@@ -759,6 +759,102 @@
   #keuanganApp .kg-row .amt{text-align:right;margin-left:auto;}
 }
 
+/* ===================== ABSENSI / WORKSPACE APP ===================== */
+#absensiApp{
+    --ab-bg:#F6F3EC;
+    --ab-bg2:#EFEADE;
+    --ab-ink:#211D1A;
+    --ab-muted:#6b6255;
+    --ab-denim:#33507A;
+    --ab-denim-dark:#233858;
+    --ab-amber:#C98A2C;
+    --ab-purple:#7A6FB0;
+    --ab-green:#4C7A5E;
+    --ab-rust:#B15A3D;
+    --ab-line:#DAD3C3;
+    --ab-white:#FFFCF6;
+    margin:0;background:var(--ab-bg);color:var(--ab-ink);font-family:'Work Sans',sans-serif;min-height:calc(100vh - 50px);
+  }
+#absensiApp *{box-sizing:border-box;}
+#absensiApp .display, #absensiApp h1, #absensiApp h2, #absensiApp h3{font-family:'Bebas Neue', sans-serif; letter-spacing:.03em;}
+#absensiApp .ab-header{
+    background:var(--ab-ink);color:var(--ab-bg);padding:20px 24px;
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+    border-bottom:3px solid var(--ab-denim);
+  }
+#absensiApp .ab-header h1{margin:0;font-size:26px;}
+#absensiApp .ab-header .sub{font-size:11px;color:#B9C3D6;text-transform:uppercase;letter-spacing:.12em;margin-top:2px;}
+#absensiApp .ab-role-switch{display:flex;gap:6px;background:rgba(255,255,255,.08);padding:5px;border-radius:999px;flex-wrap:wrap;}
+#absensiApp .ab-role-switch button{border:none;background:transparent;color:var(--ab-bg);padding:8px 16px;border-radius:999px;font-family:'Bebas Neue';font-size:13px;letter-spacing:.05em;cursor:pointer;}
+#absensiApp .ab-role-switch button.active{background:var(--ab-denim);color:#fff;}
+#absensiApp main{max-width:1080px;margin:0 auto;padding:22px 18px 90px;}
+#absensiApp .ab-subnav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+#absensiApp .ab-subnav button{font-family:'Bebas Neue';font-size:13.5px;letter-spacing:.05em;background:transparent;border:1.5px solid var(--ab-line);color:var(--ab-muted);padding:9px 16px;border-radius:8px;cursor:pointer;}
+#absensiApp .ab-subnav button.active{background:var(--ab-ink);border-color:var(--ab-ink);color:var(--ab-bg);}
+#absensiApp .ab-card{background:var(--ab-white);border:1.5px solid var(--ab-line);border-radius:12px;padding:18px 20px;margin-bottom:18px;}
+#absensiApp .ab-card h2{margin:0 0 12px;font-size:19px;}
+#absensiApp .ab-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;}
+#absensiApp .ab-stat{background:var(--ab-white);border:1.5px solid var(--ab-line);border-radius:10px;padding:14px 16px;}
+#absensiApp .ab-stat .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ab-muted);}
+#absensiApp .ab-stat .val{font-family:'Bebas Neue';font-size:26px;}
+#absensiApp .ab-badge{font-family:'Bebas Neue';font-size:11.5px;letter-spacing:.05em;padding:4px 10px;border-radius:999px;color:#fff;display:inline-block;}
+#absensiApp .ab-badge.hadir{background:var(--ab-green);}
+#absensiApp .ab-badge.belum{background:var(--ab-rust);}
+#absensiApp .ab-badge.libur{background:var(--ab-muted);}
+#absensiApp .ab-badge.marketing{background:var(--ab-purple);}
+#absensiApp .ab-badge.umum{background:var(--ab-denim);}
+#absensiApp .ab-badge.tercapai{background:var(--ab-green);}
+#absensiApp .ab-badge.proses{background:var(--ab-amber);}
+#absensiApp .ab-badge.kurang{background:var(--ab-rust);}
+#absensiApp .kpi-highlight{border:1.5px solid var(--ab-denim);background:linear-gradient(135deg, rgba(51,80,122,0.06), rgba(51,80,122,0));}
+#absensiApp .btn{font-family:'Bebas Neue';letter-spacing:.05em;font-size:14px;border:none;border-radius:8px;padding:11px 18px;cursor:pointer;background:var(--ab-denim);color:#fff;}
+#absensiApp .btn:hover{background:var(--ab-denim-dark);}
+#absensiApp .btn.ghost{background:transparent;border:1.5px solid var(--ab-line);color:var(--ab-ink);}
+#absensiApp .btn.green{background:var(--ab-green);}
+#absensiApp .btn.rust{background:var(--ab-rust);}
+#absensiApp .btn.amber{background:var(--ab-amber);}
+#absensiApp .btn.small{padding:7px 13px;font-size:12px;}
+#absensiApp .btn.block{width:100%;}
+#absensiApp .btn:disabled{opacity:.5;cursor:not-allowed;}
+#absensiApp label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ab-muted);margin:14px 0 6px;}
+#absensiApp label:first-child{margin-top:0;}
+#absensiApp input[type=text], #absensiApp input[type=number], #absensiApp input[type=date], #absensiApp input[type=month], #absensiApp input[type=time], #absensiApp select, #absensiApp textarea{
+    width:100%;border:1.5px solid var(--ab-line);border-radius:8px;padding:10px 12px;font-family:'Work Sans';font-size:14px;background:#fff;color:var(--ab-ink);
+  }
+#absensiApp input:focus, #absensiApp select:focus, #absensiApp textarea:focus{outline:2px solid var(--ab-denim);border-color:var(--ab-denim);}
+#absensiApp textarea{resize:vertical;min-height:64px;}
+#absensiApp .ab-row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+#absensiApp table.ab-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+#absensiApp table.ab-table th{text-align:left;font-family:'Bebas Neue';font-size:12.5px;letter-spacing:.04em;color:var(--ab-muted);border-bottom:2px solid var(--ab-ink);padding:8px;white-space:nowrap;}
+#absensiApp table.ab-table td{padding:9px 8px;border-bottom:1px solid var(--ab-line);}
+#absensiApp table.ab-table tbody tr:hover td{background:rgba(51,80,122,.05);cursor:pointer;}
+#absensiApp .ab-empty{border:1.5px dashed var(--ab-line);border-radius:10px;padding:34px 18px;text-align:center;color:var(--ab-muted);}
+#absensiApp .ab-employee-row{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1.5px solid var(--ab-line);border-radius:10px;padding:12px 14px;margin-bottom:10px;background:#fff;flex-wrap:wrap;}
+#absensiApp .ab-employee-row .nm{font-weight:700;font-size:14.5px;}
+#absensiApp .ab-employee-row .meta{font-size:11.5px;color:var(--ab-muted);margin-top:2px;}
+#absensiApp .ab-thumb{width:46px;height:46px;object-fit:cover;border-radius:8px;border:1px solid var(--ab-line);cursor:pointer;}
+#absensiApp .ab-video-wrap{position:relative;border-radius:10px;overflow:hidden;background:#000;margin-bottom:12px;}
+#absensiApp .ab-video-wrap video, #absensiApp .ab-video-wrap img{width:100%;display:block;max-height:420px;object-fit:cover;}
+#absensiApp .ab-progress-bar{height:8px;border-radius:999px;background:var(--ab-line);overflow:hidden;margin-top:6px;}
+#absensiApp .ab-progress-bar > div{height:100%;background:var(--ab-green);}
+#absensiApp .ab-progress-bar.over > div{background:var(--ab-amber);}
+#absensiApp .ab-note{background:var(--ab-bg2);border:1px dashed var(--ab-line);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--ab-muted);margin-top:10px;}
+#absensiApp .overlay{position:fixed;inset:0;background:rgba(33,29,26,0.6);display:flex;align-items:flex-start;justify-content:center;padding:30px 14px;overflow-y:auto;z-index:900;}
+#absensiApp .modal{background:var(--ab-bg);border-radius:14px;max-width:560px;width:100%;padding:24px 22px 22px;position:relative;border:1px solid var(--ab-line);}
+#absensiApp .modal h3{margin:0 0 4px;font-size:22px;}
+#absensiApp .modal .sub{font-size:12px;color:var(--ab-muted);margin-bottom:14px;}
+#absensiApp .modal .close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--ab-muted);}
+#absensiApp .kv{display:grid;grid-template-columns:130px 1fr;gap:6px 10px;font-size:13.5px;margin-bottom:6px;}
+#absensiApp .kv b{color:var(--ab-muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em;}
+@media(max-width:640px){
+  #absensiApp .ab-row2{grid-template-columns:1fr;}
+  #absensiApp main{padding:16px 12px 90px;}
+  #absensiApp .modal{padding:20px 16px;border-radius:12px 12px 0 0;max-height:92vh;overflow-y:auto;}
+  #absensiApp .overlay{padding:0;align-items:flex-end;}
+  #absensiApp table.ab-table{font-size:12px;}
+  #absensiApp table.ab-table th, #absensiApp table.ab-table td{padding:7px 5px;}
+}
+
 /* ===================== GLOBAL NAV ===================== */
 #globalNav{
   position:sticky; top:0; z-index:500;
@@ -836,6 +932,7 @@
     <button id="gn-btn-workflow" onclick="showMode('workflow')">Alur Kerja</button>
     <button id="gn-btn-nota" onclick="showMode('nota')">Generator Nota</button>
     <button id="gn-btn-keuangan" onclick="showMode('keuangan')">Keuangan</button>
+    <button id="gn-btn-absensi" onclick="showMode('absensi')">Workspace</button>
   </div>
 </div>
 
@@ -864,6 +961,12 @@
       <h2>Riwayat &amp; Keuangan</h2>
       <p>Semua nota otomatis tercatat di sini lengkap dengan nomor urut, atas nama pemesan, status DP/lunas &amp; sisa pembayaran. Tambah transaksi manual dan lihat grafik penjualan harian, bulanan, tahunan.</p>
       <span class="ls-cta">Buka Keuangan →</span>
+    </button>
+    <button class="ls-card ls-card-workflow" onclick="showMode('absensi')">
+      <div class="ls-icon">04</div>
+      <h2>Workspace — Absensi</h2>
+      <p>Karyawan absen masuk pakai kamera (Senin–Sabtu, Minggu libur) sesuai jam yang ditentukan. Owner bisa lihat rekap absensi per bulan, kelola data karyawan, dan pantau progress harian tim Marketing (kontak &amp; event) lengkap bukti uploadnya.</p>
+      <span class="ls-cta">Buka Workspace →</span>
     </button>
   </div>
   <div class="ls-hint">Tips: dari halaman detail sebuah project di Alur Kerja, Admin bisa klik "Buat Nota untuk Client Ini" — nama client, ukuran, dan qty akan otomatis terisi di Generator Nota.</div>
@@ -1089,6 +1192,18 @@
   </main>
 
   <div id="kgModalRoot"></div>
+</div>
+
+<div id="absensiApp" style="display:none;">
+  <div class="ab-header">
+    <div>
+      <h1>WORKSPACE — ABSENSI</h1>
+      <div class="sub">Absensi Karyawan &amp; Progress Marketing</div>
+    </div>
+    <div class="ab-role-switch" id="abRoleSwitch"></div>
+  </div>
+  <main id="abApp"><div class="ab-empty">Memuat…</div></main>
+  <div id="abModalRoot"></div>
 </div>
 
 <script>
@@ -2901,6 +3016,903 @@ async function submitPayment(invNo, sisa){
   if(ok) openInvoiceDetail(invNo);
 }
 
+/* =====================================================================
+   ===================== WORKSPACE / ABSENSI APP =====================
+   Koleksi Firestore baru yang dipakai modul ini (terpisah dari modul lain):
+   - wspEmployees        : data karyawan (CRUD oleh Owner/Admin)
+   - wspAttendance       : catatan absen masuk harian + foto kamera
+   - wspMarketingProgress: progress harian KPI Marketing + bukti gambar
+   - wspSettings/config  : target KPI & jam absen (diubah oleh Owner/Admin)
+   ===================================================================== */
+
+let wspEmployeesCache = [];
+let wspAttendanceCache = [];
+let wspMarketingCache = [];
+let wspSettings = { kontakTarget: 10, eventTarget: 10, jamMulai: '07:00', jamSelesai: '17:00' };
+let wspInited = false;
+let wspStream = null;
+let wspCapturedDataUrl = null;
+
+/* Akun login Owner/Admin untuk akses tab Owner di Workspace.
+   Ganti / tambah akun di sini bila perlu. */
+const WSP_ADMIN_ACCOUNTS = [
+  { email: 'admin1@gmail.com', password: 'Galihsaputra' },
+  { email: 'owner@gmail.com', password: 'admin123' }
+];
+
+let wspState = {
+  role: 'karyawan',
+  myEmployeeId: '',
+  loading: true,
+  ownerTab: 'rekap',
+  rekapMonth: wspCurrentMonthStr(),
+  rekapEmployeeId: 'all',
+  marketingMonth: wspCurrentMonthStr(),
+  kpiMonth: wspCurrentMonthStr(),
+  ownerEmail: ''
+};
+
+/* ---------- Helpers ---------- */
+function wspCurrentMonthStr(){
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+}
+function wspTodayStr(){
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function wspNowTimeStr(){
+  const d = new Date();
+  return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+function wspDayName(dateStr){
+  const names = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  const d = new Date(dateStr + 'T00:00:00');
+  return names[d.getDay()];
+}
+function wspIsSunday(dateStr){
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.getDay() === 0;
+}
+function wspWithinAttendanceWindow(){
+  const now = wspNowTimeStr();
+  const mulai = wspSettings.jamMulai || '00:00';
+  const selesai = wspSettings.jamSelesai || '23:59';
+  return now >= mulai && now <= selesai;
+}
+function wspWorkingDaysInMonth(yyyymm){
+  const parts = (yyyymm || wspCurrentMonthStr()).split('-').map(Number);
+  const y = parts[0], m = parts[1];
+  const daysInMonth = new Date(y, m, 0).getDate();
+  const today = new Date();
+  const isCurrentMonth = (today.getFullYear()===y && (today.getMonth()+1)===m);
+  const lastDay = isCurrentMonth ? today.getDate() : daysInMonth;
+  let count = 0;
+  for(let day=1; day<=lastDay; day++){
+    if(new Date(y, m-1, day).getDay() !== 0) count++;
+  }
+  return count;
+}
+function wspGetEmployee(id){ return wspEmployeesCache.find(e=>e.id===id); }
+function wspAttendanceFor(employeeId, dateStr){ return wspAttendanceCache.find(a=>a.employeeId===employeeId && a.date===dateStr); }
+function wspMarketingFor(employeeId, dateStr){ return wspMarketingCache.find(m=>m.employeeId===employeeId && m.date===dateStr); }
+function wspGenId(){
+  return 'WSP-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2,7).toUpperCase();
+}
+function wspMonthLabel(yyyymm){
+  try{ return new Date((yyyymm||wspCurrentMonthStr())+'-01').toLocaleDateString('id-ID',{month:'long', year:'numeric'}); }
+  catch(e){ return yyyymm; }
+}
+
+/* ---------- Data layer ---------- */
+async function wspSaveEmployee(emp){
+  if(!CONFIG_READY) return false;
+  try{ await db.collection('wspEmployees').doc(emp.id).set(emp); return true; }
+  catch(e){ alert('Gagal menyimpan karyawan: ' + e.message); return false; }
+}
+async function wspDeleteEmployee(id){
+  if(!CONFIG_READY) return false;
+  if(!confirm('Hapus karyawan ini? Riwayat absensi & progress yang sudah tercatat tidak akan terhapus.')) return false;
+  try{ await db.collection('wspEmployees').doc(id).delete(); return true; }
+  catch(e){ alert('Gagal menghapus karyawan: ' + e.message); return false; }
+}
+async function wspSaveAttendance(rec){
+  if(!CONFIG_READY) return false;
+  try{ await db.collection('wspAttendance').doc(rec.id).set(rec); return true; }
+  catch(e){ alert('Gagal menyimpan absensi: ' + e.message); return false; }
+}
+async function wspSaveMarketing(rec){
+  if(!CONFIG_READY) return false;
+  try{ await db.collection('wspMarketingProgress').doc(rec.id).set(rec); return true; }
+  catch(e){ alert('Gagal menyimpan progress: ' + e.message); return false; }
+}
+async function wspSaveSettings(cfg){
+  if(!CONFIG_READY) return false;
+  try{ await db.collection('wspSettings').doc('config').set(cfg, {merge:true}); return true; }
+  catch(e){ alert('Gagal menyimpan pengaturan: ' + e.message); return false; }
+}
+
+function subscribeWspRealtime(){
+  if(!CONFIG_READY){ wspState.loading = false; renderAbsensi(); return; }
+  db.collection('wspEmployees').orderBy('createdAt','asc').onSnapshot(snap=>{
+    wspEmployeesCache = snap.docs.map(d=>d.data());
+    wspState.loading = false;
+    renderAbsensi();
+  }, err=>{ console.error('Realtime wspEmployees error', err); wspState.loading=false; renderAbsensi(); });
+  db.collection('wspAttendance').orderBy('date','desc').onSnapshot(snap=>{
+    wspAttendanceCache = snap.docs.map(d=>d.data());
+    renderAbsensi();
+  }, err=>console.error('Realtime wspAttendance error', err));
+  db.collection('wspMarketingProgress').orderBy('date','desc').onSnapshot(snap=>{
+    wspMarketingCache = snap.docs.map(d=>d.data());
+    renderAbsensi();
+  }, err=>console.error('Realtime wspMarketingProgress error', err));
+  db.collection('wspSettings').doc('config').onSnapshot(doc=>{
+    if(doc.exists) wspSettings = Object.assign({}, wspSettings, doc.data());
+    renderAbsensi();
+  }, err=>console.error('Realtime wspSettings error', err));
+}
+
+function initAbsensi(){
+  if(wspInited) return;
+  wspInited = true;
+  try{ wspState.myEmployeeId = localStorage.getItem('tenx_wsp_employee_id') || ''; }catch(e){}
+  try{ wspState.role = localStorage.getItem('tenx_wsp_role') || 'karyawan'; }catch(e){}
+  try{ wspState.ownerEmail = localStorage.getItem('tenx_wsp_owner_email') || ''; }catch(e){}
+  renderAbsensi();
+  subscribeWspRealtime();
+}
+
+/* ---------- Login Owner/Admin ---------- */
+function wspIsOwnerAuthed(){ return !!wspState.ownerEmail; }
+function wspFindAdminAccount(email, password){
+  const e = (email||'').trim().toLowerCase();
+  return WSP_ADMIN_ACCOUNTS.find(acc => acc.email.toLowerCase()===e && acc.password===password) || null;
+}
+function renderOwnerLogin(){
+  return `
+    <div class="ab-card" style="max-width:420px;margin:0 auto;">
+      <h2>Login Owner / Admin</h2>
+      <div class="sub" style="font-size:13px;color:var(--ab-muted);margin-bottom:6px;">Masuk dengan akun Owner/Admin untuk melihat rekapan absensi, mengelola karyawan, dan mengatur KPI.</div>
+      <label>Email</label>
+      <input type="text" id="wspLoginEmail" placeholder="contoh: " autocomplete="username">
+      <label>Password</label>
+      <input type="text" id="wspLoginPassword" placeholder="Masukkan password" autocomplete="current-password">
+      <div id="wspLoginError" style="font-size:12.5px;color:var(--ab-rust);margin-top:8px;"></div>
+      <button class="btn block" style="margin-top:14px;" onclick="wspOwnerLoginSubmit()">Masuk</button>
+    </div>`;
+}
+function wspOwnerLoginSubmit(){
+  const email = document.getElementById('wspLoginEmail').value;
+  const password = document.getElementById('wspLoginPassword').value;
+  const acc = wspFindAdminAccount(email, password);
+  const errEl = document.getElementById('wspLoginError');
+  if(!acc){
+    if(errEl) errEl.textContent = 'Email atau password salah. Silakan coba lagi.';
+    return;
+  }
+  wspState.ownerEmail = acc.email;
+  try{ localStorage.setItem('tenx_wsp_owner_email', acc.email); }catch(e){}
+  renderAbsensi();
+}
+function wspOwnerLogout(){
+  if(!confirm('Keluar dari akun Owner/Admin?')) return;
+  wspState.ownerEmail = '';
+  try{ localStorage.removeItem('tenx_wsp_owner_email'); }catch(e){}
+  renderAbsensi();
+}
+
+/* ---------- Role switch & router ---------- */
+function wspSetRole(role){
+  wspState.role = role;
+  try{ localStorage.setItem('tenx_wsp_role', role); }catch(e){}
+  renderAbsensi();
+}
+function renderAbsensiRoleSwitch(){
+  const el = document.getElementById('abRoleSwitch');
+  if(!el) return;
+  el.innerHTML = `
+    <button class="${wspState.role==='karyawan'?'active':''}" onclick="wspSetRole('karyawan')">KARYAWAN</button>
+    <button class="${wspState.role==='owner'?'active':''}" onclick="wspSetRole('owner')">OWNER / ADMIN</button>
+  `;
+}
+function renderAbsensi(){
+  renderAbsensiRoleSwitch();
+  const app = document.getElementById('abApp');
+  if(!app) return;
+  if(!CONFIG_READY){
+    app.innerHTML = `<div class="ab-empty"><div class="display" style="font-size:22px;">Belum Terhubung ke Firebase</div><div>Lengkapi <b>firebaseConfig</b> di bagian atas kode untuk mengaktifkan fitur Workspace / Absensi.</div></div>`;
+    return;
+  }
+  if(wspState.loading){
+    app.innerHTML = `<div class="ab-empty">Memuat data…</div>`;
+    return;
+  }
+  if(wspState.role==='karyawan'){
+    app.innerHTML = renderKaryawanView();
+  } else {
+    app.innerHTML = wspIsOwnerAuthed() ? renderOwnerView() : renderOwnerLogin();
+  }
+}
+
+/* ---------- KARYAWAN VIEW ---------- */
+function renderKaryawanView(){
+  const activeEmployees = wspEmployeesCache.filter(e=>e.active!==false);
+  const emp = wspGetEmployee(wspState.myEmployeeId);
+
+  if(!emp){
+    const options = activeEmployees.map(e=>`<option value="${e.id}">${escapeHtml(e.name)}${e.division==='marketing' ? ' (Marketing)' : ''}</option>`).join('');
+    return `
+      <div class="ab-card">
+        <h2>Siapa Anda?</h2>
+        <div class="sub" style="font-size:13px;color:var(--ab-muted);margin-bottom:10px;">Pilih nama Anda dari daftar karyawan untuk mulai absen. Pilihan ini akan diingat di HP/device ini.</div>
+        ${activeEmployees.length ? `
+          <label>Nama Karyawan</label>
+          <select id="wspPickEmployee">${options}</select>
+          <button class="btn block" style="margin-top:14px;" onclick="wspConfirmIdentity()">Ini Saya, Lanjutkan</button>
+        ` : `<div class="ab-empty">Belum ada data karyawan. Minta Owner/Admin menambahkan nama Anda dulu lewat tab Owner → Kelola Karyawan.</div>`}
+      </div>`;
+  }
+
+  const today = wspTodayStr();
+  const isSunday = wspIsSunday(today);
+  const attToday = wspAttendanceFor(emp.id, today);
+  const withinWindow = wspWithinAttendanceWindow();
+
+  let statusBlock;
+  if(attToday){
+    statusBlock = `
+      <div class="ab-badge hadir">SUDAH ABSEN — ${escapeHtml(attToday.time)}</div>
+      <div style="margin-top:12px;display:flex;gap:12px;align-items:center;">
+        <img src="${attToday.photoUrl}" class="ab-thumb" style="width:64px;height:64px;" onclick="wspLightbox('${attToday.photoUrl}')">
+        <div style="font-size:12.5px;color:var(--ab-muted);">Foto absensi hari ini. Klik untuk memperbesar.</div>
+      </div>`;
+  } else if(isSunday){
+    statusBlock = `<div class="ab-badge libur">HARI MINGGU — LIBUR</div>`;
+  } else if(!withinWindow){
+    statusBlock = `<div class="ab-badge belum">DI LUAR JAM ABSEN</div>
+      <div class="ab-note">Jam absen dibuka pukul ${escapeHtml(wspSettings.jamMulai)}–${escapeHtml(wspSettings.jamSelesai)}. Sekarang pukul ${wspNowTimeStr()}.</div>`;
+  } else {
+    statusBlock = `
+      <div class="ab-badge belum">BELUM ABSEN</div>
+      <button class="btn green block" style="margin-top:14px;" onclick="wspOpenCamera()">📷 Absen Masuk (Kamera)</button>`;
+  }
+
+  const myAttendance = wspAttendanceCache.filter(a=>a.employeeId===emp.id).slice(0,14);
+  const historyRows = myAttendance.map(a=>`
+    <tr onclick="wspLightbox('${a.photoUrl}')">
+      <td>${formatDateID(a.date)}<br><span style="font-size:11px;color:var(--ab-muted);">${wspDayName(a.date)}</span></td>
+      <td>${escapeHtml(a.time)}</td>
+      <td><img src="${a.photoUrl}" class="ab-thumb"></td>
+    </tr>`).join('');
+
+  let marketingBlock = '';
+  if(emp.division === 'marketing'){
+    const prog = wspMarketingFor(emp.id, today);
+    const kTarget = Number(wspSettings.kontakTarget) || 10;
+    const eTarget = Number(wspSettings.eventTarget) || 10;
+    if(prog){
+      const kPct = Math.min(100, Math.round(((Number(prog.kontak)||0)/kTarget)*100));
+      const ePct = Math.min(100, Math.round(((Number(prog.event)||0)/eTarget)*100));
+      marketingBlock = `
+        <div class="ab-card">
+          <h2>Progress Marketing Hari Ini</h2>
+          <div class="ab-grid">
+            <div class="ab-stat">
+              <div class="lbl">Kontak (target ${kTarget}/hari)</div>
+              <div class="val">${prog.kontak} / ${kTarget}</div>
+              <div class="ab-progress-bar ${Number(prog.kontak)>=kTarget?'':'over'}"><div style="width:${kPct}%"></div></div>
+            </div>
+            <div class="ab-stat">
+              <div class="lbl">Event (target ${eTarget}/hari)</div>
+              <div class="val">${prog.event} / ${eTarget}</div>
+              <div class="ab-progress-bar ${Number(prog.event)>=eTarget?'':'over'}"><div style="width:${ePct}%"></div></div>
+            </div>
+          </div>
+          <div style="margin-top:14px;display:flex;gap:12px;align-items:center;">
+            <img src="${prog.proofUrl}" class="ab-thumb" style="width:60px;height:60px;" onclick="wspLightbox('${prog.proofUrl}')">
+            <div style="font-size:12.5px;color:var(--ab-muted);">${prog.note ? escapeHtml(prog.note) : 'Bukti sudah dikirim untuk hari ini.'}</div>
+          </div>
+          <button class="btn ghost block" style="margin-top:14px;" onclick="wspOpenMarketingForm()">Update Ulang Progress Hari Ini</button>
+        </div>`;
+    } else {
+      marketingBlock = `
+        <div class="ab-card">
+          <h2>Update Progress Marketing</h2>
+          <div class="sub" style="font-size:13px;color:var(--ab-muted);">Target KPI hari ini: <b>${kTarget} kontak</b> &amp; <b>${eTarget} event</b>. Lengkapi bukti berupa screenshot rekap Excel Anda.</div>
+          <button class="btn amber block" style="margin-top:10px;" onclick="wspOpenMarketingForm()">+ Input Progress Hari Ini</button>
+        </div>`;
+    }
+  }
+
+  return `
+    <div class="ab-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+        <div>
+          <h2>Halo, ${escapeHtml(emp.name)}</h2>
+          <div style="font-size:12.5px;color:var(--ab-muted);">${wspDayName(today)}, ${formatDateID(today)} ${emp.division==='marketing' ? '· <span class="ab-badge marketing" style="transform:none;">MARKETING</span>' : ''}</div>
+        </div>
+        <button class="btn ghost small" onclick="wspChangeIdentity()">Ganti Karyawan</button>
+      </div>
+      <div style="margin-top:14px;">${statusBlock}</div>
+    </div>
+
+    ${marketingBlock}
+
+    <div class="ab-card">
+      <h2>Riwayat Absensi Saya</h2>
+      ${historyRows ? `<table class="ab-table"><thead><tr><th>Tanggal</th><th>Jam</th><th>Foto</th></tr></thead><tbody>${historyRows}</tbody></table>` : `<div class="ab-empty">Belum ada riwayat absensi.</div>`}
+    </div>
+  `;
+}
+
+function wspConfirmIdentity(){
+  const sel = document.getElementById('wspPickEmployee');
+  if(!sel || !sel.value) return;
+  wspState.myEmployeeId = sel.value;
+  try{ localStorage.setItem('tenx_wsp_employee_id', sel.value); }catch(e){}
+  renderAbsensi();
+}
+function wspChangeIdentity(){
+  if(!confirm('Ganti identitas karyawan di device ini?')) return;
+  wspState.myEmployeeId = '';
+  try{ localStorage.removeItem('tenx_wsp_employee_id'); }catch(e){}
+  renderAbsensi();
+}
+function wspCloseModal(){
+  const root = document.getElementById('abModalRoot');
+  if(root) root.innerHTML = '';
+}
+
+/* ---------- Kamera absensi ---------- */
+function wspOpenCamera(){
+  const root = document.getElementById('abModalRoot');
+  root.innerHTML = `
+    <div class="overlay" onclick="if(event.target===this) wspCloseCamera()">
+      <div class="modal">
+        <button class="close" onclick="wspCloseCamera()">✕</button>
+        <h3>Absen Masuk</h3>
+        <div class="sub">Ambil foto wajah Anda sebagai bukti kehadiran hari ini.</div>
+        <div class="ab-video-wrap" id="wspVideoWrap">
+          <video id="wspVideo" autoplay playsinline muted></video>
+        </div>
+        <canvas id="wspCanvas" style="display:none;"></canvas>
+        <div id="wspCamStatus" style="font-size:12.5px;color:var(--ab-muted);margin-bottom:8px;">Mengaktifkan kamera…</div>
+        <div id="wspActionsRow" style="display:flex;gap:10px;">
+          <button class="btn block" id="wspCaptureBtn" onclick="wspCapturePhoto()" disabled>Ambil Foto</button>
+        </div>
+      </div>
+    </div>`;
+  wspStartCamera();
+}
+async function wspStartCamera(){
+  try{
+    wspStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}, audio:false});
+    const video = document.getElementById('wspVideo');
+    if(!video){ wspStopCameraStream(); return; }
+    video.srcObject = wspStream;
+    const statusEl = document.getElementById('wspCamStatus');
+    const btn = document.getElementById('wspCaptureBtn');
+    if(statusEl) statusEl.textContent = 'Kamera aktif. Posisikan wajah Anda lalu ambil foto.';
+    if(btn) btn.disabled = false;
+  }catch(e){
+    const statusEl = document.getElementById('wspCamStatus');
+    if(statusEl) statusEl.textContent = 'Tidak bisa mengakses kamera: ' + e.message + '. Pastikan izin kamera sudah diaktifkan di browser.';
+  }
+}
+function wspStopCameraStream(){
+  if(wspStream){
+    wspStream.getTracks().forEach(t=>t.stop());
+    wspStream = null;
+  }
+}
+function wspCloseCamera(){
+  wspStopCameraStream();
+  wspCapturedDataUrl = null;
+  wspCloseModal();
+}
+function wspCapturePhoto(){
+  const video = document.getElementById('wspVideo');
+  const canvas = document.getElementById('wspCanvas');
+  if(!video || !canvas) return;
+  canvas.width = video.videoWidth || 480;
+  canvas.height = video.videoHeight || 360;
+  canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+  wspCapturedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+  wspStopCameraStream();
+  const wrap = document.getElementById('wspVideoWrap');
+  if(wrap) wrap.innerHTML = `<img src="${wspCapturedDataUrl}">`;
+  const statusEl = document.getElementById('wspCamStatus');
+  if(statusEl) statusEl.textContent = 'Foto siap dikirim, atau ambil ulang jika kurang jelas.';
+  const actions = document.getElementById('wspActionsRow');
+  if(actions){
+    actions.innerHTML = `
+      <button class="btn ghost block" onclick="wspRetakePhoto()">Ambil Ulang</button>
+      <button class="btn green block" id="wspSendBtn" onclick="wspSubmitAttendance()">Kirim Absen</button>
+    `;
+  }
+}
+function wspRetakePhoto(){
+  wspCapturedDataUrl = null;
+  wspOpenCamera();
+}
+function wspDataUrlToFile(dataUrl, filename){
+  const arr = dataUrl.split(',');
+  const mimeMatch = arr[0].match(/:(.*?);/);
+  const mime = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while(n--){ u8arr[n] = bstr.charCodeAt(n); }
+  return new File([u8arr], filename, {type:mime});
+}
+async function wspSubmitAttendance(){
+  const emp = wspGetEmployee(wspState.myEmployeeId);
+  if(!emp || !wspCapturedDataUrl) return;
+  const btn = document.getElementById('wspSendBtn');
+  if(btn){ btn.disabled = true; btn.textContent = 'Mengirim…'; }
+  try{
+    const file = wspDataUrlToFile(wspCapturedDataUrl, 'absen_' + emp.id + '_' + Date.now() + '.jpg');
+    const uploaded = await uploadFilesToStorage([file], 'absensi');
+    const photoUrl = uploaded[0].url;
+    const today = wspTodayStr();
+    const record = {
+      id: emp.id + '_' + today,
+      employeeId: emp.id,
+      employeeName: emp.name,
+      division: emp.division || 'umum',
+      date: today,
+      time: wspNowTimeStr(),
+      photoUrl,
+      createdAt: new Date().toISOString()
+    };
+    const ok = await wspSaveAttendance(record);
+    if(ok){
+      wspCapturedDataUrl = null;
+      wspCloseModal();
+      renderAbsensi();
+    } else if(btn){
+      btn.disabled = false; btn.textContent = 'Kirim Absen';
+    }
+  }catch(e){
+    alert('Gagal mengirim absen: ' + e.message);
+    if(btn){ btn.disabled = false; btn.textContent = 'Kirim Absen'; }
+  }
+}
+
+/* ---------- Progress Marketing (karyawan) ---------- */
+function wspOpenMarketingForm(){
+  const emp = wspGetEmployee(wspState.myEmployeeId);
+  if(!emp) return;
+  const today = wspTodayStr();
+  const existing = wspMarketingFor(emp.id, today);
+  const kTarget = Number(wspSettings.kontakTarget) || 10;
+  const eTarget = Number(wspSettings.eventTarget) || 10;
+  const root = document.getElementById('abModalRoot');
+  root.innerHTML = `
+    <div class="overlay" onclick="if(event.target===this) wspCloseModal()">
+      <div class="modal">
+        <button class="close" onclick="wspCloseModal()">✕</button>
+        <h3>Update Progress Marketing</h3>
+        <div class="sub">${formatDateID(today)} · Target hari ini: ${kTarget} kontak, ${eTarget} event</div>
+        <label>Jumlah Kontak</label>
+        <input type="number" id="wspKontak" min="0" value="${existing ? existing.kontak : ''}" placeholder="cth: 10">
+        <label>Jumlah Event</label>
+        <input type="number" id="wspEvent" min="0" value="${existing ? existing.event : ''}" placeholder="cth: 10">
+        <label>Bukti (Screenshot Excel / Rekap)</label>
+        <input type="file" id="wspProofFile" accept="image/*">
+        ${existing ? `<div style="margin-top:8px;display:flex;align-items:center;gap:8px;"><img src="${existing.proofUrl}" class="ab-thumb"><span style="font-size:11.5px;color:var(--ab-muted);">Bukti sebelumnya — upload baru untuk mengganti.</span></div>` : ''}
+        <label>Catatan (opsional)</label>
+        <textarea id="wspNote" placeholder="Catatan tambahan...">${existing && existing.note ? escapeHtml(existing.note) : ''}</textarea>
+        <div id="wspMarketingStatus" style="font-size:12px;color:var(--ab-muted);margin-top:6px;"></div>
+        <button class="btn amber block" id="wspMktSaveBtn" style="margin-top:14px;" onclick="wspSubmitMarketing('${existing ? existing.proofUrl : ''}')">Simpan Progress</button>
+      </div>
+    </div>`;
+}
+async function wspSubmitMarketing(existingProofUrl){
+  const emp = wspGetEmployee(wspState.myEmployeeId);
+  if(!emp) return;
+  const kontak = Number(document.getElementById('wspKontak').value) || 0;
+  const event = Number(document.getElementById('wspEvent').value) || 0;
+  const note = document.getElementById('wspNote').value || '';
+  const fileInput = document.getElementById('wspProofFile');
+  const file = fileInput && fileInput.files[0];
+  if(!existingProofUrl && !file){ alert('Upload bukti gambar (screenshot Excel) wajib diisi.'); return; }
+  const statusEl = document.getElementById('wspMarketingStatus');
+  const btn = document.getElementById('wspMktSaveBtn');
+  try{
+    let proofUrl = existingProofUrl;
+    if(file){
+      if(btn) btn.disabled = true;
+      if(statusEl) statusEl.textContent = 'Mengupload bukti…';
+      const uploaded = await uploadFilesToStorage([file], 'marketing-progress');
+      proofUrl = uploaded[0].url;
+    }
+    const today = wspTodayStr();
+    const record = {
+      id: emp.id + '_' + today,
+      employeeId: emp.id,
+      employeeName: emp.name,
+      date: today,
+      kontak, event, proofUrl, note,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    const ok = await wspSaveMarketing(record);
+    if(ok){ wspCloseModal(); renderAbsensi(); }
+    else if(btn){ btn.disabled = false; }
+  }catch(e){
+    alert('Gagal menyimpan progress: ' + e.message);
+    if(btn) btn.disabled = false;
+  }
+}
+
+function wspLightbox(url){
+  if(!url) return;
+  const root = document.getElementById('abModalRoot');
+  root.innerHTML = `
+    <div class="overlay" style="background:rgba(15,13,11,.92);align-items:center;" onclick="wspCloseModal()">
+      <img src="${url}" style="max-width:100%;max-height:85vh;border-radius:10px;object-fit:contain;">
+    </div>`;
+}
+
+/* ---------- OWNER VIEW ---------- */
+function renderOwnerView(){
+  return `
+    <div class="ab-card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:12px 16px;">
+      <div style="font-size:12.5px;color:var(--ab-muted);">Masuk sebagai <b style="color:var(--ab-ink);">${escapeHtml(wspState.ownerEmail)}</b></div>
+      <button class="btn ghost small" onclick="wspOwnerLogout()">Keluar</button>
+    </div>
+    <div class="ab-subnav">
+      <button class="${wspState.ownerTab==='rekap'?'active':''}" onclick="wspSetOwnerTab('rekap')">Rekap Absensi</button>
+      <button class="${wspState.ownerTab==='karyawan'?'active':''}" onclick="wspSetOwnerTab('karyawan')">Kelola Karyawan</button>
+      <button class="${wspState.ownerTab==='marketing'?'active':''}" onclick="wspSetOwnerTab('marketing')">Kinerja Marketing</button>
+      <button class="${wspState.ownerTab==='kpiboard'?'active':''}" onclick="wspSetOwnerTab('kpiboard')">📊 KPI Karyawan</button>
+      <button class="${wspState.ownerTab==='kpi'?'active':''}" onclick="wspSetOwnerTab('kpi')">Pengaturan KPI &amp; Jam</button>
+    </div>
+    ${wspState.ownerTab==='rekap' ? renderOwnerRekap() : ''}
+    ${wspState.ownerTab==='karyawan' ? renderOwnerKaryawan() : ''}
+    ${wspState.ownerTab==='marketing' ? renderOwnerMarketing() : ''}
+    ${wspState.ownerTab==='kpiboard' ? renderOwnerKpiBoard() : ''}
+    ${wspState.ownerTab==='kpi' ? renderOwnerKpi() : ''}
+  `;
+}
+function wspSetOwnerTab(tab){ wspState.ownerTab = tab; renderAbsensi(); }
+
+function renderOwnerRekap(){
+  const month = wspState.rekapMonth;
+  const workingDays = wspWorkingDaysInMonth(month);
+  const employees = wspEmployeesCache;
+  const filterOptions = employees.map(e=>`<option value="${e.id}" ${wspState.rekapEmployeeId===e.id?'selected':''}>${escapeHtml(e.name)}</option>`).join('');
+  const monthAttendance = wspAttendanceCache.filter(a=>a.date && a.date.startsWith(month));
+
+  const rows = employees
+    .filter(e => wspState.rekapEmployeeId==='all' || e.id===wspState.rekapEmployeeId)
+    .map(e=>{
+      const count = monthAttendance.filter(a=>a.employeeId===e.id).length;
+      const pct = workingDays ? Math.round((count/workingDays)*100) : 0;
+      return `<tr onclick="wspOpenRekapDetail('${e.id}')">
+        <td>${escapeHtml(e.name)}<br><span class="ab-badge ${e.division==='marketing'?'marketing':'umum'}" style="transform:none;font-size:10px;">${e.division==='marketing'?'MARKETING':'UMUM'}</span></td>
+        <td>${count} / ${workingDays} hari</td>
+        <td>${pct}%</td>
+      </tr>`;
+    }).join('');
+
+  return `
+    <div class="ab-card">
+      <h2>Rekap Absensi Bulanan</h2>
+      <div class="ab-row2">
+        <div>
+          <label>Bulan</label>
+          <input type="month" value="${month}" onchange="wspChangeRekapMonth(this.value)">
+        </div>
+        <div>
+          <label>Karyawan</label>
+          <select onchange="wspChangeRekapEmployee(this.value)">
+            <option value="all" ${wspState.rekapEmployeeId==='all'?'selected':''}>Semua Karyawan</option>
+            ${filterOptions}
+          </select>
+        </div>
+      </div>
+      <div class="ab-note">Hari kerja bulan ini (Senin–Sabtu, Minggu libur): <b>${workingDays} hari</b>. Klik nama karyawan untuk lihat rincian harian &amp; foto.</div>
+    </div>
+    <div class="ab-card">
+      ${rows ? `<table class="ab-table"><thead><tr><th>Karyawan</th><th>Hadir</th><th>%</th></tr></thead><tbody>${rows}</tbody></table>` : `<div class="ab-empty">Belum ada data karyawan / absensi untuk bulan ini.</div>`}
+    </div>
+  `;
+}
+function wspChangeRekapMonth(v){ wspState.rekapMonth = v; renderAbsensi(); }
+function wspChangeRekapEmployee(v){ wspState.rekapEmployeeId = v; renderAbsensi(); }
+function wspOpenRekapDetail(employeeId){
+  const emp = wspGetEmployee(employeeId);
+  if(!emp) return;
+  const month = wspState.rekapMonth;
+  const records = wspAttendanceCache.filter(a=>a.employeeId===employeeId && a.date && a.date.startsWith(month)).sort((a,b)=>a.date<b.date?1:-1);
+  const rows = records.map(a=>`
+    <tr onclick="wspLightbox('${a.photoUrl}')">
+      <td>${formatDateID(a.date)}<br><span style="font-size:11px;color:var(--ab-muted);">${wspDayName(a.date)}</span></td>
+      <td>${escapeHtml(a.time)}</td>
+      <td><img src="${a.photoUrl}" class="ab-thumb"></td>
+    </tr>`).join('');
+  const root = document.getElementById('abModalRoot');
+  root.innerHTML = `
+    <div class="overlay" onclick="if(event.target===this) wspCloseModal()">
+      <div class="modal">
+        <button class="close" onclick="wspCloseModal()">✕</button>
+        <h3>${escapeHtml(emp.name)}</h3>
+        <div class="sub">Rincian absensi ${wspMonthLabel(month)}</div>
+        ${rows ? `<table class="ab-table"><thead><tr><th>Tanggal</th><th>Jam</th><th>Foto</th></tr></thead><tbody>${rows}</tbody></table>` : `<div class="ab-empty">Belum ada absensi di bulan ini.</div>`}
+      </div>
+    </div>`;
+}
+
+function renderOwnerKaryawan(){
+  const rows = wspEmployeesCache.map(e=>`
+    <div class="ab-employee-row">
+      <div>
+        <div class="nm">${escapeHtml(e.name)} ${e.active===false ? '<span style="color:var(--ab-rust);font-size:11px;">(nonaktif)</span>' : ''}</div>
+        <div class="meta"><span class="ab-badge ${e.division==='marketing'?'marketing':'umum'}" style="transform:none;">${e.division==='marketing'?'MARKETING':'UMUM'}</span></div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn ghost small" onclick="wspEditEmployee('${e.id}')">Edit</button>
+        <button class="btn rust small" onclick="wspRemoveEmployee('${e.id}')">Hapus</button>
+      </div>
+    </div>`).join('');
+
+  return `
+    <div class="ab-card">
+      <h2>Kelola Karyawan</h2>
+      <div class="sub" style="font-size:13px;color:var(--ab-muted);margin-bottom:10px;">Tambah, ubah, atau nonaktifkan karyawan. Karyawan divisi Marketing otomatis mendapat fitur update progress KPI.</div>
+      <button class="btn block" onclick="wspEditEmployee(null)">+ Tambah Karyawan</button>
+    </div>
+    <div class="ab-card">
+      ${rows || `<div class="ab-empty">Belum ada karyawan. Klik "+ Tambah Karyawan" di atas.</div>`}
+    </div>
+  `;
+}
+function wspEditEmployee(id){
+  const emp = id ? wspGetEmployee(id) : null;
+  const root = document.getElementById('abModalRoot');
+  root.innerHTML = `
+    <div class="overlay" onclick="if(event.target===this) wspCloseModal()">
+      <div class="modal">
+        <button class="close" onclick="wspCloseModal()">✕</button>
+        <h3>${emp ? 'Edit Karyawan' : 'Tambah Karyawan'}</h3>
+        <label>Nama Karyawan</label>
+        <input type="text" id="wspEmpName" value="${emp ? escapeHtml(emp.name) : ''}" placeholder="Nama lengkap">
+        <label>Divisi</label>
+        <select id="wspEmpDivision">
+          <option value="umum" ${(!emp || emp.division==='umum')?'selected':''}>Umum</option>
+          <option value="marketing" ${emp && emp.division==='marketing'?'selected':''}>Marketing</option>
+        </select>
+        <label>Status</label>
+        <select id="wspEmpActive">
+          <option value="true" ${(!emp || emp.active!==false)?'selected':''}>Aktif</option>
+          <option value="false" ${emp && emp.active===false?'selected':''}>Nonaktif</option>
+        </select>
+        <button class="btn block" style="margin-top:16px;" onclick="wspSaveEmployeeForm('${emp ? emp.id : ''}')">Simpan</button>
+      </div>
+    </div>`;
+}
+async function wspSaveEmployeeForm(id){
+  const name = document.getElementById('wspEmpName').value.trim();
+  if(!name){ alert('Nama karyawan wajib diisi'); return; }
+  const division = document.getElementById('wspEmpDivision').value;
+  const active = document.getElementById('wspEmpActive').value === 'true';
+  const existing = id ? wspGetEmployee(id) : null;
+  const emp = {
+    id: id || wspGenId(),
+    name, division, active,
+    createdAt: existing ? existing.createdAt : new Date().toISOString()
+  };
+  const ok = await wspSaveEmployee(emp);
+  if(ok){ wspCloseModal(); renderAbsensi(); }
+}
+async function wspRemoveEmployee(id){
+  const ok = await wspDeleteEmployee(id);
+  if(ok) renderAbsensi();
+}
+
+function renderOwnerMarketing(){
+  const month = wspState.marketingMonth;
+  const workingDays = wspWorkingDaysInMonth(month);
+  const kTarget = Number(wspSettings.kontakTarget) || 10;
+  const eTarget = Number(wspSettings.eventTarget) || 10;
+  const marketers = wspEmployeesCache.filter(e=>e.division==='marketing');
+  const monthProgress = wspMarketingCache.filter(m=>m.date && m.date.startsWith(month));
+
+  const rows = marketers.map(e=>{
+    const recs = monthProgress.filter(m=>m.employeeId===e.id);
+    const totalKontak = recs.reduce((s,r)=>s+(Number(r.kontak)||0),0);
+    const totalEvent = recs.reduce((s,r)=>s+(Number(r.event)||0),0);
+    const targetKontak = workingDays * kTarget;
+    const targetEvent = workingDays * eTarget;
+    const pctK = targetKontak ? Math.round((totalKontak/targetKontak)*100) : 0;
+    const pctE = targetEvent ? Math.round((totalEvent/targetEvent)*100) : 0;
+    return `<tr onclick="wspOpenMarketingDetail('${e.id}')">
+      <td>${escapeHtml(e.name)}</td>
+      <td>${totalKontak} / ${targetKontak} <span style="color:var(--ab-muted);font-size:11px;">(${pctK}%)</span></td>
+      <td>${totalEvent} / ${targetEvent} <span style="color:var(--ab-muted);font-size:11px;">(${pctE}%)</span></td>
+      <td>${recs.length} / ${workingDays} hari lapor</td>
+    </tr>`;
+  }).join('');
+
+  return `
+    <div class="ab-card">
+      <h2>Kinerja Marketing</h2>
+      <label>Bulan</label>
+      <input type="month" value="${month}" onchange="wspChangeMarketingMonth(this.value)">
+      <div class="ab-note">Target KPI saat ini: <b>${kTarget} kontak/hari</b> &amp; <b>${eTarget} event/hari</b>. Ubah lewat tab "Pengaturan KPI &amp; Jam".</div>
+    </div>
+    <div class="ab-card">
+      ${marketers.length ? (rows ? `<table class="ab-table"><thead><tr><th>Nama</th><th>Kontak</th><th>Event</th><th>Lapor</th></tr></thead><tbody>${rows}</tbody></table>` : `<div class="ab-empty">Belum ada progress dilaporkan bulan ini.</div>`) : `<div class="ab-empty">Belum ada karyawan divisi Marketing. Tambahkan lewat tab Kelola Karyawan.</div>`}
+    </div>
+  `;
+}
+function wspChangeMarketingMonth(v){ wspState.marketingMonth = v; renderAbsensi(); }
+function wspOpenMarketingDetail(employeeId){
+  const emp = wspGetEmployee(employeeId);
+  if(!emp) return;
+  const month = wspState.marketingMonth;
+  const recs = wspMarketingCache.filter(m=>m.employeeId===employeeId && m.date && m.date.startsWith(month)).sort((a,b)=>a.date<b.date?1:-1);
+  const kTarget = Number(wspSettings.kontakTarget) || 10;
+  const eTarget = Number(wspSettings.eventTarget) || 10;
+  const rows = recs.map(r=>`
+    <tr onclick="wspLightbox('${r.proofUrl}')">
+      <td>${formatDateID(r.date)}</td>
+      <td>${r.kontak}${Number(r.kontak)>=kTarget?' ✅':''}</td>
+      <td>${r.event}${Number(r.event)>=eTarget?' ✅':''}</td>
+      <td><img src="${r.proofUrl}" class="ab-thumb"></td>
+    </tr>`).join('');
+  const root = document.getElementById('abModalRoot');
+  root.innerHTML = `
+    <div class="overlay" onclick="if(event.target===this) wspCloseModal()">
+      <div class="modal">
+        <button class="close" onclick="wspCloseModal()">✕</button>
+        <h3>${escapeHtml(emp.name)}</h3>
+        <div class="sub">Rincian progress ${wspMonthLabel(month)}</div>
+        ${rows ? `<table class="ab-table"><thead><tr><th>Tanggal</th><th>Kontak</th><th>Event</th><th>Bukti</th></tr></thead><tbody>${rows}</tbody></table>` : `<div class="ab-empty">Belum ada laporan di bulan ini.</div>`}
+      </div>
+    </div>`;
+}
+
+/* ===================== DASHBOARD KPI KARYAWAN (terhubung otomatis) ===================== */
+function renderOwnerKpiBoard(){
+  const month = wspState.kpiMonth;
+  const workingDays = wspWorkingDaysInMonth(month);
+  const kTarget = Number(wspSettings.kontakTarget) || 10;
+  const eTarget = Number(wspSettings.eventTarget) || 10;
+  const activeEmployees = wspEmployeesCache.filter(e=>e.active!==false);
+  const monthAttendance = wspAttendanceCache.filter(a=>a.date && a.date.startsWith(month));
+  const monthMarketing = wspMarketingCache.filter(m=>m.date && m.date.startsWith(month));
+
+  const rows = activeEmployees.map(e=>{
+    let scorePct, detail, metricLabel;
+    if(e.division === 'marketing'){
+      const recs = monthMarketing.filter(m=>m.employeeId===e.id);
+      const totalKontak = recs.reduce((s,r)=>s+(Number(r.kontak)||0),0);
+      const totalEvent = recs.reduce((s,r)=>s+(Number(r.event)||0),0);
+      const targetKontak = workingDays * kTarget;
+      const targetEvent = workingDays * eTarget;
+      const pctK = targetKontak ? (totalKontak/targetKontak)*100 : 0;
+      const pctE = targetEvent ? (totalEvent/targetEvent)*100 : 0;
+      scorePct = Math.round((pctK+pctE)/2);
+      detail = `Kontak ${totalKontak}/${targetKontak} · Event ${totalEvent}/${targetEvent} · ${recs.length}/${workingDays} hari lapor`;
+      metricLabel = 'Progress Marketing';
+    } else {
+      const count = monthAttendance.filter(a=>a.employeeId===e.id).length;
+      scorePct = workingDays ? Math.round((count/workingDays)*100) : 0;
+      detail = `Hadir ${count}/${workingDays} hari kerja`;
+      metricLabel = 'Kedisiplinan Absensi';
+    }
+    let statusClass, statusLabel;
+    if(scorePct >= 100){ statusClass='tercapai'; statusLabel='TERCAPAI'; }
+    else if(scorePct >= 70){ statusClass='proses'; statusLabel='PROSES'; }
+    else { statusClass='kurang'; statusLabel='PERLU PERHATIAN'; }
+    return { emp:e, scorePct, detail, metricLabel, statusClass, statusLabel };
+  });
+
+  rows.sort((a,b)=>b.scorePct-a.scorePct);
+
+  const totalKaryawan = rows.length;
+  const avgScore = totalKaryawan ? Math.round(rows.reduce((s,r)=>s+r.scorePct,0)/totalKaryawan) : 0;
+  const countTercapai = rows.filter(r=>r.statusClass==='tercapai').length;
+  const countProses = rows.filter(r=>r.statusClass==='proses').length;
+  const countKurang = rows.filter(r=>r.statusClass==='kurang').length;
+  const topPerformer = rows[0];
+
+  const tableRows = rows.map(r=>`
+    <tr onclick="wspOpenKpiDetail('${r.emp.id}')">
+      <td>${escapeHtml(r.emp.name)}<br><span class="ab-badge ${r.emp.division==='marketing'?'marketing':'umum'}" style="transform:none;font-size:10px;">${r.emp.division==='marketing'?'MARKETING':'UMUM'}</span></td>
+      <td>${r.metricLabel}<div style="font-size:11.5px;color:var(--ab-muted);margin-top:2px;">${r.detail}</div></td>
+      <td style="min-width:120px;">
+        ${Math.min(r.scorePct,100)}%${r.scorePct>100?' 🔥':''}
+        <div class="ab-progress-bar ${r.scorePct>100?'over':''}"><div style="width:${Math.min(r.scorePct,100)}%"></div></div>
+      </td>
+      <td><span class="ab-badge ${r.statusClass}" style="transform:none;">${r.statusLabel}</span></td>
+    </tr>`).join('');
+
+  return `
+    <div class="ab-card">
+      <h2>Dashboard KPI Karyawan</h2>
+      <div class="sub" style="font-size:13px;color:var(--ab-muted);margin-bottom:6px;">Skor ini <b>otomatis terhitung &amp; realtime</b> dari laporan harian karyawan — Progress Marketing (kontak &amp; event) untuk divisi Marketing, dan data Absensi untuk divisi Umum. Tidak perlu input manual.</div>
+      <label>Bulan</label>
+      <input type="month" value="${month}" onchange="wspChangeKpiMonth(this.value)">
+    </div>
+    <div class="ab-card ${topPerformer && topPerformer.scorePct>0 ? '' : ''}">
+      <div class="ab-grid">
+        <div class="ab-stat"><div class="lbl">Rata-rata Pencapaian</div><div class="val">${avgScore}%</div></div>
+        <div class="ab-stat"><div class="lbl">Karyawan Tercapai</div><div class="val" style="color:var(--ab-green);">${countTercapai}</div></div>
+        <div class="ab-stat"><div class="lbl">Dalam Proses</div><div class="val" style="color:var(--ab-amber);">${countProses}</div></div>
+        <div class="ab-stat"><div class="lbl">Perlu Perhatian</div><div class="val" style="color:var(--ab-rust);">${countKurang}</div></div>
+      </div>
+      ${topPerformer ? `<div class="ab-note">🏆 Performa terbaik bulan ${wspMonthLabel(month)}: <b>${escapeHtml(topPerformer.emp.name)}</b> (${Math.min(topPerformer.scorePct,100)}%${topPerformer.scorePct>100?'+':''}). Skor Marketing = rata-rata pencapaian target Kontak &amp; Event harian. Skor karyawan Umum = tingkat kehadiran terhadap hari kerja.</div>` : `<div class="ab-note">Belum ada karyawan aktif untuk dihitung KPI-nya.</div>`}
+    </div>
+    <div class="ab-card">
+      ${tableRows ? `<table class="ab-table"><thead><tr><th>Karyawan</th><th>Metrik &amp; Progress</th><th>Skor</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table>` : `<div class="ab-empty">Belum ada data karyawan / progress untuk bulan ini.</div>`}
+    </div>
+  `;
+}
+function wspChangeKpiMonth(v){ wspState.kpiMonth = v; renderAbsensi(); }
+function wspOpenKpiDetail(employeeId){
+  const emp = wspGetEmployee(employeeId);
+  if(!emp) return;
+  if(emp.division === 'marketing'){
+    wspState.marketingMonth = wspState.kpiMonth;
+    wspOpenMarketingDetail(employeeId);
+  } else {
+    wspState.rekapMonth = wspState.kpiMonth;
+    wspOpenRekapDetail(employeeId);
+  }
+}
+
+function renderOwnerKpi(){
+  return `
+    <div class="ab-card">
+      <h2>Pengaturan KPI &amp; Jam Absen</h2>
+      <div class="sub" style="font-size:13px;color:var(--ab-muted);margin-bottom:6px;">Hanya Owner/Admin yang bisa mengubah pengaturan ini. Perubahan berlaku untuk seluruh karyawan.</div>
+      <div class="ab-row2">
+        <div>
+          <label>Target Kontak / Hari (Marketing)</label>
+          <input type="number" id="wspCfgKontak" min="0" value="${Number(wspSettings.kontakTarget)||10}">
+        </div>
+        <div>
+          <label>Target Event / Hari (Marketing)</label>
+          <input type="number" id="wspCfgEvent" min="0" value="${Number(wspSettings.eventTarget)||10}">
+        </div>
+      </div>
+      <div class="ab-row2">
+        <div>
+          <label>Jam Mulai Absen</label>
+          <input type="time" id="wspCfgJamMulai" value="${wspSettings.jamMulai || '07:00'}">
+        </div>
+        <div>
+          <label>Jam Selesai Absen</label>
+          <input type="time" id="wspCfgJamSelesai" value="${wspSettings.jamSelesai || '17:00'}">
+        </div>
+      </div>
+      <div id="wspCfgStatus" style="font-size:12px;color:var(--ab-green);margin-top:8px;"></div>
+      <button class="btn block" style="margin-top:14px;" onclick="wspSaveKpiForm()">Simpan Pengaturan</button>
+      <div class="ab-note">Absen hanya bisa dilakukan Senin–Sabtu pada rentang jam di atas. Hari Minggu otomatis libur untuk semua karyawan.</div>
+    </div>
+  `;
+}
+async function wspSaveKpiForm(){
+  const cfg = {
+    kontakTarget: Number(document.getElementById('wspCfgKontak').value) || 10,
+    eventTarget: Number(document.getElementById('wspCfgEvent').value) || 10,
+    jamMulai: document.getElementById('wspCfgJamMulai').value || '07:00',
+    jamSelesai: document.getElementById('wspCfgJamSelesai').value || '17:00',
+    updatedAt: new Date().toISOString()
+  };
+  const ok = await wspSaveSettings(cfg);
+  const statusEl = document.getElementById('wspCfgStatus');
+  if(ok){
+    wspSettings = Object.assign({}, wspSettings, cfg);
+    if(statusEl){ statusEl.textContent = 'Tersimpan.'; setTimeout(()=>{ if(statusEl) statusEl.textContent=''; }, 2000); }
+  }
+}
+
 /* ===================== MODE SWITCHING (LANDING / WORKFLOW / NOTA) ===================== */
 let currentMode = 'landing';
 
@@ -2910,6 +3922,7 @@ function showMode(mode){
   document.getElementById('workflowApp').style.display = (mode==='workflow') ? 'block' : 'none';
   document.getElementById('notaApp').style.display = (mode==='nota') ? 'block' : 'none';
   document.getElementById('keuanganApp').style.display = (mode==='keuangan') ? 'block' : 'none';
+  document.getElementById('absensiApp').style.display = (mode==='absensi') ? 'block' : 'none';
 
   document.querySelectorAll('#globalNav .gn-links button').forEach(b=>b.classList.remove('active'));
   const activeBtn = document.getElementById('gn-btn-'+mode);
@@ -2926,6 +3939,9 @@ function showMode(mode){
   }
   if(mode==='keuangan'){
     initKeuangan();
+  }
+  if(mode==='absensi'){
+    initAbsensi();
   }
 }
 
