@@ -903,11 +903,132 @@
 #landingScreen .ls-card-nota .ls-cta{color:#f5c518;}
 #landingScreen .ls-card-workflow .ls-cta{color:#8fb0ff;}
 #landingScreen .ls-card-keuangan .ls-cta{color:#6fe3a1;}
+#landingScreen .ls-card-sop .ls-cta{color:#ffca6b;}
 #landingScreen .ls-hint{margin-top:36px;max-width:600px;font-size:12px;color:#9fb0d8;line-height:1.6;}
 @media(max-width:480px){
   #landingScreen{padding:32px 16px;}
   #landingScreen h1{font-size:24px;}
   #landingScreen .ls-card{padding:22px 18px;}
+}
+
+/* ===================== SOP APP ===================== */
+#sopShell{
+  --sp-bg:#F6F3EC; --sp-ink:#211D1A; --sp-muted:#6b6255; --sp-line:#DAD3C3;
+  --sp-white:#FFFCF6; --sp-denim:#33507A; --sp-amber:#C98A2C; --sp-green:#4C7A5E; --sp-rust:#B15A3D;
+  background:var(--sp-bg); color:var(--sp-ink); font-family:'Work Sans',sans-serif; min-height:calc(100vh - 50px);
+}
+#sopShell *{box-sizing:border-box;}
+#sopShell .sop-header{
+  background:var(--sp-ink); color:var(--sp-bg); padding:20px 24px;
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+  border-bottom:3px solid var(--sp-amber);
+}
+#sopShell .sop-header h1{margin:0;font-size:26px;font-family:'Bebas Neue',sans-serif;letter-spacing:.03em;}
+#sopShell .sop-header .sub{font-size:11px;color:#d8cdb6;text-transform:uppercase;letter-spacing:.12em;margin-top:2px;}
+#sopShell main{max-width:920px;margin:0 auto;padding:22px 18px 90px;}
+
+#sopShell .sop-doc-head{
+  background:var(--sp-white); border:1.5px solid var(--sp-line); border-radius:12px;
+  padding:22px 22px 18px; margin-bottom:16px; text-align:center;
+}
+#sopShell .sop-stamp{
+  display:inline-block; background:var(--sp-amber); color:#fff; font-family:'Bebas Neue',sans-serif;
+  font-size:12px; letter-spacing:.09em; padding:5px 14px; border-radius:999px; margin-bottom:12px;
+}
+#sopShell .sop-doc-head h2{margin:0;font-family:'Bebas Neue',sans-serif;font-size:27px;letter-spacing:.04em;line-height:1.1;}
+#sopShell .sop-company{font-family:'Bebas Neue',sans-serif;font-size:19px;color:var(--sp-denim);letter-spacing:.08em;margin:2px 0 14px;}
+#sopShell .sop-doc-head p{font-size:13px;line-height:1.65;color:var(--sp-muted);margin:0 0 8px;text-align:left;}
+
+#sopShell .sop-tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+#sopShell .sop-tools input[type="search"]{
+  flex:1 1 220px; min-width:180px; padding:12px 14px; border-radius:10px;
+  border:1.5px solid var(--sp-line); background:var(--sp-white); color:var(--sp-ink);
+  font-family:'Work Sans',sans-serif; font-size:14px; outline:none;
+}
+#sopShell .sop-tools input[type="search"]:focus{border-color:var(--sp-denim);}
+#sopShell .sop-tool-btns{display:flex;gap:8px;flex-wrap:wrap;}
+#sopShell .sop-btn{
+  font-family:'Bebas Neue',sans-serif; font-size:13.5px; letter-spacing:.05em;
+  background:var(--sp-ink); border:1.5px solid var(--sp-ink); color:var(--sp-bg);
+  padding:11px 16px; border-radius:10px; cursor:pointer;
+}
+#sopShell .sop-btn:hover{background:var(--sp-denim);border-color:var(--sp-denim);}
+
+#sopShell .sop-chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px;}
+#sopShell .sop-chip{
+  font-size:11.5px; background:var(--sp-white); border:1.5px solid var(--sp-line);
+  color:var(--sp-muted); padding:7px 11px; border-radius:999px; cursor:pointer;
+  font-family:'Work Sans',sans-serif; text-align:left;
+}
+#sopShell .sop-chip:hover{border-color:var(--sp-denim);color:var(--sp-denim);}
+
+#sopShell .sop-sec{background:var(--sp-white);border:1.5px solid var(--sp-line);border-radius:12px;margin-bottom:12px;overflow:hidden;}
+#sopShell .sop-sec.open{border-color:var(--sp-denim);}
+#sopShell .sop-sec-head{
+  width:100%; display:flex; align-items:center; gap:12px; text-align:left;
+  background:transparent; border:none; padding:15px 16px; cursor:pointer; color:inherit;
+}
+#sopShell .sop-sec-head .ico{font-size:20px;line-height:1;}
+#sopShell .sop-sec-head .ttl{flex:1;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.03em;line-height:1.15;}
+#sopShell .sop-sec-head .ttl small{display:block;font-family:'Work Sans',sans-serif;font-size:10px;letter-spacing:.14em;color:var(--sp-amber);font-weight:700;margin-bottom:2px;}
+#sopShell .sop-sec-head .chev{font-size:11px;color:var(--sp-muted);}
+#sopShell .sop-sec-body{display:none;padding:0 18px 18px;border-top:1px solid var(--sp-line);}
+#sopShell .sop-sec.open .sop-sec-body{display:block;}
+#sopShell .sop-sec-body h4{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.03em;margin:18px 0 8px;color:var(--sp-denim);}
+#sopShell .sop-sec-body p{font-size:13.5px;line-height:1.7;margin:0 0 9px;}
+#sopShell .sop-sec-body ul,#sopShell .sop-sec-body ol{margin:0 0 10px;padding-left:20px;}
+#sopShell .sop-sec-body li{font-size:13.5px;line-height:1.65;margin-bottom:4px;}
+#sopShell .sop-sec-body mark{background:#f6e07a;color:inherit;padding:0 2px;border-radius:3px;}
+
+#sopShell .sop-big{
+  background:var(--sp-ink); color:var(--sp-bg); font-family:'Bebas Neue',sans-serif;
+  font-size:19px; letter-spacing:.05em; text-align:center; padding:14px 16px;
+  border-radius:10px; margin:12px 0; line-height:1.25;
+}
+#sopShell blockquote{
+  margin:12px 0; padding:12px 16px; background:rgba(51,80,122,.07);
+  border-left:4px solid var(--sp-denim); border-radius:0 8px 8px 0;
+  font-size:13.5px; line-height:1.65; font-weight:600;
+}
+#sopShell .sop-warn{
+  margin:12px 0; padding:12px 14px; background:rgba(177,90,61,.09);
+  border:1.5px dashed var(--sp-rust); border-radius:9px;
+  font-size:13px; line-height:1.6; color:#8a3f28; font-weight:600;
+}
+#sopShell .sop-choice{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:12px 0;}
+#sopShell .sop-choice-card{
+  border:2px solid var(--sp-denim); border-radius:10px; padding:14px; text-align:center; background:rgba(51,80,122,.05);
+}
+#sopShell .sop-choice-card .lbl{display:block;font-size:10.5px;letter-spacing:.14em;color:var(--sp-muted);font-weight:700;}
+#sopShell .sop-choice-card .val{display:block;font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--sp-denim);margin-top:4px;}
+#sopShell .sop-kpi{display:flex;flex-direction:column;gap:9px;margin:12px 0;}
+#sopShell .sop-kpi-row{display:flex;gap:12px;align-items:center;border:1.5px solid var(--sp-line);border-radius:10px;padding:12px 14px;}
+#sopShell .sop-kpi-row .rng{font-family:'Bebas Neue',sans-serif;font-size:19px;min-width:82px;}
+#sopShell .sop-kpi-row .bd{display:flex;flex-direction:column;gap:2px;}
+#sopShell .sop-kpi-row .bd b{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.04em;}
+#sopShell .sop-kpi-row .bd span{font-size:12.5px;color:var(--sp-muted);line-height:1.5;}
+#sopShell .sop-kpi-row.tone-green{border-color:var(--sp-green);} #sopShell .sop-kpi-row.tone-green .rng{color:var(--sp-green);}
+#sopShell .sop-kpi-row.tone-amber{border-color:var(--sp-amber);} #sopShell .sop-kpi-row.tone-amber .rng{color:var(--sp-amber);}
+#sopShell .sop-kpi-row.tone-rust{border-color:var(--sp-rust);} #sopShell .sop-kpi-row.tone-rust .rng{color:var(--sp-rust);}
+#sopShell .sop-sign{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0;}
+#sopShell .sop-sign-box{border:1.5px solid var(--sp-line);border-radius:10px;padding:14px;text-align:center;}
+#sopShell .sop-sign-box .role{display:block;font-size:10px;letter-spacing:.14em;color:var(--sp-amber);font-weight:700;}
+#sopShell .sop-sign-box b{display:block;font-size:13.5px;margin:6px 0 2px;}
+#sopShell .sop-sign-box .sub{display:block;font-size:11.5px;color:var(--sp-muted);}
+#sopShell .sop-sign-box .line{display:block;margin-top:22px;font-size:12px;color:var(--sp-muted);}
+#sopShell .sop-empty{background:var(--sp-white);border:1.5px dashed var(--sp-line);border-radius:12px;padding:30px 20px;text-align:center;font-size:13.5px;color:var(--sp-muted);}
+#sopShell .sop-foot{margin-top:24px;text-align:center;font-size:11.5px;color:var(--sp-muted);letter-spacing:.06em;}
+@media(max-width:520px){
+  #sopShell main{padding:16px 13px 80px;}
+  #sopShell .sop-doc-head h2{font-size:22px;}
+  #sopShell .sop-big{font-size:16px;}
+  #sopShell .sop-sec-head .ttl{font-size:16px;}
+}
+@media print{
+  #globalNav, #sopShell .sop-tools, #sopShell .sop-chips, #sopShell .sop-header .sop-back{display:none !important;}
+  #sopShell .sop-sec-head .chev{display:none;}
+  #sopShell{background:#fff;}
+  #sopShell .sop-sec{break-inside:avoid;}
 }
 
 /* ===================== LINK OVERRIDES: dudukkan sub-header workflow di bawah nav global,
@@ -933,6 +1054,7 @@
     <button id="gn-btn-nota" onclick="showMode('nota')">Generator Nota</button>
     <button id="gn-btn-keuangan" onclick="showMode('keuangan')">Keuangan</button>
     <button id="gn-btn-absensi" onclick="showMode('absensi')">Workspace</button>
+    <button id="gn-btn-sop" onclick="showMode('sop')">SOP</button>
   </div>
 </div>
 
@@ -967,6 +1089,12 @@
       <h2>Workspace — Absensi</h2>
       <p>Karyawan absen masuk pakai kamera (Senin–Sabtu, Minggu libur) sesuai jam yang ditentukan. Owner bisa lihat rekap absensi per bulan, kelola data karyawan, dan pantau progress harian tim Marketing (kontak &amp; event) lengkap bukti uploadnya.</p>
       <span class="ls-cta">Buka Workspace →</span>
+    </button>
+    <button class="ls-card ls-card-sop" onclick="showMode('sop')">
+      <div class="ls-icon">05</div>
+      <h2>SOP TenX Apparel</h2>
+      <p>Standar Operasional Prosedur resmi yang berlaku efektif 15 September 2026. Bisa dibaca langsung di aplikasi — lengkap dengan pencarian aturan, KPI Marketing/Produksi/Desain, jam kerja, piket, bonus, komisi, dan reward. Tidak perlu buka file Word lagi.</p>
+      <span class="ls-cta">Baca SOP &rarr;</span>
     </button>
   </div>
   <div class="ls-hint">Tips: dari halaman detail sebuah project di Alur Kerja, Admin bisa klik "Buat Nota untuk Client Ini" — nama client, ukuran, dan qty akan otomatis terisi di Generator Nota.</div>
@@ -1192,6 +1320,17 @@
   </main>
 
   <div id="kgModalRoot"></div>
+</div>
+
+<div id="sopShell" style="display:none;">
+  <div class="sop-header">
+    <div>
+      <h1>SOP TENX APPAREL</h1>
+      <div class="sub">Standar Operasional Prosedur &middot; Efektif 15 September 2026</div>
+    </div>
+    <button class="sop-btn sop-back" onclick="showMode('absensi')" style="background:transparent;border-color:rgba(255,255,255,.35);color:#fff;">&larr; Workspace</button>
+  </div>
+  <main id="sopApp"><div class="sop-empty">Memuat SOP&hellip;</div></main>
 </div>
 
 <div id="absensiApp" style="display:none;">
@@ -3339,6 +3478,14 @@ function renderKaryawanView(){
 
     ${marketingBlock}
 
+    <div class="ab-card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+      <div>
+        <h2 style="margin:0 0 4px;">SOP TenX Apparel</h2>
+        <div style="font-size:12.5px;color:var(--ab-muted);">Baca aturan kerja, KPI, jam kerja, piket, bonus &amp; komisi langsung di aplikasi.</div>
+      </div>
+      <button class="btn ghost small" onclick="showMode('sop')">&#128216; Buka SOP</button>
+    </div>
+
     <div class="ab-card">
       <h2>Riwayat Absensi Saya</h2>
       ${historyRows ? `<table class="ab-table"><thead><tr><th>Tanggal</th><th>Jam</th><th>Foto</th></tr></thead><tbody>${historyRows}</tbody></table>` : `<div class="ab-empty">Belum ada riwayat absensi.</div>`}
@@ -3364,13 +3511,172 @@ function wspCloseModal(){
   if(root) root.innerHTML = '';
 }
 
-/* ---------- Kamera absensi ---------- */
+/* ---------- Kamera absensi (versi APK/WebView friendly) ----------
+   Strategi:
+   1. Di HP / WebView (Median APK) -> LANGSUNG panggil kamera bawaan HP lewat
+      <input type="file" accept="image/*" capture="user">. Cara ini TIDAK butuh
+      izin getUserMedia di WebView, jadi tidak pernah gagal "Permission denied".
+   2. Di laptop/desktop -> pakai live preview getUserMedia seperti biasa,
+      dengan tombol cadangan "Pakai Kamera Perangkat" kalau ditolak.
+------------------------------------------------------------------- */
+function wspIsMobileLike(){
+  const ua = navigator.userAgent || '';
+  const touch = (navigator.maxTouchPoints || 0) > 1;
+  return /Android|iPhone|iPad|iPod|Median|GoNative|gonative|; wv\)|Mobile Safari/i.test(ua) || touch;
+}
+function wspHasLiveCamera(){
+  return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+}
+
+/* Kompres foto supaya upload cepat walau sinyal HP pas-pasan */
+function wspCompressImageFile(file, maxSide, quality){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onerror = ()=> reject(new Error('Gagal membaca file foto.'));
+    reader.onload = ()=>{
+      const img = new Image();
+      img.onerror = ()=> resolve(reader.result); // fallback: pakai apa adanya
+      img.onload = ()=>{
+        try{
+          let w = img.naturalWidth || img.width;
+          let h = img.naturalHeight || img.height;
+          const side = Math.max(w, h);
+          if(side > maxSide){
+            const r = maxSide / side;
+            w = Math.round(w * r);
+            h = Math.round(h * r);
+          }
+          const c = document.createElement('canvas');
+          c.width = w; c.height = h;
+          c.getContext('2d').drawImage(img, 0, 0, w, h);
+          resolve(c.toDataURL('image/jpeg', quality || 0.82));
+        }catch(err){
+          resolve(reader.result);
+        }
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* Pintu masuk utama tombol "Absen Masuk (Kamera)" */
 function wspOpenCamera(){
+  if(wspIsMobileLike()){
+    // Panggil kamera bawaan HP langsung pada gesture klik ini juga.
+    wspNativeCamera();
+  } else {
+    wspOpenLiveCameraModal();
+  }
+}
+
+/* ---- Jalur 1: kamera bawaan HP (tanpa izin browser) ---- */
+function wspNativeCamera(useFront){
+  const old = document.getElementById('wspNativeCamInput');
+  if(old && old.parentNode) old.parentNode.removeChild(old);
+
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.id = 'wspNativeCamInput';
+  input.accept = 'image/*';
+  if(useFront !== false) input.setAttribute('capture', 'user');
+  input.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0;width:1px;height:1px;';
+  document.body.appendChild(input);
+
+  input.addEventListener('change', async function(){
+    const file = input.files && input.files[0];
+    if(!file){ return; }
+    wspShowPhotoProcessing();
+    try{
+      wspCapturedDataUrl = await wspCompressImageFile(file, 900, 0.82);
+      wspShowPhotoPreview();
+    }catch(err){
+      alert('Gagal memproses foto: ' + err.message);
+      wspCloseModal();
+    }
+    if(input.parentNode) input.parentNode.removeChild(input);
+  });
+
+  try{
+    input.click();
+  }catch(e){
+    // kalau diblokir, tampilkan modal manual
+    wspOpenManualPickerModal();
+  }
+}
+
+/* Modal manual: dipakai kalau click programatik diblokir WebView */
+function wspOpenManualPickerModal(){
   const root = document.getElementById('abModalRoot');
   root.innerHTML = `
     <div class="overlay" onclick="if(event.target===this) wspCloseCamera()">
       <div class="modal">
-        <button class="close" onclick="wspCloseCamera()">✕</button>
+        <button class="close" onclick="wspCloseCamera()">&#10005;</button>
+        <h3>Absen Masuk</h3>
+        <div class="sub">Tekan tombol di bawah untuk membuka kamera HP Anda.</div>
+        <label class="btn green block" style="margin-top:14px;display:block;text-align:center;cursor:pointer;">
+          &#128247; Buka Kamera HP
+          <input type="file" accept="image/*" capture="user" style="display:none;" onchange="wspHandleManualPick(this)">
+        </label>
+        <label class="btn ghost block" style="margin-top:10px;display:block;text-align:center;cursor:pointer;">
+          Pilih Foto dari Galeri
+          <input type="file" accept="image/*" style="display:none;" onchange="wspHandleManualPick(this)">
+        </label>
+      </div>
+    </div>`;
+}
+async function wspHandleManualPick(input){
+  const file = input.files && input.files[0];
+  if(!file) return;
+  wspShowPhotoProcessing();
+  try{
+    wspCapturedDataUrl = await wspCompressImageFile(file, 900, 0.82);
+    wspShowPhotoPreview();
+  }catch(err){
+    alert('Gagal memproses foto: ' + err.message);
+    wspCloseModal();
+  }
+}
+
+function wspShowPhotoProcessing(){
+  const root = document.getElementById('abModalRoot');
+  root.innerHTML = `
+    <div class="overlay">
+      <div class="modal">
+        <h3>Memproses Foto…</h3>
+        <div class="sub">Sebentar ya, foto sedang disiapkan.</div>
+      </div>
+    </div>`;
+}
+
+/* Preview foto + tombol kirim (dipakai semua jalur) */
+function wspShowPhotoPreview(){
+  const root = document.getElementById('abModalRoot');
+  root.innerHTML = `
+    <div class="overlay" onclick="if(event.target===this) wspCloseCamera()">
+      <div class="modal">
+        <button class="close" onclick="wspCloseCamera()">&#10005;</button>
+        <h3>Konfirmasi Absen</h3>
+        <div class="sub">Pastikan wajah Anda terlihat jelas, lalu kirim.</div>
+        <div class="ab-video-wrap" id="wspVideoWrap" style="margin-top:10px;">
+          <img src="${wspCapturedDataUrl}" style="width:100%;display:block;border-radius:10px;">
+        </div>
+        <div id="wspCamStatus" style="font-size:12.5px;color:var(--ab-muted);margin:8px 0;">Foto siap dikirim, atau ambil ulang jika kurang jelas.</div>
+        <div id="wspActionsRow" style="display:flex;gap:10px;">
+          <button class="btn ghost block" onclick="wspRetakePhoto()">Ambil Ulang</button>
+          <button class="btn green block" id="wspSendBtn" onclick="wspSubmitAttendance()">Kirim Absen</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ---- Jalur 2: live preview (desktop / browser yang mengizinkan) ---- */
+function wspOpenLiveCameraModal(){
+  const root = document.getElementById('abModalRoot');
+  root.innerHTML = `
+    <div class="overlay" onclick="if(event.target===this) wspCloseCamera()">
+      <div class="modal">
+        <button class="close" onclick="wspCloseCamera()">&#10005;</button>
         <h3>Absen Masuk</h3>
         <div class="sub">Ambil foto wajah Anda sebagai bukti kehadiran hari ini.</div>
         <div class="ab-video-wrap" id="wspVideoWrap">
@@ -3381,24 +3687,45 @@ function wspOpenCamera(){
         <div id="wspActionsRow" style="display:flex;gap:10px;">
           <button class="btn block" id="wspCaptureBtn" onclick="wspCapturePhoto()" disabled>Ambil Foto</button>
         </div>
+        <label class="btn ghost block" style="margin-top:10px;display:block;text-align:center;cursor:pointer;font-size:12.5px;">
+          Pakai Kamera Perangkat
+          <input type="file" accept="image/*" capture="user" style="display:none;" onchange="wspStopCameraStream();wspHandleManualPick(this)">
+        </label>
       </div>
     </div>`;
   wspStartCamera();
 }
+
 async function wspStartCamera(){
-  try{
-    wspStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}, audio:false});
-    const video = document.getElementById('wspVideo');
-    if(!video){ wspStopCameraStream(); return; }
-    video.srcObject = wspStream;
+  if(!wspHasLiveCamera()){
     const statusEl = document.getElementById('wspCamStatus');
-    const btn = document.getElementById('wspCaptureBtn');
-    if(statusEl) statusEl.textContent = 'Kamera aktif. Posisikan wajah Anda lalu ambil foto.';
-    if(btn) btn.disabled = false;
-  }catch(e){
-    const statusEl = document.getElementById('wspCamStatus');
-    if(statusEl) statusEl.textContent = 'Tidak bisa mengakses kamera: ' + e.message + '. Pastikan izin kamera sudah diaktifkan di browser.';
+    if(statusEl) statusEl.textContent = 'Live preview tidak tersedia di aplikasi ini. Gunakan tombol "Pakai Kamera Perangkat" di bawah.';
+    return;
   }
+  const attempts = [
+    {video:{facingMode:{ideal:'user'}}, audio:false},
+    {video:{facingMode:'environment'}, audio:false},
+    {video:true, audio:false}
+  ];
+  let lastErr = null;
+  for(const c of attempts){
+    try{
+      wspStream = await navigator.mediaDevices.getUserMedia(c);
+      break;
+    }catch(e){ lastErr = e; wspStream = null; }
+  }
+  const statusEl = document.getElementById('wspCamStatus');
+  const btn = document.getElementById('wspCaptureBtn');
+  if(!wspStream){
+    if(statusEl) statusEl.textContent = 'Kamera langsung tidak bisa dibuka (' + (lastErr ? lastErr.name : 'unknown') + '). Silakan pakai tombol "Pakai Kamera Perangkat" di bawah.';
+    return;
+  }
+  const video = document.getElementById('wspVideo');
+  if(!video){ wspStopCameraStream(); return; }
+  video.srcObject = wspStream;
+  try{ await video.play(); }catch(e){}
+  if(statusEl) statusEl.textContent = 'Kamera aktif. Posisikan wajah Anda lalu ambil foto.';
+  if(btn) btn.disabled = false;
 }
 function wspStopCameraStream(){
   if(wspStream){
@@ -3409,6 +3736,8 @@ function wspStopCameraStream(){
 function wspCloseCamera(){
   wspStopCameraStream();
   wspCapturedDataUrl = null;
+  const old = document.getElementById('wspNativeCamInput');
+  if(old && old.parentNode) old.parentNode.removeChild(old);
   wspCloseModal();
 }
 function wspCapturePhoto(){
@@ -3420,17 +3749,7 @@ function wspCapturePhoto(){
   canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
   wspCapturedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
   wspStopCameraStream();
-  const wrap = document.getElementById('wspVideoWrap');
-  if(wrap) wrap.innerHTML = `<img src="${wspCapturedDataUrl}">`;
-  const statusEl = document.getElementById('wspCamStatus');
-  if(statusEl) statusEl.textContent = 'Foto siap dikirim, atau ambil ulang jika kurang jelas.';
-  const actions = document.getElementById('wspActionsRow');
-  if(actions){
-    actions.innerHTML = `
-      <button class="btn ghost block" onclick="wspRetakePhoto()">Ambil Ulang</button>
-      <button class="btn green block" id="wspSendBtn" onclick="wspSubmitAttendance()">Kirim Absen</button>
-    `;
-  }
+  wspShowPhotoPreview();
 }
 function wspRetakePhoto(){
   wspCapturedDataUrl = null;
@@ -3569,6 +3888,7 @@ function renderOwnerView(){
       <button class="${wspState.ownerTab==='marketing'?'active':''}" onclick="wspSetOwnerTab('marketing')">Kinerja Marketing</button>
       <button class="${wspState.ownerTab==='kpiboard'?'active':''}" onclick="wspSetOwnerTab('kpiboard')">📊 KPI Karyawan</button>
       <button class="${wspState.ownerTab==='kpi'?'active':''}" onclick="wspSetOwnerTab('kpi')">Pengaturan KPI &amp; Jam</button>
+      <button onclick="showMode('sop')">&#128216; SOP</button>
     </div>
     ${wspState.ownerTab==='rekap' ? renderOwnerRekap() : ''}
     ${wspState.ownerTab==='karyawan' ? renderOwnerKaryawan() : ''}
@@ -3913,6 +4233,472 @@ async function wspSaveKpiForm(){
   }
 }
 
+/* ===================== MODUL SOP TENX APPAREL ===================== */
+const SOP_META = {
+  title: 'STANDAR OPERASIONAL PROSEDUR',
+  company: 'TENX APPAREL',
+  effective: 'BERLAKU EFEKTIF 15 SEPTEMBER 2026',
+  intro: [
+    'SOP ini dibuat berdasarkan hasil evaluasi kinerja Bulan Agustus 2026 serta kebutuhan TenX Apparel untuk meningkatkan kedisiplinan, produktivitas, tanggung jawab, kualitas pelayanan, dan pencapaian target perusahaan.',
+    'SOP ini menjadi pedoman bagi seluruh anggota/karyawan TenX Apparel dalam menjalankan pekerjaan sehari-hari.'
+  ]
+};
+
+const SOP_DATA = [
+  {
+    id: 'A', title: 'TUJUAN SOP', icon: '🎯',
+    items: [
+      { h: 'SOP ini dibuat untuk:', ol: [
+        'Membuat sistem kerja yang lebih teratur dan jelas.',
+        'Menjelaskan tanggung jawab setiap karyawan.',
+        'Meningkatkan kedisiplinan dan produktivitas.',
+        'Memastikan setiap pekerjaan dikerjakan sesuai target.',
+        'Mengurangi kesalahan dalam produksi maupun pelayanan pelanggan.',
+        'Membuat sistem KPI yang dapat diukur secara objektif.',
+        'Menjadi dasar evaluasi kinerja, bonus, komisi, dan reward.',
+        'Menciptakan lingkungan kerja yang nyaman, profesional, dan tetap menyenangkan.'
+      ]},
+      { quote: 'Intinya: setiap orang mengetahui apa yang harus dikerjakan, kapan harus dikerjakan, dan bagaimana hasil pekerjaannya dinilai.' }
+    ]
+  },
+  {
+    id: 'B', title: 'PROSEDUR KERJA UMUM', icon: '🧾',
+    items: [
+      { h: '1. Penerimaan Barang', p: ['Setiap barang yang datang ke workshop/kantor TenX Apparel wajib:'], ul: [
+        'Dicek jumlahnya.', 'Dicek jenis barangnya.', 'Dicek kondisi barangnya.',
+        'Dicocokkan dengan SPK.', 'Dicatat apabila terdapat kekurangan atau kerusakan.',
+        'Ditandatangani oleh Penanggung Jawab (PJ) yang menerima barang.'
+      ], p2: [
+        'Barang yang sudah diterima menjadi tanggung jawab PJ sampai diserahkan kepada bagian berikutnya.',
+        'Tujuan: menghindari barang hilang, tertukar, kurang, atau salah proses.'
+      ]},
+      { h: '2. Membaca dan Mengikuti SPK', p: [
+        'Setiap pekerjaan wajib mengacu pada SPK. Karyawan tidak diperbolehkan hanya mengandalkan ingatan atau perkiraan.',
+        'Sebelum mengerjakan pekerjaan, wajib memahami:'
+      ], ul: [
+        'Nama customer.', 'Jumlah pesanan.', 'Jenis produk.', 'Ukuran.', 'Warna.', 'Desain.',
+        'Jenis sablon/bordir/printing.', 'Deadline.', 'Catatan khusus customer.'
+      ], warn: 'Apabila terdapat informasi yang tidak jelas, wajib bertanya terlebih dahulu kepada Admin/PJ/Owner sebelum pekerjaan dilanjutkan.'},
+      { h: '3. Etos Kerja', p: ['Setiap karyawan wajib bekerja dengan prinsip:'],
+        big: 'TELITI — FOKUS — BERTANGGUNG JAWAB — CEPAT — ENJOY',
+        p2: ['Cepat bukan berarti terburu-buru. Teliti bukan berarti lambat. Setiap pekerjaan harus dikerjakan dengan seimbang antara kecepatan dan kualitas.']
+      },
+      { h: '4. Selesaikan Pekerjaan Terlebih Dahulu', p: ['Selama jam kerja, prioritas utama adalah pekerjaan. Prinsip TenX Apparel:'],
+        quote: 'Kerjakan kewajiban terlebih dahulu, baru bersantai.',
+        p2: [
+          'Bersantai, mengobrol, bermain HP, duduk di sofa, atau aktivitas non-pekerjaan diperbolehkan secara wajar apabila tidak mengganggu pekerjaan.',
+          'Apabila masih terdapat pekerjaan yang harus diselesaikan, maka pekerjaan menjadi prioritas.'
+        ]},
+      { h: '5. Kerapian Tempat Kerja', p: ['Setelah menggunakan suatu tempat atau peralatan, setiap karyawan wajib mengembalikannya ke kondisi rapi. Contohnya:'], ul: [
+        'Meja kerja dirapikan.', 'Alat sablon dikembalikan.', 'Gunting, cutter, penggaris, dan alat produksi dikembalikan.',
+        'Sampah dibuang.', 'Barang produksi tidak dibiarkan berserakan.', 'File dan dokumen disimpan pada tempatnya.'
+      ], warn: 'Orang yang menggunakan bertanggung jawab untuk merapikan kembali.'}
+    ]
+  },
+  {
+    id: 'C', title: 'TANGGUNG JAWAB BARANG DAN PERALATAN', icon: '🧰',
+    items: [
+      { h: '6. Penggunaan Alat', p: ['Semua peralatan TenX Apparel merupakan aset perusahaan. Setiap karyawan wajib menjaga:'], ul: [
+        'Mesin.', 'Peralatan produksi.', 'Komputer/laptop.', 'Printer.', 'Alat sablon.',
+        'Bahan produksi.', 'Dokumen.', 'Perlengkapan kantor.'
+      ], p2: ['Kerusakan akibat kelalaian akan dicatat dan dievaluasi berdasarkan kronologi serta tanggung jawab masing-masing.']},
+      { h: '7. Kehilangan Barang', p: [
+        'Apabila terjadi kehilangan barang kantor, bahan produksi, perlengkapan sablon, atau aset operasional lainnya, maka kejadian tersebut wajib segera dilaporkan.',
+        'Perusahaan akan melakukan pemeriksaan:'
+      ], ol: [
+        'Barang terakhir digunakan oleh siapa.', 'Kapan barang terakhir terlihat.',
+        'Siapa yang bertanggung jawab.', 'Apakah terdapat unsur kelalaian.',
+        'Bagaimana penyelesaian yang paling adil.'
+      ], warn: 'Tidak diperbolehkan saling menuduh tanpa pemeriksaan.'}
+    ]
+  },
+  {
+    id: 'D', title: 'PIKET DAN KEBERSIHAN', icon: '🧹',
+    items: [
+      { h: '8. Piket Harian', p: ['Setiap karyawan wajib menjalankan jadwal piket yang telah ditentukan. Piket meliputi:'], ul: [
+        'Menyapu.', 'Mengepel.', 'Mengelap meja.', 'Merapikan area kerja.',
+        'Membersihkan area produksi.', 'Membuang sampah.', 'Memastikan workshop dalam kondisi layak digunakan.'
+      ]},
+      { h: 'Ketidakhadiran Piket', p: ['Apabila karyawan tidak menjalankan piket tanpa alasan yang dapat diterima, maka diberikan konsekuensi:'],
+        warn: 'Wajib mengganti tugas kebersihan pada hari Minggu, sesuai arahan Owner/Kepegawaian.',
+        p2: ['Ketidakhadiran piket akan dicatat sebagai bagian dari evaluasi kedisiplinan.']}
+    ]
+  },
+  {
+    id: 'E', title: 'JAM KERJA AFNAN & NURR', icon: '⏰',
+    items: [
+      { h: '9. Pilihan Jam Kerja', p: [
+        'Khusus Afnan dan Nurr sebagai Divisi Marketing, perusahaan memberikan dua pilihan jam kerja. Setiap orang memilih sendiri salah satu pilihan berikut:'
+      ], cards: [
+        { lbl: 'PILIHAN 1', val: '09.00 – 17.00 WIB' },
+        { lbl: 'PILIHAN 2', val: '10.30 – 19.30 WIB' }
+      ], p2: [
+        'Afnan dan Nurr tidak wajib memilih jam kerja yang sama. Contoh: Afnan memilih 09.00–17.00 WIB, Nurr memilih 10.30–19.30 WIB. Atau keduanya memilih jam yang sama.'
+      ]},
+      { h: 'Ketentuan Pemilihan', p: [
+        'Setelah memilih salah satu jam kerja, karyawan wajib menjalankan jadwal tersebut secara konsisten.',
+        'Perubahan jadwal tidak boleh dilakukan secara sepihak dan mendadak.',
+        'Apabila membutuhkan perubahan jadwal, karyawan wajib mengkomunikasikannya terlebih dahulu kepada Owner/Kepegawaian.'
+      ]},
+      { h: '10. Disiplin Selama Jam Kerja', p: [
+        'Jam kerja bukan hanya waktu berada di workshop. Jam kerja berarti waktu yang digunakan untuk menjalankan tanggung jawab pekerjaan.',
+        'Selama jam kerja Afnan dan Nurr wajib:'
+      ], ul: [
+        'Berada di area kerja.', 'Fokus pada pekerjaan marketing.', 'Melakukan pencarian prospek.',
+        'Menghubungi calon customer/PIC.', 'Follow-up calon customer.', 'Mengelola database.',
+        'Melayani customer.', 'Membuat laporan.', 'Mengikuti evaluasi.',
+        'Menyelesaikan pekerjaan administrasi marketing.'
+      ]}
+    ]
+  },
+  {
+    id: 'F', title: 'ATURAN KHUSUS MARKETING', icon: '📣',
+    items: [
+      { h: '11. Posisi Kerja', p: ['Saat datang dan mulai bekerja, Afnan dan Nurr wajib langsung menuju meja/kursi kerja.'],
+        warn: 'Tidak diperbolehkan langsung duduk di sofa tamu selama jam kerja apabila tidak berkaitan dengan pekerjaan.',
+        p2: ['Sofa tamu digunakan untuk:'], ul: [
+          'Menerima customer.', 'Berdiskusi mengenai pekerjaan.', 'Keperluan perusahaan.', 'Istirahat sesuai kewajaran.'
+        ], p3: ['Di luar jam kerja, penggunaan sofa diperbolehkan.']},
+      { h: '12. Target Kontak Marketing', p: ['Setiap anggota Marketing memiliki target:'],
+        big: '20 KONTAK BARU PER ORANG PER HARI',
+        p2: ['Kontak baru dapat berupa:'], ul: [
+          'PIC event.', 'Panitia sekolah.', 'OSIS/MPK.', 'BEM/HIMA.', 'Karang Taruna.',
+          'Komunitas.', 'EO.', 'Instansi.', 'Perusahaan.', 'Organisasi lainnya.'
+        ],
+        p3: ['Data harus memiliki informasi yang jelas dan dapat digunakan untuk penawaran. Minimal:'],
+        quote: 'Nama Event/Organisasi — Nama PIC — Nomor WhatsApp — Tanggal Event — Status Hubungi.'},
+      { h: '13. Follow-Up Customer', p: [
+        'Data yang sudah diperoleh tidak hanya dikumpulkan. Setiap prospek wajib ditindaklanjuti. Follow-up dilakukan:'
+      ], ul: [
+        'Maksimal 1×24 jam setelah data diperoleh, apabila memungkinkan.',
+        'Follow-up berikutnya secara berkala.',
+        'Minimal 1 kali dalam 1 minggu untuk prospek yang belum memberikan keputusan.'
+      ], quote: 'Tujuannya adalah mengubah data menjadi prospek → penawaran → order → customer repeat.'}
+    ]
+  },
+  {
+    id: 'G', title: 'KPI MARKETING', icon: '📈',
+    items: [
+      { h: '14. Perhitungan KPI', big: '20 KONTAK × 6 HARI KERJA = 120 KONTAK/ORANG/MINGGU',
+        p2: ['Kategori penilaian:'], kpi: [
+          { range: '≥ 90%', label: 'TERCAPAI', tone: 'green', desc: 'Karyawan berhak masuk perhitungan reward sesuai ketentuan.' },
+          { range: '70 – 89%', label: 'CUKUP', tone: 'amber', desc: 'Tidak mendapatkan reward KPI dan menjadi bahan evaluasi.' },
+          { range: '< 70%', label: 'TIDAK TERCAPAI', tone: 'rust', desc: 'Dilakukan evaluasi kinerja dan tindak lanjut sesuai kebijakan perusahaan.' }
+        ]}
+    ]
+  },
+  {
+    id: 'H', title: 'KPI PRODUKSI', icon: '🏭',
+    items: [
+      { h: '15. Target Produksi', p: ['Bagian Produksi wajib menyelesaikan pekerjaan berdasarkan SPK dan deadline yang telah ditentukan. Target utama:'],
+        quote: 'Pekerjaan selesai sesuai SPK, tepat waktu, dan sesuai standar kualitas.',
+        p2: ['Target tidak hanya dihitung berdasarkan jumlah, tetapi juga kualitas.']},
+      { h: '16. Kesalahan Produksi', p: ['Kesalahan produksi wajib dicatat. Contoh:'], ul: [
+        'Salah ukuran.', 'Salah warna.', 'Salah desain.', 'Salah posisi sablon.', 'Sablon rusak.',
+        'Jahitan tidak sesuai.', 'Barang tertukar.', 'Jumlah kurang.', 'Produk cacat.'
+      ], warn: 'Batas toleransi kesalahan: maksimal 1–5% dari total produksi, sesuai jenis pekerjaan dan tingkat toleransinya.',
+        p2: ['Apabila kesalahan melebihi batas toleransi, dilakukan evaluasi.']},
+      { h: '17. QC Produksi', p: ['Sebelum barang dikemas, bagian yang bertanggung jawab wajib melakukan QC. QC meliputi:'], ul: [
+        'Jumlah.', 'Ukuran.', 'Warna.', 'Desain.', 'Posisi sablon.',
+        'Kondisi jahitan.', 'Kebersihan produk.', 'Kesesuaian dengan SPK.'
+      ], p2: ['Hasil QC wajib didokumentasikan sesuai kebutuhan perusahaan.']}
+    ]
+  },
+  {
+    id: 'I', title: 'KPI DESAIN', icon: '🎨',
+    items: [
+      { h: '18. Target Desain', p: ['Setiap desain yang masuk wajib segera diproses. Target:'],
+        big: 'DESAIN MULAI DIKERJAKAN PADA HARI YANG SAMA',
+        warn: 'Deadline maksimal 2×24 jam, kecuali terdapat revisi besar, perubahan konsep dari customer, atau kondisi khusus yang sudah dikomunikasikan.'},
+      { h: '19. Sistem Revisi', p: ['Designer wajib:'], ol: [
+        'Memahami brief.', 'Membuat desain.', 'Mengirim desain kepada Admin.',
+        'Admin mengirim kepada customer.', 'Menerima feedback.', 'Melakukan revisi.',
+        'Memastikan desain ACC.', 'Menyimpan file final.'
+      ], p2: ['File final wajib disimpan pada folder yang telah ditentukan.']}
+    ]
+  },
+  {
+    id: 'J', title: 'PENGGUNAAN HP DAN MEDIA SOSIAL', icon: '📱',
+    items: [
+      { h: '20. Penggunaan HP Saat Jam Kerja', p: ['HP diperbolehkan digunakan untuk pekerjaan. Contoh:'], ul: [
+        'WhatsApp customer.', 'Instagram/TikTok perusahaan.', 'Riset prospek.',
+        'Follow-up.', 'Komunikasi internal.', 'Mengambil foto/video pekerjaan.'
+      ], warn: 'Penggunaan HP untuk hiburan pribadi tidak boleh sampai mengganggu pekerjaan.'}
+    ]
+  },
+  {
+    id: 'K', title: 'BIAYA OPERASIONAL', icon: '💰',
+    items: [
+      { h: '21. Batas OPS', p: ['Batas biaya operasional untuk setiap pekerjaan adalah:'],
+        big: 'MAKSIMAL Rp50.000',
+        p2: ['Biaya tersebut dapat digunakan untuk kebutuhan operasional yang relevan seperti:'], ul: [
+          'Konsumsi.', 'Makanan.', 'Rokok.', 'Keperluan kecil lainnya.'
+        ],
+        warn: 'Pengeluaran harus dapat dipertanggungjawabkan. Apabila membutuhkan biaya lebih dari Rp50.000, wajib meminta persetujuan terlebih dahulu.'}
+    ]
+  },
+  {
+    id: 'L', title: 'SISTEM TARGET, EVALUASI, DAN PENGHASILAN', icon: '📊',
+    items: [
+      { h: '22. Prinsip KPI', p: ['Setiap karyawan dinilai berdasarkan:'], ul: [
+        'Kehadiran.', 'Kedisiplinan.', 'Produktivitas.', 'Kualitas pekerjaan.', 'Kecepatan pekerjaan.',
+        'Tanggung jawab.', 'Pencapaian KPI.', 'Kerja sama.', 'Komplain customer.'
+      ], quote: 'Penilaian dilakukan berdasarkan data dan catatan pekerjaan, bukan berdasarkan suka atau tidak suka.'},
+      { h: '23. Apabila Target Tidak Tercapai', p: ['Apabila target tidak tercapai:'], ol: [
+        'Data KPI diperiksa.', 'Penyebab tidak tercapainya target dicari.',
+        'Karyawan diberikan evaluasi.', 'Dibuat langkah perbaikan.',
+        'Hasilnya dipantau pada periode berikutnya.'
+      ], p2: ['Untuk konsekuensi terhadap upah/insentif, pelaksanaannya harus mengikuti perjanjian kerja dan ketentuan ketenagakerjaan yang berlaku.']}
+    ]
+  },
+  {
+    id: 'M', title: 'BONUS OVER TARGET', icon: '🎁',
+    items: [
+      { h: '24. Bonus', p: ['Karyawan yang secara konsisten melebihi target dan memberikan hasil positif bagi perusahaan dapat memperoleh bonus. Besaran bonus:'],
+        big: '1 – 5% DARI TOTAL PEMASUKAN',
+        p2: ['Sesuai hasil evaluasi dan kebijakan perusahaan. Bonus mempertimbangkan:'], ul: [
+          'Pencapaian target.', 'Kualitas pekerjaan.', 'Disiplin.', 'Kontribusi terhadap perusahaan.',
+          'Tidak adanya complain serius.', 'Kondisi keuangan perusahaan.'
+        ], warn: 'Bonus bukan hak otomatis setiap bulan apabila persyaratan belum terpenuhi.'}
+    ]
+  },
+  {
+    id: 'N', title: 'KOMISI MARKETING', icon: '🤝',
+    items: [
+      { h: '25. Komisi Order', p: ['Setiap order yang masuk melalui penawaran atau prospek yang dilakukan oleh Team Marketing dapat memperoleh komisi sesuai sistem komisi perusahaan. Data order harus dapat ditelusuri melalui:'],
+        quote: 'PIC → Penawaran → Follow-up → Order → Pembayaran → Produksi.',
+        p2: ['Tujuannya agar komisi dapat dihitung secara transparan.']}
+    ]
+  },
+  {
+    id: 'O', title: 'REWARD DAN OUTING', icon: '🏆',
+    items: [
+      { h: '26. Reward KPI', p: [
+        'Reward diberikan berdasarkan pencapaian KPI. Apabila KPI tidak mencapai batas yang ditentukan, maka reward KPI tidak diberikan. Apabila KPI tercapai sesuai ketentuan, karyawan dapat memperoleh reward.',
+        'Salah satu bentuk reward adalah Dana Outing Tim. Contoh:'
+      ], big: 'RAB VILLA BANDUNG MAKSIMAL Rp15.000.000',
+        p2: ['Besaran dan pelaksanaan outing tetap mempertimbangkan kondisi keuangan perusahaan.']}
+    ]
+  },
+  {
+    id: 'P', title: 'PENCATATAN KPI', icon: '🗂️',
+    items: [
+      { h: '27. Wajib Dicatat', p: ['Semua KPI wajib memiliki bukti pencatatan.']},
+      { h: 'Marketing', p: ['Google Sheet/Buku Marketing berisi:'], ul: [
+        'Nama Event.', 'Nama PIC.', 'Nomor WhatsApp.', 'Tanggal Event.', 'Tanggal Kontak.',
+        'Status Hubungi.', 'Status Follow-up.', 'Hasil.', 'Keterangan.'
+      ]},
+      { h: 'Produksi', ul: [
+        'SPK.', 'Jumlah produksi.', 'Hasil QC.', 'Kesalahan/cacat.', 'Foto QC.', 'Status pekerjaan.'
+      ]},
+      { h: 'Desain', ul: [
+        'Brief.', 'Tanggal masuk.', 'Tanggal pengerjaan.', 'Revisi.', 'ACC.', 'File final.'
+      ]}
+    ]
+  },
+  {
+    id: 'Q', title: 'EVALUASI', icon: '📋',
+    items: [
+      { h: '28. Evaluasi Mingguan', p: ['Evaluasi KPI dilakukan minimal 1 kali dalam seminggu. Yang dibahas:'], ol: [
+        'Target.', 'Realisasi.', 'Kendala.', 'Kesalahan.', 'Customer.',
+        'Prospek.', 'Pekerjaan yang tertunda.', 'Solusi minggu berikutnya.'
+      ]},
+      { h: '29. Evaluasi Bulanan', p: ['Evaluasi bulanan digunakan untuk menentukan:'], ul: [
+        'Pencapaian KPI.', 'Bonus.', 'Komisi.', 'Reward.', 'Kebutuhan training.',
+        'Perbaikan sistem kerja.', 'Perpanjangan/penyesuaian tanggung jawab.', 'Evaluasi kinerja individu.'
+      ]}
+    ]
+  },
+  {
+    id: 'R', title: 'PRINSIP KERJA TENX APPAREL', icon: '⚡',
+    items: [
+      { p: ['Seluruh karyawan diharapkan menerapkan prinsip:'],
+        big: 'SATSET DALAM BEKERJA, TELITI DALAM HASIL, JUJUR DALAM TANGGUNG JAWAB',
+        p2: [
+          'Tidak perlu menunggu pekerjaan menumpuk untuk mulai bekerja.',
+          'Apabila bahan, data, desain, SPK, atau informasi sudah tersedia, maka pekerjaan harus segera diproses.'
+        ]}
+    ]
+  },
+  {
+    id: 'S', title: 'PENUTUP', icon: '✅',
+    items: [
+      { p: ['SOP ini dibuat bukan untuk mempersulit karyawan, tetapi untuk membuat sistem kerja yang:'],
+        big: 'LEBIH JELAS, LEBIH ADIL, LEBIH TERUKUR, DAN LEBIH PROFESIONAL',
+        p2: [
+          'Setiap karyawan memiliki kesempatan yang sama untuk mendapatkan bonus, komisi, dan reward dengan menunjukkan kinerja yang baik.',
+          'Setiap karyawan juga memiliki tanggung jawab untuk memenuhi target dan menjaga kualitas pekerjaan.',
+          'Dengan adanya SOP ini, diharapkan seluruh anggota TenX Apparel dapat bekerja dengan lebih nyaman, terarah, dan bertanggung jawab sehingga perusahaan dapat berkembang bersama seluruh tim.'
+        ]},
+      { h: 'Tanda Tangan', p: ['Cilacap, 15 September 2026'], sign: [
+        { role: 'OWNER', name: 'ANAFI AGUSTIAN', sub: 'Owner TenX Apparel' },
+        { role: 'BENDAHARA', name: 'ADMI', sub: 'Bendahara' },
+        { role: 'KEPEGAWAIAN', name: 'Ahmad Saefulloh, S.H.', sub: 'Kepegawaian Kabupaten Cilacap' }
+      ]},
+      { h: 'Pernyataan Karyawan', p: ['Dengan menyetujui dokumen ini, karyawan menyatakan telah:'], ul: [
+        'Membaca SOP.', 'Memahami aturan kerja.', 'Memahami target KPI.',
+        'Memahami sistem evaluasi.', 'Memahami jam kerja yang dipilih.',
+        'Bersedia menjalankan tugas dan tanggung jawab sesuai SOP.'
+      ]}
+    ]
+  }
+];
+
+let sopState = { query: '', open: {}, expandAll: false };
+
+function sopEsc(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function sopHighlight(text){
+  const safe = sopEsc(text);
+  const q = sopState.query.trim();
+  if(!q) return safe;
+  try{
+    const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+    return safe.replace(re, '<mark>$1</mark>');
+  }catch(e){ return safe; }
+}
+
+function sopItemText(item){
+  const parts = [];
+  ['h','big','warn','quote'].forEach(k=>{ if(item[k]) parts.push(item[k]); });
+  ['p','p2','p3','ul','ol'].forEach(k=>{ if(item[k]) parts.push(item[k].join(' ')); });
+  if(item.cards) item.cards.forEach(c=> parts.push(c.lbl + ' ' + c.val));
+  if(item.kpi) item.kpi.forEach(c=> parts.push(c.range + ' ' + c.label + ' ' + c.desc));
+  if(item.sign) item.sign.forEach(c=> parts.push(c.role + ' ' + c.name + ' ' + c.sub));
+  return parts.join(' ');
+}
+
+function sopSectionMatches(sec){
+  const q = sopState.query.trim().toLowerCase();
+  if(!q) return true;
+  const hay = (sec.id + ' ' + sec.title + ' ' + sec.items.map(sopItemText).join(' ')).toLowerCase();
+  return hay.indexOf(q) !== -1;
+}
+
+function sopRenderItem(item){
+  let out = '';
+  if(item.h) out += '<h4>' + sopHighlight(item.h) + '</h4>';
+  const para = arr => (arr || []).map(t=>'<p>' + sopHighlight(t) + '</p>').join('');
+  out += para(item.p);
+  if(item.ul) out += '<ul>' + item.ul.map(t=>'<li>' + sopHighlight(t) + '</li>').join('') + '</ul>';
+  if(item.ol) out += '<ol>' + item.ol.map(t=>'<li>' + sopHighlight(t) + '</li>').join('') + '</ol>';
+  if(item.big) out += '<div class="sop-big">' + sopHighlight(item.big) + '</div>';
+  if(item.cards) out += '<div class="sop-choice">' + item.cards.map(c=>
+      '<div class="sop-choice-card"><span class="lbl">' + sopHighlight(c.lbl) + '</span><span class="val">' + sopHighlight(c.val) + '</span></div>'
+    ).join('') + '</div>';
+  if(item.kpi) out += '<div class="sop-kpi">' + item.kpi.map(c=>
+      '<div class="sop-kpi-row tone-' + c.tone + '"><div class="rng">' + sopHighlight(c.range) + '</div>' +
+      '<div class="bd"><b>' + sopHighlight(c.label) + '</b><span>' + sopHighlight(c.desc) + '</span></div></div>'
+    ).join('') + '</div>';
+  if(item.warn) out += '<div class="sop-warn">' + sopHighlight(item.warn) + '</div>';
+  if(item.quote) out += '<blockquote>' + sopHighlight(item.quote) + '</blockquote>';
+  out += para(item.p2);
+  out += para(item.p3);
+  if(item.sign) out += '<div class="sop-sign">' + item.sign.map(c=>
+      '<div class="sop-sign-box"><span class="role">' + sopHighlight(c.role) + '</span>' +
+      '<b>' + sopHighlight(c.name) + '</b><span class="sub">' + sopHighlight(c.sub) + '</span>' +
+      '<span class="line">(________________)</span></div>'
+    ).join('') + '</div>';
+  return out;
+}
+
+function renderSop(){
+  const app = document.getElementById('sopApp');
+  if(!app) return;
+  const q = sopState.query.trim();
+  const sections = SOP_DATA.filter(sopSectionMatches);
+
+  const chips = SOP_DATA.map(s=>
+    '<button class="sop-chip" onclick="sopJumpTo(\'' + s.id + '\')">' + s.icon + ' ' + sopEsc(s.id) + '. ' + sopEsc(s.title) + '</button>'
+  ).join('');
+
+  const body = sections.length ? sections.map(sec=>{
+    const open = q ? true : !!sopState.open[sec.id];
+    return '<section class="sop-sec ' + (open ? 'open' : '') + '" id="sop-sec-' + sec.id + '">' +
+      '<button class="sop-sec-head" onclick="sopToggle(\'' + sec.id + '\')">' +
+        '<span class="ico">' + sec.icon + '</span>' +
+        '<span class="ttl"><small>BAGIAN ' + sopEsc(sec.id) + '</small>' + sopHighlight(sec.title) + '</span>' +
+        '<span class="chev">' + (open ? '&#9650;' : '&#9660;') + '</span>' +
+      '</button>' +
+      '<div class="sop-sec-body">' + sec.items.map(sopRenderItem).join('') + '</div>' +
+    '</section>';
+  }).join('') : '<div class="sop-empty">Tidak ada bagian SOP yang cocok dengan pencarian &ldquo;' + sopEsc(q) + '&rdquo;.</div>';
+
+  app.innerHTML =
+    '<div class="sop-doc-head">' +
+      '<div class="sop-stamp">' + sopEsc(SOP_META.effective) + '</div>' +
+      '<h2>' + sopEsc(SOP_META.title) + '</h2>' +
+      '<div class="sop-company">' + sopEsc(SOP_META.company) + '</div>' +
+      SOP_META.intro.map(t=>'<p>' + sopEsc(t) + '</p>').join('') +
+    '</div>' +
+    '<div class="sop-tools">' +
+      '<input id="sopSearch" type="search" placeholder="Cari aturan… (mis. piket, komisi, jam kerja)" value="' + sopEsc(sopState.query) + '" oninput="sopSearchInput(this.value)">' +
+      '<div class="sop-tool-btns">' +
+        '<button class="sop-btn" onclick="sopToggleAll()">' + (sopState.expandAll ? 'Tutup Semua' : 'Buka Semua') + '</button>' +
+        '<button class="sop-btn" onclick="sopPrint()">&#128438; Cetak / PDF</button>' +
+      '</div>' +
+    '</div>' +
+    (q ? '' : '<div class="sop-chips">' + chips + '</div>') +
+    '<div class="sop-sections">' + body + '</div>' +
+    '<div class="sop-foot">Dokumen internal TenX Apparel · Versi 15 September 2026</div>';
+
+  const inp = document.getElementById('sopSearch');
+  if(inp && sopState.focusSearch){ inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
+}
+
+function sopSearchInput(v){
+  sopState.query = v;
+  sopState.focusSearch = true;
+  renderSop();
+}
+function sopToggle(id){
+  sopState.open[id] = !sopState.open[id];
+  sopState.focusSearch = false;
+  renderSop();
+  const el = document.getElementById('sop-sec-' + id);
+  if(el && sopState.open[id]) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function sopToggleAll(){
+  sopState.expandAll = !sopState.expandAll;
+  sopState.open = {};
+  if(sopState.expandAll) SOP_DATA.forEach(s=>{ sopState.open[s.id] = true; });
+  sopState.focusSearch = false;
+  renderSop();
+}
+function sopJumpTo(id){
+  sopState.open[id] = true;
+  sopState.focusSearch = false;
+  renderSop();
+  const el = document.getElementById('sop-sec-' + id);
+  if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function sopPrint(){
+  const prev = { open: Object.assign({}, sopState.open), q: sopState.query, all: sopState.expandAll };
+  sopState.query = '';
+  sopState.expandAll = true;
+  sopState.open = {};
+  SOP_DATA.forEach(s=>{ sopState.open[s.id] = true; });
+  sopState.focusSearch = false;
+  renderSop();
+  setTimeout(()=>{
+    window.print();
+    sopState.open = prev.open; sopState.query = prev.q; sopState.expandAll = prev.all;
+    renderSop();
+  }, 250);
+}
+function initSop(){
+  if(!Object.keys(sopState.open).length && !sopState.query){
+    sopState.open['A'] = true;
+  }
+  sopState.focusSearch = false;
+  renderSop();
+}
+function openSopFromWorkspace(){ showMode('sop'); }
+
 /* ===================== MODE SWITCHING (LANDING / WORKFLOW / NOTA) ===================== */
 let currentMode = 'landing';
 
@@ -3923,6 +4709,7 @@ function showMode(mode){
   document.getElementById('notaApp').style.display = (mode==='nota') ? 'block' : 'none';
   document.getElementById('keuanganApp').style.display = (mode==='keuangan') ? 'block' : 'none';
   document.getElementById('absensiApp').style.display = (mode==='absensi') ? 'block' : 'none';
+  document.getElementById('sopShell').style.display = (mode==='sop') ? 'block' : 'none';
 
   document.querySelectorAll('#globalNav .gn-links button').forEach(b=>b.classList.remove('active'));
   const activeBtn = document.getElementById('gn-btn-'+mode);
@@ -3942,6 +4729,9 @@ function showMode(mode){
   }
   if(mode==='absensi'){
     initAbsensi();
+  }
+  if(mode==='sop'){
+    initSop();
   }
 }
 
