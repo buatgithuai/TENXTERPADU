@@ -1491,6 +1491,59 @@ async function saveProject(p){
   }
 }
 
+/* ===================== KOMISI: PERIODE GAJIAN (RESET OTOMATIS TGL 5) =====================
+   Upah/komisi dibagikan setiap tanggal 5. Jadi satu "periode komisi" berjalan
+   dari tanggal 5 bulan berjalan sampai tanggal 4 bulan berikutnya. Begitu masuk
+   tanggal 5, sistem otomatis pindah ke periode baru dan akumulasi komisi mulai
+   terhitung dari 0 lagi untuk periode tsb — tanpa perlu ada yang menghapus data. */
+function getPeriodeKomisi(ts){
+  const d = ts ? new Date(ts) : new Date();
+  let y = d.getFullYear(), m = d.getMonth(); // 0-11
+  if(d.getDate() < 5){ m -= 1; if(m<0){ m = 11; y -= 1; } }
+  const start = new Date(y, m, 5, 0,0,0,0);
+  const endExclusive = new Date(y, m+1, 5, 0,0,0,0);
+  const bulanNama = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const endDisplay = new Date(endExclusive.getTime() - 86400000);
+  const label = `5 ${bulanNama[start.getMonth()]} – 4 ${bulanNama[endDisplay.getMonth()]} ${endDisplay.getFullYear()}`;
+  const key = `${start.getFullYear()}-${String(start.getMonth()+1).padStart(2,'0')}`;
+  return { key, label, start: start.getTime(), end: endExclusive.getTime() };
+}
+function periodeLabelFromKey(key){
+  const [y,m] = key.split('-').map(Number);
+  return getPeriodeKomisi(new Date(y, m-1, 10).getTime()).label;
+}
+
+let komisiClaimsCache = [];
+function subscribeKomisiClaimsRealtime(){
+  if(!CONFIG_READY) return;
+  db.collection('komisiClaims').orderBy('createdAt','desc')
+    .onSnapshot(snapshot => {
+      komisiClaimsCache = snapshot.docs.map(d => d.data());
+      if(state.role==='admin' && state.adminView==='rekap') render();
+    }, err => console.error('Realtime komisiClaims error', err));
+}
+async function saveKomisiClaim(c){
+  if(!CONFIG_READY) return false;
+  try{
+    await db.collection('komisiClaims').doc(c.id).set(c);
+    return true;
+  }catch(e){
+    console.error('Gagal menyimpan pengambilan komisi', e);
+    alert('Gagal menyimpan data: ' + e.message);
+    return false;
+  }
+}
+async function deleteKomisiClaim(id){
+  if(!CONFIG_READY) return false;
+  try{
+    await db.collection('komisiClaims').doc(id).delete();
+    return true;
+  }catch(e){
+    alert('Gagal menghapus data: ' + e.message);
+    return false;
+  }
+}
+
 async function getMyName(role){
   try{ return localStorage.getItem('tenx_myname_' + role) || ''; }catch(e){ return ''; }
 }
@@ -1833,9 +1886,26 @@ function renderRekapKomisi(){
       map[name].jumlahBerjalan++; map[name].pcsBerjalan+=qty; map[name].komisiBerjalan+=kom;
     }
   });
-  const rows = Object.values(map).sort((a,b)=>b.komisiFinal-a.komisiFinal);
+  // Total komisi yang sudah diambil per nama, dihitung dari SELURUH riwayat (semua periode/bulan)
+  const diambilMap = {};
+  komisiClaimsCache.forEach(c=>{
+    const name = (c.namaProduksi||'').trim();
+    if(!name) return;
+    diambilMap[name] = (diambilMap[name]||0) + (Number(c.jumlah)||0);
+  });
+  Object.keys(diambilMap).forEach(name=>{
+    if(!map[name]) map[name] = {name, jumlahSelesai:0, pcsSelesai:0, komisiFinal:0, jumlahBerjalan:0, pcsBerjalan:0, komisiBerjalan:0};
+  });
+
+  const rows = Object.values(map).map(r=>{
+    const sudahDiambil = diambilMap[r.name] || 0;
+    const sisaKomisi = r.komisiFinal - sudahDiambil;
+    return { ...r, sudahDiambil, sisaKomisi };
+  }).sort((a,b)=>b.komisiFinal-a.komisiFinal);
   const grandFinal = rows.reduce((s,r)=>s+r.komisiFinal,0);
   const grandBerjalan = rows.reduce((s,r)=>s+r.komisiBerjalan,0);
+  const grandDiambil = rows.reduce((s,r)=>s+r.sudahDiambil,0);
+  const grandSisa = rows.reduce((s,r)=>s+r.sisaKomisi,0);
 
   if(!rows.length){
     return emptyState('Belum ada data komisi','Rekap akan muncul otomatis setelah project ditugaskan ke bagian Produksi.');
@@ -1847,7 +1917,8 @@ function renderRekapKomisi(){
     <table class="rekap">
       <thead><tr>
         <th>Nama Produksi</th><th>Project Selesai</th><th>Pcs Selesai</th><th>Komisi Final</th>
-        <th>Project Berjalan</th><th>Pcs Berjalan</th><th>Komisi Berjalan (estimasi)</th>
+        <th>Sudah Diambil</th><th>Sisa Komisi</th>
+        <th>Project Berjalan</th><th>Pcs Berjalan</th><th>Komisi Berjalan (estimasi)</th><th></th>
       </tr></thead>
       <tbody>
         ${rows.map(r=>`
@@ -1856,18 +1927,197 @@ function renderRekapKomisi(){
             <td>${r.jumlahSelesai}</td>
             <td>${r.pcsSelesai}</td>
             <td class="mono">${rupiah(r.komisiFinal)}</td>
+            <td class="mono">${rupiah(r.sudahDiambil)}</td>
+            <td class="mono" style="color:${r.sisaKomisi>0?'#B15A3D':'#4C7A5E'};font-weight:600;">${rupiah(r.sisaKomisi)}</td>
             <td>${r.jumlahBerjalan}</td>
             <td>${r.pcsBerjalan}</td>
             <td class="mono">${rupiah(r.komisiBerjalan)}</td>
+            <td><button class="btn ghost small" onclick="openAmbilKomisiModal('${escapeHtml(r.name).replace(/'/g,"\\'")}', ${Math.max(r.sisaKomisi,0)})">+ Input Diambil</button></td>
           </tr>
         `).join('')}
       </tbody>
       <tfoot>
-        <tr><td colspan="3">TOTAL</td><td class="mono">${rupiah(grandFinal)}</td><td colspan="2"></td><td class="mono">${rupiah(grandBerjalan)}</td></tr>
+        <tr>
+          <td colspan="3">TOTAL</td>
+          <td class="mono">${rupiah(grandFinal)}</td>
+          <td class="mono">${rupiah(grandDiambil)}</td>
+          <td class="mono">${rupiah(grandSisa)}</td>
+          <td colspan="2"></td>
+          <td class="mono">${rupiah(grandBerjalan)}</td>
+          <td></td>
+        </tr>
       </tfoot>
     </table>
     </div>
-    <div class="note-box" style="margin-top:16px;">Komisi Final dihitung dari project berstatus <b>Selesai</b>. Komisi Berjalan adalah estimasi dari project yang sudah masuk tahap Desain Selesai / Diproses Produksi namun belum ditandai Selesai.</div>
+    <div class="note-box" style="margin-top:16px;">
+      <b>Komisi Final</b> = total komisi dari seluruh project berstatus Selesai (akumulasi sepanjang waktu).
+      <b>Sudah Diambil</b> = total yang pernah dicatat sebagai diambil (dari seluruh riwayat/bulan).
+      <b>Sisa Komisi</b> = Komisi Final − Sudah Diambil, yaitu sisa yang belum dibayarkan ke bagian Produksi tsb.
+      Komisi Berjalan adalah estimasi dari project yang sudah masuk tahap Desain Selesai / Diproses Produksi namun belum ditandai Selesai.
+    </div>
+
+    ${renderKomisiPeriodeBerjalan()}
+    ${renderRiwayatPengambilanKomisi()}
+  `;
+}
+
+/* ===================== KOMISI PERIODE BERJALAN + INPUT "TELAH DIAMBIL" ===================== */
+function renderKomisiPeriodeBerjalan(){
+  const periode = getPeriodeKomisi();
+  const map = {};
+  projectsCache.forEach(p=>{
+    const name = (p.namaProduksi||'').trim();
+    if(!name || p.status!=='selesai') return;
+    const tsSelesai = p.selesaiAt || p.createdAt || 0;
+    if(tsSelesai < periode.start || tsSelesai >= periode.end) return;
+    if(!map[name]) map[name] = {name, jumlahSelesai:0, pcsSelesai:0, komisiPeriode:0};
+    map[name].jumlahSelesai++; map[name].pcsSelesai += totalQty(p); map[name].komisiPeriode += totalKomisi(p);
+  });
+  komisiClaimsCache.forEach(c=>{
+    const name = (c.namaProduksi||'').trim();
+    if(!name || c.periodeKey !== periode.key) return;
+    if(!map[name]) map[name] = {name, jumlahSelesai:0, pcsSelesai:0, komisiPeriode:0};
+  });
+  const rows = Object.values(map).sort((a,b)=> (a.name||'').localeCompare(b.name||''));
+
+  const rowsHtml = rows.map(r=>{
+    const claimed = komisiClaimsCache
+      .filter(c=> c.periodeKey===periode.key && (c.namaProduksi||'').trim()===r.name)
+      .reduce((s,c)=> s + (Number(c.jumlah)||0), 0);
+    const sisa = r.komisiPeriode - claimed;
+    return `
+      <tr>
+        <td><b>${escapeHtml(r.name)}</b></td>
+        <td>${r.jumlahSelesai} project / ${r.pcsSelesai} pcs</td>
+        <td class="mono">${rupiah(r.komisiPeriode)}</td>
+        <td class="mono">${rupiah(claimed)}</td>
+        <td class="mono" style="color:${sisa>0?'#B15A3D':'#4C7A5E'};font-weight:600;">${rupiah(sisa)}</td>
+        <td><button class="btn ghost small" onclick="openAmbilKomisiModal('${escapeHtml(r.name).replace(/'/g,"\\'")}', ${Math.max(sisa,0)}, '${periode.key}')">+ Input Diambil</button></td>
+      </tr>
+    `;
+  }).join('');
+
+  const body = rows.length ? `
+    <div style="overflow-x:auto;">
+    <table class="rekap">
+      <thead><tr>
+        <th>Nama Produksi</th><th>Selesai Periode Ini</th><th>Komisi Terkumpul</th>
+        <th>Sudah Diambil</th><th>Sisa Belum Diambil</th><th></th>
+      </tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+    </div>
+  ` : emptyState('Belum ada komisi di periode ini','Komisi akan muncul otomatis begitu ada project berstatus Selesai pada periode berjalan.');
+
+  return `
+    <div class="divider"></div>
+    <div class="section-title"><h2>Komisi Periode Berjalan</h2><div class="line"></div></div>
+    <div class="note-box" style="margin-bottom:14px;">
+      Periode aktif: <b>${periode.label}</b>. Akumulasi komisi di sini otomatis mulai dari <b>Rp0</b> lagi
+      setiap tanggal <b>5</b> (mengikuti tanggal pembagian upah), tanpa perlu menghapus data manapun —
+      riwayat bulan-bulan sebelumnya tetap tersimpan di bagian "Riwayat Pengambilan Komisi" di bawah.
+      Klik <b>+ Input Diambil</b> saat komisi seseorang sudah dibayarkan, untuk mencatatnya.
+    </div>
+    ${body}
+  `;
+}
+
+function openAmbilKomisiModal(nama, defaultJumlah, periodeKey){
+  const periode = periodeKey ? { key: periodeKey, label: periodeLabelFromKey(periodeKey) } : getPeriodeKomisi();
+  renderModal(`
+    <button class="close" onclick="closeModal()">×</button>
+    <h2>Input Komisi Telah Diambil</h2>
+    <div class="modal-sub">Nama Produksi: <b>${escapeHtml(nama)}</b> · Periode: <b>${escapeHtml(periode.label)}</b></div>
+
+    <label>Jumlah Komisi Diambil (Rp)</label>
+    <input type="number" min="0" id="ak_jumlah" value="${Math.round(Number(defaultJumlah)||0)}">
+
+    <label>Tanggal Diambil</label>
+    <input type="date" id="ak_tanggal" value="${new Date().toISOString().slice(0,10)}">
+
+    <label>Catatan (opsional)</label>
+    <textarea id="ak_catatan" placeholder="cth. dibayar tunai / transfer, atau keterangan lain"></textarea>
+
+    <div class="modal-actions">
+      <button class="btn block" onclick="submitAmbilKomisi('${escapeHtml(nama).replace(/'/g,"\\'")}','${periode.key}')">Simpan</button>
+    </div>
+  `);
+}
+
+async function submitAmbilKomisi(nama, periodeKey){
+  const jumlah = parseFloat(document.getElementById('ak_jumlah').value) || 0;
+  const tanggalStr = document.getElementById('ak_tanggal').value;
+  const catatan = document.getElementById('ak_catatan').value.trim();
+  if(jumlah <= 0){ alert('Mohon isi jumlah komisi yang diambil.'); return; }
+  const tanggal = tanggalStr ? new Date(tanggalStr).getTime() : Date.now();
+  const claim = {
+    id: genId(),
+    namaProduksi: nama,
+    periodeKey: periodeKey,
+    periodeLabel: periodeLabelFromKey(periodeKey),
+    jumlah, catatan,
+    tanggal, createdAt: Date.now()
+  };
+  const ok = await saveKomisiClaim(claim);
+  if(!ok) return;
+  closeModal();
+  render();
+}
+
+async function hapusKomisiClaim(id){
+  if(!confirm('Hapus catatan pengambilan komisi ini?')) return;
+  const ok = await deleteKomisiClaim(id);
+  if(ok) render();
+}
+
+/* ===================== RIWAYAT PENGAMBILAN KOMISI (PER BULAN) ===================== */
+function renderRiwayatPengambilanKomisi(){
+  if(!komisiClaimsCache.length){
+    return `
+      <div class="divider"></div>
+      <div class="section-title"><h2>Riwayat Pengambilan Komisi</h2><div class="line"></div></div>
+      ${emptyState('Belum ada riwayat pengambilan','Catatan komisi yang sudah diambil akan tersimpan di sini per periode/bulan.')}
+    `;
+  }
+  const byPeriode = {};
+  komisiClaimsCache.forEach(c=>{
+    if(!byPeriode[c.periodeKey]) byPeriode[c.periodeKey] = { label: c.periodeLabel || periodeLabelFromKey(c.periodeKey), items: [], total: 0 };
+    byPeriode[c.periodeKey].items.push(c);
+    byPeriode[c.periodeKey].total += (Number(c.jumlah)||0);
+  });
+  const periodeKeys = Object.keys(byPeriode).sort().reverse();
+
+  return `
+    <div class="divider"></div>
+    <div class="section-title"><h2>Riwayat Pengambilan Komisi</h2><div class="line"></div></div>
+    ${periodeKeys.map(key=>{
+      const grp = byPeriode[key];
+      const items = [...grp.items].sort((a,b)=> b.tanggal - a.tanggal);
+      return `
+        <div class="komisi-riwayat-bulan" style="margin-bottom:18px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
+            <b>${escapeHtml(grp.label)}</b>
+            <span class="mono">Total diambil: ${rupiah(grp.total)}</span>
+          </div>
+          <div style="overflow-x:auto;">
+          <table class="rekap">
+            <thead><tr><th>Tanggal</th><th>Nama Produksi</th><th>Jumlah</th><th>Catatan</th><th></th></tr></thead>
+            <tbody>
+              ${items.map(c=>`
+                <tr>
+                  <td>${fmtDate(c.tanggal)}</td>
+                  <td>${escapeHtml(c.namaProduksi)}</td>
+                  <td class="mono">${rupiah(c.jumlah)}</td>
+                  <td>${escapeHtml(c.catatan||'-')}</td>
+                  <td><button class="btn ghost small" onclick="hapusKomisiClaim('${c.id}')">Hapus</button></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          </div>
+        </div>
+      `;
+    }).join('')}
   `;
 }
 
@@ -2559,6 +2809,7 @@ function initWorkflow(){
   if(!CONFIG_READY){ state.loading = false; render(); return; }
   render();
   subscribeRealtime();
+  subscribeKomisiClaimsRealtime();
 }
 
 
