@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>TENX APPAREL — Sistem Terpadu (Alur Kerja &amp; Nota)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -11,6 +11,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.3/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 :root{
     --canvas:#F6F3EC;
@@ -185,7 +186,7 @@
     border:1px solid var(--line);border-radius:6px;background:var(--paper,#fff);
     text-decoration:none;color:var(--ink);cursor:pointer;padding:4px;box-sizing:border-box;overflow:hidden;
   }
-#workflowApp .file-chip-icon{font-size:22px;line-height:1;}
+#workflowApp .file-chip-icon{font-size:13px;font-weight:700;letter-spacing:.05em;line-height:1;}
 #workflowApp .file-chip-name{font-size:9px;line-height:1.15;text-align:center;word-break:break-all;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;color:var(--ink-soft);}
 #workflowApp .upload-status{font-size:12px;color:var(--denim);margin-top:6px;min-height:16px;}
 #workflowApp .lightbox-overlay{
@@ -670,6 +671,23 @@
 #keuanganApp .kg-card .lbl{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;}
 #keuanganApp .kg-card .val{font-size:21px;font-weight:800;color:var(--navy);}
 #keuanganApp .kg-card.outstanding .val{color:var(--rust);}
+#keuanganApp .kg-card .sub{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.4;}
+#keuanganApp .kg-card.income{border-top:3px solid var(--green);}
+#keuanganApp .kg-card.income .val{color:var(--green);}
+#keuanganApp .kg-card.st-dp{border-top:3px solid var(--amber);}
+#keuanganApp .kg-card.st-dp .val{color:#9A6A12;}
+#keuanganApp .kg-card.st-none{border-top:3px solid var(--rust);}
+#keuanganApp .kg-card.st-none .val{color:var(--rust);}
+#keuanganApp .kg-group-sep{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:6px 0 4px;}
+#keuanganApp .kg-note{font-size:12px;color:var(--muted);background:var(--bg);border:1px dashed var(--line);border-radius:8px;padding:9px 12px;margin:-8px 0 20px;line-height:1.5;}
+#keuanganApp .kg-group{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 12px;border-radius:8px;margin:14px 0 2px;font-size:13px;font-weight:800;color:#fff;}
+#keuanganApp .kg-group:first-child{margin-top:0;}
+#keuanganApp .kg-group small{font-weight:600;font-size:11.5px;opacity:.95;}
+#keuanganApp .kg-group.g-lunas{background:var(--green);}
+#keuanganApp .kg-group.g-dp{background:#B8801F;}
+#keuanganApp .kg-group.g-belum_bayar{background:var(--rust);}
+#keuanganApp .kg-row .amt .in{color:var(--green);font-weight:700;}
+#keuanganApp .kg-row .amt .out{color:var(--rust);font-weight:700;}
 #keuanganApp .kg-section{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:20px;}
 #keuanganApp .kg-section h2{font-size:16px;margin:0 0 14px;color:var(--navy);}
 #keuanganApp .kg-chart-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
@@ -855,6 +873,88 @@
   #absensiApp table.ab-table th, #absensiApp table.ab-table td{padding:7px 5px;}
 }
 
+/* ===================== MARKETING PROSPEK & PIC STYLES ===================== */
+#absensiApp .wsp-prospect-toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;}
+#absensiApp .wsp-prospect-actions{display:flex;gap:8px;flex-wrap:wrap;}
+#absensiApp .wsp-search-bar{flex:1 1 240px;position:relative;}
+#absensiApp .wsp-search-bar input{padding:9px 12px;font-size:13.5px;border-radius:8px;}
+#absensiApp .wsp-search-bar .icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--ab-muted);pointer-events:none;}
+#absensiApp .wsp-filter-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+#absensiApp .wsp-filter-pill{
+  background:#fff;border:1.5px solid var(--ab-line);border-radius:999px;padding:6px 14px;
+  font-size:12px;font-family:'Bebas Neue';letter-spacing:.05em;cursor:pointer;color:var(--ab-muted);
+  display:inline-flex;align-items:center;gap:6px;transition:all .15s ease;
+}
+#absensiApp .wsp-filter-pill:hover{border-color:var(--ab-denim);color:var(--ab-ink);}
+#absensiApp .wsp-filter-pill.active{background:var(--ab-denim);color:#fff;border-color:var(--ab-denim);}
+#absensiApp .wsp-filter-pill .cnt{background:rgba(0,0,0,0.07);padding:1px 6px;border-radius:999px;font-size:11px;font-family:'Work Sans';font-weight:600;}
+#absensiApp .wsp-filter-pill.active .cnt{background:rgba(255,255,255,0.28);color:#fff;}
+#absensiApp .wsp-filter-pill.tone-amber.active{background:var(--ab-amber);border-color:var(--ab-amber);}
+#absensiApp .wsp-filter-pill.tone-green.active{background:var(--ab-green);border-color:var(--ab-green);}
+
+/* Quick Checklist Button */
+#absensiApp .wsp-check-btn{
+  display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;
+  font-size:11.5px;font-weight:700;cursor:pointer;border:1.5px solid var(--ab-line);background:#fff;
+  transition:all .15s ease;user-select:none;font-family:'Work Sans',sans-serif;
+}
+#absensiApp .wsp-check-btn.checked{background:#EBF5EE;border-color:var(--ab-green);color:var(--ab-green);}
+#absensiApp .wsp-check-btn.pending{background:#FFF6E5;border-color:var(--ab-amber);color:#A86B12;}
+#absensiApp .wsp-check-btn:hover{transform:scale(1.02);box-shadow:0 2px 6px rgba(0,0,0,0.08);}
+
+/* WhatsApp Quick Button */
+#absensiApp .wsp-wa-btn{
+  display:inline-flex;align-items:center;gap:5px;background:#25D366;color:#fff;
+  padding:5px 11px;border-radius:6px;font-size:11px;font-weight:700;text-decoration:none;
+  transition:all .15s ease;border:none;cursor:pointer;font-family:'Work Sans',sans-serif;
+}
+#absensiApp .wsp-wa-btn:hover{transform:scale(1.04);background:#1EBE5D;box-shadow:0 2px 6px rgba(37,211,102,0.3);}
+
+/* Instagram DM Button & badges */
+#absensiApp .wsp-ig-btn{
+  display:inline-flex;align-items:center;gap:5px;color:#fff;
+  background:linear-gradient(45deg,#F58529,#DD2A7B 55%,#8134AF);
+  padding:5px 11px;border-radius:6px;font-size:11px;font-weight:700;border:none;cursor:pointer;
+  font-family:'Work Sans',sans-serif;transition:all .15s ease;
+}
+#absensiApp .wsp-ig-btn:hover{transform:scale(1.04);box-shadow:0 2px 6px rgba(221,42,123,0.35);}
+#absensiApp .wsp-ig-handle{font-size:12px;color:#B0307A;font-weight:600;margin:2px 0;text-decoration:none;display:inline-block;}
+#absensiApp .wsp-ig-handle:hover{text-decoration:underline;}
+#absensiApp .wsp-contact-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;}
+#absensiApp .wsp-badge-other{
+  display:block;margin-top:6px;padding:5px 9px;border-radius:6px;font-size:11px;font-weight:700;line-height:1.35;
+  background:rgba(76,122,94,0.12);color:var(--ab-green);border:1px solid rgba(76,122,94,0.35);
+}
+#absensiApp .wsp-badge-dup{
+  display:block;margin-top:6px;padding:5px 9px;border-radius:6px;font-size:11px;font-weight:600;line-height:1.35;
+  background:rgba(201,138,44,0.14);color:#8A5A12;border:1px solid rgba(201,138,44,0.4);
+}
+
+/* Excel Dropzone */
+#absensiApp .wsp-dropzone{
+  border:2px dashed var(--ab-denim);border-radius:12px;padding:26px 16px;text-align:center;
+  background:rgba(51,80,122,0.03);cursor:pointer;transition:all .15s ease;margin:12px 0;
+}
+#absensiApp .wsp-dropzone:hover{background:rgba(51,80,122,0.08);border-color:var(--ab-denim-dark);}
+#absensiApp .wsp-dropzone .icon{font-size:38px;margin-bottom:6px;}
+#absensiApp .wsp-dropzone .dz-title{font-family:'Bebas Neue';font-size:19px;color:var(--ab-denim);letter-spacing:.04em;}
+#absensiApp .wsp-dropzone .dz-sub{font-size:12px;color:var(--ab-muted);margin-top:2px;}
+
+/* Excel Preview Table */
+#absensiApp .wsp-excel-preview{max-height:230px;overflow-y:auto;border:1.5px solid var(--ab-line);border-radius:8px;margin:12px 0;background:#fff;}
+#absensiApp .wsp-excel-preview table{width:100%;font-size:11.5px;border-collapse:collapse;}
+#absensiApp .wsp-excel-preview th{background:var(--ab-bg2);padding:7px 9px;text-align:left;position:sticky;top:0;font-size:11px;color:var(--ab-muted);border-bottom:1.5px solid var(--ab-line);white-space:nowrap;}
+#absensiApp .wsp-excel-preview td{padding:6px 9px;border-bottom:1px solid var(--ab-line);}
+
+/* Live KPI Sync Highlight */
+#absensiApp .wsp-kpi-sync-badge{
+  display:inline-flex;align-items:center;gap:6px;background:rgba(76,122,94,0.12);
+  color:var(--ab-green);padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;
+}
+#absensiApp .wsp-kpi-sync-badge.pending{
+  background:rgba(201,138,44,0.14);color:#A86B12;
+}
+
 /* ===================== GLOBAL NAV ===================== */
 #globalNav{
   position:sticky; top:0; z-index:500;
@@ -1038,6 +1138,50 @@
 #workflowApp .btn.gold{ background:#C98A2C; }
 #workflowApp .btn.gold:hover{ background:#a8741f; }
 
+
+/* ===== PATCH: halaman bulan, hide/show, mobile ===== */
+html{-webkit-text-size-adjust:100%;}
+body{overflow-x:hidden;}
+#absensiApp .wsp-viewbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px;font-size:12.5px;color:var(--ab-muted);}
+#absensiApp .wsp-viewbar select{width:auto;padding:6px 8px;font-size:13px;}
+#absensiApp .wsp-chip{border:1.5px solid var(--ab-line);background:#fff;border-radius:999px;padding:5px 11px;font-size:12px;cursor:pointer;color:var(--ab-muted);font-family:inherit;}
+#absensiApp .wsp-chip.on{background:var(--ab-denim);border-color:var(--ab-denim);color:#fff;}
+#absensiApp .wsp-mtabs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;margin-bottom:8px;-webkit-overflow-scrolling:touch;}
+#absensiApp .wsp-mtab{flex:0 0 auto;border:1.5px solid var(--ab-line);background:#fff;border-radius:8px;padding:7px 12px;font-family:'Bebas Neue';letter-spacing:.04em;font-size:14px;cursor:pointer;color:var(--ab-muted);}
+#absensiApp .wsp-mtab .cnt{font-family:'Work Sans';font-size:11px;font-weight:700;background:rgba(0,0,0,.08);border-radius:999px;padding:1px 6px;margin-left:3px;}
+#absensiApp .wsp-mtab.active{background:var(--ab-ink);border-color:var(--ab-ink);color:#fff;}
+#absensiApp .wsp-mtab.active .cnt{background:rgba(255,255,255,.25);}
+#absensiApp .wsp-pagehead{font-weight:700;margin:2px 0 10px;color:var(--ab-ink);}
+#absensiApp.wsp-hide-hub [data-col="hub"],#absensiApp.wsp-hide-cat [data-col="cat"]{display:none!important;}
+@media(max-width:720px){
+  #absensiApp table.wsp-cards thead{display:none;}
+  #absensiApp table.wsp-cards,#absensiApp table.wsp-cards tbody{display:block;width:100%;}
+  #absensiApp table.wsp-cards tr{display:block;background:#fff;border:1.5px solid var(--ab-line);border-radius:10px;margin-bottom:10px;padding:6px 12px;}
+  #absensiApp table.wsp-cards td{display:block;border:none!important;padding:6px 0!important;width:auto!important;max-width:none!important;text-align:left!important;font-size:13px;}
+  #absensiApp table.wsp-cards td>div{max-width:none!important;}
+  #absensiApp table.wsp-cards td::before{content:attr(data-label);display:block;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ab-muted);margin-bottom:2px;}
+  #absensiApp input,#absensiApp select,#absensiApp textarea{font-size:16px;}
+  #absensiApp .btn{min-height:40px;}
+  #absensiApp .wsp-prospect-actions .btn,#absensiApp .wsp-viewbar .btn{flex:1 1 auto;}
+}
+
+/* ===== Halaman Belum / Sudah dihubungi + tombol centang ===== */
+#absensiApp .wsp-ptabs{display:flex;gap:8px;margin:4px 0 12px;}
+#absensiApp .wsp-ptab{flex:1 1 0;display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 12px;border:1.5px solid var(--ab-line);background:#fff;border-radius:10px;cursor:pointer;font-family:'Bebas Neue';font-size:16px;letter-spacing:.05em;color:var(--ab-muted);}
+#absensiApp .wsp-ptab .cnt{font-family:'Work Sans';font-size:12px;font-weight:700;background:rgba(0,0,0,.08);border-radius:999px;padding:1px 9px;}
+#absensiApp .wsp-ptab.belum.active{background:var(--ab-amber);border-color:var(--ab-amber);color:#fff;}
+#absensiApp .wsp-ptab.sudah.active{background:var(--ab-green);border-color:var(--ab-green);color:#fff;}
+#absensiApp .wsp-ptab.active .cnt{background:rgba(255,255,255,.28);}
+#absensiApp .wsp-pnote{font-size:12.5px;color:var(--ab-muted);background:#EBF5EE;border:1px solid #cfe5d6;border-radius:8px;padding:8px 12px;margin-bottom:12px;}
+#absensiApp .wsp-done-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:8px;border:1.5px solid var(--ab-green);background:#fff;color:var(--ab-green);font-weight:700;font-size:13px;cursor:pointer;font-family:'Work Sans',sans-serif;white-space:nowrap;}
+#absensiApp .wsp-done-btn .bx{width:18px;height:18px;border:2px solid var(--ab-green);border-radius:4px;position:relative;flex:0 0 auto;background:#fff;}
+#absensiApp .wsp-done-btn:hover{background:#EBF5EE;}
+#absensiApp .wsp-done-btn:hover .bx::after{content:"";position:absolute;left:4px;top:0;width:5px;height:10px;border:solid var(--ab-green);border-width:0 2.5px 2.5px 0;transform:rotate(45deg);}
+#absensiApp .wsp-done-btn.on{border-color:var(--ab-line);color:var(--ab-muted);font-weight:600;}
+#absensiApp .wsp-done-btn.on .bx{background:var(--ab-green);border-color:var(--ab-green);}
+#absensiApp .wsp-done-btn.on .bx::after{content:"";position:absolute;left:4px;top:0;width:5px;height:10px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg);}
+#absensiApp .wsp-done-btn.on:hover{border-color:var(--ab-rust);color:var(--ab-rust);background:#fff;}
+@media(max-width:720px){#absensiApp .wsp-done-btn{width:100%;justify-content:center;padding:11px 14px;font-size:14px;}}
 </style>
 </head>
 <body>
@@ -1221,7 +1365,7 @@
       </div>
 
       <div class="inv-banner">
-        <span>📍</span><span id="pv-storeAddress">JL.CURUG MUJAN , BULAKSARI , KEC.BANTARSARI KAB.CILACAP, JAWA TENGAH</span>
+        <span id="pv-storeAddress">JL.CURUG MUJAN , BULAKSARI , KEC.BANTARSARI KAB.CILACAP, JAWA TENGAH</span>
       </div>
 
       <div class="inv-body">
@@ -1263,9 +1407,9 @@
         <div class="footer-grid">
           <div class="follow">
             <b>Follow Us</b>
-            <div class="row">📞 <span id="pv-storePhone2">0857-2900-8192</span></div>
-            <div class="row">📷 <span id="pv-storeIg">@tenxofficial_</span></div>
-            <div class="row">🎵 <span id="pv-storeIg2">@tenxofficial_</span></div>
+            <div class="row">Telp: <span id="pv-storePhone2">0857-2900-8192</span></div>
+            <div class="row">Instagram: <span id="pv-storeIg">@tenxofficial_</span></div>
+            <div class="row">TikTok: <span id="pv-storeIg2">@tenxofficial_</span></div>
           </div>
           <div class="sign">
             <div class="line"></div>
@@ -1293,9 +1437,10 @@
 
   <main>
     <div class="kg-summary" id="kgSummary"></div>
+    <div class="kg-note"><b>Cara hitung:</b> Pemasukan hanya menghitung uang yang <b>sudah benar-benar masuk</b> (DP, pelunasan, atau bayar full langsung) dan transaksi manual. Nota yang <b>belum ada pembayaran sama sekali</b> tidak dihitung, dan nota <b>DP</b> hanya dihitung sebesar DP yang sudah dibayar, sisanya masuk saat dilunasi.</div>
 
     <div class="kg-section">
-      <h2>Grafik Penjualan</h2>
+      <h2>Grafik Pemasukan <span style="font-weight:400;font-size:12px;color:var(--muted);">(hanya uang yang sudah masuk)</span></h2>
       <div class="kg-chart-tabs" id="kgChartTabs">
         <button class="active" onclick="setKgChartMode('harian')" id="kgtab-harian">Harian (30 hari)</button>
         <button onclick="setKgChartMode('bulanan')" id="kgtab-bulanan">Bulanan (tahun ini)</button>
@@ -1310,8 +1455,8 @@
         <div class="kg-search"><input type="text" id="kgSearch" placeholder="Cari nama pemesan / no. invoice..." oninput="renderKeuangan()"></div>
         <div class="kg-filters" id="kgFilters">
           <button class="active" data-f="semua" onclick="setKgFilter('semua')">Semua</button>
-          <button data-f="belum_bayar" onclick="setKgFilter('belum_bayar')">Belum Bayar</button>
-          <button data-f="dp" onclick="setKgFilter('dp')">DP</button>
+          <button data-f="belum_bayar" onclick="setKgFilter('belum_bayar')">Belum Masuk</button>
+          <button data-f="dp" onclick="setKgFilter('dp')">Sudah DP (Belum Lunas)</button>
           <button data-f="lunas" onclick="setKgFilter('lunas')">Lunas</button>
         </div>
       </div>
@@ -2601,8 +2746,8 @@ function openDetailModal(id){
       <div class="divider"></div>
       <label>Kelola Pencatatan (Admin)</label>
       <div class="modal-actions">
-        <button class="btn ghost" style="flex:1;" onclick="openEditProjectModal('${p.id}')">✎ Edit Data Project</button>
-        <button class="btn rust" style="flex:1;" onclick="deleteProject('${p.id}')">🗑 Hapus Project</button>
+        <button class="btn ghost" style="flex:1;" onclick="openEditProjectModal('${p.id}')">Edit Data Project</button>
+        <button class="btn rust" style="flex:1;" onclick="deleteProject('${p.id}')">Hapus Project</button>
       </div>
     `;
   }
@@ -2753,10 +2898,10 @@ function normalizeFileItem(item){
 }
 function fileIconFor(name){
   const ext = (name||'').split('.').pop().toLowerCase();
-  if(ext==='pdf') return '📄';
-  if(ext==='doc'||ext==='docx') return '📝';
-  if(ext==='xls'||ext==='xlsx'||ext==='csv') return '📊';
-  return '📎';
+  if(ext==='pdf') return 'PDF';
+  if(ext==='doc'||ext==='docx') return 'DOC';
+  if(ext==='xls'||ext==='xlsx'||ext==='csv') return 'XLS';
+  return 'FILE';
 }
 function renderFileThumb(item, size, removeFn, removeIdx){
   const f = normalizeFileItem(item);
@@ -3120,6 +3265,29 @@ function setKgChartMode(m){
   renderKgChart();
 }
 
+/* Tanggal lokal (bukan UTC) supaya pemasukan jatuh di hari yang benar */
+function kgLocalDate(d){
+  d = (d instanceof Date) ? d : new Date(d);
+  if(isNaN(d.getTime())) return '';
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function kgStatusLabel(st){ return st==='lunas' ? 'LUNAS' : st==='dp' ? 'DP · BELUM LUNAS' : 'BELUM MASUK'; }
+
+/* Uang yang BENAR-BENAR masuk dari satu nota: setiap pembayaran dihitung di tanggal bayarnya */
+function invoicePaymentEntries(inv){
+  const invDate = inv.invDate || (inv.createdAt||'').slice(0,10);
+  const pays = Array.isArray(inv.payments) ? inv.payments : [];
+  const out = []; let sum = 0;
+  pays.forEach(p=>{
+    const a = Number(p.amount)||0; if(a<=0) return;
+    sum += a;
+    out.push({ date: (p.at ? kgLocalDate(p.at) : '') || invDate, amount: a });
+  });
+  const resid = Number(inv.totalDibayar||0) - sum;   // data lama yang totalDibayar-nya tidak punya rincian
+  if(resid > 0) out.push({ date: invDate, amount: resid });
+  return out;
+}
+
 function combinedTransactions(){
   const fromInvoices = invoicesCache.map(inv => ({
     type:'invoice',
@@ -3130,6 +3298,7 @@ function combinedTransactions(){
     amount: Number(inv.total||0),
     dibayar: Number(inv.totalDibayar||0),
     status: invoiceStatus(inv),
+    entries: invoicePaymentEntries(inv),
     createdAt: inv.createdAt || inv.invDate,
     raw: inv
   }));
@@ -3142,63 +3311,100 @@ function combinedTransactions(){
     amount: Number(m.amount||0),
     dibayar: Number(m.amount||0),
     status: 'lunas',
+    entries: [{ date: m.date, amount: Number(m.amount||0) }],
     createdAt: m.createdAt || m.date,
     raw: m
   }));
   return [...fromInvoices, ...fromManual].sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
 }
+/* Semua uang masuk (pembayaran) dari semua transaksi */
+function kgIncomeEntries(all){
+  const out = [];
+  all.forEach(t=> (t.entries||[]).forEach(e=>{ if(e.date && e.amount>0) out.push(e); }));
+  return out;
+}
 
 function renderKeuangan(){
   if(!document.getElementById('kgSummary')) return;
   const all = combinedTransactions();
+  const entries = kgIncomeEntries(all);
 
-  const now = new Date();
-  const todayStr = now.toISOString().slice(0,10);
-  const thisMonth = now.getMonth(), thisYear = now.getFullYear();
+  const todayStr = kgLocalDate(new Date());
+  const monthKey = todayStr.slice(0,7), yearKey = todayStr.slice(0,4);
 
-  let todayTotal=0, monthTotal=0, yearTotal=0, outstanding=0;
-  all.forEach(t=>{
-    const d = t.date ? new Date(t.date+'T00:00:00') : null;
-    if(t.date === todayStr) todayTotal += t.amount;
-    if(d && !isNaN(d) && d.getFullYear()===thisYear && d.getMonth()===thisMonth) monthTotal += t.amount;
-    if(d && !isNaN(d) && d.getFullYear()===thisYear) yearTotal += t.amount;
-    if(t.type==='invoice') outstanding += Math.max(t.amount - t.dibayar, 0);
+  // PEMASUKAN PASTI = hanya uang yang sudah masuk (DP / pelunasan / full / manual)
+  let todayTotal=0, monthTotal=0, yearTotal=0;
+  entries.forEach(e=>{
+    if(e.date === todayStr) todayTotal += e.amount;
+    if(e.date.slice(0,7) === monthKey) monthTotal += e.amount;
+    if(e.date.slice(0,4) === yearKey) yearTotal += e.amount;
   });
 
+  // Pisahkan: belum masuk sama sekali  vs  sudah DP tapi belum lunas
+  const inv = all.filter(t=>t.type==='invoice');
+  const gNone = inv.filter(t=>t.status==='belum_bayar');
+  const gDp   = inv.filter(t=>t.status==='dp');
+  const gLunas = all.filter(t=>t.status==='lunas');
+  const sumNoneTotal = gNone.reduce((x,t)=>x+t.amount,0);
+  const sumDpSisa    = gDp.reduce((x,t)=>x+Math.max(t.amount-t.dibayar,0),0);
+  const sumDpMasuk   = gDp.reduce((x,t)=>x+t.dibayar,0);
+
   document.getElementById('kgSummary').innerHTML = `
-    <div class="kg-card"><div class="lbl">Hari Ini</div><div class="val">${formatRupiah(todayTotal)}</div></div>
-    <div class="kg-card"><div class="lbl">Bulan Ini</div><div class="val">${formatRupiah(monthTotal)}</div></div>
-    <div class="kg-card"><div class="lbl">Tahun Ini</div><div class="val">${formatRupiah(yearTotal)}</div></div>
-    <div class="kg-card outstanding"><div class="lbl">Belum Lunas (Sisa)</div><div class="val">${formatRupiah(outstanding)}</div></div>
+    <div class="kg-card income"><div class="lbl">Pemasukan Hari Ini</div><div class="val">${formatRupiah(todayTotal)}</div><div class="sub">Uang yang sudah masuk</div></div>
+    <div class="kg-card income"><div class="lbl">Pemasukan Bulan Ini</div><div class="val">${formatRupiah(monthTotal)}</div><div class="sub">Uang yang sudah masuk</div></div>
+    <div class="kg-card income"><div class="lbl">Pemasukan Tahun Ini</div><div class="val">${formatRupiah(yearTotal)}</div><div class="sub">Uang yang sudah masuk</div></div>
+    <div class="kg-card st-dp"><div class="lbl">Sudah DP · Belum Lunas</div><div class="val">${formatRupiah(sumDpSisa)}</div><div class="sub">${gDp.length} nota · sisa tagihan<br>DP sudah masuk ${formatRupiah(sumDpMasuk)}</div></div>
+    <div class="kg-card st-none"><div class="lbl">Belum Masuk Sama Sekali</div><div class="val">${formatRupiah(sumNoneTotal)}</div><div class="sub">${gNone.length} nota · belum ada pembayaran<br>(tidak dihitung sebagai pemasukan)</div></div>
   `;
+
+  // jumlah nota di tiap tombol filter
+  const cnt = { semua: all.length, belum_bayar: gNone.length, dp: gDp.length, lunas: gLunas.length };
+  const flab = { semua:'Semua', belum_bayar:'Belum Masuk', dp:'Sudah DP (Belum Lunas)', lunas:'Lunas' };
+  document.querySelectorAll('#kgFilters button').forEach(b=>{ const k=b.dataset.f; if(flab[k]) b.textContent = flab[k] + ' (' + cnt[k] + ')'; });
 
   // list dengan search + filter
   const q = (document.getElementById('kgSearch')?.value || '').toLowerCase().trim();
-  let list = all.filter(t=>{
+  const list = all.filter(t=>{
     if(kgFilter!=='semua' && t.status!==kgFilter) return false;
     if(!q) return true;
     return (t.custName||'').toLowerCase().includes(q) || String(t.id).toLowerCase().includes(q);
   });
 
+  const rowHtml = t=>{
+    const badge = t.type==='manual'
+      ? `<span class="kg-badge manual">MANUAL</span>`
+      : `<span class="kg-badge ${t.status}">${kgStatusLabel(t.status)}</span>`;
+    const sisa = t.type==='invoice' ? Math.max(t.amount-t.dibayar,0) : 0;
+    let sub = '';
+    if(t.type==='invoice'){
+      if(t.status==='belum_bayar') sub = `<small class="out">Belum ada pembayaran</small>`;
+      else if(t.status==='dp') sub = `<small class="in">Sudah masuk ${formatRupiah(t.dibayar)}</small><small class="out">Sisa ${formatRupiah(sisa)}</small>`;
+      else sub = `<small class="in">Sudah masuk penuh</small>`;
+    }
+    return `
+      <div class="kg-row" onclick="${t.type==='invoice' ? `openInvoiceDetail('${t.id}')` : `openManualDetail('${t.id}')`}">
+        <div>
+          <div class="who">${escapeHtml(t.custName)} ${t.type==='invoice' ? '· #'+t.id : ''}</div>
+          <div class="meta">${formatDateID(t.date)} ${badge}</div>
+        </div>
+        <div class="amt">${formatRupiah(t.amount)}${sub}</div>
+      </div>`;
+  };
+
   const listEl = document.getElementById('kgList');
   if(list.length===0){
     listEl.innerHTML = `<div class="kg-empty">Belum ada transaksi yang cocok.</div>`;
   } else {
-    listEl.innerHTML = list.map(t=>{
-      const badge = t.type==='manual'
-        ? `<span class="kg-badge manual">MANUAL</span>`
-        : `<span class="kg-badge ${t.status}">${t.status==='lunas'?'LUNAS':t.status==='dp'?'DP':'BELUM BAYAR'}</span>`;
-      const sisa = t.type==='invoice' ? Math.max(t.amount-t.dibayar,0) : 0;
-      return `
-        <div class="kg-row" onclick="${t.type==='invoice' ? `openInvoiceDetail('${t.id}')` : `openManualDetail('${t.id}')`}">
-          <div>
-            <div class="who">${escapeHtml(t.custName)} ${t.type==='invoice' ? '· #'+t.id : ''}</div>
-            <div class="meta">${formatDateID(t.date)} ${badge}</div>
-          </div>
-          <div class="amt">${formatRupiah(t.amount)}
-            ${sisa>0 ? `<small>Sisa ${formatRupiah(sisa)}</small>` : ''}
-          </div>
-        </div>`;
+    // dikelompokkan per status supaya tidak bingung
+    const groups = [
+      { k:'belum_bayar', title:'Belum Masuk Sama Sekali', info:t=>`Total tagihan ${formatRupiah(t.reduce((x,y)=>x+y.amount,0))}` },
+      { k:'dp',          title:'Sudah DP · Belum Lunas',  info:t=>`Sudah masuk ${formatRupiah(t.reduce((x,y)=>x+y.dibayar,0))} · Sisa ${formatRupiah(t.reduce((x,y)=>x+Math.max(y.amount-y.dibayar,0),0))}` },
+      { k:'lunas',       title:'Lunas',                   info:t=>`Sudah masuk ${formatRupiah(t.reduce((x,y)=>x+y.dibayar,0))}` }
+    ];
+    listEl.innerHTML = groups.map(g=>{
+      const items = list.filter(t=>t.status===g.k);
+      if(!items.length) return '';
+      return `<div class="kg-group g-${g.k}"><span>${g.title} (${items.length})</span><small>${g.info(items)}</small></div>` + items.map(rowHtml).join('');
     }).join('');
   }
 
@@ -3208,7 +3414,8 @@ function renderKeuangan(){
 function renderKgChart(){
   const canvas = document.getElementById('kgChartCanvas');
   if(!canvas || typeof Chart==='undefined') return;
-  const all = combinedTransactions();
+  const entries = kgIncomeEntries(combinedTransactions());   // hanya uang yang sudah masuk
+  const sumBy = fn => entries.filter(fn).reduce((s,e)=>s+e.amount,0);
 
   let labels = [], data = [];
   const now = new Date();
@@ -3216,30 +3423,24 @@ function renderKgChart(){
   if(kgChartMode==='harian'){
     for(let i=29;i>=0;i--){
       const d = new Date(now); d.setDate(d.getDate()-i);
-      const key = d.toISOString().slice(0,10);
+      const key = kgLocalDate(d);
       labels.push(String(d.getDate())+'/'+String(d.getMonth()+1));
-      data.push(all.filter(t=>t.date===key).reduce((s,t)=>s+t.amount,0));
+      data.push(sumBy(e=>e.date===key));
     }
   } else if(kgChartMode==='bulanan'){
     const bulanSingkat = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+    const yr = String(now.getFullYear());
     for(let m=0;m<12;m++){
       labels.push(bulanSingkat[m]);
-      data.push(all.filter(t=>{
-        const d = t.date ? new Date(t.date+'T00:00:00') : null;
-        return d && !isNaN(d) && d.getFullYear()===now.getFullYear() && d.getMonth()===m;
-      }).reduce((s,t)=>s+t.amount,0));
+      const key = yr+'-'+String(m+1).padStart(2,'0');
+      data.push(sumBy(e=>e.date.slice(0,7)===key));
     }
   } else {
-    const years = new Set();
-    all.forEach(t=>{ const d = t.date ? new Date(t.date+'T00:00:00') : null; if(d && !isNaN(d)) years.add(d.getFullYear()); });
-    if(years.size===0) years.add(now.getFullYear());
-    const sortedYears = Array.from(years).sort();
-    sortedYears.forEach(y=>{
-      labels.push(String(y));
-      data.push(all.filter(t=>{
-        const d = t.date ? new Date(t.date+'T00:00:00') : null;
-        return d && !isNaN(d) && d.getFullYear()===y;
-      }).reduce((s,t)=>s+t.amount,0));
+    const years = new Set(entries.map(e=>e.date.slice(0,4)));
+    if(years.size===0) years.add(String(now.getFullYear()));
+    Array.from(years).sort().forEach(y=>{
+      labels.push(y);
+      data.push(sumBy(e=>e.date.slice(0,4)===y));
     });
   }
 
@@ -3247,7 +3448,7 @@ function renderKgChart(){
   kgChartInstance = new Chart(canvas.getContext('2d'), {
     type: kgChartMode==='harian' ? 'line' : 'bar',
     data: { labels, datasets: [{
-      label:'Penjualan',
+      label:'Pemasukan (uang masuk)',
       data,
       backgroundColor:'#f5c518',
       borderColor:'#152452',
@@ -3347,7 +3548,7 @@ function openInvoiceDetail(invNo){
   if(!inv) return;
   const sisa = Math.max(Number(inv.total||0) - Number(inv.totalDibayar||0), 0);
   const status = invoiceStatus(inv);
-  const statusLabel = status==='lunas' ? 'LUNAS' : status==='dp' ? 'DP' : 'BELUM BAYAR';
+  const statusLabel = kgStatusLabel(status);
 
   const itemsRows = (inv.items||[]).map(it=>`
     <tr><td>${escapeHtml(it.desc)}</td><td>${formatRupiah(it.price)}</td><td>${it.qty}</td><td>${formatRupiah(it.price*it.qty)}</td></tr>
@@ -3376,8 +3577,8 @@ function openInvoiceDetail(invNo){
 
         <div class="kg-totals">
           <div class="trow"><span>Total Nota</span><span>${formatRupiah(inv.total)}</span></div>
-          <div class="trow"><span>Sudah Dibayar</span><span>${formatRupiah(inv.totalDibayar||0)}</span></div>
-          <div class="trow grand"><span>Sisa</span><span>${formatRupiah(sisa)}</span></div>
+          <div class="trow"><span>Sudah Masuk (DP / pembayaran)</span><span>${formatRupiah(inv.totalDibayar||0)}</span></div>
+          <div class="trow grand"><span>Sisa Belum Dibayar</span><span>${formatRupiah(sisa)}</span></div>
         </div>
 
         <label style="margin-top:0;">Riwayat Pembayaran</label>
@@ -3412,12 +3613,14 @@ async function submitPayment(invNo, sisa){
    - wspEmployees        : data karyawan (CRUD oleh Owner/Admin)
    - wspAttendance       : catatan absen masuk harian + foto kamera
    - wspMarketingProgress: progress harian KPI Marketing + bukti gambar
+   - wspMarketingProspects: database prospek PIC & calon customer marketing
    - wspSettings/config  : target KPI & jam absen (diubah oleh Owner/Admin)
    ===================================================================== */
 
 let wspEmployeesCache = [];
 let wspAttendanceCache = [];
 let wspMarketingCache = [];
+let wspProspectsCache = [];
 let wspSettings = { kontakTarget: 10, eventTarget: 10, jamMulai: '07:00', jamSelesai: '17:00' };
 let wspInited = false;
 let wspStream = null;
@@ -3439,8 +3642,14 @@ let wspState = {
   rekapEmployeeId: 'all',
   marketingMonth: wspCurrentMonthStr(),
   kpiMonth: wspCurrentMonthStr(),
-  ownerEmail: ''
+  ownerEmail: '',
+  prospectFilter: 'all', // 'all' | 'belum' | 'sudah' | 'hari_ini'
+  prospectSearch: '',
+  prospectOwnerFilter: 'all' // for owner view
 };
+wspState.prospectMonth='all'; wspState.prospectYear=null; wspState.prospectPage='belum';
+wspState.ui={kpi:true,hub:true,cat:true};
+try{ Object.assign(wspState.ui, JSON.parse(localStorage.getItem('tenx_wsp_ui')||'{}')); }catch(e){}
 
 /* ---------- Helpers ---------- */
 function wspCurrentMonthStr(){
@@ -3486,12 +3695,192 @@ function wspWorkingDaysInMonth(yyyymm){
 function wspGetEmployee(id){ return wspEmployeesCache.find(e=>e.id===id); }
 function wspAttendanceFor(employeeId, dateStr){ return wspAttendanceCache.find(a=>a.employeeId===employeeId && a.date===dateStr); }
 function wspMarketingFor(employeeId, dateStr){ return wspMarketingCache.find(m=>m.employeeId===employeeId && m.date===dateStr); }
+function wspProspectsFor(employeeId){ return wspProspectsCache.filter(p=>p.employeeId===employeeId); }
+
+/* ---- Hitungan KPI marketing LIVE dari database prospek (tanggal lokal, bukan UTC) ---- */
+function wspLocalDate(iso){
+  const d=new Date(iso); if(isNaN(d.getTime())) return '';
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function wspContactDay(p){
+  if(!p||!p.contacted||p.contactedByOther) return '';
+  return p.contactedDate || (p.contactedAt?wspLocalDate(p.contactedAt):'') || p.date || '';
+}
+function wspIsContactedOn(p,dateStr){ return wspContactDay(p)===dateStr; }
+function wspAddedDay(p){ return (p&&p.date) || (p&&p.createdAt?wspLocalDate(p.createdAt):''); }
+function wspIsAddedOn(p,dateStr){ return wspAddedDay(p)===dateStr; }
+/* Total kontak & event satu karyawan dalam satu bulan (yyyy-mm).
+   Dihitung live dari prospek; catatan manual yang lebih besar tetap dipertahankan. */
+function wspMonthTotals(employeeId, month){
+  const mine=wspProspectsFor(employeeId), days={};
+  const d=(k)=>days[k]||(days[k]={kontak:0,ev:new Set(),saved:null});
+  mine.forEach(p=>{
+    const c=wspContactDay(p); if(c && c.startsWith(month)) d(c).kontak++;
+    const a=wspAddedDay(p), ev=(p.namaEvent||'').trim().toLowerCase();
+    if(a && a.startsWith(month) && ev) d(a).ev.add(ev);
+  });
+  wspMarketingCache.filter(m=>m.employeeId===employeeId && m.date && m.date.startsWith(month)).forEach(m=>{ d(m.date).saved=m; });
+  let kontak=0,event=0,lapor=0;
+  Object.keys(days).forEach(k=>{
+    const x=days[k], sv=x.saved;
+    let kk=x.kontak, ee=x.ev.size;
+    if(sv && !sv.autoSynced){ kk=Math.max(kk,Number(sv.kontak)||0); ee=Math.max(ee,Number(sv.event)||0); }
+    kontak+=kk; event+=ee; if(sv||kk>0||ee>0) lapor++;
+  });
+  return {kontak,event,lapor};
+}
+
 function wspGenId(){
   return 'WSP-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2,7).toUpperCase();
+}
+function wspGenProspectId(){
+  return 'PRSP-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
 }
 function wspMonthLabel(yyyymm){
   try{ return new Date((yyyymm||wspCurrentMonthStr())+'-01').toLocaleDateString('id-ID',{month:'long', year:'numeric'}); }
   catch(e){ return yyyymm; }
+}
+
+/* Helper Nomor Telepon & WhatsApp */
+function wspNormalizePhone(raw){
+  if(!raw) return '';
+  let s = String(raw).trim().replace(/[\s\-\.\(\)]/g, '');
+  if(s.startsWith('+62')) s = '0' + s.slice(3);
+  else if(s.startsWith('62')) s = '0' + s.slice(2);
+  else if(s.startsWith('8')) s = '0' + s;
+  return s;
+}
+function wspPhoneForWhatsApp(raw){
+  let s = wspNormalizePhone(raw).replace(/\D/g, '');
+  if(s.startsWith('0')) s = '62' + s.slice(1);
+  return s;
+}
+/* ===== Instagram helpers ===== */
+function wspNormIg(raw){
+  if(raw==null) return '';
+  let s=String(raw).trim(); if(!s) return '';
+  let m=s.match(/(?:instagram\.com|instagr\.am|ig\.me)\/(?:m\/|_u\/)?@?([a-z0-9._]+)/i), found=!!m;
+  if(m) s=m[1];
+  else { m=s.match(/@([a-z0-9._]{1,30})/i); if(m){ s=m[1]; found=true; } }
+  if(!found && /\s/.test(s)) return '';
+  s=s.replace(/^@+/,'').replace(/[\s\/?#].*$/,'').replace(/\.+$/,'').toLowerCase();
+  if(!/^[a-z0-9._]{1,30}$/.test(s)) return '';
+  if(/^\d{8,}$/.test(s)) return '';
+  if(['p','reel','reels','explore','stories','accounts','direct','tv'].includes(s)) return '';
+  return s;
+}
+function wspLooksIg(v){
+  const t=String(v==null?'':v).trim();
+  return /^@[a-z0-9._]{2,30}$/i.test(t) || /(instagram\.com|instagr\.am|ig\.me)\//i.test(t);
+}
+/* Cari username IG yang "terselip" di teks bebas (catatan, nama PIC, dll) */
+function wspIgFromText(text){
+  const t=String(text==null?'':text); if(!t) return '';
+  let m=t.match(/(?:instagram\.com|instagr\.am|ig\.me)\/(?:m\/|_u\/)?@?([a-z0-9._]+)/i);
+  if(m){ const u=wspNormIg(m[1]); if(u) return u; }
+  m=t.match(/(?:^|[\s(,;|:])@([a-z0-9._]{2,30})/i);
+  if(m){ const u=wspNormIg(m[1]); if(u) return u; }
+  m=t.match(/\b(?:ig|instagram|insta)\s*[:=]\s*@?([a-z0-9._]{2,30})/i);
+  if(m){ const u=wspNormIg(m[1]); if(u) return u; }
+  return '';
+}
+
+/* ===== Deteksi prospek yang sama antar karyawan (event sama + kontak PIC sama) ===== */
+function wspEventKey(ev){
+  const k=String(ev||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+  return (!k||k==='event tanpa nama')?'':k;
+}
+function wspContactKeys(p){
+  const k=[], wa=wspPhoneForWhatsApp(p.noWa||''), ig=wspNormIg(p.igUsername||'');
+  if(wa && wa.length>=9) k.push('wa:'+wa);
+  if(ig) k.push('ig:'+ig);
+  return k;
+}
+function wspFindSiblings(p){
+  const ek=wspEventKey(p.namaEvent), ck=wspContactKeys(p);
+  if(!ek||!ck.length) return [];
+  return wspProspectsCache.filter(x=>x.id!==p.id && x.employeeId!==p.employeeId
+    && wspEventKey(x.namaEvent)===ek && wspContactKeys(x).some(k=>ck.includes(k)));
+}
+/* Dipanggil saat p dicentang/dibatalkan. Mengubah data duplikat milik karyawan lain di cache,
+   mengembalikan daftar record yang berubah (untuk disimpan). */
+function wspPropagateContact(p,isChecked){
+  const sibs=wspFindSiblings(p), changed=[], now=new Date().toISOString(), today=wspTodayStr();
+  sibs.forEach(sb=>{
+    if(isChecked){
+      if(sb.contacted) return;
+      sb.contacted=true; sb.status='sudah';
+      sb.contactedDate=p.contactedDate||today; sb.contactedAt=p.contactedAt||now;
+      sb.contactedByOther=true; sb.contactedBy=p.employeeName||'rekan tim'; sb.contactedById=p.employeeId||'';
+      sb.updatedAt=now; changed.push(sb);
+    } else if(sb.contactedByOther && sb.contactedById===p.employeeId){
+      const other=wspFindSiblings(sb).find(x=>x.id!==p.id && x.contacted && !x.contactedByOther);
+      if(other){
+        sb.contactedBy=other.employeeName||'rekan tim'; sb.contactedById=other.employeeId||'';
+        sb.contactedDate=other.contactedDate||sb.contactedDate; sb.contactedAt=other.contactedAt||sb.contactedAt;
+      } else {
+        sb.contacted=false; sb.status='belum'; sb.contactedDate=''; sb.contactedAt='';
+        sb.contactedByOther=false; sb.contactedBy=''; sb.contactedById='';
+      }
+      sb.updatedAt=now; changed.push(sb);
+    }
+  });
+  return changed;
+}
+/* Prospek BARU yang ternyata sudah dihubungi karyawan lain -> langsung masuk "Sudah Dihubungi" */
+function wspApplyIncoming(rec){
+  const real=wspFindSiblings(rec).find(x=>x.contacted && !x.contactedByOther);
+  if(!real) return false;
+  rec.contacted=true; rec.status='sudah';
+  rec.contactedDate=real.contactedDate||wspTodayStr(); rec.contactedAt=real.contactedAt||new Date().toISOString();
+  rec.contactedByOther=true; rec.contactedBy=real.employeeName||'rekan tim'; rec.contactedById=real.employeeId||'';
+  return true;
+}
+function wspToast(msg){
+  let t=document.getElementById('wspToast');
+  if(!t){ t=document.createElement('div'); t.id='wspToast';
+    t.style.cssText="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#211D1A;color:#fff;padding:11px 18px;border-radius:10px;font:600 13px 'Work Sans',sans-serif;z-index:99999;max-width:90vw;box-shadow:0 6px 20px rgba(0,0,0,.25);text-align:center;line-height:1.4";
+    document.body.appendChild(t); }
+  t.textContent=msg; t.style.display='block'; clearTimeout(t._h); t._h=setTimeout(()=>{t.style.display='none';},5200);
+}
+/* HTML helper untuk baris tabel */
+function wspContactButtons(p){
+  const ig=wspNormIg(p.igUsername||'');
+  const btns=(p.noWa?`<button class="wsp-wa-btn" onclick="wspChatWhatsApp('${escapeHtml(p.noWa)}', '${escapeHtml(p.namaPic)}', '${escapeHtml(p.namaEvent)}', '${p.id}')">Chat WA</button>`:'')
+    +(ig?`<button class="wsp-ig-btn" title="Buka DM Instagram @${ig} (pesan penawaran otomatis disalin)" onclick="wspDmInstagram('${p.id}')">DM IG</button>`:'');
+  return (ig?`<div><a class="wsp-ig-handle" href="https://instagram.com/${ig}" target="_blank" rel="noopener">@${escapeHtml(ig)}</a></div>`:'')
+    +(btns?`<div class="wsp-contact-row">${btns}</div>`:'');
+}
+function wspPicBadges(p){
+  let h='';
+  if(p.contacted && p.contactedByOther){
+    h+=`<span class="wsp-badge-other">✔ Sudah dihubungi oleh ${escapeHtml(p.contactedBy||'rekan tim')}</span>`;
+  } else if(!p.contacted){
+    const names=[...new Set(wspFindSiblings(p).map(x=>x.employeeName||'rekan tim'))];
+    if(names.length) h+=`<span class="wsp-badge-dup">⚠ Event &amp; PIC yang sama juga ada di: ${names.map(escapeHtml).join(', ')}</span>`;
+  }
+  return h;
+}
+function wspCatatanHtml(p){
+  const other=(p.contacted&&p.contactedByOther)?`<div style="color:var(--ab-green);font-weight:700;margin-bottom:3px;">Sudah dihubungi oleh ${escapeHtml(p.contactedBy||'rekan tim')}</div>`:'';
+  return other+(p.catatan?escapeHtml(p.catatan):(other?'':'—'));
+}
+
+function wspFormatExcelDate(val){
+  if(!val) return '';
+  if(val instanceof Date){
+    if(isNaN(val.getTime())) return '';
+    return val.getFullYear() + '-' + String(val.getMonth()+1).padStart(2,'0') + '-' + String(val.getDate()).padStart(2,'0');
+  }
+  if(typeof val === 'number'){
+    try{
+      const d = new Date(Math.round((val - 25569)*86400*1000));
+      if(!isNaN(d.getTime())){
+        return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+      }
+    }catch(e){}
+  }
+  return String(val).trim();
 }
 
 /* ---------- Data layer ---------- */
@@ -3512,7 +3901,13 @@ async function wspSaveAttendance(rec){
   catch(e){ alert('Gagal menyimpan absensi: ' + e.message); return false; }
 }
 async function wspSaveMarketing(rec){
-  if(!CONFIG_READY) return false;
+  if(!CONFIG_READY){
+    const idx = wspMarketingCache.findIndex(m=>m.id===rec.id);
+    if(idx>=0) wspMarketingCache[idx] = rec;
+    else wspMarketingCache.unshift(rec);
+    try{ localStorage.setItem('tenx_wsp_marketing_cache', JSON.stringify(wspMarketingCache)); }catch(e){}
+    return true;
+  }
   try{ await db.collection('wspMarketingProgress').doc(rec.id).set(rec); return true; }
   catch(e){ alert('Gagal menyimpan progress: ' + e.message); return false; }
 }
@@ -3522,8 +3917,368 @@ async function wspSaveSettings(cfg){
   catch(e){ alert('Gagal menyimpan pengaturan: ' + e.message); return false; }
 }
 
+/* Data layer Prospek PIC Marketing */
+async function wspSaveProspect(rec, extraDates){
+  // Update local cache immediately
+  const idx = wspProspectsCache.findIndex(p=>p.id===rec.id);
+  if(idx>=0) wspProspectsCache[idx] = rec;
+  else wspProspectsCache.unshift(rec);
+  try{ localStorage.setItem('tenx_wsp_prospects_cache', JSON.stringify(wspProspectsCache)); }catch(e){}
+
+  if(CONFIG_READY){
+    try{
+      await db.collection('wspMarketingProspects').doc(rec.id).set(rec);
+    }catch(e){
+      console.error('Firestore save prospect error:', e);
+    }
+  }
+
+  // Auto-sync KPI harian karyawan bersangkutan
+  // Sinkron KPI untuk tanggal input, tanggal dihubungi, hari ini, dan tanggal lama (jika dibatalkan)
+  const ds = new Set([rec.date || wspTodayStr(), rec.contactedDate, wspTodayStr()].concat(extraDates || []).filter(Boolean));
+  for(const d of ds) await wspSyncProspectsToDailyKpi(rec.employeeId, d);
+  return true;
+}
+
+async function wspSaveProspectsBatch(records){
+  if(!records || !records.length) return false;
+  // Update local cache
+  records.forEach(rec=>{
+    const idx = wspProspectsCache.findIndex(p=>p.id===rec.id);
+    if(idx>=0) wspProspectsCache[idx] = rec;
+    else wspProspectsCache.unshift(rec);
+  });
+  try{ localStorage.setItem('tenx_wsp_prospects_cache', JSON.stringify(wspProspectsCache)); }catch(e){}
+
+  if(CONFIG_READY){
+    try{
+      const batchSize = 350;
+      for(let i=0; i<records.length; i+=batchSize){
+        const chunk = records.slice(i, i+batchSize);
+        const batch = db.batch();
+        chunk.forEach(rec=>{
+          const ref = db.collection('wspMarketingProspects').doc(rec.id);
+          batch.set(ref, rec);
+        });
+        await batch.commit();
+      }
+    }catch(e){
+      console.error('Firestore batch save error:', e);
+    }
+  }
+
+  // Auto-sync KPI harian untuk semua karyawan yang ada di records
+  const empIds = [...new Set(records.map(r=>r.employeeId).filter(Boolean))];
+  for(const eid of empIds){
+    await wspSyncProspectsToDailyKpi(eid, wspTodayStr());
+  }
+  return true;
+}
+
+async function wspDeleteProspect(id){
+  const p = wspProspectsCache.find(x=>x.id===id);
+  if(!p) return false;
+  if(!confirm(`Hapus data prospek PIC "${p.namaPic || p.namaEvent || 'ini'}"?`)) return false;
+
+  wspProspectsCache = wspProspectsCache.filter(x=>x.id!==id);
+  try{ localStorage.setItem('tenx_wsp_prospects_cache', JSON.stringify(wspProspectsCache)); }catch(e){}
+
+  if(CONFIG_READY){
+    try{
+      await db.collection('wspMarketingProspects').doc(id).delete();
+    }catch(e){
+      console.error('Firestore delete error:', e);
+    }
+  }
+
+  for(const d of new Set([p.date || wspTodayStr(), p.contactedDate, wspTodayStr()].filter(Boolean))) await wspSyncProspectsToDailyKpi(p.employeeId, d);
+  renderAbsensi();
+  return true;
+}
+
+/* Toggle Checklist Sudah / Belum Dihubungi */
+async function wspToggleProspectContacted(id, isChecked){
+  const p = wspProspectsCache.find(x=>x.id===id);
+  if(!p) return;
+  const today = wspTodayStr();
+  const oldDate = p.contactedDate;
+  p.contacted = !!isChecked;
+  p.status = isChecked ? 'sudah' : 'belum';
+  p.contactedDate = isChecked ? today : '';
+  p.contactedAt = isChecked ? new Date().toISOString() : '';
+  p.contactedByOther = false;
+  p.contactedBy = isChecked ? (p.employeeName || '') : '';
+  p.contactedById = isChecked ? (p.employeeId || '') : '';
+  p.updatedAt = new Date().toISOString();
+
+  // Prospek yang sama (event + PIC sama) di karyawan lain ikut pindah / kembali otomatis
+  const changed = wspPropagateContact(p, !!isChecked);
+
+  // Tampilan langsung pindah halaman & progress langsung bergerak, simpan menyusul
+  renderAbsensi();
+  await wspSaveProspect(p, [oldDate]);
+  if(changed.length) await wspSaveProspectsBatch(changed);
+  renderAbsensi();
+  if(changed.length){
+    const names = [...new Set(changed.map(c=>c.employeeName||'rekan'))].join(', ');
+    wspToast(isChecked
+      ? `Data yang sama milik ${names} otomatis dipindah ke "Sudah Dihubungi" (oleh ${p.employeeName||'rekan tim'}).`
+      : `Data yang sama milik ${names} dikembalikan ke "Belum Dihubungi".`);
+  }
+}
+
+/* =========================================================================
+   INTEGRASI OTOMATIS KE PROGRESS & KPI HARIAN MARKETING
+   Menghitung jumlah PIC yang dihubungi hari ini & event yang dicari hari ini,
+   lalu langsung mengupdate wspMarketingProgress secara realtime!
+   ========================================================================= */
+async function wspSyncProspectsToDailyKpi(employeeId, dateStr){
+  if(!employeeId) return;
+  dateStr = dateStr || wspTodayStr();
+  const emp = wspGetEmployee(employeeId);
+  if(!emp || emp.division !== 'marketing') return;
+
+  const myProspects = wspProspectsCache.filter(p => p.employeeId === employeeId);
+
+  // 1. Jumlah kontak yang dihubungi pada tanggal ini
+  const contactedOnDate = myProspects.filter(p => wspIsContactedOn(p, dateStr)).length;
+
+  // 2. Jumlah event prospek yang diinput pada tanggal ini
+  const eventsOnDateSet = new Set();
+  myProspects.filter(p => wspIsAddedOn(p, dateStr)).forEach(p => {
+    const ev = (p.namaEvent || '').trim();
+    if(ev) eventsOnDateSet.add(ev.toLowerCase());
+  });
+  const eventsOnDate = eventsOnDateSet.size;
+
+  const existing = wspMarketingFor(employeeId, dateStr);
+  const existingKontak = existing ? (Number(existing.kontak) || 0) : 0;
+  const existingEvent = existing ? (Number(existing.event) || 0) : 0;
+
+  // Nilai baru: prioritaskan hitungan live dari database prospek
+  let targetKontakVal = contactedOnDate;
+  let targetEventVal = eventsOnDate;
+
+  // Jika karyawan pernah upload bukti gambar manual atau input manual lebih tinggi, jaga agar tidak hilang
+  if(existing && existing.proofUrl && !existing.autoSynced){
+    targetKontakVal = Math.max(existingKontak, contactedOnDate);
+    targetEventVal = Math.max(existingEvent, eventsOnDate);
+  }
+
+  // Update progress jika ada perubahan atau belum ada record hari ini
+  if(!existing || existing.kontak !== targetKontakVal || existing.event !== targetEventVal){
+    const record = {
+      id: employeeId + '_' + dateStr,
+      employeeId,
+      employeeName: emp.name,
+      date: dateStr,
+      kontak: targetKontakVal,
+      event: targetEventVal,
+      proofUrl: existing ? existing.proofUrl : '',
+      note: (existing && existing.note && !existing.autoSynced) ? existing.note : `Terintegrasi otomatis dari Database Prospek PIC (${contactedOnDate} PIC dihubungi, ${eventsOnDate} event)`,
+      autoSynced: true,
+      updatedAt: new Date().toISOString(),
+      createdAt: (existing && existing.createdAt) ? existing.createdAt : new Date().toISOString()
+    };
+    await wspSaveMarketing(record);
+  }
+}
+
+/* Chat langsung via WhatsApp dengan template penawaran TenX */
+function wspChatWhatsApp(phone, namaPic, namaEvent, prospectId){
+  const cleanPhone = wspPhoneForWhatsApp(phone);
+  if(!cleanPhone || cleanPhone.length < 9){
+    alert('Nomor WhatsApp tidak valid atau kosong: ' + (phone || '-'));
+    return;
+  }
+  const emp = wspGetEmployee(wspState.myEmployeeId) || {name:'Marketing'};
+  const greeting = `Halo Kak ${namaPic || ''}, perkenalkan saya ${emp.name} dari TENX APPAREL. Terkait rencana apparel/seragam untuk ${namaEvent || 'kegiatan Kakak'}, apakah boleh kami bantu buatkan penawaran & katalog desain terbaik? Terima kasih kak! 🙏`;
+  const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(greeting)}`;
+  window.open(url, '_blank');
+
+  // Jika belum dicentang "sudah dihubungi", tawarkan untuk langsung centang
+  if(prospectId){
+    const p = wspProspectsCache.find(x => x.id === prospectId);
+    if(p && !p.contacted){
+      setTimeout(()=>{
+        if(confirm(`Apakah Kakak sudah menghubungi PIC "${namaPic}" (${namaEvent})?\n\nKlik OK untuk menandai "Sudah Dihubungi" agar otomatis menambah capaian KPI harian Anda.`)){
+          wspToggleProspectContacted(prospectId, true);
+        }
+      }, 700);
+    }
+  }
+}
+
+/* DM Instagram langsung: buka thread DM ke username, pesan penawaran otomatis disalin ke clipboard */
+function wspDmInstagram(prospectId){
+  const p = wspProspectsCache.find(x => x.id === prospectId);
+  if(!p) return;
+  const ig = wspNormIg(p.igUsername || '');
+  if(!ig){ alert('Username Instagram belum diisi / tidak valid untuk prospek ini.'); return; }
+  const emp = wspGetEmployee(wspState.myEmployeeId) || {name: p.employeeName || 'Marketing'};
+  const msg = `Halo Kak ${p.namaPic || ''}, perkenalkan saya ${emp.name} dari TENX APPAREL. Terkait rencana apparel/seragam untuk ${p.namaEvent || 'kegiatan Kakak'}, apakah boleh kami bantu buatkan penawaran & katalog desain terbaik? Terima kasih kak! 🙏`;
+  // Instagram tidak mendukung teks otomatis lewat link, jadi pesan disalin -> tinggal paste
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(msg).catch(()=>{}); }
+    else { const ta=document.createElement('textarea'); ta.value=msg; ta.style.cssText='position:fixed;opacity:0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); }
+  }catch(e){}
+  window.open(`https://ig.me/m/${ig}`, '_blank');
+  wspToast('Pesan penawaran sudah disalin — tempel (paste) di kolom chat DM @' + ig);
+  if(!p.contacted){
+    setTimeout(()=>{
+      if(confirm(`Apakah Kakak sudah mengirim DM ke @${ig} (${p.namaPic || ''} - ${p.namaEvent || ''})?\n\nKlik OK untuk menandai "Sudah Dihubungi" agar otomatis menambah capaian KPI harian Anda.`)){
+        wspToggleProspectContacted(prospectId, true);
+      }
+    }, 1200);
+  }
+}
+
+/* Download Template Excel / CSV untuk Marketing */
+function wspDownloadProspectTemplate(){
+  const sampleData = [
+    {
+      "Nama Event": "Dies Natalis SMA 1 Yogyakarta",
+      "Nama PIC": "Rian Ardiansyah",
+      "No WhatsApp": "081234567890",
+      "Username Instagram": "@rian.ardi",
+      "Tanggal Event": "2026-11-20",
+      "Jenis Produk": "Kaos & PDH",
+      "Estimasi Pcs": 85,
+      "Status Hubungi": "Sudah",
+      "Catatan": "Sudah dikirim price list, minta follow-up lusa"
+    },
+    {
+      "Nama Event": "Porseni Mahasiswa FT Undip",
+      "Nama PIC": "Dewi Sartika",
+      "No WhatsApp": "085712345678",
+      "Username Instagram": "@bemftundip",
+      "Tanggal Event": "2026-12-05",
+      "Jenis Produk": "Jaket Bomber & Jersey",
+      "Estimasi Pcs": 120,
+      "Status Hubungi": "Belum",
+      "Catatan": "Dapat kontak dari IG @bemftundip"
+    },
+    {
+      "Nama Event": "Touring Komunitas RX-King Solo",
+      "Nama PIC": "Bambang Pamungkas",
+      "No WhatsApp": "081398765432",
+      "Username Instagram": "",
+      "Tanggal Event": "2026-10-28",
+      "Jenis Produk": "Kaos Sablon Plastisol",
+      "Estimasi Pcs": 50,
+      "Status Hubungi": "Sudah",
+      "Catatan": "Tertarik bahan cotton combed 24s"
+    }
+  ];
+
+  if(window.XLSX){
+    const ws = XLSX.utils.json_to_sheet(sampleData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Template Prospek");
+    XLSX.writeFile(wb, "Template_Data_Prospek_TENX.xlsx");
+  } else {
+    wspDownloadCsv(sampleData, "Template_Data_Prospek_TENX.csv");
+  }
+}
+
+/* Export Database Prospek ke Excel / CSV */
+function wspExportProspectsExcel(filterEmpId){
+  let list = wspProspectsCache;
+  if(filterEmpId && filterEmpId !== 'all'){
+    list = list.filter(p=>p.employeeId === filterEmpId);
+  }
+  if(!list.length){
+    alert('Belum ada data prospek untuk diekspor.');
+    return;
+  }
+  const rows = list.map((p, idx)=>({
+    "No": idx + 1,
+    "Marketing": p.employeeName || '-',
+    "Nama Event / Organisasi": p.namaEvent || '-',
+    "Nama PIC": p.namaPic || '-',
+    "No WhatsApp": p.noWa || '-',
+    "Instagram": p.igUsername ? '@'+p.igUsername : '-',
+    "Tanggal Event": p.tglEvent || '-',
+    "Jenis Produk": p.jenisProduk || '-',
+    "Estimasi Pcs": p.estimasiPcs || '-',
+    "Status Hubungi": p.contacted ? 'Sudah Dihubungi' : 'Belum Dihubungi',
+    "Dihubungi Oleh": p.contacted ? (p.contactedBy || p.employeeName || '-') : '-',
+    "Tanggal Dihubungi": p.contactedDate ? formatDateID(p.contactedDate) : '-',
+    "Tanggal Input": p.date ? formatDateID(p.date) : '-',
+    "Catatan": p.catatan || '-'
+  }));
+
+  if(window.XLSX){
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Data Prospek");
+    XLSX.writeFile(wb, "Database_Prospek_Marketing_TENX_" + wspTodayStr() + ".xlsx");
+  } else {
+    wspDownloadCsv(rows, "Database_Prospek_Marketing_TENX_" + wspTodayStr() + ".csv");
+  }
+}
+
+function wspDownloadCsv(data, filename){
+  if(!data.length) return;
+  const headers = Object.keys(data[0]);
+  const lines = [headers.map(h => `"${String(h).replace(/"/g, '""')}"`).join(',')];
+  data.forEach(row => {
+    lines.push(headers.map(h => `"${String(row[h]||'').replace(/"/g, '""')}"`).join(','));
+  });
+  const blob = new Blob(["\uFEFF" + lines.join('\r\n')], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/* Fallback parser CSV sederhana jika file CSV tanpa XLSX */
+function wspParseCsvText(text){
+  const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+  if(!lines.length) return [];
+  const parseLine = line => {
+    const res = [];
+    let cur = '', inQ = false;
+    for(let i=0; i<line.length; i++){
+      const c = line[i];
+      if(c === '"'){
+        if(inQ && line[i+1] === '"'){ cur += '"'; i++; }
+        else { inQ = !inQ; }
+      } else if(c === ',' && !inQ){
+        res.push(cur.trim());
+        cur = '';
+      } else {
+        cur += c;
+      }
+    }
+    res.push(cur.trim());
+    return res;
+  };
+  const headers = parseLine(lines[0]);
+  const rows = [];
+  for(let i=1; i<lines.length; i++){
+    const cols = parseLine(lines[i]);
+    const obj = {};
+    headers.forEach((h, idx) => { obj[h] = cols[idx] || ''; });
+    rows.push(obj);
+  }
+  return rows;
+}
+
 function subscribeWspRealtime(){
-  if(!CONFIG_READY){ wspState.loading = false; renderAbsensi(); return; }
+  if(!CONFIG_READY){
+    wspState.loading = false;
+    try{
+      const localP = localStorage.getItem('tenx_wsp_prospects_cache');
+      if(localP) wspProspectsCache = JSON.parse(localP);
+    }catch(e){}
+    renderAbsensi();
+    return;
+  }
   db.collection('wspEmployees').orderBy('createdAt','asc').onSnapshot(snap=>{
     wspEmployeesCache = snap.docs.map(d=>d.data());
     wspState.loading = false;
@@ -3541,6 +4296,24 @@ function subscribeWspRealtime(){
     if(doc.exists) wspSettings = Object.assign({}, wspSettings, doc.data());
     renderAbsensi();
   }, err=>console.error('Realtime wspSettings error', err));
+  db.collection('wspMarketingProspects').orderBy('createdAt','desc').onSnapshot(snap=>{
+    wspProspectsCache = snap.docs.map(d=>d.data());
+    try{ localStorage.setItem('tenx_wsp_prospects_cache', JSON.stringify(wspProspectsCache)); }catch(e){}
+    // Otomatis sinkronkan KPI untuk karyawan marketing yang sedang aktif
+    if(wspState.myEmployeeId){
+      const curEmp = wspGetEmployee(wspState.myEmployeeId);
+      if(curEmp && curEmp.division === 'marketing'){
+        wspSyncProspectsToDailyKpi(curEmp.id, wspTodayStr());
+      }
+    }
+    renderAbsensi();
+  }, err=>{
+    console.error('Realtime wspMarketingProspects error', err);
+    try{
+      const localP = localStorage.getItem('tenx_wsp_prospects_cache');
+      if(localP && !wspProspectsCache.length) wspProspectsCache = JSON.parse(localP);
+    }catch(e){}
+  });
 }
 
 function initAbsensi(){
@@ -3549,6 +4322,10 @@ function initAbsensi(){
   try{ wspState.myEmployeeId = localStorage.getItem('tenx_wsp_employee_id') || ''; }catch(e){}
   try{ wspState.role = localStorage.getItem('tenx_wsp_role') || 'karyawan'; }catch(e){}
   try{ wspState.ownerEmail = localStorage.getItem('tenx_wsp_owner_email') || ''; }catch(e){}
+  try{
+    const localP = localStorage.getItem('tenx_wsp_prospects_cache');
+    if(localP) wspProspectsCache = JSON.parse(localP);
+  }catch(e){}
   renderAbsensi();
   subscribeWspRealtime();
 }
@@ -3665,7 +4442,7 @@ function renderKaryawanView(){
   } else {
     statusBlock = `
       <div class="ab-badge belum">BELUM ABSEN</div>
-      <button class="btn green block" style="margin-top:14px;" onclick="wspOpenCamera()">📷 Absen Masuk (Kamera)</button>`;
+      <button class="btn green block" style="margin-top:14px;" onclick="wspOpenCamera()">Absen Masuk (Kamera)</button>`;
   }
 
   const myAttendance = wspAttendanceCache.filter(a=>a.employeeId===emp.id).slice(0,14);
@@ -3681,38 +4458,198 @@ function renderKaryawanView(){
     const prog = wspMarketingFor(emp.id, today);
     const kTarget = Number(wspSettings.kontakTarget) || 10;
     const eTarget = Number(wspSettings.eventTarget) || 10;
-    if(prog){
-      const kPct = Math.min(100, Math.round(((Number(prog.kontak)||0)/kTarget)*100));
-      const ePct = Math.min(100, Math.round(((Number(prog.event)||0)/eTarget)*100));
-      marketingBlock = `
-        <div class="ab-card">
-          <h2>Progress Marketing Hari Ini</h2>
-          <div class="ab-grid">
-            <div class="ab-stat">
-              <div class="lbl">Kontak (target ${kTarget}/hari)</div>
-              <div class="val">${prog.kontak} / ${kTarget}</div>
-              <div class="ab-progress-bar ${Number(prog.kontak)>=kTarget?'':'over'}"><div style="width:${kPct}%"></div></div>
-            </div>
-            <div class="ab-stat">
-              <div class="lbl">Event (target ${eTarget}/hari)</div>
-              <div class="val">${prog.event} / ${eTarget}</div>
-              <div class="ab-progress-bar ${Number(prog.event)>=eTarget?'':'over'}"><div style="width:${ePct}%"></div></div>
-            </div>
-          </div>
-          <div style="margin-top:14px;display:flex;gap:12px;align-items:center;">
-            <img src="${prog.proofUrl}" class="ab-thumb" style="width:60px;height:60px;" onclick="wspLightbox('${prog.proofUrl}')">
-            <div style="font-size:12.5px;color:var(--ab-muted);">${prog.note ? escapeHtml(prog.note) : 'Bukti sudah dikirim untuk hari ini.'}</div>
-          </div>
-          <button class="btn ghost block" style="margin-top:14px;" onclick="wspOpenMarketingForm()">Update Ulang Progress Hari Ini</button>
-        </div>`;
-    } else {
-      marketingBlock = `
-        <div class="ab-card">
-          <h2>Update Progress Marketing</h2>
-          <div class="sub" style="font-size:13px;color:var(--ab-muted);">Target KPI hari ini: <b>${kTarget} kontak</b> &amp; <b>${eTarget} event</b>. Lengkapi bukti berupa screenshot rekap Excel Anda.</div>
-          <button class="btn amber block" style="margin-top:10px;" onclick="wspOpenMarketingForm()">+ Input Progress Hari Ini</button>
-        </div>`;
+    const myProspects = wspProspectsFor(emp.id);
+
+    // Hitung kontak & event live hari ini dari database prospek
+    const contactedTodayList = myProspects.filter(p => wspIsContactedOn(p, today));
+    const contactedToday = contactedTodayList.length;
+
+    const eventsTodaySet = new Set();
+    myProspects.filter(p => wspIsAddedOn(p, today)).forEach(p => {
+      const ev = (p.namaEvent||'').trim();
+      if(ev) eventsTodaySet.add(ev.toLowerCase());
+    });
+    const eventsToday = eventsTodaySet.size;
+
+    // Nilai live terintegrasi
+    // Hitungan live dari database prospek; angka manual hanya dipakai jika lebih besar
+    const manualProg = prog && !prog.autoSynced;
+    const kontakCount = manualProg ? Math.max(Number(prog.kontak)||0, contactedToday) : contactedToday;
+    const eventCount = manualProg ? Math.max(Number(prog.event)||0, eventsToday) : eventsToday;
+
+    const kPct = Math.min(100, Math.round((kontakCount / kTarget) * 100));
+    const ePct = Math.min(100, Math.round((eventCount / eTarget) * 100));
+    const avgPct = Math.round((kPct + ePct) / 2);
+    const isTercapai = (kontakCount >= kTarget && eventCount >= eTarget);
+
+    // Filter daftar prospek: halaman Belum / Sudah dihubungi
+    let filteredProspects = myProspects.filter(p => wspState.prospectPage==='sudah' ? p.contacted : !p.contacted);
+
+    if(wspState.prospectSearch){
+      const q = wspState.prospectSearch.toLowerCase();
+      filteredProspects = filteredProspects.filter(p =>
+        (p.namaPic && p.namaPic.toLowerCase().includes(q)) ||
+        (p.namaEvent && p.namaEvent.toLowerCase().includes(q)) ||
+        (p.noWa && p.noWa.includes(q)) ||
+        (p.igUsername && p.igUsername.toLowerCase().includes(q.replace(/^@/,''))) ||
+        (p.jenisProduk && p.jenisProduk.toLowerCase().includes(q)) ||
+        (p.catatan && p.catatan.toLowerCase().includes(q))
+      );
     }
+
+    const pg = wspEventPages(filteredProspects); filteredProspects = wspSortPage(pg.rows);
+    const uncontactedCount = myProspects.filter(p => !p.contacted).length;
+    const contactedCount = myProspects.filter(p => p.contacted).length;
+    const todayAddedCount = myProspects.filter(p => wspIsAddedOn(p, today)).length;
+
+    // Baris tabel prospek
+    const prospectRows = filteredProspects.map((p, idx) => `
+      <tr>
+        <td style="text-align:center;width:95px;">
+          ${wspCheckBtn(p)}
+        </td>
+        <td>
+          <div style="font-weight:700;font-size:14px;color:var(--ab-ink);">${escapeHtml(p.namaPic || 'Tanpa Nama')}</div>
+          <div style="font-size:12px;color:var(--ab-muted);margin:2px 0;">${escapeHtml(p.noWa || '-')}</div>
+          ${wspContactButtons(p)}${wspPicBadges(p)}
+        </td>
+        <td>
+          <div style="font-weight:600;color:var(--ab-denim);font-size:13.5px;">${escapeHtml(p.namaEvent || '-')}</div>
+          <div style="font-size:11.5px;color:var(--ab-muted);margin-top:2px;">
+            ${p.tglEvent ? `Tgl event: ${formatDateID(p.tglEvent)} ` : ''}
+            ${p.jenisProduk ? `· ${escapeHtml(p.jenisProduk)} ` : ''}
+            ${p.estimasiPcs ? `· ${escapeHtml(p.estimasiPcs)} pcs` : ''}
+          </div>
+        </td>
+        <td>
+          <div style="font-size:11.5px;">
+            ${p.contacted && p.contactedDate ? `<span style="color:var(--ab-green);font-weight:600;">${p.contactedByOther?'':'Dihubungi: '}${wspContactedLabel(p)}</span>` : '<span style="color:var(--ab-muted);">Belum dihubungi</span>'}
+          </div>
+          <div style="font-size:10.5px;color:var(--ab-muted);margin-top:2px;">Input: ${p.date ? formatDateID(p.date) : '-'}</div>
+        </td>
+        <td>
+          <div style="font-size:12px;color:var(--ab-muted);max-width:180px;white-space:normal;line-height:1.4;">${wspCatatanHtml(p)}</div>
+        </td>
+        <td style="white-space:nowrap;width:70px;">
+          <div style="display:flex;gap:4px;">
+            <button class="btn ghost small" onclick="wspOpenProspectForm('${p.id}')" title="Edit">Edit</button>
+            <button class="btn rust small" onclick="wspDeleteProspect('${p.id}')" title="Hapus">Hapus</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+
+    marketingBlock = `
+      <!-- CARD 1: PROGRESS & KPI MARKETING TERINTEGRASI -->
+      <div class="ab-card kpi-highlight">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <h2 style="margin:0;">Progress &amp; KPI Marketing Hari Ini</h2>
+              <span class="wsp-kpi-sync-badge ${isTercapai ? '' : 'pending'}">Realtime Sync Database</span>
+            </div>
+            <div style="font-size:12.5px;color:var(--ab-muted);margin-top:4px;">
+              Progres otomatis terhitung dari data PIC yang Anda input &amp; centang hari ini (${contactedToday} PIC dihubungi, ${eventsToday} event baru).
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <button class="btn ghost small" onclick="wspToggleUi('kpi')">${wspState.ui.kpi?'Sembunyikan':'Tampilkan'} detail</button>
+            <span class="ab-badge ${isTercapai ? 'tercapai' : (avgPct >= 70 ? 'proses' : 'kurang')}" style="transform:none;font-size:12px;padding:6px 14px;">
+              ${isTercapai ? 'TARGET HARI INI TERCAPAI' : `SKOR: ${avgPct}%`}
+            </span>
+          </div>
+        </div>
+
+        <div style="${wspState.ui.kpi?'':'display:none'}">
+        <div class="ab-grid" style="margin-top:16px;">
+          <div class="ab-stat">
+            <div class="lbl">Kontak PIC (Target ${kTarget} / hari)</div>
+            <div class="val">${kontakCount} <span style="font-size:15px;color:var(--ab-muted);font-family:'Work Sans';font-weight:400;">/ ${kTarget}</span></div>
+            <div class="ab-progress-bar ${kontakCount >= kTarget ? '' : 'over'}"><div style="width:${kPct}%"></div></div>
+            <div style="font-size:11px;color:var(--ab-muted);margin-top:4px;">${kontakCount >= kTarget ? 'Target kontak terpenuhi' : `${kTarget - kontakCount} kontak lagi untuk capai target`}</div>
+          </div>
+          <div class="ab-stat">
+            <div class="lbl">Event Dicari (Target ${eTarget} / hari)</div>
+            <div class="val">${eventCount} <span style="font-size:15px;color:var(--ab-muted);font-family:'Work Sans';font-weight:400;">/ ${eTarget}</span></div>
+            <div class="ab-progress-bar ${eventCount >= eTarget ? '' : 'over'}"><div style="width:${ePct}%"></div></div>
+            <div style="font-size:11px;color:var(--ab-muted);margin-top:4px;">${eventCount >= eTarget ? 'Target event terpenuhi' : `${eTarget - eventCount} event lagi untuk capai target`}</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;">
+          <button class="btn" onclick="wspOpenProspectForm(null)">+ Input Prospek Baru</button>
+          <button class="btn amber" onclick="wspOpenImportExcelModal()">Impor File Excel / CSV</button>
+          <button class="btn ghost small" onclick="wspSyncProspectsToDailyKpi('${emp.id}', '${today}');renderAbsensi();" title="Hitung ulang KPI">Sinkronkan KPI</button>
+          <button class="btn ghost small" onclick="wspOpenMarketingForm()">Bukti / Catatan Manual</button>
+        </div>
+        </div>
+      </div>
+
+      <!-- CARD 2: DATABASE PROSPEK & PIC MARKETING -->
+      <div class="ab-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+          <div>
+            <h2 style="margin:0;">Database Prospek &amp; PIC Marketing</h2>
+            <div style="font-size:12.5px;color:var(--ab-muted);margin-top:2px;">
+              Input dan simpan data prospek PIC di sini. Cukup centang checklist untuk menandai yang sudah dihubungi.
+            </div>
+          </div>
+          <div class="wsp-prospect-actions">
+            <button class="btn small" onclick="wspOpenProspectForm(null)">+ Tambah Prospek</button>
+            <button class="btn amber small" onclick="wspOpenImportExcelModal()">Impor Excel</button>
+            <button class="btn ghost small" onclick="wspExportProspectsExcel('${emp.id}')">Ekspor</button>
+          </div>
+        </div>
+
+        ${wspPageTabs(myProspects)}
+        <!-- Filter & Search Toolbar -->
+        <div class="wsp-prospect-toolbar">
+          <div class="wsp-search-bar">
+            
+            <input type="text" placeholder="Cari nama PIC, nama event, no WA..." value="${escapeHtml(wspState.prospectSearch)}" oninput="wspOnProspectSearch(this.value)">
+          </div>
+        </div>
+
+        ${pg.html}
+        <!-- Tabel Prospek PIC -->
+        ${filteredProspects.length ? `
+          <div style="overflow-x:auto;">
+            <table class="ab-table wsp-cards">
+              <thead>
+                <tr>
+                  <th style="text-align:center;">${wspState.prospectPage==='sudah'?'Status':'Centang'}</th>
+                  <th>Nama PIC &amp; WhatsApp</th>
+                  <th>Nama Event / Organisasi</th>
+                  <th>Waktu Hubungi</th>
+                  <th>Catatan</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>${prospectRows}</tbody>
+            </table>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:12px;color:var(--ab-muted);flex-wrap:wrap;gap:8px;">
+            <div>Menampilkan <b>${filteredProspects.length}</b> dari total <b>${myProspects.length}</b> prospek Anda.</div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn ghost small" onclick="wspDownloadProspectTemplate()">Template Excel</button>
+              <button class="btn ghost small" onclick="wspExportProspectsExcel('${emp.id}')">Ekspor ke Excel (.xlsx)</button>
+            </div>
+          </div>
+        ` : `
+          <div class="ab-empty" style="padding:28px 16px;">
+            
+            <div class="display" style="font-size:18px;margin-bottom:4px;">${!myProspects.length ? 'Belum Ada Data Prospek PIC' : (wspState.prospectSearch || wspState.prospectMonth!=='all') ? 'Tidak ada prospek yang cocok dengan pencarian / halaman ini' : (wspState.prospectPage==='sudah' ? 'Belum Ada Prospek yang Dihubungi' : 'Semua Prospek Sudah Dihubungi')}</div>
+            <div style="font-size:13px;color:var(--ab-muted);max-width:440px;margin:0 auto 16px;">
+              ${!myProspects.length ? 'Mulai masukkan data PIC event yang Anda cari atau impor file Excel Anda agar tidak perlu ketik ulang 1 per 1.' : (wspState.prospectPage==='sudah' ? 'Klik tombol Centang pada prospek di halaman Belum Dihubungi, nanti otomatis pindah ke sini.' : 'Coba ubah kata kunci pencarian, atau cek halaman bulan lain.')}
+            </div>
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+              <button class="btn" onclick="wspOpenProspectForm(null)">+ Input Prospek Baru</button>
+              <button class="btn amber" onclick="wspOpenImportExcelModal()">Impor File Excel / CSV</button>
+            </div>
+          </div>
+        `}
+      </div>
+    `;
   }
 
   return `
@@ -3734,7 +4671,7 @@ function renderKaryawanView(){
         <h2 style="margin:0 0 4px;">SOP TenX Apparel</h2>
         <div style="font-size:12.5px;color:var(--ab-muted);">Baca aturan kerja, KPI, jam kerja, piket, bonus &amp; komisi langsung di aplikasi.</div>
       </div>
-      <button class="btn ghost small" onclick="showMode('sop')">&#128216; Buka SOP</button>
+      <button class="btn ghost small" onclick="showMode('sop')">Buka SOP</button>
     </div>
 
     <div class="ab-card">
@@ -3755,6 +4692,14 @@ function wspChangeIdentity(){
   if(!confirm('Ganti identitas karyawan di device ini?')) return;
   wspState.myEmployeeId = '';
   try{ localStorage.removeItem('tenx_wsp_employee_id'); }catch(e){}
+  renderAbsensi();
+}
+function wspOnProspectSearch(val){
+  wspState.prospectSearch = val || '';
+  renderAbsensi();
+}
+function wspSetProspectFilter(f){
+  wspState.prospectFilter = f || 'all';
   renderAbsensi();
 }
 function wspCloseModal(){
@@ -3866,7 +4811,7 @@ function wspOpenManualPickerModal(){
         <h3>Absen Masuk</h3>
         <div class="sub">Tekan tombol di bawah untuk membuka kamera HP Anda.</div>
         <label class="btn green block" style="margin-top:14px;display:block;text-align:center;cursor:pointer;">
-          &#128247; Buka Kamera HP
+          Buka Kamera HP
           <input type="file" accept="image/*" capture="user" style="display:none;" onchange="wspHandleManualPick(this)">
         </label>
         <label class="btn ghost block" style="margin-top:10px;display:block;text-align:center;cursor:pointer;">
@@ -4050,7 +4995,502 @@ async function wspSubmitAttendance(){
   }
 }
 
-/* ---------- Progress Marketing (karyawan) ---------- */
+/* ===================== MODAL INPUT PROSPEK PIC (LANGSUNG DARI APLIKASI) ===================== */
+function wspOpenProspectForm(prospectId){
+  const emp = wspGetEmployee(wspState.myEmployeeId);
+  const p = prospectId ? wspProspectsCache.find(x => x.id === prospectId) : null;
+  const isOwner = wspIsOwnerAuthed() && wspState.role === 'owner';
+  const defaultEmpId = p ? p.employeeId : (emp ? emp.id : (wspEmployeesCache.find(e=>e.division==='marketing')?.id || ''));
+
+  const mktOptions = wspEmployeesCache.filter(e=>e.division==='marketing').map(e =>
+    `<option value="${e.id}" ${defaultEmpId===e.id ? 'selected' : ''}>${escapeHtml(e.name)}</option>`
+  ).join('');
+
+  const today = wspTodayStr();
+  const root = document.getElementById('abModalRoot');
+  root.innerHTML = `
+    <div class="overlay" onclick="if(event.target===this) wspCloseModal()">
+      <div class="modal" style="max-width:540px;">
+        <button class="close" onclick="wspCloseModal()">✕</button>
+        <h3>${p ? 'Edit Data Prospek PIC' : 'Tambah Prospek PIC Baru'}</h3>
+        <div class="sub">Input langsung data calon customer / PIC. Data tersimpan otomatis dan terintegrasi ke KPI harian Anda.</div>
+
+        ${isOwner ? `
+          <label>Pemilik Data (Marketing):</label>
+          <select id="wspPrspEmp">${mktOptions}</select>
+        ` : `<input type="hidden" id="wspPrspEmp" value="${defaultEmpId}">`}
+
+        <label>Nama Event / Kegiatan / Organisasi <span style="color:var(--ab-rust);">*</span></label>
+        <input type="text" id="wspPrspEvent" placeholder="cth: Dies Natalis SMAN 1, BEM FT Undip, Komunitas RX-King" value="${p ? escapeHtml(p.namaEvent||'') : ''}">
+
+        <div class="ab-row2">
+          <div>
+            <label>Nama PIC / Kontak <span style="color:var(--ab-rust);">*</span></label>
+            <input type="text" id="wspPrspPic" placeholder="cth: Kak Rian / Mas Bambang" value="${p ? escapeHtml(p.namaPic||'') : ''}">
+          </div>
+          <div>
+            <label>Nomor WhatsApp / HP</label>
+            <input type="text" id="wspPrspPhone" placeholder="cth: 081234567890" value="${p ? escapeHtml(p.noWa||'') : ''}">
+          </div>
+        </div>
+
+        <label>Username Instagram <span style="font-weight:400;text-transform:none;color:var(--ab-muted);">(opsional bila No WA sudah diisi)</span></label>
+        <input type="text" id="wspPrspIg" placeholder="cth: @bemftundip atau link instagram.com/bemftundip" value="${p && p.igUsername ? '@'+escapeHtml(p.igUsername) : ''}">
+
+        <div class="ab-row2">
+          <div>
+            <label>Tanggal / Waktu Event</label>
+            <input type="date" id="wspPrspTglEvent" value="${p ? (p.tglEvent||'') : ''}">
+          </div>
+          <div>
+            <label>Estimasi Jumlah (Pcs)</label>
+            <input type="number" id="wspPrspQty" min="0" placeholder="cth: 50" value="${p ? (p.estimasiPcs||'') : ''}">
+          </div>
+        </div>
+
+        <label>Kebutuhan Produk / Jenis Apparel</label>
+        <input type="text" id="wspPrspProduk" placeholder="cth: Kaos Combed 24s, Jaket Parasut, Kemeja PDH, Jersey" value="${p ? escapeHtml(p.jenisProduk||'') : ''}">
+
+        <div style="background:var(--ab-bg2);border:1.5px solid var(--ab-line);border-radius:10px;padding:12px 14px;margin-top:14px;">
+          <label style="margin:0;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:13px;text-transform:none;">
+            <input type="checkbox" id="wspPrspContacted" style="width:19px;height:19px;cursor:pointer;" ${p && p.contacted ? 'checked' : ''}>
+            <span><b>Sudah Dihubungi Hari Ini</b> (centang untuk langsung menambah KPI harian)</span>
+          </label>
+        </div>
+
+        <label>Catatan / Keterangan Tambahan</label>
+        <textarea id="wspPrspCatatan" placeholder="Catatan hasil pembicaraan, info sumber kontak, dll...">${p ? escapeHtml(p.catatan||'') : ''}</textarea>
+
+        <div style="display:flex;gap:10px;margin-top:16px;">
+          ${p ? `<button class="btn rust" onclick="wspDeleteProspect('${p.id}');wspCloseModal();">Hapus</button>` : ''}
+          <button class="btn block" onclick="wspSaveProspectForm('${p ? p.id : ''}')">${p ? 'Simpan Perubahan' : 'Simpan Prospek ke Database'}</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+async function wspSaveProspectForm(id){
+  const empIdEl = document.getElementById('wspPrspEmp');
+  const empId = empIdEl ? empIdEl.value : wspState.myEmployeeId;
+  const namaEvent = document.getElementById('wspPrspEvent').value.trim();
+  const namaPic = document.getElementById('wspPrspPic').value.trim();
+  const noWa = document.getElementById('wspPrspPhone').value.trim();
+  const tglEvent = document.getElementById('wspPrspTglEvent').value;
+  const estimasiPcs = document.getElementById('wspPrspQty').value.trim();
+  const jenisProduk = document.getElementById('wspPrspProduk').value.trim();
+  const contacted = document.getElementById('wspPrspContacted').checked;
+  const catatan = document.getElementById('wspPrspCatatan').value.trim();
+
+  if(!namaEvent){ alert('Nama Event / Kegiatan wajib diisi.'); return; }
+  if(!namaPic){ alert('Nama PIC wajib diisi.'); return; }
+  const igRaw = document.getElementById('wspPrspIg') ? document.getElementById('wspPrspIg').value.trim() : '';
+  const igUsername = wspNormIg(igRaw);
+  if(igRaw && !igUsername){ alert('Username Instagram tidak valid. Contoh: @bemftundip'); return; }
+  if(!noWa && !igUsername){ alert('Isi minimal Nomor WhatsApp atau Username Instagram.'); return; }
+
+  const emp = wspGetEmployee(empId) || wspGetEmployee(wspState.myEmployeeId) || { id: empId, name: 'Marketing' };
+  const today = wspTodayStr();
+  const existing = id ? wspProspectsCache.find(x => x.id === id) : null;
+
+  const rec = {
+    id: id || wspGenProspectId(),
+    employeeId: emp.id,
+    employeeName: emp.name,
+    namaEvent,
+    namaPic,
+    noWa: wspNormalizePhone(noWa),
+    igUsername: igUsername || '',
+    tglEvent: tglEvent || '',
+    estimasiPcs: estimasiPcs ? Number(estimasiPcs) : '',
+    jenisProduk: jenisProduk || '',
+    contacted: contacted,
+    status: contacted ? 'sudah' : 'belum',
+    contactedDate: contacted ? ((existing && existing.contactedDate) || today) : '',
+    contactedAt: contacted ? ((existing && existing.contactedAt) || new Date().toISOString()) : '',
+    contactedByOther: !!(contacted && existing && existing.contactedByOther),
+    contactedBy: contacted ? ((existing && existing.contactedBy) || emp.name) : '',
+    contactedById: contacted ? ((existing && existing.contactedById) || emp.id) : '',
+    catatan: catatan || '',
+    date: existing ? (existing.date || today) : today,
+    createdAt: existing ? (existing.createdAt || new Date().toISOString()) : new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  // Prospek baru yang ternyata sudah dihubungi karyawan lain -> langsung "Sudah Dihubungi"
+  let autoOther = false;
+  if(!id && !rec.contacted) autoOther = wspApplyIncoming(rec);
+
+  // Sinkron ke karyawan lain yang memegang event + PIC yang sama
+  let changed = [];
+  if(rec.contacted && !rec.contactedByOther) changed = wspPropagateContact(rec, true);
+  else if(existing && existing.contacted && !existing.contactedByOther && !rec.contacted) changed = wspPropagateContact(rec, false);
+
+  const ok = await wspSaveProspect(rec);
+  if(ok){
+    if(changed.length) await wspSaveProspectsBatch(changed);
+    wspCloseModal();
+    renderAbsensi();
+    if(autoOther) wspToast(`PIC ini sudah dihubungi oleh ${rec.contactedBy}, otomatis masuk "Sudah Dihubungi".`);
+    else if(changed.length && rec.contacted) wspToast(`Data yang sama milik karyawan lain otomatis dipindah ke "Sudah Dihubungi".`);
+  }
+}
+
+/* ===================== MODAL IMPOR FILE EXCEL / CSV ===================== */
+let wspPendingImportRows = [];
+
+function wspOpenImportExcelModal(){
+  const emp = wspGetEmployee(wspState.myEmployeeId);
+  const isOwner = wspIsOwnerAuthed() && wspState.role === 'owner';
+  const defaultEmpId = emp ? emp.id : (wspEmployeesCache.find(e=>e.division==='marketing')?.id || '');
+  const mktOptions = wspEmployeesCache.filter(e=>e.division==='marketing').map(e =>
+    `<option value="${e.id}" ${defaultEmpId===e.id ? 'selected' : ''}>${escapeHtml(e.name)}</option>`
+  ).join('');
+
+  wspPendingImportRows = [];
+
+  const root = document.getElementById('abModalRoot');
+  root.innerHTML = `
+    <div class="overlay" onclick="if(event.target===this) wspCloseModal()">
+      <div class="modal" style="max-width:680px;">
+        <button class="close" onclick="wspCloseModal()">✕</button>
+        <h3>Impor Prospek dari File Excel / CSV</h3>
+        <div class="sub">Pindahkan database prospek Excel Anda langsung ke aplikasi ini tanpa perlu ketik ulang satu per satu. Data otomatis tersimpan dan masuk ke progres KPI harian.</div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+          ${isOwner ? `
+            <div style="flex:1;min-width:200px;">
+              <label style="margin:0 0 4px;">Assign ke PIC Marketing:</label>
+              <select id="wspImportEmpId" style="padding:7px 10px;">${mktOptions}</select>
+            </div>
+          ` : `<input type="hidden" id="wspImportEmpId" value="${defaultEmpId}">`}
+          <button class="btn ghost small" onclick="wspDownloadProspectTemplate()" style="margin-left:auto;">Download Contoh Format Excel</button>
+        </div>
+
+        <div class="wsp-dropzone" onclick="document.getElementById('wspExcelFileInput').click()">
+          
+          <div class="dz-title">Klik atau Tarik File Excel / CSV ke Sini</div>
+          <div class="dz-sub">Mendukung format .xlsx, .xls, dan .csv</div>
+          <input type="file" id="wspExcelFileInput" accept=".xlsx,.xls,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" style="display:none;" onchange="wspHandleExcelFile(this)">
+        </div>
+
+        <div id="wspImportPreviewArea" style="display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:6px;">
+            <div id="wspImportSummary" style="font-weight:700;font-size:14px;color:var(--ab-denim);"></div>
+            <div style="font-size:12px;color:var(--ab-muted);">Preview 5 baris pertama:</div>
+          </div>
+          <div class="wsp-excel-preview" id="wspImportPreviewTable"></div>
+          
+          <div style="background:var(--ab-bg2);border:1.5px solid var(--ab-line);border-radius:10px;padding:12px 14px;margin-top:12px;">
+            <label style="margin:0;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:13px;text-transform:none;">
+              <input type="checkbox" id="wspImportSyncKpi" checked style="width:18px;height:18px;cursor:pointer;">
+              <span><b>Sinkronkan langsung ke Progress KPI Hari Ini</b> (menghitung prospek yang sudah dihubungi &amp; event baru)</span>
+            </label>
+          </div>
+
+          <button class="btn block" id="wspImportSaveBtn" style="margin-top:14px;" onclick="wspSubmitExcelImport()">Simpan Semua Data ke Database</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+let wspImportWb=null;
+const WSP_ALIASES={
+ namaEvent:['nama event','event','kegiatan','nama acara','acara','nama kegiatan','organisasi','nama organisasi','instansi','lembaga','sekolah','komunitas','perusahaan','nama usaha','klien','client','brand','judul'],
+ namaPic:['nama pic','pic','nama kontak','penanggung jawab','pj','contact person','cp','nama cp','narahubung','panitia','ketua','nama','kontak'],
+ noWa:['no whatsapp','nomor whatsapp','whatsapp','nomor wa','no wa','wa','no hp','nomor hp','hp','handphone','telepon','telp','no telp','no telepon','nomor telepon','nomor telp','phone','mobile','no kontak','kontak wa'],
+ tglEvent:['tanggal event','tgl event','tanggal acara','tgl acara','tanggal pelaksanaan','tgl pelaksanaan','tanggal','tgl','jadwal','waktu pelaksanaan','waktu','date'],
+ jenisProduk:['jenis produk','produk','kebutuhan','item','jenis'],
+ estimasiPcs:['estimasi pcs','jumlah pcs','estimasi jumlah','pcs','jumlah','qty'],
+ igUsername:['username instagram','username ig','usn instagram','usn ig','user instagram','user ig','akun instagram','akun ig','id instagram','id ig','instagram username','link instagram','link ig','kontak instagram','kontak ig','instagram','ig','insta','sosmed','sosial media','medsos'],
+ status:['status hubungi','sudah hubungi','dihubungi','status','checklist','hubungi','follow up'],
+ catatan:['catatan','keterangan','notes','note','hasil']
+};
+const WSP_BLN={jan:1,januari:1,january:1,feb:2,februari:2,pebruari:2,february:2,mar:3,maret:3,march:3,apr:4,april:4,mei:5,may:5,jun:6,juni:6,june:6,jul:7,juli:7,july:7,agu:8,agt:8,agus:8,agustus:8,aug:8,august:8,sep:9,sept:9,september:9,okt:10,oktober:10,oct:10,october:10,nov:11,nop:11,nopember:11,november:11,des:12,desember:12,dec:12,december:12};
+function wspExtractPhone(v){
+  if(v===''||v==null) return '';
+  const parts=String(v).split(/[\/,;\n|]|\bdan\b|\batau\b/i);
+  for(const p of parts){ const dd=p.replace(/\D/g,''); if(dd.length>=9&&dd.length<=15) return wspNormalizePhone(p.replace(/[^\d+]/g,'')); }
+  return '';
+}
+function wspParseEventDate(v){
+  if(v===''||v==null) return '';
+  const pad=n=>String(n).padStart(2,'0');
+  const ymd=(y,m,d)=>(m>=1&&m<=12&&d>=1&&d<=31&&y>=2000&&y<=2100)?y+'-'+pad(m)+'-'+pad(d):'';
+  if(v instanceof Date) return isNaN(v)?'':ymd(v.getFullYear(),v.getMonth()+1,v.getDate());
+  const s=String(v).trim().toLowerCase();
+  if(typeof v==='number'||/^\d{5}(\.\d+)?$/.test(s)){ const n=Number(v); if(n>30000&&n<80000){ const d=new Date(Math.round((n-25569)*864e5)); return ymd(d.getUTCFullYear(),d.getUTCMonth()+1,d.getUTCDate()); } return ''; }
+  let m=s.match(/(\d{4})\s*[-\/.]\s*(\d{1,2})\s*[-\/.]\s*(\d{1,2})/); if(m) return ymd(+m[1],+m[2],+m[3]);
+  m=s.match(/(\d{1,2})\s*[-\/.]\s*(\d{1,2})\s*[-\/.]\s*(\d{2,4})/); if(m){ let y=+m[3]; if(y<100) y+=2000; return ymd(y,+m[2],+m[1]); }
+  const mw=(s.match(/[a-z]+/g)||[]).find(w=>WSP_BLN[w]);
+  if(mw){ const dm=s.match(/\b\d{1,2}\b/), ym=s.match(/\b(20\d{2})\b/); return ymd(ym?+ym[1]:new Date().getFullYear(),WSP_BLN[mw],dm?+dm[0]:1); }
+  return '';
+}
+function wspHandleExcelFile(input){
+  const file=input.files&&input.files[0]; if(!file) return;
+  if(!window.XLSX){ alert('Library Excel belum termuat. Coba lagi dalam beberapa detik.'); return; }
+  const isCsv=/\.csv$/i.test(file.name), r=new FileReader();
+  r.onload=e=>{ try{
+    wspImportWb=XLSX.read(new Uint8Array(e.target.result),{type:'array',raw:isCsv});
+    const names=wspImportWb.SheetNames;
+    const first=names.findIndex(n=>wspSheetAoa(n).length>1);
+    wspImportSheetIdx(first>=0?first:0);
+  }catch(err){ alert('Gagal membaca file: '+err.message); } };
+  r.readAsArrayBuffer(file);
+}
+function wspSheetAoa(n){ return XLSX.utils.sheet_to_json(wspImportWb.Sheets[n],{header:1,raw:true,defval:'',blankrows:false}); }
+function wspImportSheetIdx(i){ wspProcessAoa(wspSheetAoa(wspImportWb.SheetNames[i]),i); }
+
+function wspProcessAoa(aoa,sheetIdx){
+  aoa=(aoa||[]).filter(r=>r.some(c=>String(c==null?'':c).trim()!==''));
+  if(!aoa.length){ alert('Sheet ini kosong / tidak ada data yang terbaca.'); return; }
+  const norm=s=>String(s==null?'':s).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+  const sc=h=>{ h=norm(h); const o=[]; if(!h) return o;
+    for(const f in WSP_ALIASES) WSP_ALIASES[f].forEach(a=>{ if(h===a) o.push([f,100+a.length]); else if((' '+h+' ').includes(' '+a+' ')) o.push([f,50+a.length]); });
+    return o; };
+  let hi=-1,best=0;
+  aoa.slice(0,20).forEach((r,i)=>{ const s=new Set(); r.forEach(c=>sc(c).forEach(x=>s.add(x[0]))); if(s.size>best){best=s.size;hi=i;} });
+  const headers=hi>=0?aoa[hi].map(h=>String(h==null?'':h).trim()):[];
+  const body=aoa.slice(hi+1), map={}, used=new Set(), trip=[];
+  headers.forEach((h,ci)=>sc(h).forEach(([f,s])=>trip.push([s,f,ci])));
+  trip.sort((a,b)=>b[0]-a[0]).forEach(([s,f,ci])=>{ if(map[f]===undefined&&!used.has(ci)){ map[f]=ci; used.add(ci); } });
+  const cols=Math.max(...aoa.slice(0,60).map(r=>r.length)), smp=body.slice(0,60), has=v=>v!==''&&v!=null;
+  const rt=(ci,fn)=>{ const f=smp.filter(r=>has(r[ci])); return f.length?f.filter(r=>fn(r[ci])).length/f.length:0; };
+  // kolom "kontak" yang isinya nomor HP -> pindahkan ke No WA
+  if(map.noWa===undefined&&map.namaPic!==undefined&&rt(map.namaPic,wspExtractPhone)>=.6){ map.noWa=map.namaPic; delete map.namaPic; }
+  const free=[];
+  for(let ci=0;ci<cols;ci++){
+    if(used.has(ci)) continue;
+    const pr=rt(ci,wspExtractPhone), dr=rt(ci,wspParseEventDate);
+    if(map.igUsername===undefined&&rt(ci,wspLooksIg)>=.5){ map.igUsername=ci; used.add(ci); }
+    else if(map.tglEvent===undefined&&dr>=.6&&dr>=pr){ map.tglEvent=ci; used.add(ci); }
+    else if(map.noWa===undefined&&pr>=.6){ map.noWa=ci; used.add(ci); }
+    else if(smp.some(r=>has(r[ci]))&&rt(ci,v=>typeof v==='number'&&v<10000)<.8) free.push(ci);
+  }
+  if(best===0) ['namaEvent','namaPic','catatan'].forEach((f,i)=>{ if(free[i]!==undefined){ map[f]=free[i]; used.add(free[i]); } });
+  const txt=v=>String(v==null?'':v).trim();
+  const parsed=[];
+  body.forEach(r=>{
+    const g=f=>map[f]===undefined?'':r[map[f]];
+    let pic=txt(g('namaPic')), wa=wspExtractPhone(g('noWa'));
+    if(!wa){ const m=pic.match(/(\+?62|0)8[\d\s\-.]{7,13}\d/); if(m){ wa=wspNormalizePhone(m[0]); pic=pic.replace(m[0],'').replace(/[\s()\-\/,]+$/,'').trim(); } }
+    const ev=txt(g('namaEvent'));
+    // Username Instagram: dari kolom IG, kalau kosong cari di seluruh isi baris (cth. "IG @bemftundip" di catatan)
+    let ig=wspNormIg(g('igUsername'));
+    if(!ig) ig=wspIgFromText(r.map(txt).join(' | '));
+    if((!ev&&!pic&&!wa&&!ig)||/^(total|jumlah)$/i.test(ev||pic)) return;
+    const tglRaw=g('tglEvent'), tgl=wspParseEventDate(tglRaw), extra=[];
+    const cat=txt(g('catatan')); if(cat) extra.push(cat);
+    if(txt(tglRaw)&&!tgl) extra.push('Tgl asli: '+txt(tglRaw));
+    headers.forEach((h,ci)=>{ if(used.has(ci)||!h||/^(no|nomor|#)$/i.test(h)) return; const v=txt(r[ci]); if(v) extra.push(h+': '+v); });
+    const st=norm(g('status')), neg=/belum|tidak|false|^x$|^no$/.test(st);
+    const pcs=txt(g('estimasiPcs')).replace(/[^\d.]/g,'');
+    parsed.push({namaEvent:ev,namaPic:pic,noWa:wa,ig:ig,tglEvent:tgl,jenisProduk:txt(g('jenisProduk')),
+      estimasiPcs:pcs?Number(pcs):'',contacted:!neg&&/sudah|done|^ya$|yes|true|^v$|closing|deal|follow|dihubungi/.test(st),catatan:extra.join(' | ')});
+  });
+  if(!parsed.length){ alert('Tidak ada baris data yang valid (butuh minimal kolom Nama Event, PIC, atau No WhatsApp). Coba pakai "Download Contoh Format Excel".'); return; }
+  wspPendingImportRows=parsed;
+  const L={namaEvent:'Event',namaPic:'PIC',noWa:'No WA',igUsername:'Instagram',tglEvent:'Tgl Event',jenisProduk:'Produk',estimasiPcs:'Pcs',status:'Status',catatan:'Catatan'};
+  const mapTxt=Object.keys(map).map(f=>L[f]+' ← "'+(headers[map[f]]||('Kolom '+(map[f]+1)))+'"').join(' · ');
+  const noWa=parsed.filter(x=>!x.noWa&&!x.ig).length, nIg=parsed.filter(x=>x.ig).length, noTgl=parsed.filter(x=>!x.tglEvent).length, noEv=parsed.filter(x=>!x.namaEvent).length;
+  const warn=[noEv?noEv+' tanpa nama event':'',noWa?noWa+' tanpa no. WA & IG':'',nIg?nIg+' dengan username IG (tombol DM IG aktif)':'',noTgl?noTgl+' tanpa tanggal (masuk halaman "Tanpa Tgl")':''].filter(Boolean).join(' · ');
+  const names=wspImportWb?wspImportWb.SheetNames:[];
+  const sel=names.length>1?'<div style="margin-top:6px;font-weight:400;font-size:12px;">Sheet: <select style="width:auto;padding:4px 8px;" onchange="wspImportSheetIdx(+this.value)">'+names.map((n,i)=>'<option value="'+i+'"'+(i===sheetIdx?' selected':'')+'>'+escapeHtml(n)+'</option>').join('')+'</select></div>':'';
+  document.getElementById('wspImportPreviewArea').style.display='block';
+  document.getElementById('wspImportSummary').innerHTML=''+parsed.length+' baris prospek terbaca'
+    +(warn?'<div style="font-weight:400;font-size:12px;color:var(--ab-rust);margin-top:3px;">'+escapeHtml(warn)+'</div>':'')
+    +'<div style="font-weight:400;font-size:11.5px;color:var(--ab-muted);margin-top:3px;">Kolom terdeteksi: '+escapeHtml(mapTxt)+'</div>'+sel;
+  document.getElementById('wspImportPreviewTable').innerHTML='<table><thead><tr><th>#</th><th>Nama Event</th><th>Nama PIC</th><th>WhatsApp</th><th>Instagram</th><th>Tgl Event</th><th>Status</th></tr></thead><tbody>'
+    +parsed.slice(0,8).map((r,i)=>'<tr><td>'+(i+1)+'</td><td><b>'+escapeHtml(r.namaEvent||'-')+'</b></td><td>'+escapeHtml(r.namaPic||'-')+'</td><td>'+escapeHtml(r.noWa||'-')+'</td><td>'+(r.ig?'@'+escapeHtml(r.ig):'-')+'</td><td>'+escapeHtml(r.tglEvent||'-')+'</td><td>'+(r.contacted?'SUDAH':'BELUM')+'</td></tr>').join('')+'</tbody></table>';
+}
+
+/* ===== Halaman per bulan event, hide/show, hapus semua ===== */
+const WSP_BULAN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+function wspHasDate(p){ return /^\d{4}-\d{2}-\d{2}/.test(p.tglEvent||''); }
+function wspYears(list){ const s=new Set(); list.forEach(p=>{ if(wspHasDate(p)) s.add(p.tglEvent.slice(0,4)); }); return [...s].sort(); }
+function wspActiveYear(){
+  if(wspState.prospectYear) return wspState.prospectYear;
+  const ys=wspYears(wspProspectsCache), cy=String(new Date().getFullYear());
+  return (!ys.length||ys.includes(cy))?cy:ys[ys.length-1];
+}
+function wspMatchPage(p,m,yr){
+  if(m==='all') return !wspHasDate(p)||yr==='all'||p.tglEvent.startsWith(yr+'-');
+  if(m==='none') return !wspHasDate(p);
+  return wspHasDate(p)&&(yr==='all'||p.tglEvent.startsWith(yr+'-'))&&p.tglEvent.slice(5,7)===m;
+}
+
+function wspPageTabs(base){
+  const pg=wspState.prospectPage, td=wspTodayStr();
+  const nb=base.filter(p=>!p.contacted).length, ns=base.length-nb;
+  const nToday=base.filter(p=>wspIsContactedOn(p,td)).length;
+  const t=(k,l,n)=>'<button class="wsp-ptab '+k+(pg===k?' active':'')+'" onclick="wspSetPage(\''+k+'\')">'+l+'<span class="cnt">'+n+'</span></button>';
+  return '<div class="wsp-ptabs">'+t('belum','Belum Dihubungi',nb)+t('sudah','Sudah Dihubungi',ns)+'</div>'
+    +(pg==='sudah'?'<div class="wsp-pnote">Dihubungi hari ini: <b>'+nToday+'</b> PIC. Jumlah ini otomatis masuk ke progress Kontak PIC hari ini.</div>':'');
+}
+function wspSetPage(k){ wspState.prospectPage=k; wspState.prospectMonth='all'; renderAbsensi(); }
+function wspCheckBtn(p){
+  return p.contacted
+    ? '<button class="wsp-done-btn on" title="Klik untuk kembalikan ke daftar Belum Dihubungi" onclick="wspToggleProspectContacted(\''+p.id+'\',false)"><span class="bx"></span>Batalkan</button>'
+    : '<button class="wsp-done-btn" title="Tandai sudah dihubungi" onclick="wspToggleProspectContacted(\''+p.id+'\',true)"><span class="bx"></span>Centang</button>';
+}
+function wspContactedLabel(p){
+  let t=p.contactedDate?formatDateID(p.contactedDate):'';
+  if(p.contactedByOther) t='Sudah dihubungi oleh '+(p.contactedBy||'rekan tim')+(t?' · '+t:'');
+  if(p.contactedAt){ const d=new Date(p.contactedAt); if(!isNaN(d)) t+=(t?' · ':'')+'jam '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+  return t;
+}
+function wspSortPage(rows){
+  if(wspState.prospectPage==='sudah') rows.sort((a,b)=>String(b.contactedAt||b.contactedDate||'').localeCompare(String(a.contactedAt||a.contactedDate||'')));
+  return rows;
+}
+function wspEventPages(list){
+  const yr=wspActiveYear(), m=wspState.prospectMonth, ui=wspState.ui;
+  const rows=list.filter(p=>wspMatchPage(p,m,yr)).sort((a,b)=>(wspHasDate(a)?a.tglEvent:'9999')<(wspHasDate(b)?b.tglEvent:'9999')?-1:1);
+  const cnt=k=>list.filter(p=>wspMatchPage(p,k,yr)).length;
+  const tab=(k,l)=>'<button class="wsp-mtab '+(m===k?'active':'')+'" onclick="wspSetMonth(\''+k+'\')">'+l+' <span class="cnt">'+cnt(k)+'</span></button>';
+  const years=wspYears(wspProspectsCache); if(yr!=='all'&&!years.includes(yr)) years.push(yr); years.sort();
+  const chip=(k,l)=>'<button class="wsp-chip '+(ui[k]?'on':'')+'" onclick="wspToggleUi(\''+k+'\')">'+l+'</button>';
+  let head='';
+  if(m!=='all') head='<div class="wsp-pagehead">'+(m==='none'?'Event tanpa tanggal':WSP_BULAN[+m-1]+(yr==='all'?'':' '+yr))+' — '+rows.length+' prospek</div>';
+  const html='<div class="wsp-viewbar"><span>Tahun event:</span><select onchange="wspSetYear(this.value)">'
+    +'<option value="all"'+(yr==='all'?' selected':'')+'>Semua tahun</option>'+years.map(y=>'<option value="'+y+'"'+(y===yr?' selected':'')+'>'+y+'</option>').join('')+'</select>'
+    +'<span>Kolom:</span>'+chip('hub','Waktu Hubungi')+chip('cat','Catatan')
+    +'<button class="btn rust small" style="margin-left:auto;" onclick="wspOpenDeleteAll()">Hapus Semua</button></div>'
+    +'<div class="wsp-mtabs">'+tab('all','SEMUA')+WSP_BULAN.map((n,i)=>tab(String(i+1).padStart(2,'0'),n.slice(0,3).toUpperCase())).join('')+tab('none','TANPA TGL')+'</div>'+head;
+  return {rows,html};
+}
+function wspSetMonth(k){ wspState.prospectMonth=k; renderAbsensi(); }
+function wspSetYear(v){ wspState.prospectYear=v; renderAbsensi(); }
+function wspToggleUi(k){ wspState.ui[k]=!wspState.ui[k]; try{ localStorage.setItem('tenx_wsp_ui',JSON.stringify(wspState.ui)); }catch(e){} renderAbsensi(); }
+function wspLabelCells(){
+  document.querySelectorAll('#absensiApp table.wsp-cards').forEach(t=>{
+    const hs=[...t.querySelectorAll('thead th')];
+    hs.forEach((th,i)=>{
+      const h=th.textContent.trim(), key=/waktu/i.test(h)?'hub':/catatan/i.test(h)?'cat':'';
+      if(key) th.dataset.col=key;
+      t.querySelectorAll('tbody tr').forEach(tr=>{ const td=tr.children[i]; if(!td) return; td.dataset.label=h; if(key) td.dataset.col=key; });
+    });
+  });
+  const root=document.getElementById('absensiApp');
+  if(root){ root.classList.toggle('wsp-hide-hub',!wspState.ui.hub); root.classList.toggle('wsp-hide-cat',!wspState.ui.cat); }
+}
+(function(){ const o=renderAbsensi; renderAbsensi=function(){ const r=o.apply(this,arguments); try{ wspLabelCells(); }catch(e){}
+  try{
+    const id=wspState.myEmployeeId, td=wspTodayStr();
+    if(wspState.role==='karyawan'&&id&&!window._wspSyncBusy&&wspGetEmployee(id)&&wspGetEmployee(id).division==='marketing'){
+      const need=wspMarketingFor(id,td)||wspProspectsFor(id).some(p=>(p.contacted&&p.contactedDate===td)||p.date===td);
+      if(need){ window._wspSyncBusy=true; wspSyncProspectsToDailyKpi(id,td).catch(()=>{}).then(()=>setTimeout(()=>{window._wspSyncBusy=false;},1500)); }
+    }
+  }catch(e){}
+  return r; }; })();
+
+function wspDelScope(){
+  if(wspState.role==='owner'&&wspIsOwnerAuthed()){
+    const f=wspState.prospectOwnerFilter;
+    return (f&&f!=='all')?wspProspectsCache.filter(p=>p.employeeId===f):wspProspectsCache.slice();
+  }
+  return wspProspectsFor(wspState.myEmployeeId);
+}
+function wspOpenDeleteAll(){
+  const all=wspDelScope();
+  if(!all.length){ alert('Tidak ada data prospek untuk dihapus.'); return; }
+  const m=wspState.prospectMonth, yr=wspActiveYear();
+  const page=m==='all'?[]:all.filter(p=>wspMatchPage(p,m,yr));
+  const lbl=m==='none'?'Tanpa Tanggal':(m==='all'?'':WSP_BULAN[+m-1]+(yr==='all'?'':' '+yr));
+  const who=(wspState.role==='owner'&&wspIsOwnerAuthed())?(wspState.prospectOwnerFilter==='all'?'SEMUA karyawan marketing':'karyawan marketing terpilih'):'milik Anda';
+  document.getElementById('abModalRoot').innerHTML='<div class="overlay" onclick="if(event.target===this) wspCloseModal()"><div class="modal">'
+    +'<button class="close" onclick="wspCloseModal()">✕</button><h3>Hapus Data Prospek</h3>'
+    +'<div class="sub">Data yang dihapus tidak bisa dikembalikan. Cocok jika salah impor Excel.</div>'
+    +'<label>Ketik <b>HAPUS</b> untuk konfirmasi</label><input type="text" id="wspDelConfirm" autocomplete="off" placeholder="HAPUS">'
+    +'<button class="btn rust block" style="margin-top:12px;" onclick="wspRunDelete(\'all\')">Hapus SEMUA ('+all.length+' data, '+who+')</button>'
+    +(page.length?'<button class="btn ghost block" style="margin-top:8px;" onclick="wspRunDelete(\'page\')">Hapus hanya halaman '+lbl+' ('+page.length+' data)</button>':'')
+    +'</div></div>';
+}
+async function wspRunDelete(kind){
+  const c=document.getElementById('wspDelConfirm');
+  if(!c||c.value.trim().toUpperCase()!=='HAPUS'){ alert('Ketik HAPUS dulu untuk konfirmasi.'); return; }
+  const all=wspDelScope(), m=wspState.prospectMonth, yr=wspActiveYear();
+  const del=kind==='page'?all.filter(p=>wspMatchPage(p,m,yr)):all;
+  if(!del.length) return;
+  const ids=new Set(del.map(p=>p.id)), emps=[...new Set(del.map(p=>p.employeeId).filter(Boolean))];
+  wspProspectsCache=wspProspectsCache.filter(p=>!ids.has(p.id));
+  try{ localStorage.setItem('tenx_wsp_prospects_cache',JSON.stringify(wspProspectsCache)); }catch(e){}
+  if(CONFIG_READY){
+    try{
+      const arr=[...ids];
+      for(let i=0;i<arr.length;i+=400){ const b=db.batch(); arr.slice(i,i+400).forEach(id=>b.delete(db.collection('wspMarketingProspects').doc(id))); await b.commit(); }
+    }catch(e){ console.error(e); alert('Sebagian data gagal dihapus dari server: '+e.message); }
+  }
+  const dm={};
+  del.forEach(p=>{ if(!p.employeeId) return; const st=dm[p.employeeId]||(dm[p.employeeId]=new Set([wspTodayStr()])); if(p.date) st.add(p.date); if(p.contactedDate) st.add(p.contactedDate); });
+  for(const e in dm) for(const d of dm[e]) await wspSyncProspectsToDailyKpi(e,d);
+  wspCloseModal(); renderAbsensi();
+  alert('Berhasil menghapus '+del.length+' data prospek.');
+}
+
+async function wspSubmitExcelImport(){
+  if(!wspPendingImportRows || !wspPendingImportRows.length){
+    alert('Pilih file Excel yang valid terlebih dahulu.');
+    return;
+  }
+
+  const empIdEl = document.getElementById('wspImportEmpId');
+  const empId = empIdEl ? empIdEl.value : wspState.myEmployeeId;
+  const emp = wspGetEmployee(empId) || wspGetEmployee(wspState.myEmployeeId) || { id: empId, name: 'Marketing' };
+  const syncKpi = document.getElementById('wspImportSyncKpi') ? document.getElementById('wspImportSyncKpi').checked : true;
+  const today = wspTodayStr();
+
+  const btn = document.getElementById('wspImportSaveBtn');
+  if(btn){ btn.disabled = true; btn.textContent = 'Menyimpan ke database…'; }
+
+  const recordsToSave = wspPendingImportRows.map(r => ({
+    id: wspGenProspectId(),
+    employeeId: emp.id,
+    employeeName: emp.name,
+    namaEvent: r.namaEvent || 'Event Tanpa Nama',
+    namaPic: r.namaPic || 'PIC',
+    noWa: r.noWa || '',
+    igUsername: r.ig || '',
+    tglEvent: r.tglEvent || '',
+    jenisProduk: r.jenisProduk || '',
+    estimasiPcs: r.estimasiPcs || '',
+    contacted: !!r.contacted,
+    status: r.contacted ? 'sudah' : 'belum',
+    contactedDate: r.contacted ? today : '',
+    contactedAt: r.contacted ? new Date().toISOString() : '',
+    contactedByOther: false,
+    contactedBy: r.contacted ? emp.name : '',
+    contactedById: r.contacted ? emp.id : '',
+    catatan: r.catatan || '',
+    date: today,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  }));
+
+  // Cek duplikat antar karyawan (event + PIC sama)
+  let autoOtherCount = 0; const propagated = [];
+  recordsToSave.forEach(rec=>{
+    if(!rec.contacted){ if(wspApplyIncoming(rec)) autoOtherCount++; }
+  });
+  const ok = await wspSaveProspectsBatch(recordsToSave);
+  if(ok){
+    recordsToSave.filter(r=>r.contacted && !r.contactedByOther).forEach(r=>{ wspPropagateContact(r,true).forEach(c=>propagated.push(c)); });
+    if(propagated.length) await wspSaveProspectsBatch(propagated);
+    if(syncKpi){
+      await wspSyncProspectsToDailyKpi(emp.id, today);
+    }
+    wspPendingImportRows = [];
+    wspCloseModal();
+    renderAbsensi();
+    alert(`Berhasil mengimpor ${recordsToSave.length} data prospek PIC ke database!\nData tersimpan otomatis dan progres KPI harian Anda telah diperbarui.`
+      + (recordsToSave.filter(r=>r.igUsername).length ? `\n${recordsToSave.filter(r=>r.igUsername).length} prospek punya username Instagram (tombol DM IG aktif).` : '')
+      + (autoOtherCount ? `\n${autoOtherCount} prospek sudah dihubungi karyawan lain, otomatis masuk "Sudah Dihubungi".` : '')
+      + (propagated.length ? `\n${propagated.length} data milik karyawan lain otomatis dipindah ke "Sudah Dihubungi".` : ''));
+  } else {
+    if(btn){ btn.disabled = false; btn.textContent = 'Simpan Semua Data ke Database'; }
+  }
+}
+
+/* ---------- Progress Marketing (karyawan manual update) ---------- */
 function wspOpenMarketingForm(){
   const emp = wspGetEmployee(wspState.myEmployeeId);
   if(!emp) return;
@@ -4058,6 +5498,15 @@ function wspOpenMarketingForm(){
   const existing = wspMarketingFor(emp.id, today);
   const kTarget = Number(wspSettings.kontakTarget) || 10;
   const eTarget = Number(wspSettings.eventTarget) || 10;
+
+  // Nilai default dari prospek database hari ini
+  const myProspects = wspProspectsFor(emp.id);
+  const contactedTodayCount = myProspects.filter(p => wspIsContactedOn(p, today)).length;
+  const eventsTodayCount = new Set(myProspects.filter(p => wspIsAddedOn(p, today)).map(p=>(p.namaEvent||'').trim().toLowerCase()).filter(Boolean)).size;
+
+  const defaultKontak = existing ? existing.kontak : contactedTodayCount;
+  const defaultEvent = existing ? existing.event : eventsTodayCount;
+
   const root = document.getElementById('abModalRoot');
   root.innerHTML = `
     <div class="overlay" onclick="if(event.target===this) wspCloseModal()">
@@ -4065,13 +5514,18 @@ function wspOpenMarketingForm(){
         <button class="close" onclick="wspCloseModal()">✕</button>
         <h3>Update Progress Marketing</h3>
         <div class="sub">${formatDateID(today)} · Target hari ini: ${kTarget} kontak, ${eTarget} event</div>
+
+        <div style="background:var(--ab-bg2);border:1px dashed var(--ab-line);border-radius:8px;padding:10px 12px;font-size:12.5px;color:var(--ab-muted);margin-bottom:12px;">
+          <b>Terkoneksi Database:</b> Hari ini Anda sudah mencatat <b>${contactedTodayCount} kontak dihubungi</b> dan <b>${eventsTodayCount} event baru</b>. Anda bisa menyesuaikan jumlah atau menambahkan bukti screenshot jika ada.
+        </div>
+
         <label>Jumlah Kontak</label>
-        <input type="number" id="wspKontak" min="0" value="${existing ? existing.kontak : ''}" placeholder="cth: 10">
+        <input type="number" id="wspKontak" min="0" value="${defaultKontak}" placeholder="cth: 10">
         <label>Jumlah Event</label>
-        <input type="number" id="wspEvent" min="0" value="${existing ? existing.event : ''}" placeholder="cth: 10">
-        <label>Bukti (Screenshot Excel / Rekap)</label>
+        <input type="number" id="wspEvent" min="0" value="${defaultEvent}" placeholder="cth: 10">
+        <label>Bukti (Screenshot / Rekap Tambahan - Opsional)</label>
         <input type="file" id="wspProofFile" accept="image/*">
-        ${existing ? `<div style="margin-top:8px;display:flex;align-items:center;gap:8px;"><img src="${existing.proofUrl}" class="ab-thumb"><span style="font-size:11.5px;color:var(--ab-muted);">Bukti sebelumnya — upload baru untuk mengganti.</span></div>` : ''}
+        ${existing && existing.proofUrl ? `<div style="margin-top:8px;display:flex;align-items:center;gap:8px;"><img src="${existing.proofUrl}" class="ab-thumb"><span style="font-size:11.5px;color:var(--ab-muted);">Bukti sebelumnya — upload baru untuk mengganti.</span></div>` : ''}
         <label>Catatan (opsional)</label>
         <textarea id="wspNote" placeholder="Catatan tambahan...">${existing && existing.note ? escapeHtml(existing.note) : ''}</textarea>
         <div id="wspMarketingStatus" style="font-size:12px;color:var(--ab-muted);margin-top:6px;"></div>
@@ -4079,6 +5533,7 @@ function wspOpenMarketingForm(){
       </div>
     </div>`;
 }
+
 async function wspSubmitMarketing(existingProofUrl){
   const emp = wspGetEmployee(wspState.myEmployeeId);
   if(!emp) return;
@@ -4087,24 +5542,33 @@ async function wspSubmitMarketing(existingProofUrl){
   const note = document.getElementById('wspNote').value || '';
   const fileInput = document.getElementById('wspProofFile');
   const file = fileInput && fileInput.files[0];
-  if(!existingProofUrl && !file){ alert('Upload bukti gambar (screenshot Excel) wajib diisi.'); return; }
+
+  const today = wspTodayStr();
+  const hasDbProspects = wspProspectsCache.some(p => p.employeeId === emp.id && (p.date === today || p.contactedDate === today));
+
+  if(!existingProofUrl && !file && !hasDbProspects && (kontak > 0 || event > 0)){
+    if(!confirm('Anda belum mengunggah foto bukti dan belum ada data prospek di database hari ini. Lanjutkan simpan progress?')){
+      return;
+    }
+  }
+
   const statusEl = document.getElementById('wspMarketingStatus');
   const btn = document.getElementById('wspMktSaveBtn');
   try{
-    let proofUrl = existingProofUrl;
+    let proofUrl = existingProofUrl || '';
     if(file){
       if(btn) btn.disabled = true;
       if(statusEl) statusEl.textContent = 'Mengupload bukti…';
       const uploaded = await uploadFilesToStorage([file], 'marketing-progress');
       proofUrl = uploaded[0].url;
     }
-    const today = wspTodayStr();
     const record = {
       id: emp.id + '_' + today,
       employeeId: emp.id,
       employeeName: emp.name,
       date: today,
       kontak, event, proofUrl, note,
+      autoSynced: false, // Ditandai manual update jika disimpan dari form ini
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -4137,9 +5601,9 @@ function renderOwnerView(){
       <button class="${wspState.ownerTab==='rekap'?'active':''}" onclick="wspSetOwnerTab('rekap')">Rekap Absensi</button>
       <button class="${wspState.ownerTab==='karyawan'?'active':''}" onclick="wspSetOwnerTab('karyawan')">Kelola Karyawan</button>
       <button class="${wspState.ownerTab==='marketing'?'active':''}" onclick="wspSetOwnerTab('marketing')">Kinerja Marketing</button>
-      <button class="${wspState.ownerTab==='kpiboard'?'active':''}" onclick="wspSetOwnerTab('kpiboard')">📊 KPI Karyawan</button>
+      <button class="${wspState.ownerTab==='kpiboard'?'active':''}" onclick="wspSetOwnerTab('kpiboard')">KPI Karyawan</button>
       <button class="${wspState.ownerTab==='kpi'?'active':''}" onclick="wspSetOwnerTab('kpi')">Pengaturan KPI &amp; Jam</button>
-      <button onclick="showMode('sop')">&#128216; SOP</button>
+      <button onclick="showMode('sop')">SOP</button>
     </div>
     ${wspState.ownerTab==='rekap' ? renderOwnerRekap() : ''}
     ${wspState.ownerTab==='karyawan' ? renderOwnerKaryawan() : ''}
@@ -4293,55 +5757,176 @@ function renderOwnerMarketing(){
   const monthProgress = wspMarketingCache.filter(m=>m.date && m.date.startsWith(month));
 
   const rows = marketers.map(e=>{
-    const recs = monthProgress.filter(m=>m.employeeId===e.id);
-    const totalKontak = recs.reduce((s,r)=>s+(Number(r.kontak)||0),0);
-    const totalEvent = recs.reduce((s,r)=>s+(Number(r.event)||0),0);
+    const mt = wspMonthTotals(e.id, month);
+    const recs = {length: mt.lapor};
+    const totalKontak = mt.kontak;
+    const totalEvent = mt.event;
     const targetKontak = workingDays * kTarget;
     const targetEvent = workingDays * eTarget;
     const pctK = targetKontak ? Math.round((totalKontak/targetKontak)*100) : 0;
     const pctE = targetEvent ? Math.round((totalEvent/targetEvent)*100) : 0;
+    const prospectCount = wspProspectsFor(e.id).length;
     return `<tr onclick="wspOpenMarketingDetail('${e.id}')">
-      <td>${escapeHtml(e.name)}</td>
+      <td><b>${escapeHtml(e.name)}</b><br><span style="font-size:11px;color:var(--ab-muted);">${prospectCount} data prospek di database</span></td>
       <td>${totalKontak} / ${targetKontak} <span style="color:var(--ab-muted);font-size:11px;">(${pctK}%)</span></td>
       <td>${totalEvent} / ${targetEvent} <span style="color:var(--ab-muted);font-size:11px;">(${pctE}%)</span></td>
       <td>${recs.length} / ${workingDays} hari lapor</td>
     </tr>`;
   }).join('');
 
+  // Prospek untuk Owner View
+  let ownerProspects = wspProspectsCache;
+  if(wspState.prospectOwnerFilter && wspState.prospectOwnerFilter !== 'all'){
+    ownerProspects = ownerProspects.filter(p => p.employeeId === wspState.prospectOwnerFilter);
+  }
+  const ownerBase = ownerProspects;
+  ownerProspects = ownerProspects.filter(p => wspState.prospectPage==='sudah' ? p.contacted : !p.contacted);
+  if(wspState.prospectSearch){
+    const q = wspState.prospectSearch.toLowerCase();
+    ownerProspects = ownerProspects.filter(p =>
+      (p.namaPic && p.namaPic.toLowerCase().includes(q)) ||
+      (p.namaEvent && p.namaEvent.toLowerCase().includes(q)) ||
+      (p.noWa && p.noWa.includes(q)) ||
+        (p.igUsername && p.igUsername.toLowerCase().includes(q.replace(/^@/,''))) ||
+      (p.employeeName && p.employeeName.toLowerCase().includes(q))
+    );
+  }
+
+  const pgO = wspEventPages(ownerProspects); ownerProspects = wspSortPage(pgO.rows);
+  const marketerSelectOptions = marketers.map(e =>
+    `<option value="${e.id}" ${wspState.prospectOwnerFilter===e.id?'selected':''}>${escapeHtml(e.name)}</option>`
+  ).join('');
+
+  const ownerProspectRows = ownerProspects.slice(0, 500).map((p, idx) => `
+    <tr>
+      <td style="text-align:center;">
+        ${wspCheckBtn(p)}
+      </td>
+      <td>
+        <b>${escapeHtml(p.namaPic || 'Tanpa Nama')}</b>
+        <div style="font-size:11.5px;color:var(--ab-muted);">${escapeHtml(p.noWa || '-')}</div>
+        ${wspContactButtons(p)}${wspPicBadges(p)}
+      </td>
+      <td>
+        <div style="font-weight:600;color:var(--ab-denim);">${escapeHtml(p.namaEvent || '-')}</div>
+        <div style="font-size:11px;color:var(--ab-muted);">${p.jenisProduk ? escapeHtml(p.jenisProduk) : ''} ${p.estimasiPcs ? `(${p.estimasiPcs} pcs)` : ''}</div>
+      </td>
+      <td><b>${escapeHtml(p.employeeName || '-')}</b></td>
+      <td>
+        <div style="font-size:11.5px;">${p.contacted && p.contactedDate ? `<span style="color:var(--ab-green);font-weight:600;">${wspContactedLabel(p)}</span>` : '<span style="color:var(--ab-muted);">Belum</span>'}</div>
+        <div style="font-size:10.5px;color:var(--ab-muted);margin-top:2px;">Input: ${p.date ? formatDateID(p.date) : '-'}</div>
+      </td>
+      <td style="font-size:12px;color:var(--ab-muted);max-width:180px;white-space:normal;">${wspCatatanHtml(p)}</td>
+      <td>
+        <div style="display:flex;gap:4px;">
+          <button class="btn ghost small" onclick="wspOpenProspectForm('${p.id}')" title="Edit">Edit</button>
+          <button class="btn rust small" onclick="wspDeleteProspect('${p.id}')" title="Hapus">Hapus</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+
   return `
     <div class="ab-card">
-      <h2>Kinerja Marketing</h2>
+      <h2>Kinerja Marketing Bulanan</h2>
       <label>Bulan</label>
       <input type="month" value="${month}" onchange="wspChangeMarketingMonth(this.value)">
-      <div class="ab-note">Target KPI saat ini: <b>${kTarget} kontak/hari</b> &amp; <b>${eTarget} event/hari</b>. Ubah lewat tab "Pengaturan KPI &amp; Jam".</div>
+      <div class="ab-note">Target KPI: <b>${kTarget} kontak/hari</b> &amp; <b>${eTarget} event/hari</b>. Ubah lewat tab "Pengaturan KPI &amp; Jam".</div>
     </div>
     <div class="ab-card">
-      ${marketers.length ? (rows ? `<table class="ab-table"><thead><tr><th>Nama</th><th>Kontak</th><th>Event</th><th>Lapor</th></tr></thead><tbody>${rows}</tbody></table>` : `<div class="ab-empty">Belum ada progress dilaporkan bulan ini.</div>`) : `<div class="ab-empty">Belum ada karyawan divisi Marketing. Tambahkan lewat tab Kelola Karyawan.</div>`}
+      ${marketers.length ? (rows ? `<table class="ab-table"><thead><tr><th>Nama Marketing</th><th>Kontak Tercapai</th><th>Event Tercapai</th><th>Hari Lapor</th></tr></thead><tbody>${rows}</tbody></table>` : `<div class="ab-empty">Belum ada progress dilaporkan bulan ini.</div>`) : `<div class="ab-empty">Belum ada karyawan divisi Marketing. Tambahkan lewat tab Kelola Karyawan.</div>`}
+    </div>
+
+    <!-- DATABASE MONITORING PROSPEK DARI SEMUA MARKETING -->
+    <div class="ab-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+        <div>
+          <h2 style="margin:0;">Database Prospek PIC (Semua Tim Marketing)</h2>
+          <div style="font-size:12.5px;color:var(--ab-muted);margin-top:2px;">Pantau data prospek, PIC yang dicari, dan checklist status follow-up marketing secara langsung.</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn amber small" onclick="wspOpenImportExcelModal()">Impor File Excel</button>
+          <button class="btn ghost small" onclick="wspExportProspectsExcel(wspState.prospectOwnerFilter)">Ekspor ke Excel (.xlsx)</button>
+        </div>
+      </div>
+
+      <div class="ab-row2" style="margin-bottom:12px;">
+        <div>
+          <label style="margin:0 0 4px;">Filter Marketing:</label>
+          <select onchange="wspChangeOwnerProspectFilter(this.value)" style="padding:8px 10px;">
+            <option value="all" ${wspState.prospectOwnerFilter==='all'?'selected':''}>Semua Karyawan Marketing</option>
+            ${marketerSelectOptions}
+          </select>
+        </div>
+        <div>
+          <label style="margin:0 0 4px;">Pencarian:</label>
+          <div class="wsp-search-bar">
+            
+            <input type="text" placeholder="Cari nama PIC, nama event, no WA..." value="${escapeHtml(wspState.prospectSearch)}" oninput="wspOnProspectSearch(this.value)">
+          </div>
+        </div>
+      </div>
+
+      ${wspPageTabs(ownerBase)}
+
+      ${pgO.html}
+      ${ownerProspectRows ? `
+        <div style="overflow-x:auto;">
+          <table class="ab-table wsp-cards">
+            <thead>
+              <tr>
+                <th style="text-align:center;">${wspState.prospectPage==='sudah'?'Status':'Centang'}</th>
+                <th>Nama PIC &amp; WhatsApp</th>
+                <th>Event / Organisasi</th>
+                <th>Marketing</th>
+                <th>Waktu Hubungi</th>
+                <th>Catatan</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>${ownerProspectRows}</tbody>
+          </table>
+        </div>
+        <div style="font-size:12px;color:var(--ab-muted);margin-top:10px;">Menampilkan <b>${ownerProspects.length}</b> prospek.</div>
+      ` : `
+        <div class="ab-empty" style="padding:24px 16px;">
+          <div>Belum ada data prospek yang tersimpan. Tim Marketing dapat menambahkannya langsung atau mengimpor dari file Excel.</div>
+        </div>
+      `}
     </div>
   `;
 }
 function wspChangeMarketingMonth(v){ wspState.marketingMonth = v; renderAbsensi(); }
+function wspChangeOwnerProspectFilter(v){ wspState.prospectOwnerFilter = v; renderAbsensi(); }
+
 function wspOpenMarketingDetail(employeeId){
   const emp = wspGetEmployee(employeeId);
   if(!emp) return;
   const month = wspState.marketingMonth;
   const recs = wspMarketingCache.filter(m=>m.employeeId===employeeId && m.date && m.date.startsWith(month)).sort((a,b)=>a.date<b.date?1:-1);
+  const myProspects = wspProspectsFor(employeeId);
   const kTarget = Number(wspSettings.kontakTarget) || 10;
   const eTarget = Number(wspSettings.eventTarget) || 10;
   const rows = recs.map(r=>`
-    <tr onclick="wspLightbox('${r.proofUrl}')">
+    <tr onclick="${r.proofUrl ? `wspLightbox('${r.proofUrl}')` : ''}">
       <td>${formatDateID(r.date)}</td>
-      <td>${r.kontak}${Number(r.kontak)>=kTarget?' ✅':''}</td>
-      <td>${r.event}${Number(r.event)>=eTarget?' ✅':''}</td>
-      <td><img src="${r.proofUrl}" class="ab-thumb"></td>
+      <td>${r.kontak}${Number(r.kontak)>=kTarget?' (tercapai)':''}</td>
+      <td>${r.event}${Number(r.event)>=eTarget?' (tercapai)':''}</td>
+      <td>${r.proofUrl ? `<img src="${r.proofUrl}" class="ab-thumb">` : '<span style="font-size:11px;color:var(--ab-muted);">Otomatis Database</span>'}</td>
     </tr>`).join('');
   const root = document.getElementById('abModalRoot');
   root.innerHTML = `
     <div class="overlay" onclick="if(event.target===this) wspCloseModal()">
-      <div class="modal">
+      <div class="modal" style="max-width:620px;">
         <button class="close" onclick="wspCloseModal()">✕</button>
         <h3>${escapeHtml(emp.name)}</h3>
-        <div class="sub">Rincian progress ${wspMonthLabel(month)}</div>
+        <div class="sub">Rincian progress marketing ${wspMonthLabel(month)} · Total ${myProspects.length} data prospek PIC di database</div>
+        
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <button class="btn small" onclick="wspCloseModal();wspState.prospectOwnerFilter='${emp.id}';renderAbsensi();">Buka Database Prospek ${escapeHtml(emp.name)}</button>
+          <button class="btn ghost small" onclick="wspExportProspectsExcel('${emp.id}')">Ekspor ke Excel</button>
+        </div>
+
         ${rows ? `<table class="ab-table"><thead><tr><th>Tanggal</th><th>Kontak</th><th>Event</th><th>Bukti</th></tr></thead><tbody>${rows}</tbody></table>` : `<div class="ab-empty">Belum ada laporan di bulan ini.</div>`}
       </div>
     </div>`;
@@ -4360,9 +5945,10 @@ function renderOwnerKpiBoard(){
   const rows = activeEmployees.map(e=>{
     let scorePct, detail, metricLabel;
     if(e.division === 'marketing'){
-      const recs = monthMarketing.filter(m=>m.employeeId===e.id);
-      const totalKontak = recs.reduce((s,r)=>s+(Number(r.kontak)||0),0);
-      const totalEvent = recs.reduce((s,r)=>s+(Number(r.event)||0),0);
+      const mt = wspMonthTotals(e.id, month);
+      const recs = {length: mt.lapor};
+      const totalKontak = mt.kontak;
+      const totalEvent = mt.event;
       const targetKontak = workingDays * kTarget;
       const targetEvent = workingDays * eTarget;
       const pctK = targetKontak ? (totalKontak/targetKontak)*100 : 0;
@@ -4397,7 +5983,7 @@ function renderOwnerKpiBoard(){
       <td>${escapeHtml(r.emp.name)}<br><span class="ab-badge ${r.emp.division==='marketing'?'marketing':'umum'}" style="transform:none;font-size:10px;">${r.emp.division==='marketing'?'MARKETING':'UMUM'}</span></td>
       <td>${r.metricLabel}<div style="font-size:11.5px;color:var(--ab-muted);margin-top:2px;">${r.detail}</div></td>
       <td style="min-width:120px;">
-        ${Math.min(r.scorePct,100)}%${r.scorePct>100?' 🔥':''}
+        ${Math.min(r.scorePct,100)}%${r.scorePct>100?' ':''}
         <div class="ab-progress-bar ${r.scorePct>100?'over':''}"><div style="width:${Math.min(r.scorePct,100)}%"></div></div>
       </td>
       <td><span class="ab-badge ${r.statusClass}" style="transform:none;">${r.statusLabel}</span></td>
@@ -4417,7 +6003,7 @@ function renderOwnerKpiBoard(){
         <div class="ab-stat"><div class="lbl">Dalam Proses</div><div class="val" style="color:var(--ab-amber);">${countProses}</div></div>
         <div class="ab-stat"><div class="lbl">Perlu Perhatian</div><div class="val" style="color:var(--ab-rust);">${countKurang}</div></div>
       </div>
-      ${topPerformer ? `<div class="ab-note">🏆 Performa terbaik bulan ${wspMonthLabel(month)}: <b>${escapeHtml(topPerformer.emp.name)}</b> (${Math.min(topPerformer.scorePct,100)}%${topPerformer.scorePct>100?'+':''}). Skor Marketing = rata-rata pencapaian target Kontak &amp; Event harian. Skor karyawan Umum = tingkat kehadiran terhadap hari kerja.</div>` : `<div class="ab-note">Belum ada karyawan aktif untuk dihitung KPI-nya.</div>`}
+      ${topPerformer ? `<div class="ab-note">Performa terbaik bulan ${wspMonthLabel(month)}: <b>${escapeHtml(topPerformer.emp.name)}</b> (${Math.min(topPerformer.scorePct,100)}%${topPerformer.scorePct>100?'+':''}). Skor Marketing = rata-rata pencapaian target Kontak &amp; Event harian. Skor karyawan Umum = tingkat kehadiran terhadap hari kerja.</div>` : `<div class="ab-note">Belum ada karyawan aktif untuk dihitung KPI-nya.</div>`}
     </div>
     <div class="ab-card">
       ${tableRows ? `<table class="ab-table"><thead><tr><th>Karyawan</th><th>Metrik &amp; Progress</th><th>Skor</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table>` : `<div class="ab-empty">Belum ada data karyawan / progress untuk bulan ini.</div>`}
@@ -4497,7 +6083,7 @@ const SOP_META = {
 
 const SOP_DATA = [
   {
-    id: 'A', title: 'TUJUAN SOP', icon: '🎯',
+    id: 'A', title: 'TUJUAN SOP', icon: '',
     items: [
       { h: 'SOP ini dibuat untuk:', ol: [
         'Membuat sistem kerja yang lebih teratur dan jelas.',
@@ -4513,7 +6099,7 @@ const SOP_DATA = [
     ]
   },
   {
-    id: 'B', title: 'PROSEDUR KERJA UMUM', icon: '🧾',
+    id: 'B', title: 'PROSEDUR KERJA UMUM', icon: '',
     items: [
       { h: '1. Penerimaan Barang', p: ['Setiap barang yang datang ke workshop/kantor TenX Apparel wajib:'], ul: [
         'Dicek jumlahnya.', 'Dicek jenis barangnya.', 'Dicek kondisi barangnya.',
@@ -4547,7 +6133,7 @@ const SOP_DATA = [
     ]
   },
   {
-    id: 'C', title: 'TANGGUNG JAWAB BARANG DAN PERALATAN', icon: '🧰',
+    id: 'C', title: 'TANGGUNG JAWAB BARANG DAN PERALATAN', icon: '',
     items: [
       { h: '6. Penggunaan Alat', p: ['Semua peralatan TenX Apparel merupakan aset perusahaan. Setiap karyawan wajib menjaga:'], ul: [
         'Mesin.', 'Peralatan produksi.', 'Komputer/laptop.', 'Printer.', 'Alat sablon.',
@@ -4564,7 +6150,7 @@ const SOP_DATA = [
     ]
   },
   {
-    id: 'D', title: 'PIKET DAN KEBERSIHAN', icon: '🧹',
+    id: 'D', title: 'PIKET DAN KEBERSIHAN', icon: '',
     items: [
       { h: '8. Piket Harian', p: ['Setiap karyawan wajib menjalankan jadwal piket yang telah ditentukan. Piket meliputi:'], ul: [
         'Menyapu.', 'Mengepel.', 'Mengelap meja.', 'Merapikan area kerja.',
@@ -4576,7 +6162,7 @@ const SOP_DATA = [
     ]
   },
   {
-    id: 'E', title: 'JAM KERJA AFNAN & NURR', icon: '⏰',
+    id: 'E', title: 'JAM KERJA AFNAN & NURR', icon: '',
     items: [
       { h: '9. Pilihan Jam Kerja', p: [
         'Khusus Afnan dan Nurr sebagai Divisi Marketing, perusahaan memberikan dua pilihan jam kerja. Setiap orang memilih sendiri salah satu pilihan berikut:'
@@ -4603,7 +6189,7 @@ const SOP_DATA = [
     ]
   },
   {
-    id: 'F', title: 'ATURAN KHUSUS MARKETING', icon: '📣',
+    id: 'F', title: 'ATURAN KHUSUS MARKETING', icon: '',
     items: [
       { h: '11. Posisi Kerja', p: ['Saat datang dan mulai bekerja, Afnan dan Nurr wajib langsung menuju meja/kursi kerja.'],
         warn: 'Tidak diperbolehkan langsung duduk di sofa tamu selama jam kerja apabila tidak berkaitan dengan pekerjaan.',
@@ -4628,7 +6214,7 @@ const SOP_DATA = [
     ]
   },
   {
-    id: 'G', title: 'KPI MARKETING', icon: '📈',
+    id: 'G', title: 'KPI MARKETING', icon: '',
     items: [
       { h: '14. Perhitungan KPI', big: '20 KONTAK × 6 HARI KERJA = 120 KONTAK/ORANG/MINGGU',
         p2: ['Kategori penilaian:'], kpi: [
@@ -4639,7 +6225,7 @@ const SOP_DATA = [
     ]
   },
   {
-    id: 'H', title: 'KPI PRODUKSI', icon: '🏭',
+    id: 'H', title: 'KPI PRODUKSI', icon: '',
     items: [
       { h: '15. Target Produksi', p: ['Bagian Produksi wajib menyelesaikan pekerjaan berdasarkan SPK dan deadline yang telah ditentukan. Target utama:'],
         quote: 'Pekerjaan selesai sesuai SPK, tepat waktu, dan sesuai standar kualitas.',
@@ -4656,7 +6242,7 @@ const SOP_DATA = [
     ]
   },
   {
-    id: 'I', title: 'KPI DESAIN', icon: '🎨',
+    id: 'I', title: 'KPI DESAIN', icon: '',
     items: [
       { h: '18. Target Desain', p: ['Setiap desain yang masuk wajib segera diproses. Target:'],
         big: 'DESAIN MULAI DIKERJAKAN PADA HARI YANG SAMA',
@@ -4669,7 +6255,7 @@ const SOP_DATA = [
     ]
   },
   {
-    id: 'J', title: 'PENGGUNAAN HP DAN MEDIA SOSIAL', icon: '📱',
+    id: 'J', title: 'PENGGUNAAN HP DAN MEDIA SOSIAL', icon: '',
     items: [
       { h: '20. Penggunaan HP Saat Jam Kerja', p: ['HP diperbolehkan digunakan untuk pekerjaan. Contoh:'], ul: [
         'WhatsApp customer.', 'Instagram/TikTok perusahaan.', 'Riset prospek.',
@@ -4678,7 +6264,7 @@ const SOP_DATA = [
     ]
   },
   {
-    id: 'K', title: 'BIAYA OPERASIONAL', icon: '💰',
+    id: 'K', title: 'BIAYA OPERASIONAL', icon: '',
     items: [
       { h: '21. Batas OPS', p: ['Batas biaya operasional untuk setiap pekerjaan adalah:'],
         big: 'MAKSIMAL Rp50.000',
@@ -4689,7 +6275,7 @@ const SOP_DATA = [
     ]
   },
   {
-    id: 'L', title: 'SISTEM TARGET, EVALUASI, DAN PENGHASILAN', icon: '📊',
+    id: 'L', title: 'SISTEM TARGET, EVALUASI, DAN PENGHASILAN', icon: '',
     items: [
       { h: '22. Prinsip KPI', p: ['Setiap karyawan dinilai berdasarkan:'], ul: [
         'Kehadiran.', 'Kedisiplinan.', 'Produktivitas.', 'Kualitas pekerjaan.', 'Kecepatan pekerjaan.',
@@ -4703,7 +6289,7 @@ const SOP_DATA = [
     ]
   },
   {
-    id: 'M', title: 'BONUS OVER TARGET', icon: '🎁',
+    id: 'M', title: 'BONUS OVER TARGET', icon: '',
     items: [
       { h: '24. Bonus', p: ['Karyawan yang secara konsisten melebihi target dan memberikan hasil positif bagi perusahaan dapat memperoleh bonus. Besaran bonus:'],
         big: '1 – 5% DARI TOTAL PEMASUKAN',
@@ -4714,7 +6300,7 @@ const SOP_DATA = [
     ]
   },
   {
-    id: 'N', title: 'KOMISI MARKETING', icon: '🤝',
+    id: 'N', title: 'KOMISI MARKETING', icon: '',
     items: [
       { h: '25. Komisi Order', p: ['Setiap order yang masuk melalui penawaran atau prospek yang dilakukan oleh Team Marketing dapat memperoleh komisi sesuai sistem komisi perusahaan. Data order harus dapat ditelusuri melalui:'],
         quote: 'PIC → Penawaran → Follow-up → Order → Pembayaran → Produksi.',
@@ -4722,7 +6308,7 @@ const SOP_DATA = [
     ]
   },
   {
-    id: 'O', title: 'REWARD DAN OUTING', icon: '🏆',
+    id: 'O', title: 'REWARD DAN OUTING', icon: '',
     items: [
       { h: '26. Reward KPI', p: [
         'Reward diberikan berdasarkan pencapaian KPI. Apabila KPI tidak mencapai batas yang ditentukan, maka reward KPI tidak diberikan. Apabila KPI tercapai sesuai ketentuan, karyawan dapat memperoleh reward.',
@@ -4732,7 +6318,7 @@ const SOP_DATA = [
     ]
   },
   {
-    id: 'P', title: 'PENCATATAN KPI', icon: '🗂️',
+    id: 'P', title: 'PENCATATAN KPI', icon: '',
     items: [
       { h: '27. Wajib Dicatat', p: ['Semua KPI wajib memiliki bukti pencatatan.']},
       { h: 'Marketing', p: ['Google Sheet/Buku Marketing berisi:'], ul: [
@@ -4748,7 +6334,7 @@ const SOP_DATA = [
     ]
   },
   {
-    id: 'Q', title: 'EVALUASI', icon: '📋',
+    id: 'Q', title: 'EVALUASI', icon: '',
     items: [
       { h: '28. Evaluasi Mingguan', p: ['Evaluasi KPI dilakukan minimal 1 kali dalam seminggu. Yang dibahas:'], ol: [
         'Target.', 'Realisasi.', 'Kendala.', 'Kesalahan.', 'Customer.',
@@ -4761,7 +6347,7 @@ const SOP_DATA = [
     ]
   },
   {
-    id: 'R', title: 'PRINSIP KERJA TENX APPAREL', icon: '⚡',
+    id: 'R', title: 'PRINSIP KERJA TENX APPAREL', icon: '',
     items: [
       { p: ['Seluruh karyawan diharapkan menerapkan prinsip:'],
         big: 'SATSET DALAM BEKERJA, TELITI DALAM HASIL, JUJUR DALAM TANGGUNG JAWAB',
@@ -4772,7 +6358,7 @@ const SOP_DATA = [
     ]
   },
   {
-    id: 'S', title: 'PENUTUP', icon: '✅',
+    id: 'S', title: 'PENUTUP', icon: '',
     items: [
       { p: ['SOP ini dibuat bukan untuk mempersulit karyawan, tetapi untuk membuat sistem kerja yang:'],
         big: 'LEBIH JELAS, LEBIH ADIL, LEBIH TERUKUR, DAN LEBIH PROFESIONAL',
@@ -4864,15 +6450,14 @@ function renderSop(){
   const sections = SOP_DATA.filter(sopSectionMatches);
 
   const chips = SOP_DATA.map(s=>
-    '<button class="sop-chip" onclick="sopJumpTo(\'' + s.id + '\')">' + s.icon + ' ' + sopEsc(s.id) + '. ' + sopEsc(s.title) + '</button>'
+    '<button class="sop-chip" onclick="sopJumpTo(\'' + s.id + '\')">' + sopEsc(s.id) + '. ' + sopEsc(s.title) + '</button>'
   ).join('');
 
   const body = sections.length ? sections.map(sec=>{
     const open = q ? true : !!sopState.open[sec.id];
     return '<section class="sop-sec ' + (open ? 'open' : '') + '" id="sop-sec-' + sec.id + '">' +
       '<button class="sop-sec-head" onclick="sopToggle(\'' + sec.id + '\')">' +
-        '<span class="ico">' + sec.icon + '</span>' +
-        '<span class="ttl"><small>BAGIAN ' + sopEsc(sec.id) + '</small>' + sopHighlight(sec.title) + '</span>' +
+                '<span class="ttl"><small>BAGIAN ' + sopEsc(sec.id) + '</small>' + sopHighlight(sec.title) + '</span>' +
         '<span class="chev">' + (open ? '&#9650;' : '&#9660;') + '</span>' +
       '</button>' +
       '<div class="sop-sec-body">' + sec.items.map(sopRenderItem).join('') + '</div>' +
@@ -4890,7 +6475,7 @@ function renderSop(){
       '<input id="sopSearch" type="search" placeholder="Cari aturan… (mis. piket, komisi, jam kerja)" value="' + sopEsc(sopState.query) + '" oninput="sopSearchInput(this.value)">' +
       '<div class="sop-tool-btns">' +
         '<button class="sop-btn" onclick="sopToggleAll()">' + (sopState.expandAll ? 'Tutup Semua' : 'Buka Semua') + '</button>' +
-        '<button class="sop-btn" onclick="sopPrint()">&#128438; Cetak / PDF</button>' +
+        '<button class="sop-btn" onclick="sopPrint()">Cetak / PDF</button>' +
       '</div>' +
     '</div>' +
     (q ? '' : '<div class="sop-chips">' + chips + '</div>') +
