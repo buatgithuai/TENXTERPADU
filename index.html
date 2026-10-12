@@ -770,12 +770,195 @@
 #keuanganApp .kg-totals{display:flex;flex-direction:column;gap:4px;font-size:13px;margin:10px 0 16px;padding:12px;background:var(--bg);border-radius:8px;}
 #keuanganApp .kg-totals .trow{display:flex;justify-content:space-between;}
 #keuanganApp .kg-totals .trow.grand{font-weight:800;font-size:14.5px;color:var(--navy);border-top:1px solid var(--line);padding-top:6px;margin-top:2px;}
+
+
 @media(max-width:520px){
   #keuanganApp .kg-header{padding:16px 16px;}
   #keuanganApp main{padding:16px 12px 90px;}
   #keuanganApp .kg-row{flex-direction:row;}
   #keuanganApp .kg-row .amt{text-align:right;margin-left:auto;}
 }
+
+
+/* ===================== FINANCE (LABA BERSIH & PENGELUARAN) ===================== */
+#financeApp{
+    --navy:#152452;
+    --navy-dark:#0e1a3d;
+    --yellow:#f5c518;
+    --yellow-dark:#e0b000;
+    --ink:#1a1a1a;
+    --muted:#6b7280;
+    --paper:#ffffff;
+    --bg:#eef1f8;
+    --line:#e3e6ee;
+    --green:#1f9d55;
+    --amber:#c98a2c;
+    --rust:#b3441f;
+  }
+#financeApp *{box-sizing:border-box;}
+#financeApp{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--ink);min-height:calc(100vh - 50px);}
+#financeApp .kg-header{
+    background:var(--navy-dark);color:#fff;padding:20px 24px;
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+    border-bottom:3px solid var(--yellow);
+  }
+#financeApp .kg-header h1{margin:0;font-size:20px;letter-spacing:.4px;}
+#financeApp .kg-header .sub{font-size:12px;color:#c6d0ec;margin-top:2px;}
+#financeApp main{max-width:1100px;margin:0 auto;padding:20px 18px 80px;}
+#financeApp .kg-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:22px;}
+#financeApp .kg-card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px 18px;}
+#financeApp .kg-card .lbl{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;}
+#financeApp .kg-card .val{font-size:21px;font-weight:800;color:var(--navy);}
+#financeApp .kg-card.outstanding .val{color:var(--rust);}
+#financeApp .kg-card .sub{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.4;}
+#financeApp .kg-card.income{border-top:3px solid var(--green);}
+#financeApp .kg-card.income .val{color:var(--green);}
+#financeApp .kg-card.st-dp{border-top:3px solid var(--amber);}
+#financeApp .kg-card.st-dp .val{color:#9A6A12;}
+#financeApp .kg-card.st-none{border-top:3px solid var(--rust);}
+#financeApp .kg-card.st-none .val{color:var(--rust);}
+#financeApp .kg-group-sep{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:6px 0 4px;}
+#financeApp .kg-note{font-size:12px;color:var(--muted);background:var(--bg);border:1px dashed var(--line);border-radius:8px;padding:9px 12px;margin:-8px 0 20px;line-height:1.5;}
+#financeApp .kg-group{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 12px;border-radius:8px;margin:14px 0 2px;font-size:13px;font-weight:800;color:#fff;}
+#financeApp .kg-group:first-child{margin-top:0;}
+#financeApp .kg-group small{font-weight:600;font-size:11.5px;opacity:.95;}
+#financeApp .kg-group.g-lunas{background:var(--green);}
+#financeApp .kg-group.g-dp{background:#B8801F;}
+#financeApp .kg-group.g-belum_bayar{background:var(--rust);}
+#financeApp .kg-row .amt .in{color:var(--green);font-weight:700;}
+#financeApp .kg-row .amt .out{color:var(--rust);font-weight:700;}
+#financeApp .kg-section{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:20px;}
+#financeApp .kg-section h2{font-size:16px;margin:0 0 14px;color:var(--navy);}
+#financeApp .kg-chart-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+#financeApp .kg-chart-tabs button{
+    font-size:12.5px;border:1.5px solid var(--line);background:#fff;color:var(--muted);
+    padding:7px 14px;border-radius:999px;cursor:pointer;font-family:inherit;
+  }
+#financeApp .kg-chart-tabs button.active{background:var(--navy);border-color:var(--navy);color:#fff;font-weight:700;}
+#financeApp .kg-chart-wrap{position:relative;height:260px;}
+#financeApp .kg-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:14px;}
+#financeApp .kg-toolbar .kg-search{flex:1;min-width:180px;}
+#financeApp .kg-toolbar input[type=text]{
+    width:100%;border:1.5px solid var(--line);border-radius:8px;padding:10px 12px;
+    font-size:13.5px;font-family:inherit;background:#fff;color:var(--ink);
+  }
+#financeApp .kg-filters{display:flex;gap:6px;flex-wrap:wrap;}
+#financeApp .kg-filters button{
+    font-size:12px;border:1.5px solid var(--line);background:#fff;color:var(--muted);
+    padding:6px 12px;border-radius:999px;cursor:pointer;font-family:inherit;
+  }
+#financeApp .kg-filters button.active{background:var(--yellow);border-color:var(--yellow);color:var(--navy-dark);font-weight:700;}
+#financeApp .btn{
+    font-family:inherit;font-weight:700;font-size:13px;border:none;border-radius:8px;
+    padding:10px 16px;cursor:pointer;background:var(--navy);color:#fff;
+  }
+#financeApp .btn:hover{background:var(--navy-dark);}
+#financeApp .btn.gold{background:var(--yellow);color:var(--navy-dark);}
+#financeApp .btn.gold:hover{background:var(--yellow-dark);}
+#financeApp .btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink);}
+#financeApp .btn.small{padding:6px 11px;font-size:12px;}
+#financeApp .kg-list{display:flex;flex-direction:column;gap:10px;}
+#financeApp .kg-row{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;background:#fff;flex-wrap:wrap;
+  }
+#financeApp .kg-row:hover{border-color:var(--navy);}
+#financeApp .kg-row .who{font-weight:700;font-size:14px;}
+#financeApp .kg-row .meta{font-size:11.5px;color:var(--muted);margin-top:2px;}
+#financeApp .kg-row .amt{font-weight:800;font-size:14.5px;color:var(--navy);text-align:right;}
+#financeApp .kg-row .amt small{display:block;font-weight:400;font-size:11px;color:var(--muted);}
+#financeApp .kg-badge{
+    font-size:10.5px;font-weight:700;letter-spacing:.04em;padding:3px 9px;border-radius:999px;color:#fff;display:inline-block;
+  }
+#financeApp .kg-badge.lunas{background:var(--green);}
+#financeApp .kg-badge.dp{background:var(--amber);}
+#financeApp .kg-badge.belum_bayar{background:var(--rust);}
+#financeApp .kg-badge.manual{background:#6b7fb0;}
+#financeApp .kg-empty{text-align:center;padding:36px 16px;color:var(--muted);font-size:13.5px;}
+/* modal */
+#financeApp .kg-modal-bg{
+    position:fixed;inset:0;background:rgba(14,26,61,0.55);z-index:900;
+    display:flex;align-items:flex-end;justify-content:center;
+  }
+#financeApp .kg-modal{
+    background:#fff;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;
+    border-radius:16px 16px 0 0;padding:22px 20px 28px;
+  }
+@media(min-width:640px){
+  #financeApp .kg-modal-bg{align-items:center;}
+  #financeApp .kg-modal{border-radius:16px;max-height:88vh;}
+}
+#financeApp .kg-modal h3{margin:0 0 4px;font-size:18px;color:var(--navy);}
+#financeApp .kg-modal .kg-modal-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
+#financeApp .kg-modal label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:12px 0 5px;}
+#financeApp .kg-modal label:first-of-type{margin-top:0;}
+#financeApp .kg-modal input, #financeApp .kg-modal textarea{
+    width:100%;border:1.5px solid var(--line);border-radius:8px;padding:10px 12px;
+    font-size:13.5px;font-family:inherit;background:#fff;color:var(--ink);
+  }
+#financeApp .kg-modal .kg-close{
+    position:absolute;top:14px;right:16px;background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;
+  }
+#financeApp .kg-modal-inner{position:relative;}
+#financeApp .kg-items-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:14px;}
+#financeApp .kg-items-table th, #financeApp .kg-items-table td{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left;}
+#financeApp .kg-items-table th:not(:first-child), #financeApp .kg-items-table td:not(:first-child){text-align:right;}
+#financeApp .kg-pay-history{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+#financeApp .kg-pay-row{display:flex;justify-content:space-between;font-size:12.5px;background:var(--bg);border-radius:6px;padding:7px 10px;}
+#financeApp .kg-pay-row .p-note{color:var(--muted);}
+#financeApp .kg-totals{display:flex;flex-direction:column;gap:4px;font-size:13px;margin:10px 0 16px;padding:12px;background:var(--bg);border-radius:8px;}
+#financeApp .kg-totals .trow{display:flex;justify-content:space-between;}
+#financeApp .kg-totals .trow.grand{font-weight:800;font-size:14.5px;color:var(--navy);border-top:1px solid var(--line);padding-top:6px;margin-top:2px;}
+
+
+@media(max-width:520px){
+  #financeApp .kg-header{padding:16px 16px;}
+  #financeApp main{padding:16px 12px 90px;}
+  #financeApp .kg-row{flex-direction:row;}
+  #financeApp .kg-row .amt{text-align:right;margin-left:auto;}
+}
+
+/* ---- Laba / Pengeluaran ---- */
+#financeApp .kg-tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+#financeApp .kg-tabs button{font-family:inherit;font-size:13.5px;font-weight:700;border:1.5px solid var(--line);background:#fff;color:var(--muted);padding:10px 18px;border-radius:10px;cursor:pointer;}
+#financeApp .kg-tabs button.active{background:var(--navy);border-color:var(--navy);color:#fff;}
+#financeApp .kg-card.profit{border-top:3px solid var(--navy);}
+#financeApp .kg-card.profit.pos .val{color:var(--green);}
+#financeApp .kg-card.profit.neg{border-top-color:var(--rust);}
+#financeApp .kg-card.profit.neg .val{color:var(--rust);}
+#financeApp .kg-card.expense{border-top:3px solid var(--rust);}
+#financeApp .kg-card.expense .val{color:var(--rust);}
+#financeApp .kg-card.margin{border-top:3px solid var(--yellow);}
+#financeApp .kg-card.margin .val{color:var(--navy);}
+#financeApp .kg-period{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
+#financeApp .kg-period button{font-size:12.5px;border:1.5px solid var(--line);background:#fff;color:var(--muted);padding:7px 14px;border-radius:999px;cursor:pointer;font-family:inherit;}
+#financeApp .kg-period button.active{background:var(--yellow);border-color:var(--yellow);color:var(--navy-dark);font-weight:700;}
+#financeApp .kg-period input[type=month]{border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:13px;font-family:inherit;background:#fff;color:var(--ink);}
+#financeApp .kg-statement{display:flex;flex-direction:column;font-size:13.5px;}
+#financeApp .kg-statement .srow{display:flex;justify-content:space-between;gap:10px;padding:9px 2px;border-bottom:1px solid var(--line);}
+#financeApp .kg-statement .srow.sub{padding-left:16px;font-size:12.5px;color:var(--muted);}
+#financeApp .kg-statement .srow.total{font-weight:800;color:var(--navy);background:var(--bg);border-radius:8px;border-bottom:none;padding:11px 10px;margin:4px 0;}
+#financeApp .kg-statement .srow.total.neg{color:var(--rust);}
+#financeApp .kg-statement .srow .pct{font-weight:600;font-size:12px;color:var(--muted);margin-left:6px;}
+#financeApp .kg-table-wrap{overflow-x:auto;}
+#financeApp .kg-table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:620px;}
+#financeApp .kg-table th,#financeApp .kg-table td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;}
+#financeApp .kg-table th:first-child,#financeApp .kg-table td:first-child{text-align:left;}
+#financeApp .kg-table th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);}
+#financeApp .kg-table tr.tot td{font-weight:800;background:var(--bg);}
+#financeApp .kg-table .pos{color:var(--green);font-weight:700;}
+#financeApp .kg-table .neg{color:var(--rust);font-weight:700;}
+#financeApp .kg-cat{display:flex;flex-direction:column;gap:9px;}
+#financeApp .kg-cat .crow{font-size:12.5px;}
+#financeApp .kg-cat .chead{display:flex;justify-content:space-between;margin-bottom:3px;gap:8px;}
+#financeApp .kg-cat .bar{height:7px;border-radius:99px;background:var(--bg);overflow:hidden;}
+#financeApp .kg-cat .bar i{display:block;height:100%;background:var(--rust);border-radius:99px;}
+#financeApp .kg-cat .bar i.hpp{background:var(--amber);}
+#financeApp .kg-badge.hpp{background:var(--amber);}
+#financeApp .kg-badge.ops{background:#6b7fb0;}
+#financeApp .kg-grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:760px){#financeApp .kg-grid2{grid-template-columns:1fr;gap:0;}}
+#financeApp .kg-modal select{width:100%;border:1.5px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13.5px;font-family:inherit;background:#fff;color:var(--ink);}
 
 /* ===================== ABSENSI / WORKSPACE APP ===================== */
 #absensiApp{
@@ -1003,6 +1186,7 @@
 #landingScreen .ls-card-nota .ls-cta{color:#f5c518;}
 #landingScreen .ls-card-workflow .ls-cta{color:#8fb0ff;}
 #landingScreen .ls-card-keuangan .ls-cta{color:#6fe3a1;}
+#landingScreen .ls-card-finance .ls-cta{color:#f5c518;}
 #landingScreen .ls-card-sop .ls-cta{color:#ffca6b;}
 #landingScreen .ls-hint{margin-top:36px;max-width:600px;font-size:12px;color:#9fb0d8;line-height:1.6;}
 @media(max-width:480px){
@@ -1197,6 +1381,7 @@ body{overflow-x:hidden;}
     <button id="gn-btn-workflow" onclick="showMode('workflow')">Alur Kerja</button>
     <button id="gn-btn-nota" onclick="showMode('nota')">Generator Nota</button>
     <button id="gn-btn-keuangan" onclick="showMode('keuangan')">Keuangan</button>
+    <button id="gn-btn-finance" onclick="showMode('finance')">FINANCE</button>
     <button id="gn-btn-absensi" onclick="showMode('absensi')">Workspace</button>
     <button id="gn-btn-sop" onclick="showMode('sop')">SOP</button>
   </div>
@@ -1225,17 +1410,23 @@ body{overflow-x:hidden;}
     <button class="ls-card ls-card-keuangan" onclick="showMode('keuangan')">
       <div class="ls-icon">03</div>
       <h2>Riwayat &amp; Keuangan</h2>
-      <p>Semua nota otomatis tercatat di sini lengkap dengan nomor urut, atas nama pemesan, status DP/lunas &amp; sisa pembayaran. Tambah transaksi manual dan lihat grafik penjualan harian, bulanan, tahunan.</p>
+      <p>Semua nota otomatis tercatat di sini lengkap dengan nomor urut, atas nama pemesan, dan status Belum Bayar / DP / Lunas beserta sisa pembayaran, jadi mudah dicari mana yang belum beres. Tambah transaksi manual dan lihat grafik pemasukan.</p>
       <span class="ls-cta">Buka Keuangan →</span>
     </button>
-    <button class="ls-card ls-card-workflow" onclick="showMode('absensi')">
+    <button class="ls-card ls-card-finance" onclick="showMode('finance')">
       <div class="ls-icon">04</div>
+      <h2>FINANCE</h2>
+      <p>Catat semua pengeluaran (produksi &amp; operasional), lalu lihat untung kotor, untung bersih, dan persentase margin rata-rata. Pemasukan terhubung otomatis dari nota — hanya DP &amp; pelunasan yang sudah masuk yang dihitung.</p>
+      <span class="ls-cta">Buka FINANCE →</span>
+    </button>
+    <button class="ls-card ls-card-workflow" onclick="showMode('absensi')">
+      <div class="ls-icon">05</div>
       <h2>Workspace — Absensi</h2>
       <p>Karyawan absen masuk pakai kamera (Senin–Sabtu, Minggu libur) sesuai jam yang ditentukan. Owner bisa lihat rekap absensi per bulan, kelola data karyawan, dan pantau progress harian tim Marketing (kontak &amp; event) lengkap bukti uploadnya.</p>
       <span class="ls-cta">Buka Workspace →</span>
     </button>
     <button class="ls-card ls-card-sop" onclick="showMode('sop')">
-      <div class="ls-icon">05</div>
+      <div class="ls-icon">06</div>
       <h2>SOP TenX Apparel</h2>
       <p>Standar Operasional Prosedur resmi yang berlaku efektif 15 September 2026. Bisa dibaca langsung di aplikasi — lengkap dengan pencarian aturan, KPI Marketing/Produksi/Desain, jam kerja, piket, bonus, komisi, dan reward. Tidak perlu buka file Word lagi.</p>
       <span class="ls-cta">Baca SOP &rarr;</span>
@@ -1465,6 +1656,65 @@ body{overflow-x:hidden;}
   </main>
 
   <div id="kgModalRoot"></div>
+</div>
+
+<div id="financeApp" style="display:none;">
+  <div class="kg-header">
+    <div>
+      <h1>FINANCE</h1>
+      <div class="sub">Laba bersih, pengeluaran &amp; margin — pemasukan terhubung otomatis dari nota yang sudah dibayar</div>
+    </div>
+    <button class="btn gold" onclick="openExpenseModal()">+ Pengeluaran</button>
+  </div>
+
+  <main>
+      <div class="kg-period" id="kgLabaPeriod">
+        <button data-p="bulan_ini" class="active" onclick="setKgLabaPeriod('bulan_ini')">Bulan Ini</button>
+        <button data-p="bulan_lalu" onclick="setKgLabaPeriod('bulan_lalu')">Bulan Lalu</button>
+        <button data-p="tahun_ini" onclick="setKgLabaPeriod('tahun_ini')">Tahun Ini</button>
+        <button data-p="semua" onclick="setKgLabaPeriod('semua')">Semua Waktu</button>
+        <input type="month" id="kgLabaMonth" onchange="setKgLabaPeriod('pilih')" title="Pilih bulan tertentu">
+      </div>
+
+      <div class="kg-summary" id="kgLabaSummary"></div>
+      <div class="kg-note" id="kgLabaNote"><b>Cara hitung:</b> Pemasukan diambil otomatis dari tab Riwayat &amp; Pemasukan — <b>hanya uang yang sudah masuk</b> (DP, pelunasan, bayar full, transaksi manual). Nota yang belum dibayar sama sekali atau sisa tagihan DP yang belum lunas <b>tidak ikut dihitung</b>. <b>Untung Kotor</b> = Pemasukan − Pengeluaran Produksi (HPP). <b>Untung Bersih</b> = Untung Kotor − Pengeluaran Operasional. <b>Margin</b> = Untung ÷ Pemasukan.</div>
+
+      <div class="kg-grid2">
+        <div class="kg-section">
+          <h2>Ringkasan Laba / Rugi</h2>
+          <div class="kg-statement" id="kgStatement"></div>
+        </div>
+        <div class="kg-section">
+          <h2>Pengeluaran per Kategori</h2>
+          <div class="kg-cat" id="kgCatBreakdown"></div>
+        </div>
+      </div>
+
+      <div class="kg-section">
+        <h2>Pemasukan vs Pengeluaran per Bulan</h2>
+        <div class="kg-chart-wrap"><canvas id="kgLabaChartCanvas"></canvas></div>
+      </div>
+
+      <div class="kg-section">
+        <h2>Rincian per Bulan</h2>
+        <div class="kg-table-wrap" id="kgMonthTable"></div>
+      </div>
+
+      <div class="kg-section">
+        <h2>Daftar Pengeluaran</h2>
+        <div class="kg-toolbar">
+          <div class="kg-search"><input type="text" id="kgExpSearch" placeholder="Cari keterangan / kategori / no. invoice..." oninput="renderExpenseList()"></div>
+          <div class="kg-filters" id="kgExpFilters">
+            <button class="active" data-g="semua" onclick="setKgExpFilter('semua')">Semua</button>
+            <button data-g="hpp" onclick="setKgExpFilter('hpp')">Produksi (HPP)</button>
+            <button data-g="ops" onclick="setKgExpFilter('ops')">Operasional</button>
+          </div>
+        </div>
+        <div class="kg-list" id="kgExpList"></div>
+      </div>
+  </main>
+
+  <div id="fnModalRoot"></div>
 </div>
 
 <div id="sopShell" style="display:none;">
@@ -1725,6 +1975,7 @@ async function getNextInvoiceNumber(){
 /* ===================== RIWAYAT NOTA / INVOICE (KEUANGAN) ===================== */
 let invoicesCache = [];
 let manualSalesCache = [];
+let expensesCache = [];
 let invoicesInited = false;
 
 function invoiceStatus(inv){
@@ -1810,6 +2061,11 @@ function subscribeInvoicesRealtime(){
       manualSalesCache = snapshot.docs.map(d => d.data());
       renderKeuangan();
     }, err => console.error('Realtime manualSales error', err));
+  db.collection('expenses').orderBy('createdAt', 'desc')
+    .onSnapshot(snapshot => {
+      expensesCache = snapshot.docs.map(d => d.data());
+      renderKeuangan();
+    }, err => console.error('Realtime expenses error (cek Firestore Rules untuk koleksi "expenses")', err));
 }
 
 function initKeuangan(){
@@ -3409,6 +3665,7 @@ function renderKeuangan(){
   }
 
   renderKgChart();
+  renderKgLaba();   // halaman FINANCE ikut ter-update saat data nota/pengeluaran berubah
 }
 
 function renderKgChart(){
@@ -3463,6 +3720,298 @@ function renderKgChart(){
       scales:{ y:{ ticks:{ callback: v => 'Rp ' + (v/1000) + 'rb' } } }
     }
   });
+}
+
+
+/* ===================== FINANCE: PENGELUARAN & LABA BERSIH ===================== */
+const KG_EXPENSE_CATS = {
+  hpp: ['Bahan Kain','Jahit / Konveksi','Sablon / Bordir / DTF','Aksesoris & Packing','Ongkir Produksi','Lain-lain Produksi'],
+  ops: ['Gaji & Upah','Komisi','Sewa, Listrik & Air','Iklan & Marketing','Peralatan & Maintenance','Lain-lain Operasional']
+};
+const KG_GROUP_LABEL = { hpp:'Produksi (HPP)', ops:'Operasional' };
+let kgLabaPeriod = 'bulan_ini';
+let kgExpFilter = 'semua';
+let kgLabaChartInstance = null;
+
+function setKgLabaPeriod(p){
+  if(p==='pilih' && !document.getElementById('kgLabaMonth').value) return;
+  kgLabaPeriod = p;
+  document.querySelectorAll('#kgLabaPeriod button').forEach(b=>b.classList.toggle('active', b.dataset.p===p));
+  if(p!=='pilih') document.getElementById('kgLabaMonth').value = '';
+  renderKgLaba();
+}
+function setKgExpFilter(g){
+  kgExpFilter = g;
+  document.querySelectorAll('#kgExpFilters button').forEach(b=>b.classList.toggle('active', b.dataset.g===g));
+  renderExpenseList();
+}
+
+/* Rp dengan tanda minus yang rapi */
+function kgRp(n){
+  n = Math.round(Number(n)||0);
+  return (n<0 ? '-' : '') + 'Rp ' + Math.abs(n).toLocaleString('id-ID');
+}
+function kgPct(num, den){
+  if(!den || den<=0) return null;
+  return (num/den)*100;
+}
+function kgPctTxt(v){
+  if(v===null || v===undefined || isNaN(v)) return '–';
+  return (Math.round(v*10)/10).toLocaleString('id-ID') + '%';
+}
+function kgMonthLabel(key){
+  const b = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const [y,m] = key.split('-');
+  return b[Number(m)-1] + ' ' + y;
+}
+/* Fungsi filter tanggal sesuai periode yang dipilih */
+function kgLabaFilter(){
+  const now = new Date();
+  const todayStr = kgLocalDate(now);
+  if(kgLabaPeriod==='bulan_ini'){ const k=todayStr.slice(0,7); return {fn:d=>d.slice(0,7)===k, label:'Bulan ' + kgMonthLabel(k)}; }
+  if(kgLabaPeriod==='bulan_lalu'){
+    const d = new Date(now.getFullYear(), now.getMonth()-1, 1);
+    const k = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    return {fn:x=>x.slice(0,7)===k, label:'Bulan ' + kgMonthLabel(k)};
+  }
+  if(kgLabaPeriod==='tahun_ini'){ const y=todayStr.slice(0,4); return {fn:d=>d.slice(0,4)===y, label:'Tahun '+y}; }
+  if(kgLabaPeriod==='pilih'){
+    const k = document.getElementById('kgLabaMonth').value;
+    if(k) return {fn:d=>d.slice(0,7)===k, label:'Bulan ' + kgMonthLabel(k)};
+  }
+  return {fn:()=>true, label:'Semua Waktu'};
+}
+
+/* Hitung semua angka laba untuk periode terpilih */
+function kgComputeLaba(){
+  const f = kgLabaFilter();
+  const incomeEntries = kgIncomeEntries(combinedTransactions()).filter(e=>f.fn(e.date));   // hanya uang yang sudah masuk
+  const exps = expensesCache.filter(x=> x.date && f.fn(x.date));
+
+  const months = {};   // key -> {income,hpp,ops}
+  const m = k => (months[k] = months[k] || {income:0,hpp:0,ops:0});
+  let income=0, hpp=0, ops=0;
+  incomeEntries.forEach(e=>{ income+=e.amount; m(e.date.slice(0,7)).income += e.amount; });
+  exps.forEach(x=>{
+    const a = Number(x.amount)||0;
+    if(x.group==='hpp'){ hpp+=a; m(x.date.slice(0,7)).hpp += a; }
+    else { ops+=a; m(x.date.slice(0,7)).ops += a; }
+  });
+  const gross = income - hpp;
+  const net = gross - ops;
+
+  const monthRows = Object.keys(months).sort().map(k=>{
+    const r = months[k];
+    const g = r.income - r.hpp, n = g - r.ops;
+    return {key:k, ...r, gross:g, net:n, grossPct:kgPct(g,r.income), netPct:kgPct(n,r.income)};
+  });
+  // Rata-rata margin per bulan = rata-rata margin tiap bulan yang punya pemasukan
+  const withIncome = monthRows.filter(r=>r.income>0);
+  const avg = arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : null;
+  const avgGrossPct = avg(withIncome.map(r=>r.grossPct));
+  const avgNetPct   = avg(withIncome.map(r=>r.netPct));
+
+  return {
+    label:f.label, income, hpp, ops, expense:hpp+ops, gross, net, exps, monthRows,
+    grossPct:kgPct(gross,income), netPct:kgPct(net,income),
+    avgGrossPct, avgNetPct, monthsCount:withIncome.length
+  };
+}
+
+function renderKgLaba(){
+  if(!document.getElementById('kgLabaSummary')) return;
+  if(document.getElementById('financeApp').style.display==='none') return;   // hemat render saat halaman tidak dibuka
+  const L = kgComputeLaba();
+  const isLoss = L.net < 0;
+
+  document.getElementById('kgLabaSummary').innerHTML = `
+    <div class="kg-card income"><div class="lbl">Pemasukan (Sudah Masuk)</div><div class="val">${kgRp(L.income)}</div><div class="sub">${escapeHtml(L.label)} · DP &amp; pelunasan yang sudah diterima</div></div>
+    <div class="kg-card expense"><div class="lbl">Total Pengeluaran</div><div class="val">${kgRp(L.expense)}</div><div class="sub">Produksi ${kgRp(L.hpp)}<br>Operasional ${kgRp(L.ops)}</div></div>
+    <div class="kg-card profit ${L.gross<0?'neg':'pos'}"><div class="lbl">Untung Kotor</div><div class="val">${kgRp(L.gross)}</div><div class="sub">Pemasukan − Produksi (HPP)<br>Margin kotor ${kgPctTxt(L.grossPct)}</div></div>
+    <div class="kg-card profit ${isLoss?'neg':'pos'}"><div class="lbl">${isLoss?'Rugi Bersih':'Untung Bersih (Net Profit)'}</div><div class="val">${kgRp(L.net)}</div><div class="sub">Setelah semua pengeluaran<br>Margin bersih ${kgPctTxt(L.netPct)}</div></div>
+    <div class="kg-card margin"><div class="lbl">Rata-rata Margin Bersih / Bulan</div><div class="val">${kgPctTxt(L.avgNetPct)}</div><div class="sub">Rata-rata ${L.monthsCount} bulan yang ada pemasukan<br>Margin kotor rata-rata ${kgPctTxt(L.avgGrossPct)}</div></div>
+  `;
+
+  // Laporan laba rugi
+  const pc = v => `<span class="pct">${kgPctTxt(v)}</span>`;
+  const catSum = (grp)=>{
+    const o = {};
+    L.exps.filter(x=>x.group===grp).forEach(x=>{ const c=x.category||'Lainnya'; o[c]=(o[c]||0)+(Number(x.amount)||0); });
+    return Object.entries(o).sort((a,b)=>b[1]-a[1]);
+  };
+  const subRows = grp => catSum(grp).map(([c,v])=>`<div class="srow sub"><span>${escapeHtml(c)}</span><span>${kgRp(v)}</span></div>`).join('');
+  document.getElementById('kgStatement').innerHTML = `
+    <div class="srow"><span>Pemasukan (uang sudah masuk)</span><b>${kgRp(L.income)}</b></div>
+    <div class="srow"><span>Pengeluaran Produksi (HPP)</span><b>− ${kgRp(L.hpp)}</b></div>
+    ${subRows('hpp')}
+    <div class="srow total ${L.gross<0?'neg':''}"><span>Untung Kotor ${pc(L.grossPct)}</span><span>${kgRp(L.gross)}</span></div>
+    <div class="srow"><span>Pengeluaran Operasional</span><b>− ${kgRp(L.ops)}</b></div>
+    ${subRows('ops')}
+    <div class="srow total ${isLoss?'neg':''}"><span>${isLoss?'Rugi Bersih':'Untung Bersih'} ${pc(L.netPct)}</span><span>${kgRp(L.net)}</span></div>
+    <div class="srow"><span>Margin bersih keseluruhan periode</span><b>${kgPctTxt(L.netPct)}</b></div>
+    <div class="srow"><span>Rata-rata margin bersih per bulan</span><b>${kgPctTxt(L.avgNetPct)}</b></div>
+  `;
+
+  // Breakdown per kategori
+  const all = [...catSum('hpp').map(([c,v])=>({c,v,g:'hpp'})), ...catSum('ops').map(([c,v])=>({c,v,g:'ops'}))].sort((a,b)=>b.v-a.v);
+  const catEl = document.getElementById('kgCatBreakdown');
+  if(!all.length){ catEl.innerHTML = `<div class="kg-empty" style="padding:18px;">Belum ada pengeluaran di periode ini.</div>`; }
+  else {
+    catEl.innerHTML = all.map(x=>{
+      const w = L.expense>0 ? (x.v/L.expense*100) : 0;
+      return `<div class="crow"><div class="chead"><span>${escapeHtml(x.c)} <span class="kg-badge ${x.g}" style="margin-left:4px;">${x.g==='hpp'?'HPP':'OPS'}</span></span><b>${kgRp(x.v)} <span style="color:var(--muted);font-weight:400;">· ${kgPctTxt(w)}</span></b></div><div class="bar"><i class="${x.g}" style="width:${w}%"></i></div></div>`;
+    }).join('');
+  }
+
+  // Tabel per bulan
+  const rows = [...L.monthRows].reverse();
+  const tbl = document.getElementById('kgMonthTable');
+  if(!rows.length){ tbl.innerHTML = `<div class="kg-empty">Belum ada data pemasukan / pengeluaran di periode ini.</div>`; }
+  else {
+    const cls = v => v<0 ? 'neg' : 'pos';
+    tbl.innerHTML = `<table class="kg-table"><thead><tr><th>Bulan</th><th>Pemasukan</th><th>HPP</th><th>Operasional</th><th>Untung Kotor</th><th>Untung Bersih</th><th>Margin Bersih</th></tr></thead><tbody>` +
+      rows.map(r=>`<tr><td>${kgMonthLabel(r.key)}</td><td>${kgRp(r.income)}</td><td>${kgRp(r.hpp)}</td><td>${kgRp(r.ops)}</td><td class="${cls(r.gross)}">${kgRp(r.gross)}</td><td class="${cls(r.net)}">${kgRp(r.net)}</td><td class="${cls(r.net)}">${kgPctTxt(r.netPct)}</td></tr>`).join('') +
+      `<tr class="tot"><td>TOTAL</td><td>${kgRp(L.income)}</td><td>${kgRp(L.hpp)}</td><td>${kgRp(L.ops)}</td><td>${kgRp(L.gross)}</td><td>${kgRp(L.net)}</td><td>${kgPctTxt(L.netPct)}</td></tr>` +
+      `<tr class="tot"><td>RATA-RATA / BULAN</td><td colspan="4"></td><td></td><td>${kgPctTxt(L.avgNetPct)}</td></tr></tbody></table>`;
+  }
+
+  renderKgLabaChart(L);
+  renderExpenseList();
+}
+
+function renderKgLabaChart(L){
+  const canvas = document.getElementById('kgLabaChartCanvas');
+  if(!canvas || typeof Chart==='undefined') return;
+  const rows = L.monthRows.slice(-12);
+  if(kgLabaChartInstance) kgLabaChartInstance.destroy();
+  kgLabaChartInstance = new Chart(canvas.getContext('2d'), {
+    data:{
+      labels: rows.map(r=>kgMonthLabel(r.key)),
+      datasets:[
+        {type:'bar', label:'Pemasukan', data:rows.map(r=>r.income), backgroundColor:'#1f9d55'},
+        {type:'bar', label:'Pengeluaran', data:rows.map(r=>r.hpp+r.ops), backgroundColor:'#b3441f'},
+        {type:'line', label:'Untung Bersih', data:rows.map(r=>r.net), borderColor:'#152452', backgroundColor:'#152452', borderWidth:2, tension:.3, pointRadius:3}
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:true, position:'bottom'}, tooltip:{ callbacks:{ label:c=> c.dataset.label+': '+kgRp(c.parsed.y) } } },
+      scales:{ y:{ ticks:{ callback: v => 'Rp ' + (v/1000) + 'rb' } } }
+    }
+  });
+}
+
+/* ---------- Daftar pengeluaran ---------- */
+function renderExpenseList(){
+  const el = document.getElementById('kgExpList');
+  if(!el) return;
+  const f = kgLabaFilter();
+  const q = (document.getElementById('kgExpSearch')?.value || '').toLowerCase().trim();
+  const list = expensesCache
+    .filter(x=> x.date && f.fn(x.date))
+    .filter(x=> kgExpFilter==='semua' || x.group===kgExpFilter)
+    .filter(x=> !q || (x.desc||'').toLowerCase().includes(q) || (x.category||'').toLowerCase().includes(q) || String(x.invNo||'').toLowerCase().includes(q))
+    .sort((a,b)=> (b.date||'').localeCompare(a.date||'') || (b.createdAt||'').localeCompare(a.createdAt||''));
+  if(!list.length){ el.innerHTML = `<div class="kg-empty">Belum ada pengeluaran di periode ini. Klik <b>+ Pengeluaran</b> untuk mencatat.</div>`; return; }
+  const total = list.reduce((s,x)=>s+(Number(x.amount)||0),0);
+  el.innerHTML = list.map(x=>`
+    <div class="kg-row" onclick="openExpenseModal('${x.id}')">
+      <div>
+        <div class="who">${escapeHtml(x.desc||x.category||'Pengeluaran')}${x.invNo ? ' · #'+escapeHtml(x.invNo) : ''}</div>
+        <div class="meta">${formatDateID(x.date)} · ${escapeHtml(x.category||'-')} <span class="kg-badge ${x.group==='hpp'?'hpp':'ops'}">${x.group==='hpp'?'HPP':'OPERASIONAL'}</span></div>
+      </div>
+      <div class="amt"><span class="out">− ${formatRupiah(x.amount)}</span></div>
+    </div>`).join('') +
+    `<div style="text-align:right;font-size:13px;font-weight:800;color:var(--rust);padding:6px 4px;">Total (${list.length} item): ${kgRp(total)}</div>`;
+}
+
+/* ---------- Modal: tambah / edit pengeluaran ---------- */
+function kgCatOptions(group, selected){
+  return KG_EXPENSE_CATS[group].map(c=>`<option value="${escapeHtml(c)}" ${c===selected?'selected':''}>${escapeHtml(c)}</option>`).join('');
+}
+function kgExpGroupChanged(){
+  const g = document.getElementById('exGroup').value;
+  document.getElementById('exCat').innerHTML = kgCatOptions(g, '');
+}
+function openExpenseModal(id){
+  const e = id ? expensesCache.find(x=>x.id===id) : null;
+  const group = e ? e.group : 'hpp';
+  const root = document.getElementById('fnModalRoot');
+  root.innerHTML = `
+    <div class="kg-modal-bg" onclick="if(event.target===this) closeFnModal()">
+      <div class="kg-modal"><div class="kg-modal-inner">
+        <button class="kg-close" onclick="closeFnModal()">✕</button>
+        <h3>${e ? 'Edit Pengeluaran' : '+ Pengeluaran'}</h3>
+        <div class="kg-modal-sub">Dihitung sebagai pengurang pemasukan untuk mencari untung bersih.</div>
+        <label>Tanggal</label>
+        <input type="date" id="exDate" value="${e ? e.date : kgLocalDate(new Date())}">
+        <label>Jenis Pengeluaran</label>
+        <select id="exGroup" onchange="kgExpGroupChanged()">
+          <option value="hpp" ${group==='hpp'?'selected':''}>Produksi (HPP) — bahan, jahit, sablon, dll</option>
+          <option value="ops" ${group==='ops'?'selected':''}>Operasional — gaji, sewa, iklan, dll</option>
+        </select>
+        <label>Kategori</label>
+        <select id="exCat">${kgCatOptions(group, e ? e.category : '')}</select>
+        <label>Keterangan</label>
+        <input type="text" id="exDesc" placeholder="Contoh: Beli kain cotton combed 24s 20 kg" value="${e ? escapeHtml(e.desc||'') : ''}">
+        <label>Jumlah (Rp)</label>
+        <input type="number" id="exAmount" min="0" placeholder="0" value="${e ? e.amount : ''}">
+        <label>No. Invoice terkait (opsional)</label>
+        <input type="text" id="exInv" placeholder="Contoh: 301" value="${e ? escapeHtml(e.invNo||'') : ''}">
+        <label>Catatan (opsional)</label>
+        <textarea id="exNote" rows="2" placeholder="Catatan tambahan">${e ? escapeHtml(e.note||'') : ''}</textarea>
+        <button class="btn gold" style="width:100%;margin-top:16px;" onclick="submitExpense('${e ? e.id : ''}')">${e ? 'Simpan Perubahan' : 'Simpan Pengeluaran'}</button>
+        ${e ? `<button class="btn ghost" style="width:100%;margin-top:8px;" onclick="confirmDeleteExpense('${e.id}')">Hapus Pengeluaran</button>` : ''}
+      </div></div>
+    </div>`;
+}
+
+async function saveExpense(record){
+  if(!CONFIG_READY){ alert('Firebase belum dikonfigurasi.'); return false; }
+  try{
+    const ref = record.id ? db.collection('expenses').doc(record.id) : db.collection('expenses').doc();
+    record.id = ref.id;
+    await ref.set(record);
+    return true;
+  }catch(e){
+    console.error('Gagal menyimpan pengeluaran', e);
+    alert('Gagal menyimpan pengeluaran: ' + e.message + '\n\nPastikan Firestore Rules mengizinkan koleksi "expenses".');
+    return false;
+  }
+}
+async function deleteExpense(id){
+  if(!CONFIG_READY) return false;
+  try{ await db.collection('expenses').doc(id).delete(); return true; }
+  catch(e){ alert('Gagal menghapus: ' + e.message); return false; }
+}
+
+async function submitExpense(id){
+  const amount = Number(document.getElementById('exAmount').value)||0;
+  if(amount<=0){ alert('Jumlah harus lebih dari 0'); return; }
+  const old = id ? expensesCache.find(x=>x.id===id) : null;
+  const record = {
+    id: id || '',
+    date: document.getElementById('exDate').value || kgLocalDate(new Date()),
+    group: document.getElementById('exGroup').value,
+    category: document.getElementById('exCat').value,
+    desc: document.getElementById('exDesc').value.trim(),
+    amount,
+    invNo: document.getElementById('exInv').value.trim(),
+    note: document.getElementById('exNote').value.trim(),
+    createdBy: old ? (old.createdBy||'-') : (state.myName || '-'),
+    createdAt: old ? (old.createdAt || new Date().toISOString()) : new Date().toISOString()
+  };
+  const ok = await saveExpense(record);
+  if(ok) closeFnModal();
+}
+async function confirmDeleteExpense(id){
+  if(!confirm('Hapus pengeluaran ini?')) return;
+  const ok = await deleteExpense(id);
+  if(ok) closeFnModal();
+}
+
+function closeFnModal(){
+  document.getElementById('fnModalRoot').innerHTML = '';
 }
 
 /* ---------- Modal: Transaksi Manual ---------- */
@@ -6544,6 +7093,7 @@ function showMode(mode){
   document.getElementById('workflowApp').style.display = (mode==='workflow') ? 'block' : 'none';
   document.getElementById('notaApp').style.display = (mode==='nota') ? 'block' : 'none';
   document.getElementById('keuanganApp').style.display = (mode==='keuangan') ? 'block' : 'none';
+  document.getElementById('financeApp').style.display = (mode==='finance') ? 'block' : 'none';
   document.getElementById('absensiApp').style.display = (mode==='absensi') ? 'block' : 'none';
   document.getElementById('sopShell').style.display = (mode==='sop') ? 'block' : 'none';
 
@@ -6562,6 +7112,10 @@ function showMode(mode){
   }
   if(mode==='keuangan'){
     initKeuangan();
+  }
+  if(mode==='finance'){
+    initKeuangan();      // memakai data nota & pengeluaran yang sama (realtime)
+    renderKgLaba();
   }
   if(mode==='absensi'){
     initAbsensi();
