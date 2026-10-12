@@ -1366,6 +1366,48 @@ body{overflow-x:hidden;}
 #absensiApp .wsp-done-btn.on .bx::after{content:"";position:absolute;left:4px;top:0;width:5px;height:10px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg);}
 #absensiApp .wsp-done-btn.on:hover{border-color:var(--ab-rust);color:var(--ab-rust);background:#fff;}
 @media(max-width:720px){#absensiApp .wsp-done-btn{width:100%;justify-content:center;padding:11px 14px;font-size:14px;}}
+
+/* ===================== SCAN STRUK / BUKTI TRANSFER ===================== */
+.kgs-box{border:1.5px dashed #aab6d8;background:#f4f7fd;border-radius:12px;padding:12px 12px 10px;margin:0 0 16px;}
+.kgs-title{font-weight:800;font-size:13.5px;color:#152452;}
+.kgs-hint{font-size:11.5px;color:#6b7280;margin:2px 0 10px;line-height:1.45;}
+.kgs-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.kgs-btn{flex:1;min-width:130px;border:1.5px solid #152452;background:#fff;color:#152452;border-radius:9px;padding:11px 12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+.kgs-btn.primary{background:#152452;color:#fff;}
+.kgs-btn:active{transform:scale(.98);}
+.kgs-body:not(:empty){margin-top:12px;border-top:1px solid #dde3f2;padding-top:12px;}
+.kgs-read{display:flex;gap:12px;align-items:flex-start;}
+.kgs-thumb{width:78px;height:100px;object-fit:cover;border-radius:8px;border:1px solid #e3e6ee;background:#fff;display:block;}
+.kgs-info{flex:1;min-width:0;}
+.kgs-tag{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:99px;color:#fff;background:#6b7fb0;margin-bottom:4px;}
+.kgs-tag.ai{background:#1f9d55;}
+.kgs-tag.ocr{background:#c98a2c;}
+.kgs-amt{font-size:21px;font-weight:800;color:#152452;line-height:1.2;word-break:break-word;}
+.kgs-amt.none{font-size:15px;color:#b3441f;}
+.kgs-sub{font-size:11.5px;color:#6b7280;line-height:1.45;}
+.kgs-busy{font-weight:700;color:#152452;font-size:14px;display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.kgs-spin{width:16px;height:16px;border:2.5px solid #cfd6ea;border-top-color:#152452;border-radius:50%;display:inline-block;animation:kgsSpin .8s linear infinite;}
+@keyframes kgsSpin{to{transform:rotate(360deg);}}
+.kgs-cands{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.kgs-chip{border:1.5px solid #c9d1e8;background:#fff;border-radius:99px;padding:5px 11px;font-size:12px;font-weight:700;color:#152452;cursor:pointer;font-family:inherit;}
+.kgs-alert{margin-top:10px;border-radius:8px;padding:9px 11px;font-size:12px;line-height:1.55;}
+.kgs-alert.amber{background:#fff6e0;border:1px solid #f0d28a;color:#6b4a07;}
+.kgs-alert.red{background:#fdebe6;border:1px solid #efb7a5;color:#8a2f12;}
+.kgs-alert.blue{background:#e9f0ff;border:1px solid #b9cdf5;color:#183a7a;}
+.kgs-match{display:block;width:100%;text-align:left;margin-top:6px;border:1.5px solid #152452;background:#fff;color:#152452;border-radius:8px;padding:8px 10px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;}
+.kgs-match small{display:block;font-weight:500;color:#6b7280;}
+.kgs-actions{display:flex;gap:16px;margin-top:10px;}
+.kgs-link{background:none;border:none;padding:2px 0;font-size:12px;font-weight:700;color:#33507a;cursor:pointer;font-family:inherit;text-decoration:underline;}
+.kgs-confirm{display:flex;gap:10px;align-items:flex-start;margin-top:12px;background:#fff;border:1.5px solid #152452;border-radius:9px;padding:10px 12px;font-size:12.5px;line-height:1.45;cursor:pointer;color:#1a1a1a;}
+#keuanganApp .kgs-confirm input[type=checkbox], #financeApp .kgs-confirm input[type=checkbox]{width:20px;height:20px;padding:0;margin:1px 0 0;flex:none;border-radius:4px;accent-color:#152452;}
+.kgs-confirm.shake{animation:kgsShake .35s;border-color:#b3441f;background:#fdebe6;}
+@keyframes kgsShake{20%,60%{transform:translateX(-5px);}40%,80%{transform:translateX(5px);}}
+.kgs-words{font-size:12px;color:#33507a;margin-top:5px;line-height:1.4;min-height:0;}
+.kgs-words:empty{display:none;}
+.kgs-proof{margin:0 0 14px;}
+.kgs-proof img{display:block;max-width:100%;max-height:220px;border-radius:8px;border:1px solid #e3e6ee;margin-top:5px;}
+.kgs-clip{font-size:12px;margin-left:4px;text-decoration:none;}
+.kgs-paylink{color:#33507a;font-weight:700;text-decoration:underline;font-size:11.5px;margin-left:6px;}
 </style>
 </head>
 <body>
@@ -1764,6 +1806,19 @@ const cloudinaryConfig = {
   uploadPreset: "tenx_unsigned"
 };
 
+/* =====================================================================
+   KONFIGURASI SCAN STRUK / BUKTI TRANSFER (fitur Finance)
+   - geminiApiKey: OPSIONAL tapi SANGAT DISARANKAN agar angka dibaca akurat.
+     Buat gratis di https://aistudio.google.com/apikey lalu BATASI key
+     hanya untuk domain website ini (HTTP referrer) di Google Cloud Console.
+   - Jika dikosongkan, otomatis memakai OCR bawaan (Tesseract.js, tanpa key,
+     akurasi lebih rendah — user tetap wajib mengecek nominal).
+   ===================================================================== */
+const scanConfig = {
+  geminiApiKey: "",
+  geminiModel: "gemini-2.5-flash"
+};
+
 const CONFIG_READY = !firebaseConfig.apiKey.startsWith('ISI_');
 const CLOUDINARY_READY = !cloudinaryConfig.cloudName.startsWith('ISI_') && !cloudinaryConfig.uploadPreset.startsWith('ISI_');
 let db = null;
@@ -1997,7 +2052,7 @@ async function saveInvoiceRecord(record){
   }
 }
 
-async function addPaymentToInvoice(invNo, amount, note){
+async function addPaymentToInvoice(invNo, amount, note, extra){
   if(!CONFIG_READY) return false;
   const ref = db.collection('invoices').doc(invNo);
   try{
@@ -2006,12 +2061,15 @@ async function addPaymentToInvoice(invNo, amount, note){
       if(!snap.exists) throw new Error('Nota tidak ditemukan');
       const data = snap.data();
       const payments = Array.isArray(data.payments) ? data.payments.slice() : [];
-      payments.push({
+      const pay = {
         amount: Number(amount)||0,
         note: note || '',
         by: state.myName || '-',
-        at: new Date().toISOString()
-      });
+        at: (extra && extra.at) || new Date().toISOString()
+      };
+      if(extra && extra.proofUrl) pay.proofUrl = extra.proofUrl;
+      if(extra && extra.scan) pay.scan = extra.scan;
+      payments.push(pay);
       const totalDibayar = payments.reduce((s,p)=>s+(Number(p.amount)||0), 0);
       tx.update(ref, { payments, totalDibayar });
     });
@@ -3917,7 +3975,7 @@ function renderExpenseList(){
   el.innerHTML = list.map(x=>`
     <div class="kg-row" onclick="openExpenseModal('${x.id}')">
       <div>
-        <div class="who">${escapeHtml(x.desc||x.category||'Pengeluaran')}${x.invNo ? ' · #'+escapeHtml(x.invNo) : ''}</div>
+        <div class="who">${escapeHtml(x.desc||x.category||'Pengeluaran')}${x.invNo ? ' · #'+escapeHtml(x.invNo) : ''}${x.proofUrl ? ' <span class="kgs-clip" title="Ada foto bukti">📎</span>' : ''}</div>
         <div class="meta">${formatDateID(x.date)} · ${escapeHtml(x.category||'-')} <span class="kg-badge ${x.group==='hpp'?'hpp':'ops'}">${x.group==='hpp'?'HPP':'OPERASIONAL'}</span></div>
       </div>
       <div class="amt"><span class="out">− ${formatRupiah(x.amount)}</span></div>
@@ -3934,6 +3992,7 @@ function kgExpGroupChanged(){
   document.getElementById('exCat').innerHTML = kgCatOptions(g, '');
 }
 function openExpenseModal(id){
+  kgScanReset(); kgScan.kind = 'expense'; kgScan.excludeId = id || '';
   const e = id ? expensesCache.find(x=>x.id===id) : null;
   const group = e ? e.group : 'hpp';
   const root = document.getElementById('fnModalRoot');
@@ -3943,6 +4002,8 @@ function openExpenseModal(id){
         <button class="kg-close" onclick="closeFnModal()">✕</button>
         <h3>${e ? 'Edit Pengeluaran' : '+ Pengeluaran'}</h3>
         <div class="kg-modal-sub">Dihitung sebagai pengurang pemasukan untuk mencari untung bersih.</div>
+        ${kgScanBoxHtml('expense')}
+        ${e && e.proofUrl ? kgProofHtml(e.proofUrl) : ''}
         <label>Tanggal</label>
         <input type="date" id="exDate" value="${e ? e.date : kgLocalDate(new Date())}">
         <label>Jenis Pengeluaran</label>
@@ -3955,15 +4016,16 @@ function openExpenseModal(id){
         <label>Keterangan</label>
         <input type="text" id="exDesc" placeholder="Contoh: Beli kain cotton combed 24s 20 kg" value="${e ? escapeHtml(e.desc||'') : ''}">
         <label>Jumlah (Rp)</label>
-        <input type="number" id="exAmount" min="0" placeholder="0" value="${e ? e.amount : ''}">
+        <input type="number" id="exAmount" min="0" placeholder="0" value="${e ? e.amount : ''}" data-words oninput="kgUpdateWords(this)"><div class="kgs-words"></div>
         <label>No. Invoice terkait (opsional)</label>
         <input type="text" id="exInv" placeholder="Contoh: 301" value="${e ? escapeHtml(e.invNo||'') : ''}">
         <label>Catatan (opsional)</label>
         <textarea id="exNote" rows="2" placeholder="Catatan tambahan">${e ? escapeHtml(e.note||'') : ''}</textarea>
-        <button class="btn gold" style="width:100%;margin-top:16px;" onclick="submitExpense('${e ? e.id : ''}')">${e ? 'Simpan Perubahan' : 'Simpan Pengeluaran'}</button>
+        <button class="btn gold" id="exSaveBtn" style="width:100%;margin-top:16px;" onclick="submitExpense('${e ? e.id : ''}')">${e ? 'Simpan Perubahan' : 'Simpan Pengeluaran'}</button>
         ${e ? `<button class="btn ghost" style="width:100%;margin-top:8px;" onclick="confirmDeleteExpense('${e.id}')">Hapus Pengeluaran</button>` : ''}
       </div></div>
     </div>`;
+  kgInitWords(root);
 }
 
 async function saveExpense(record){
@@ -3989,8 +4051,14 @@ async function submitExpense(id){
   const amount = Number(document.getElementById('exAmount').value)||0;
   if(amount<=0){ alert('Jumlah harus lebih dari 0'); return; }
   const old = id ? expensesCache.find(x=>x.id===id) : null;
+  if(!kgScanGuard()) return;
+  const btn = document.getElementById('exSaveBtn'); kgBtnBusy(btn, true);
+  const proof = await kgScanUploadProof('finance_bukti');
+  if(proof === false){ kgBtnBusy(btn, false); return; }
   const record = {
     id: id || '',
+    proofUrl: proof || (old ? (old.proofUrl||'') : ''),
+    scan: kgScanMeta(amount) || (old ? (old.scan||null) : null),
     date: document.getElementById('exDate').value || kgLocalDate(new Date()),
     group: document.getElementById('exGroup').value,
     category: document.getElementById('exCat').value,
@@ -4002,6 +4070,7 @@ async function submitExpense(id){
     createdAt: old ? (old.createdAt || new Date().toISOString()) : new Date().toISOString()
   };
   const ok = await saveExpense(record);
+  kgBtnBusy(btn, false);
   if(ok) closeFnModal();
 }
 async function confirmDeleteExpense(id){
@@ -4011,11 +4080,568 @@ async function confirmDeleteExpense(id){
 }
 
 function closeFnModal(){
+  kgScanReset();
   document.getElementById('fnModalRoot').innerHTML = '';
+}
+
+
+/* =====================================================================
+   ===================== SCAN STRUK / BUKTI TRANSFER =====================
+   Alur: foto -> dibaca otomatis -> form terisi -> staf CEK (foto vs nominal,
+   terbilang, kandidat lain, peringatan) -> centang konfirmasi -> simpan.
+   Foto disimpan ke Cloudinary sebagai bukti (proofUrl) di tiap catatan.
+   Mesin baca: AI Gemini (jika scanConfig.geminiApiKey diisi) -> cadangan OCR
+   Tesseract.js di browser (gratis, tanpa kunci, akurasi lebih rendah).
+   ===================================================================== */
+const kgScan = { file:null, previewUrl:'', result:null, engine:'', busy:false, progress:0, error:'', kind:'', excludeId:'', carry:false, ctx:null, engineTry:'' };
+
+function kgScanReset(){
+  if(kgScan.previewUrl){ try{ URL.revokeObjectURL(kgScan.previewUrl); }catch(e){} }
+  Object.assign(kgScan, { file:null, previewUrl:'', result:null, engine:'', busy:false, progress:0, error:'', kind:'', excludeId:'', ctx:null, engineTry:'' });
+}
+
+/* ---------- util angka ---------- */
+function kgTerbilang(n){
+  n = Math.floor(Math.abs(Number(n)||0));
+  if(n===0) return 'nol rupiah';
+  const sat=['','satu','dua','tiga','empat','lima','enam','tujuh','delapan','sembilan','sepuluh','sebelas'];
+  const s = x => {
+    x = Math.floor(x);
+    if(x<12) return sat[x];
+    if(x<20) return s(x-10)+' belas';
+    if(x<100) return s(Math.floor(x/10))+' puluh'+(x%10?' '+s(x%10):'');
+    if(x<200) return 'seratus'+(x%100?' '+s(x%100):'');
+    if(x<1000) return s(Math.floor(x/100))+' ratus'+(x%100?' '+s(x%100):'');
+    if(x<2000) return 'seribu'+(x%1000?' '+s(x%1000):'');
+    if(x<1e6) return s(Math.floor(x/1000))+' ribu'+(x%1000?' '+s(x%1000):'');
+    if(x<1e9) return s(Math.floor(x/1e6))+' juta'+(x%1e6?' '+s(x%1e6):'');
+    if(x<1e12) return s(Math.floor(x/1e9))+' miliar'+(x%1e9?' '+s(x%1e9):'');
+    return String(x);
+  };
+  return s(n)+' rupiah';
+}
+function kgUpdateWords(el){
+  const box = el && el.nextElementSibling;
+  if(!box || !box.classList.contains('kgs-words')) return;
+  const v = Math.round(Number(el.value)||0);
+  box.innerHTML = v>0 ? `<b>Rp ${v.toLocaleString('id-ID')}</b> — ${escapeHtml(kgTerbilang(v))}` : '';
+}
+function kgInitWords(root){
+  (root||document).querySelectorAll('input[data-words]').forEach(kgUpdateWords);
+}
+
+/* "Rp 1.250.000,00" / "1,250,000.00" / "250.000,-" -> 1250000 */
+function kgParseMoney(raw){
+  let s = String(raw||'').replace(/rp\.?/ig,'').replace(/idr/ig,'').replace(/\s+/g,'').replace(/[,.]-+$/,'').replace(/-+$/,'');
+  s = s.replace(/[^\d.,]/g,'');
+  if(!s) return null;
+  const m = s.match(/^(.*)[.,](\d{1,2})$/);          // pemisah terakhir + 1-2 digit = desimal
+  if(m) s = m[1];
+  s = s.replace(/[.,]/g,'');
+  if(!s) return null;
+  const v = parseInt(s,10);
+  return isFinite(v) ? v : null;
+}
+function kgExtractAmounts(line, lenient){
+  const out = [];
+  const re = /(rp\.?\s*)?(\d[\d.,]*\d|\d)/ig;
+  let m;
+  while((m = re.exec(line))){
+    const tok = m[2], hasRp = !!m[1];
+    if(/^\d{1,2}[.,]\d{1,2}[.,]\d{2,4}$/.test(tok)) continue;     // tanggal 12.10.2026
+    const hasSep = /[.,]/.test(tok);
+    const digits = tok.replace(/\D/g,'');
+    if(digits.length>=10 && !hasSep) continue;                      // no. HP / rekening
+    if(!hasSep && !hasRp && !lenient) continue;                      // angka polos hanya jika ada "Rp"/kata kunci
+    if(!hasSep && /^0/.test(tok)) continue;
+    const v = kgParseMoney((hasRp?'rp':'')+tok);
+    if(v && v>=500 && v<=10000000000) out.push(v);
+  }
+  return out;
+}
+function kgLineScore(low){
+  let s = 0;
+  if(/grand\s*total|total\s*(bayar|pembayaran|tagihan|belanja|akhir|transaksi|transfer)|jumlah\s*(bayar|pembayaran|tagihan|transfer|total)|nominal|total\s*amount|amount\s*paid|net\s*total|harus\s*dibayar|yang\s*dibayar/.test(low)) s = 100;
+  else if(/sub\s*-?\s*total/.test(low)) s = 20;
+  else if(/\btotal\b|jumlah|tagihan|transfer|\bamount\b|bayar/.test(low)) s = 50;
+  else if(/\brp\b|rp\.?\s*\d/.test(low)) s = 10;
+  if(/tunai|\bcash\b|kembali|change|saldo|diskon|discount|potongan|voucher|poin\b|point/.test(low)) s -= 120;
+  if(/ppn|pajak|\btax\b|biaya\s*admin|admin\s*fee|biaya\s*layanan|service\s*charge/.test(low)) s -= 60;
+  return s;
+}
+
+/* ---------- tanggal ---------- */
+function kgParseDate(text){
+  const mon = { jan:1,januari:1,feb:2,februari:2,mar:3,maret:3,apr:4,april:4,mei:5,may:5,jun:6,juni:6,jul:7,juli:7,agu:8,agt:8,agustus:8,aug:8,sep:9,sept:9,september:9,okt:10,oct:10,oktober:10,nov:11,november:11,des:12,dec:12,desember:12 };
+  const now = new Date(), thisY = now.getFullYear();
+  const fix = (d,m,y) => {
+    y = Number(y); if(y<100) y += 2000;
+    d = Number(d); m = Number(m);
+    if(m<1||m>12||d<1||d>31||y<thisY-5||y>thisY+1) return '';
+    return y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+  };
+  let m = text.match(/\b(20\d{2})[-\/.](\d{1,2})[-\/.](\d{1,2})\b/);
+  if(m){ const r = fix(m[3],m[2],m[1]); if(r) return r; }
+  m = text.match(/\b(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})\b/);
+  if(m){ const r = fix(m[1],m[2],m[3]); if(r) return r; }
+  m = text.match(/\b(\d{1,2})\s*[-\/ ]?\s*(jan(?:uari)?|feb(?:ruari)?|mar(?:et)?|apr(?:il)?|mei|may|jun(?:i)?|jul(?:i)?|agu(?:stus)?|agt|aug|sep(?:t(?:ember)?)?|okt(?:ober)?|oct|nov(?:ember)?|des(?:ember)?|dec)\.?\s*[-\/ ,]?\s*(\d{2,4})\b/i);
+  if(m){ const r = fix(m[1], mon[m[2].toLowerCase()], m[3]); if(r) return r; }
+  return '';
+}
+
+/* ---------- tebak kategori pengeluaran ---------- */
+const KG_CAT_RULES = [
+  { g:'hpp', c:'Bahan Kain',            re:/\b(kain|cotton|combed|polyester|lacoste|fleece|babyterry|baby terry|rib|textile|tekstil|bahan baku)\b/ },
+  { g:'hpp', c:'Jahit / Konveksi',      re:/\b(jahit|konveksi|tailor|penjahit|cmt|obras)\b/ },
+  { g:'hpp', c:'Sablon / Bordir / DTF', re:/\b(sablon|bordir|dtf|dtg|plastisol|rubber|polyflex|printing|tinta)\b/ },
+  { g:'hpp', c:'Aksesoris & Packing',   re:/\b(packing|plastik|polybag|kardus|lakban|hang ?tag|label|kancing|resleting|zipper|aksesoris|benang)\b/ },
+  { g:'hpp', c:'Ongkir Produksi',       re:/\b(ongkir|kurir|jne|j&t|jnt|sicepat|anteraja|cargo|kargo|ekspedisi)\b/ },
+  { g:'ops', c:'Gaji & Upah',           re:/\b(gaji|upah|honor|thr|lembur)\b/ },
+  { g:'ops', c:'Komisi',                re:/\b(komisi|fee marketing)\b/ },
+  { g:'ops', c:'Sewa, Listrik & Air',   re:/\b(sewa|listrik|pln|token|pdam|indihome|internet|wifi|telkom)\b/ },
+  { g:'ops', c:'Iklan & Marketing',     re:/\b(iklan|ads|meta|facebook|instagram|tiktok|endorse|influencer|banner|spanduk)\b/ },
+  { g:'ops', c:'Peralatan & Maintenance', re:/\b(mesin|service|servis|sparepart|spare part|jarum|maintenance|perbaikan|peralatan|bensin|bbm|pertamax)\b/ }
+];
+function kgGuessCategory(text){
+  const t = String(text||'').toLowerCase();
+  for(const r of KG_CAT_RULES){ if(r.re.test(t)) return { group:r.g, cat:r.c }; }
+  return null;
+}
+
+/* ---------- parser teks OCR ---------- */
+function kgParseReceiptText(text, kind, ocrConf){
+  const lines = String(text||'').split(/\r?\n/).map(s=>s.trim()).filter(s=>s.length>0);
+  const full = lines.join('\n');
+  const cands = [];
+  lines.forEach((ln,i)=>{
+    const sc = kgLineScore(ln.toLowerCase());
+    let nums = kgExtractAmounts(ln, sc>0);
+    if(!nums.length && sc>=50 && i+1<lines.length) nums = kgExtractAmounts(lines[i+1], true);   // label di atas, angka di bawah
+    nums.forEach(v=>cands.push({ v, sc }));
+  });
+  const byVal = new Map();
+  cands.forEach(c=>{ const o = byVal.get(c.v); if(!o || c.sc>o.sc) byVal.set(c.v, c); });
+  const ranked = Array.from(byVal.values()).sort((a,b)=> (b.sc-a.sc) || (b.v-a.v));
+  const best = ranked[0] || null;
+
+  const ragu = [];
+  let yakin = Math.round(ocrConf||60);
+  if(!best){ yakin = Math.min(yakin, 20); ragu.push('Tidak ada nominal yang terdeteksi di foto.'); }
+  else if(best.sc>=100){ /* baris TOTAL jelas */ }
+  else if(best.sc>=50){ yakin -= 10; }
+  else { yakin -= 30; ragu.push('Baris "TOTAL" tidak ditemukan — nominal dipilih berdasarkan angka terbesar.'); }
+
+  const low = full.toLowerCase();
+  const isTransfer = /transfer|berhasil|bukti|e-?receipt|m-?banking|\bbca\b|\bbri\b|\bbni\b|mandiri|\bdana\b|\bovo\b|gopay|shopeepay|qris|linkaja|\bjago\b|seabank|permata|cimb|\bbsi\b/.test(low);
+
+  let ref = '';
+  const rm = full.match(/(?:no\.?\s*ref(?:erensi)?|ref(?:erensi)?\.?(?:\s*no)?|id\s*transaksi|no\.?\s*transaksi|reference)\s*[:#]?\s*([A-Za-z0-9\-]{6,})/i);
+  if(rm) ref = rm[1];
+
+  let pihak = '';
+  for(let i=0;i<lines.length && !pihak;i++){
+    const m = lines[i].match(/^(?:nama\s*)?(penerima|tujuan|kepada|beneficiary|pengirim|sumber\s*dana|dari|from)\b\s*[:\-]?\s*(.*)$/i);
+    if(m){ pihak = (m[2] && m[2].length>=3) ? m[2] : (lines[i+1]||''); }
+  }
+  pihak = pihak.replace(/[^\p{L}\p{N} .,&'\-]/gu,'').trim().slice(0,50);
+
+  let merchant = '';
+  if(!isTransfer){
+    for(const ln of lines.slice(0,8)){
+      const letters = (ln.match(/\p{L}/gu)||[]).length;
+      if(letters>=3 && letters/ln.length>0.5 && !/struk|invoice|nota|receipt|kasir|tanggal|alamat|telp|npwp/i.test(ln)){ merchant = ln.replace(/[^\p{L}\p{N} .,&'\-]/gu,'').trim().slice(0,50); break; }
+    }
+  }
+
+  const strong = ranked.filter(c=>c.sc>=100);
+  if(isTransfer && ranked.length>1) ragu.push('Ada beberapa nominal di foto (mis. nominal & biaya admin) — pastikan yang dipilih benar.');
+  else if(strong.length>1 && new Set(strong.map(c=>c.v)).size>1) ragu.push('Ada lebih dari satu baris total dengan angka berbeda.');
+
+  return {
+    jenis: isTransfer ? 'transfer' : 'struk',
+    tanggal: kgParseDate(full),
+    total: best ? best.v : null,
+    merchant, pihak, ref,
+    items: [],
+    kandidat: ranked.map(c=>c.v),
+    yakin: Math.max(5, Math.min(99, yakin)),
+    ragu,
+    teks: full.slice(0,4000)
+  };
+}
+
+/* ---------- normalisasi hasil (AI / OCR) ---------- */
+function kgScanNormalize(r, kind){
+  const int = v => { const n = Math.round(Number(v)); return (isFinite(n) && n>0) ? n : null; };
+  const out = {
+    jenis: r.jenis || r.doc_type || 'lainnya',
+    tanggal: '',
+    total: int(r.total),
+    merchant: String(r.merchant||'').slice(0,60),
+    pihak: String(r.pihak || r.counterparty || '').slice(0,60),
+    ref: String(r.ref || r.reference || '').slice(0,40),
+    items: [],
+    kandidat: [],
+    yakin: Math.max(0, Math.min(100, Math.round(Number(r.yakin ?? r.confidence ?? 60)))),
+    ragu: Array.isArray(r.ragu) ? r.ragu.slice() : (Array.isArray(r.uncertain) ? r.uncertain.slice() : []),
+    teks: r.teks || ''
+  };
+  const d = String(r.tanggal || r.date || '');
+  if(/^\d{4}-\d{2}-\d{2}$/.test(d)){
+    const dt = new Date(d+'T12:00:00');
+    const now = new Date();
+    if(isNaN(dt.getTime())) { /* abaikan */ }
+    else if(dt.getTime() > now.getTime()+2*86400000){ out.ragu.push('Tanggal di foto ('+d+') tampak di masa depan — diabaikan, cek manual.'); }
+    else {
+      out.tanggal = d;
+      if(now.getTime()-dt.getTime() > 366*86400000) out.ragu.push('Tanggal di foto lebih dari 1 tahun lalu — pastikan benar.');
+    }
+  }
+  (Array.isArray(r.items) ? r.items : []).slice(0,40).forEach(it=>{
+    const name = String(it.name || it.nama || '').slice(0,60);
+    const qty = Number(it.qty) || 1, price = int(it.price ?? it.harga);
+    if(name) out.items.push({ name, qty, price: price||0 });
+  });
+  const cs = new Set();
+  (Array.isArray(r.kandidat) ? r.kandidat : (Array.isArray(r.other_amounts) ? r.other_amounts : [])).forEach(v=>{ const n = int(v); if(n && n!==out.total) cs.add(n); });
+  out.kandidat = Array.from(cs).slice(0,4);
+  if(out.total && out.kandidat.indexOf(out.total)===-1) { /* total tidak ikut kandidat */ }
+  return out;
+}
+
+/* ---------- mesin 1: AI Gemini (opsional, paling akurat) ---------- */
+function kgFileToBase64(file){
+  return new Promise((res,rej)=>{
+    const fr = new FileReader();
+    fr.onload = () => res(String(fr.result).split(',')[1]);
+    fr.onerror = () => rej(new Error('Gagal membaca file foto'));
+    fr.readAsDataURL(file);
+  });
+}
+async function kgScanGemini(file, kind){
+  const b64 = await kgFileToBase64(file);
+  const today = kgLocalDate(new Date());
+  const prompt =
+`Kamu adalah asisten pembukuan toko konveksi di Indonesia. Baca FOTO ini (struk belanja, nota, atau bukti transfer bank/e-wallet) dengan SANGAT TELITI, lalu balas HANYA JSON valid (tanpa markdown) dengan format:
+{"doc_type":"struk|transfer|nota|lainnya","date":"YYYY-MM-DD atau null","total":angka_rupiah_bulat_atau_null,"merchant":"nama toko/penjual atau null","counterparty":"nama penerima/pengirim (khusus transfer) atau null","reference":"nomor referensi/transaksi atau null","items":[{"name":"...","qty":angka,"price":harga_satuan_rupiah}],"other_amounts":[nominal lain yang tampak di foto, mis. subtotal, biaya admin, diskon, tunai, kembalian],"confidence":0-100,"uncertain":["hal yang kamu ragukan"]}
+ATURAN PENTING:
+- Format angka Indonesia: titik = pemisah ribuan (1.250.000 = satu juta dua ratus lima puluh ribu). Tulis di JSON sebagai angka bulat tanpa titik/koma, contoh 1250000.
+- "total" = uang yang SEBENARNYA dibayar/ditransfer: untuk struk ambil TOTAL / GRAND TOTAL / TOTAL BAYAR (BUKAN tunai yang diberikan, BUKAN kembalian, BUKAN subtotal sebelum diskon/pajak). Untuk bukti transfer ambil NOMINAL transfer (biaya admin masuk other_amounts).
+- Jika angka buram/terpotong/ambigu, isi total null atau turunkan confidence dan jelaskan di "uncertain". Jangan menebak digit.
+- Periksa ulang: jumlah item harus cocok dengan total. Jika tidak cocok, tulis di "uncertain".
+- Hari ini ${today}; jika tahun tidak tertulis, asumsikan tahun terdekat yang masuk akal.`;
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(scanConfig.geminiModel) + ':generateContent?key=' + encodeURIComponent(scanConfig.geminiApiKey);
+  const ctrl = new AbortController(); const to = setTimeout(()=>ctrl.abort(), 45000);
+  let resp;
+  try{
+    resp = await fetch(url, {
+      method:'POST', headers:{'Content-Type':'application/json'}, signal: ctrl.signal,
+      body: JSON.stringify({
+        contents:[{ parts:[ {text:prompt}, {inline_data:{ mime_type:'image/jpeg', data:b64 }} ] }],
+        generationConfig:{ temperature:0, responseMimeType:'application/json' }
+      })
+    });
+  } finally { clearTimeout(to); }
+  if(!resp.ok){
+    let msg = 'AI error ' + resp.status;
+    try{ const j = await resp.json(); if(j?.error?.message) msg += ': ' + j.error.message.slice(0,120); }catch(e){}
+    throw new Error(msg);
+  }
+  const j = await resp.json();
+  const txt = (j?.candidates?.[0]?.content?.parts||[]).map(p=>p.text||'').join('');
+  const clean = txt.replace(/```json|```/g,'').trim();
+  let parsed; try{ parsed = JSON.parse(clean); }catch(e){ throw new Error('Jawaban AI tidak bisa dibaca'); }
+  if(Array.isArray(parsed)) parsed = parsed[0] || {};
+  return parsed;
+}
+
+/* ---------- mesin 2: OCR Tesseract.js (cadangan, gratis) ---------- */
+let kgTessLoading = null;
+function kgLoadTesseract(){
+  if(window.Tesseract) return Promise.resolve();
+  if(kgTessLoading) return kgTessLoading;
+  kgTessLoading = new Promise((res,rej)=>{
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+    s.onload = res;
+    s.onerror = () => { kgTessLoading = null; rej(new Error('Mesin baca foto gagal dimuat (cek koneksi internet)')); };
+    document.head.appendChild(s);
+  });
+  return kgTessLoading;
+}
+async function kgOcrPrep(file){
+  const url = URL.createObjectURL(file);
+  const img = await new Promise((res,rej)=>{ const i = new Image(); i.onload=()=>res(i); i.onerror=()=>rej(new Error('Foto tidak bisa dibuka')); i.src=url; });
+  URL.revokeObjectURL(url);
+  const w = img.naturalWidth, h = img.naturalHeight;
+  const sc = w<1400 ? 1800/w : (w>2400 ? 2400/w : 1);
+  const c = document.createElement('canvas');
+  c.width = Math.round(w*sc); c.height = Math.round(h*sc);
+  const ctx = c.getContext('2d');
+  ctx.drawImage(img,0,0,c.width,c.height);
+  const id = ctx.getImageData(0,0,c.width,c.height), px = id.data, n = px.length/4;
+  const g = new Uint8Array(n), hist = new Uint32Array(256);
+  for(let i=0,j=0;i<px.length;i+=4,j++){ const v = (0.299*px[i]+0.587*px[i+1]+0.114*px[i+2])|0; g[j]=v; hist[v]++; }
+  let acc=0, lo=0, hi=255;                                   // regangkan kontras (persentil 2% - 98%)
+  for(let v=0;v<256;v++){ acc+=hist[v]; if(acc>=n*0.02){ lo=v; break; } }
+  acc=0; for(let v=255;v>=0;v--){ acc+=hist[v]; if(acc>=n*0.02){ hi=v; break; } }
+  const range = Math.max(hi-lo, 30);
+  for(let i=0,j=0;i<px.length;i+=4,j++){ let v = (g[j]-lo)*255/range; v = v<0?0:v>255?255:v; px[i]=px[i+1]=px[i+2]=v; }
+  ctx.putImageData(id,0,0);
+  return c;
+}
+async function kgScanTesseract(file, kind){
+  await kgLoadTesseract();
+  const canvas = await kgOcrPrep(file);
+  const logger = m => {
+    if(m && typeof m.progress==='number'){ kgScan.progress = Math.round(m.progress*100); kgScanRenderBody(); }
+  };
+  let r;
+  try{ r = await Tesseract.recognize(canvas, 'ind+eng', { logger }); }
+  catch(e){ r = await Tesseract.recognize(canvas, 'eng', { logger }); }
+  return kgParseReceiptText(r.data.text, kind, r.data.confidence);
+}
+
+/* ---------- pipeline ---------- */
+async function kgScanPick(input, kind){
+  const f = input.files && input.files[0];
+  input.value = '';
+  if(!f) return;
+  if(f.type && !f.type.startsWith('image/')){ alert('File harus berupa foto (JPG / PNG).'); return; }
+  const carryCtx = kgScan.ctx, ex = kgScan.excludeId;
+  kgScanReset();
+  kgScan.kind = kind; kgScan.ctx = carryCtx; kgScan.excludeId = ex;
+  kgScan.file = await compressImage(f, 1600, 0.85);
+  kgScan.previewUrl = URL.createObjectURL(kgScan.file);
+  kgScanRun();
+}
+async function kgScanRun(){
+  if(!kgScan.file) return;
+  kgScan.busy = true; kgScan.progress = 0; kgScan.error = ''; kgScan.result = null;
+  const kind = kgScan.kind;
+  let res = null, engine = '', errs = [];
+  if(scanConfig.geminiApiKey){
+    kgScan.engineTry = 'ai'; kgScanRenderBody();
+    try{ res = await kgScanGemini(kgScan.file, kind); engine = 'ai'; }catch(e){ errs.push(e.message); }
+  }
+  if(!res){
+    kgScan.engineTry = 'ocr'; kgScanRenderBody();
+    try{ res = await kgScanTesseract(kgScan.file, kind); engine = 'ocr'; }catch(e){ errs.push(e.message); }
+  }
+  kgScan.busy = false;
+  if(!res){ kgScan.error = errs.join(' | ') || 'Gagal membaca foto'; kgScanRenderBody(); return; }
+  kgScan.result = kgScanNormalize(res, kind);
+  kgScan.engine = engine;
+  kgScanApply(kind);
+  kgScanRenderBody();
+}
+
+/* ---------- isi form dari hasil baca ---------- */
+function kgSetField(id, val, onlyIfEmpty){
+  const el = document.getElementById(id);
+  if(!el) return false;
+  if(onlyIfEmpty && String(el.value||'').trim()) return false;
+  el.value = val;
+  if(el.hasAttribute('data-words')) kgUpdateWords(el);
+  return true;
+}
+function kgScanApply(kind){
+  const r = kgScan.result; if(!r) return;
+  const noteRef = [r.pihak ? (kind==='expense' ? 'Penerima: ' : 'Pengirim: ')+r.pihak : '', r.ref ? 'Ref: '+r.ref : ''].filter(Boolean).join(' · ');
+  const itemTxt = r.items.length ? r.items.slice(0,3).map(i=>i.name).join(', ') + (r.items.length>3 ? ', dll' : '') : '';
+  if(kind==='expense'){
+    if(r.total) kgSetField('exAmount', r.total);
+    if(r.tanggal) kgSetField('exDate', r.tanggal);
+    const desc = [r.merchant || r.pihak, itemTxt].filter(Boolean).join(' — ');
+    kgSetField('exDesc', desc, true);
+    kgSetField('exNote', noteRef, true);
+    const guess = kgGuessCategory([r.merchant, itemTxt, r.pihak, kgScan.engine==='ai' ? '' : r.teks].join(' '));
+    if(guess){
+      const g = document.getElementById('exGroup'), c = document.getElementById('exCat');
+      if(g && c){
+        g.value = guess.group; kgExpGroupChanged();
+        if(Array.from(c.options).some(o=>o.value===guess.cat)){ c.value = guess.cat; r.catGuess = guess.cat; }
+      }
+    }
+  } else if(kind==='income'){
+    if(r.total) kgSetField('msAmount', r.total);
+    if(r.tanggal) kgSetField('msDate', r.tanggal);
+    kgSetField('msCust', r.pihak || r.merchant, true);
+    if(r.jenis==='transfer') kgSetField('msCategory', 'Transfer', true);
+    kgSetField('msNote', noteRef, true);
+  } else if(kind==='payment'){
+    if(r.total) kgSetField('payAmount', r.total);
+    if(r.tanggal) kgSetField('payDate', r.tanggal);
+    kgSetField('payNote', noteRef, true);
+  }
+}
+function kgScanAmountId(){ return kgScan.kind==='expense' ? 'exAmount' : kgScan.kind==='income' ? 'msAmount' : 'payAmount'; }
+function kgScanUseAmount(v){
+  kgSetField(kgScanAmountId(), v);
+  const el = document.getElementById(kgScanAmountId()); if(el) el.focus();
+}
+function kgScanClear(){ kgScanReset(); kgScanRenderBody(); }
+function kgScanToggleConfirm(ev){
+  const cb = document.getElementById('kgsConfirm'); if(!cb) return;
+  if(!ev || ev.target!==cb) cb.checked = !cb.checked;
+  const w = document.getElementById('kgsConfirmWrap'); if(w) w.classList.remove('shake');
+}
+
+/* ---------- peringatan, duplikat, saran nota ---------- */
+function kgScanDuplicates(r){
+  if(!r) return [];
+  const out = [], amt = r.total, d = r.tanggal || '', ref = (r.ref||'').trim();
+  if(!amt && !ref) return out;
+  const same = x => amt && d && Number(x.amount)===amt && x.date===d;
+  const refHit = x => ref && x.scan && x.scan.ref===ref;
+  if(kgScan.kind==='expense'){
+    expensesCache.forEach(x=>{ if(x.id===kgScan.excludeId) return; if(same(x)||refHit(x)) out.push('Pengeluaran '+formatDateID(x.date)+' — '+(x.desc||x.category||'-')+' ('+formatRupiah(x.amount)+')'); });
+  } else {
+    manualSalesCache.forEach(x=>{ if(same(x)||refHit(x)) out.push('Transaksi manual '+formatDateID(x.date)+' — '+(x.custName||'-')+' ('+formatRupiah(x.amount)+')'); });
+    invoicesCache.forEach(inv=> (inv.payments||[]).forEach(p=>{
+      const pd = p.at ? kgLocalDate(p.at) : '';
+      if((amt && d && Number(p.amount)===amt && pd===d) || (ref && p.scan && p.scan.ref===ref)) out.push('Pembayaran Nota #'+inv.invNo+' '+formatDateID(pd)+' ('+formatRupiah(p.amount)+')');
+    }));
+  }
+  return out.slice(0,3);
+}
+function kgScanInvoiceMatches(r){
+  if(!r || !r.total) return [];
+  const toks = String(r.pihak||'').toLowerCase().split(/\s+/).filter(t=>t.length>=4);
+  return invoicesCache
+    .map(inv=>({ inv, sisa: Math.max(Number(inv.total||0)-Number(inv.totalDibayar||0),0) }))
+    .filter(x=> x.sisa>0 && (x.sisa===r.total || (toks.length && toks.some(t=>(x.inv.custName||'').toLowerCase().includes(t)) && r.total<=x.sisa)))
+    .sort((a,b)=> (b.sisa===r.total) - (a.sisa===r.total))
+    .slice(0,3);
+}
+function kgScanWarnings(){
+  const r = kgScan.result, w = [];
+  if(!r) return w;
+  if(kgScan.engine==='ocr') w.push('Dibaca dengan OCR bawaan: angka mudah tertukar (mis. 5↔6, 0↔8, 1↔7). Cocokkan dengan foto sebelum menyimpan.');
+  if(r.yakin<70) w.push('Tingkat keyakinan rendah ('+r.yakin+'%) — periksa nominal dengan teliti.');
+  if(!r.total) w.push('Nominal tidak terbaca — isi manual dari foto.');
+  if(!r.tanggal) w.push('Tanggal tidak terbaca — tanggal di form tidak diubah, cek manual.');
+  if(r.total && r.total>=50000000) w.push('Nominal sangat besar ('+formatRupiah(r.total)+') — pastikan tidak ada angka nol berlebih.');
+  if(r.items.length && r.total){
+    const sum = r.items.reduce((s,i)=>s+(i.price||0)*(i.qty||1),0);
+    if(sum>0 && sum!==r.total && !r.kandidat.includes(sum)) w.push('Jumlah rincian item ('+formatRupiah(sum)+') berbeda dari total ('+formatRupiah(r.total)+') — bisa karena diskon/pajak/ongkir, atau ada yang salah baca.');
+  }
+  if(kgScan.kind==='payment' && kgScan.ctx && r.total && r.total>kgScan.ctx.sisa) w.push('Nominal lebih besar dari sisa tagihan nota ('+formatRupiah(kgScan.ctx.sisa)+').');
+  if(r.catGuess) w.push('Kategori dipilih otomatis: '+r.catGuess+' — ubah bila kurang tepat.');
+  r.ragu.forEach(x=>w.push(x));
+  return w;
+}
+
+/* ---------- tampilan kotak scan ---------- */
+function kgScanBoxHtml(kind){
+  const hint = kind==='expense' ? 'Foto struk / nota belanja / bukti transfer keluar.'
+             : kind==='income'  ? 'Foto bukti transfer atau struk pemasukan.'
+             : 'Foto bukti transfer dari pelanggan.';
+  return `
+    <div class="kgs-box">
+      <div class="kgs-title">📷 Isi otomatis dari foto</div>
+      <div class="kgs-hint">${hint} Data terbaca otomatis, Anda tinggal mengecek. Foto tersimpan sebagai bukti.</div>
+      <div class="kgs-btns">
+        <button type="button" class="kgs-btn primary" onclick="document.getElementById('kgsCam').click()">📷 Ambil Foto</button>
+        <button type="button" class="kgs-btn" onclick="document.getElementById('kgsGal').click()">🖼️ Pilih dari Galeri</button>
+      </div>
+      <input type="file" id="kgsCam" accept="image/*" capture="environment" hidden onchange="kgScanPick(this,'${kind}')">
+      <input type="file" id="kgsGal" accept="image/*" hidden onchange="kgScanPick(this,'${kind}')">
+      <div class="kgs-body" id="kgsBody"></div>
+    </div>`;
+}
+function kgProofHtml(url){
+  if(!url) return '';
+  return `<div class="kgs-proof"><div class="kgs-sub">Foto bukti tersimpan (klik untuk memperbesar)</div><a href="${escapeHtml(url)}" target="_blank" rel="noopener"><img src="${escapeHtml(url)}" alt="Bukti" loading="lazy"></a></div>`;
+}
+function kgScanRenderBody(){
+  const el = document.getElementById('kgsBody'); if(!el) return;
+  if(!kgScan.file){ el.innerHTML = ''; return; }
+  const thumb = `<a href="${kgScan.previewUrl}" target="_blank" rel="noopener" title="Buka foto penuh"><img class="kgs-thumb" src="${kgScan.previewUrl}" alt="Foto"></a>`;
+  if(kgScan.busy){
+    el.innerHTML = `<div class="kgs-read">${thumb}<div class="kgs-info"><div class="kgs-busy"><span class="kgs-spin"></span> Membaca foto…${kgScan.progress ? ' '+kgScan.progress+'%' : ''}</div><div class="kgs-sub">${kgScan.engineTry==='ai' ? 'Dibaca oleh AI, biasanya beberapa detik.' : 'Memakai mesin baca bawaan. Pertama kali bisa 10–30 detik.'}</div></div></div>`;
+    return;
+  }
+  const r = kgScan.result;
+  let h = `<div class="kgs-read">${thumb}<div class="kgs-info">`;
+  if(r){
+    const meta = [r.tanggal ? formatDateID(r.tanggal) : '', r.merchant || r.pihak || ''].filter(Boolean).map(escapeHtml).join(' · ');
+    h += `<span class="kgs-tag ${kgScan.engine}">${kgScan.engine==='ai' ? 'Dibaca AI' : 'Dibaca OCR bawaan'} · yakin ${r.yakin}%</span>`;
+    h += r.total ? `<div class="kgs-amt">${formatRupiah(r.total)}</div>` : `<div class="kgs-amt none">Nominal tidak terbaca</div>`;
+    if(meta) h += `<div class="kgs-sub">${meta}</div>`;
+  } else {
+    h += `<div class="kgs-amt none">Foto belum bisa dibaca</div><div class="kgs-sub">${escapeHtml(kgScan.error||'')}. Isi manual saja — foto tetap tersimpan sebagai bukti.</div>`;
+  }
+  h += `</div></div>`;
+
+  if(r && r.kandidat.length){
+    h += `<div class="kgs-cands"><span class="kgs-sub">Nominal lain di foto (ketuk bila lebih tepat):</span> ` +
+      r.kandidat.map(v=>`<button type="button" class="kgs-chip" onclick="kgScanUseAmount(${v})">${formatRupiah(v)}</button>`).join('') + `</div>`;
+  }
+  const dups = kgScanDuplicates(r);
+  if(dups.length) h += `<div class="kgs-alert red"><b>Mungkin sudah pernah dicatat:</b><br>${dups.map(escapeHtml).join('<br>')}</div>`;
+  const warns = kgScanWarnings();
+  if(warns.length) h += `<div class="kgs-alert amber">${warns.map(x=>'• '+escapeHtml(x)).join('<br>')}</div>`;
+  if(kgScan.kind==='income'){
+    const ms = kgScanInvoiceMatches(r);
+    if(ms.length) h += `<div class="kgs-alert blue"><b>Mungkin pembayaran untuk nota:</b>` + ms.map(x=>`<button type="button" class="kgs-match" onclick="kgScanToInvoice('${escapeHtml(String(x.inv.invNo))}')">Catat ke Nota #${escapeHtml(String(x.inv.invNo))} — ${escapeHtml(x.inv.custName||'-')} <small>sisa ${formatRupiah(x.sisa)}${x.sisa===r.total ? ' · nominal sama persis' : ''}</small></button>`).join('') + `</div>`;
+  }
+  h += `<div class="kgs-actions"><button type="button" class="kgs-link" onclick="kgScanRun()">↻ Baca ulang</button><button type="button" class="kgs-link" onclick="kgScanClear()">✕ Hapus foto</button></div>`;
+  h += `<div class="kgs-confirm" id="kgsConfirmWrap" onclick="kgScanToggleConfirm(event)"><input type="checkbox" id="kgsConfirm" onclick="event.stopPropagation()"><span>Saya sudah mencocokkan <b>nominal &amp; tanggal</b> di form dengan foto (cek juga tulisan terbilang di bawah kolom jumlah).</span></div>`;
+  el.innerHTML = h;
+}
+function kgScanToInvoice(invNo){
+  kgScan.kind = 'payment'; kgScan.carry = true;
+  openInvoiceDetail(invNo);
+  kgScanApply('payment');
+  kgScanRenderBody();
+}
+
+/* ---------- guard, upload bukti, metadata ---------- */
+function kgScanGuard(){
+  if(!kgScan.file) return true;
+  if(kgScan.busy){ alert('Foto masih dibaca, tunggu sebentar.'); return false; }
+  const cb = document.getElementById('kgsConfirm');
+  if(cb && !cb.checked){
+    const w = document.getElementById('kgsConfirmWrap');
+    if(w){ w.classList.add('shake'); w.scrollIntoView({block:'center',behavior:'smooth'}); }
+    alert('Centang dulu konfirmasi: pastikan nominal & tanggal sudah sesuai dengan foto.');
+    return false;
+  }
+  return true;
+}
+/* return: '' (tanpa foto) | url | false (user membatalkan karena upload gagal) */
+async function kgScanUploadProof(folder){
+  if(!kgScan.file) return '';
+  try{
+    const res = await uploadFilesToStorage([kgScan.file], folder);
+    return (res && res[0] && res[0].url) || '';
+  }catch(e){
+    return confirm('Foto bukti gagal diupload: ' + e.message + '\n\nSimpan data TANPA foto bukti?') ? '' : false;
+  }
+}
+function kgScanMeta(finalAmount){
+  if(!kgScan.file) return null;
+  const r = kgScan.result;
+  return {
+    engine: kgScan.engine || 'manual',
+    yakin: r ? r.yakin : 0,
+    readAmount: r && r.total ? r.total : null,
+    edited: !!(r && r.total && r.total !== Math.round(finalAmount)),
+    ref: r && r.ref ? r.ref : '',
+    date: r && r.tanggal ? r.tanggal : ''
+  };
+}
+function kgBtnBusy(btn, busy){
+  if(!btn) return;
+  btn.disabled = busy;
+  if(busy){ btn.dataset.t = btn.textContent; btn.textContent = 'Menyimpan…'; }
+  else if(btn.dataset.t){ btn.textContent = btn.dataset.t; }
 }
 
 /* ---------- Modal: Transaksi Manual ---------- */
 function openManualSaleModal(){
+  kgScanReset(); kgScan.kind = 'income';
   const root = document.getElementById('kgModalRoot');
   root.innerHTML = `
     <div class="kg-modal-bg" onclick="if(event.target===this) closeKgModal()">
@@ -4023,6 +4649,7 @@ function openManualSaleModal(){
         <button class="kg-close" onclick="closeKgModal()">✕</button>
         <h3>+ Transaksi Manual</h3>
         <div class="kg-modal-sub">Untuk penjualan yang belum dibuatkan nota.</div>
+        ${kgScanBoxHtml('income')}
         <label>Tanggal</label>
         <input type="date" id="msDate" value="${new Date().toISOString().slice(0,10)}">
         <label>Nama Pemesan / Keterangan</label>
@@ -4030,10 +4657,10 @@ function openManualSaleModal(){
         <label>Kategori (opsional)</label>
         <input type="text" id="msCategory" placeholder="Contoh: Retail, Reseller, dll">
         <label>Jumlah (Rp)</label>
-        <input type="number" id="msAmount" min="0" placeholder="0">
+        <input type="number" id="msAmount" min="0" placeholder="0" data-words oninput="kgUpdateWords(this)"><div class="kgs-words"></div>
         <label>Catatan (opsional)</label>
         <textarea id="msNote" rows="2" placeholder="Catatan tambahan"></textarea>
-        <button class="btn gold" style="width:100%;margin-top:16px;" onclick="submitManualSale()">Simpan Transaksi</button>
+        <button class="btn gold" id="msSaveBtn" style="width:100%;margin-top:16px;" onclick="submitManualSale()">Simpan Transaksi</button>
       </div></div>
     </div>`;
 }
@@ -4041,7 +4668,13 @@ function openManualSaleModal(){
 async function submitManualSale(){
   const amount = Number(document.getElementById('msAmount').value)||0;
   if(amount<=0){ alert('Jumlah harus lebih dari 0'); return; }
+  if(!kgScanGuard()) return;
+  const btn = document.getElementById('msSaveBtn'); kgBtnBusy(btn, true);
+  const proof = await kgScanUploadProof('finance_bukti');
+  if(proof === false){ kgBtnBusy(btn, false); return; }
   const record = {
+    proofUrl: proof || '',
+    scan: kgScanMeta(amount),
     date: document.getElementById('msDate').value || new Date().toISOString().slice(0,10),
     custName: document.getElementById('msCust').value || 'Transaksi manual',
     category: document.getElementById('msCategory').value || '',
@@ -4051,10 +4684,12 @@ async function submitManualSale(){
     createdAt: new Date().toISOString()
   };
   const ok = await saveManualSale(record);
+  kgBtnBusy(btn, false);
   if(ok) closeKgModal();
 }
 
 function closeKgModal(){
+  kgScanReset();
   document.getElementById('kgModalRoot').innerHTML = '';
 }
 
@@ -4073,6 +4708,7 @@ function openManualDetail(id){
           <div class="trow grand"><span>Jumlah</span><span>${formatRupiah(m.amount)}</span></div>
         </div>
         ${m.note ? `<div style="font-size:12.5px;color:var(--muted);margin-bottom:14px;">${escapeHtml(m.note)}</div>` : ''}
+        ${kgProofHtml(m.proofUrl)}
         <div style="font-size:11.5px;color:var(--muted);margin-bottom:14px;">Dicatat oleh ${escapeHtml(m.createdBy||'-')}</div>
         <button class="btn ghost" style="width:100%;" onclick="confirmDeleteManualSale('${m.id}')">Hapus Transaksi</button>
       </div></div>
@@ -4096,6 +4732,8 @@ function openInvoiceDetail(invNo){
   const inv = invoicesCache.find(x=>x.invNo===invNo);
   if(!inv) return;
   const sisa = Math.max(Number(inv.total||0) - Number(inv.totalDibayar||0), 0);
+  if(kgScan.carry){ kgScan.carry = false; } else { kgScanReset(); }
+  kgScan.kind = 'payment'; kgScan.ctx = { invNo, sisa };
   const status = invoiceStatus(inv);
   const statusLabel = kgStatusLabel(status);
 
@@ -4107,7 +4745,7 @@ function openInvoiceDetail(invNo){
     ? inv.payments.map(p=>`
         <div class="kg-pay-row">
           <span>${formatDateID((p.at||'').slice(0,10))} — ${formatRupiah(p.amount)}</span>
-          <span class="p-note">${escapeHtml(p.note||'')}</span>
+          <span class="p-note">${escapeHtml(p.note||'')}${p.proofUrl ? ` <a class="kgs-paylink" href="${escapeHtml(p.proofUrl)}" target="_blank" rel="noopener">📎 bukti</a>` : ''}</span>
         </div>`).join('')
     : `<div class="kg-pay-row"><span class="p-note">Belum ada pembayaran tercatat.</span></div>`;
 
@@ -4134,25 +4772,39 @@ function openInvoiceDetail(invNo){
         <div class="kg-pay-history">${payRows}</div>
 
         ${sisa>0 ? `
+        ${kgScanBoxHtml('payment')}
         <label>Tambah Pembayaran (Rp)</label>
-        <input type="number" id="payAmount" min="0" max="${sisa}" placeholder="0">
+        <input type="number" id="payAmount" min="0" placeholder="0" data-words oninput="kgUpdateWords(this)"><div class="kgs-words"></div>
+        <label>Tanggal Pembayaran</label>
+        <input type="date" id="payDate" value="${kgLocalDate(new Date())}">
         <label>Catatan (opsional)</label>
         <input type="text" id="payNote" placeholder="Contoh: Pelunasan saat ambil barang">
-        <button class="btn gold" style="width:100%;margin-top:14px;" onclick="submitPayment('${inv.invNo}', ${sisa})">Simpan Pembayaran</button>
+        <button class="btn gold" id="paySaveBtn" style="width:100%;margin-top:14px;" onclick="submitPayment('${inv.invNo}', ${sisa})">Simpan Pembayaran</button>
         ` : `<div style="text-align:center;color:var(--green);font-weight:700;margin-top:10px;">Nota ini sudah lunas</div>`}
 
         <div style="font-size:11.5px;color:var(--muted);margin-top:16px;">Dibuat oleh ${escapeHtml(inv.createdBy||'-')} · ${formatDateID(inv.invDate)}</div>
         <button class="btn ghost" style="width:100%;margin-top:10px;" onclick="confirmDeleteInvoice('${inv.invNo}')">Hapus Nota Ini</button>
       </div></div>
     </div>`;
+  kgInitWords(root);
+  kgScanRenderBody();
 }
 
 async function submitPayment(invNo, sisa){
   const amount = Number(document.getElementById('payAmount').value)||0;
   if(amount<=0){ alert('Jumlah pembayaran harus lebih dari 0'); return; }
   if(amount>sisa){ if(!confirm('Jumlah melebihi sisa tagihan ('+formatRupiah(sisa)+'). Tetap lanjutkan?')) return; }
+  if(!kgScanGuard()) return;
+  const btn = document.getElementById('paySaveBtn'); kgBtnBusy(btn, true);
+  const proof = await kgScanUploadProof('finance_bukti');
+  if(proof === false){ kgBtnBusy(btn, false); return; }
   const note = document.getElementById('payNote').value || '';
-  const ok = await addPaymentToInvoice(invNo, amount, note);
+  const dv = (document.getElementById('payDate')||{}).value || '';
+  const extra = { at: (dv && dv !== kgLocalDate(new Date())) ? new Date(dv+'T12:00:00').toISOString() : new Date().toISOString() };
+  if(proof) extra.proofUrl = proof;
+  const meta = kgScanMeta(amount); if(meta) extra.scan = meta;
+  const ok = await addPaymentToInvoice(invNo, amount, note, extra);
+  kgBtnBusy(btn, false);
   if(ok) openInvoiceDetail(invNo);
 }
 
