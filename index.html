@@ -1295,6 +1295,9 @@
 #globalNav .gn-links button:hover{background:rgba(255,255,255,0.18);}
 #globalNav .gn-links button.active{background:#f5c518;color:#0e1a3d;border-color:#f5c518;font-weight:700;}
 @media(max-width:520px){
+  #globalNav .gn-links{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;width:100%;padding-bottom:2px;scrollbar-width:none;}
+  #globalNav .gn-links::-webkit-scrollbar{display:none;}
+  #globalNav .gn-links button{flex:none;white-space:nowrap;}
   #globalNav{padding:8px 12px;}
   #globalNav .gn-brand{font-size:12px;}
   #globalNav .gn-links button{padding:6px 9px;font-size:11px;}
@@ -1328,6 +1331,7 @@
 #landingScreen .ls-card-keuangan .ls-cta{color:#6fe3a1;}
 #landingScreen .ls-card-finance .ls-cta{color:#f5c518;}
 #landingScreen .ls-card-sop .ls-cta{color:#ffca6b;}
+#landingScreen .ls-card-pricelist .ls-cta{color:#ff9f7a;}
 #landingScreen .ls-hint{margin-top:36px;max-width:600px;font-size:12px;color:#9fb0d8;line-height:1.6;}
 @media(max-width:480px){
   #landingScreen{padding:32px 16px;}
@@ -1695,6 +1699,117 @@ body{overflow-x:hidden;}
 #wfChat .in button{border:none;background:#f5c518;color:#0e1a3d;font-weight:800;font-family:inherit;padding:10px 15px;border-radius:10px;cursor:pointer;font-size:13px;}
 #wfChat .in button.stop{background:#b3441f;color:#fff;}
 @media(max-width:520px){ .wfc-fab{right:12px;} #wfChat{right:8px;} }
+
+/* ===================== HARGA RESELLER (PRICE LIST) ===================== */
+#priceShell{
+  --pl-bg:#F6F3EC; --pl-ink:#211D1A; --pl-muted:#6b6255; --pl-line:#DAD3C3;
+  --pl-white:#FFFCF6; --pl-denim:#33507A; --pl-amber:#C98A2C; --pl-green:#4C7A5E; --pl-rust:#B15A3D;
+  background:var(--pl-bg); color:var(--pl-ink); font-family:'Work Sans',sans-serif; min-height:calc(100vh - 50px);
+}
+#priceShell *{box-sizing:border-box;}
+#priceShell{overflow-x:hidden;-webkit-text-size-adjust:100%;}
+#priceShell .pl-item,#priceShell .pl-log .b,#priceShell .pl-banner{overflow-wrap:anywhere;}
+#priceShell .pl-header{background:var(--pl-ink);color:var(--pl-bg);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-bottom:3px solid var(--pl-amber);}
+#priceShell .pl-header h1{margin:0;font-size:26px;font-family:'Bebas Neue',sans-serif;letter-spacing:.03em;}
+#priceShell .pl-header .sub{font-size:11px;color:#d8cdb6;text-transform:uppercase;letter-spacing:.12em;margin-top:2px;}
+#priceShell .pl-role{display:flex;gap:6px;background:rgba(255,255,255,.08);padding:5px;border-radius:999px;}
+#priceShell .pl-role button{border:none;background:transparent;color:var(--pl-bg);padding:8px 16px;border-radius:999px;font-family:'Bebas Neue';font-size:13px;letter-spacing:.05em;cursor:pointer;}
+#priceShell .pl-role button.active{background:var(--pl-denim);color:#fff;}
+#priceShell main{max-width:1000px;margin:0 auto;padding:22px 18px 90px;}
+#priceShell .pl-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+#priceShell .pl-tabs button{font-family:'Bebas Neue';font-size:14px;letter-spacing:.05em;background:transparent;border:1.5px solid var(--pl-line);color:var(--pl-muted);padding:9px 16px;border-radius:8px;cursor:pointer;}
+#priceShell .pl-tabs button.active{background:var(--pl-ink);border-color:var(--pl-ink);color:var(--pl-bg);}
+#priceShell .pl-banner{background:#FFF4D6;border:1.5px solid #E8C877;border-radius:12px;padding:13px 16px;margin-bottom:16px;font-size:13.5px;line-height:1.55;white-space:pre-wrap;}
+#priceShell .pl-banner b{display:block;font-family:'Bebas Neue';font-size:15px;letter-spacing:.05em;color:#8a5d12;margin-bottom:2px;}
+#priceShell .pl-meta{font-size:12px;color:var(--pl-muted);margin-bottom:14px;}
+#priceShell .pl-tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+#priceShell .pl-search{flex:1;min-width:200px;max-width:380px;border:1.5px solid var(--pl-line);border-radius:8px;padding:10px 13px;font-family:inherit;font-size:14px;background:var(--pl-white);color:var(--pl-ink);}
+#priceShell .pl-search:focus{outline:2px solid #6B87AC;border-color:var(--pl-denim);}
+#priceShell .pl-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+#priceShell .pl-chip{font-family:'Bebas Neue';font-size:12.5px;letter-spacing:.05em;padding:7px 13px;border-radius:999px;border:1.5px solid var(--pl-line);background:var(--pl-white);color:var(--pl-muted);cursor:pointer;}
+#priceShell .pl-chip.active{background:var(--pl-denim);border-color:var(--pl-denim);color:#fff;}
+#priceShell .pl-cat{display:flex;align-items:center;gap:10px;margin:22px 0 10px;}
+#priceShell .pl-cat h2{margin:0;font-family:'Bebas Neue';font-size:21px;letter-spacing:.04em;}
+#priceShell .pl-cat .ln{flex:1;height:1px;background:var(--pl-line);}
+#priceShell .pl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:12px;}
+#priceShell .pl-item{background:var(--pl-white);border:1.5px dashed #C9BFA8;border-radius:10px;padding:14px 16px;position:relative;}
+#priceShell .pl-item .nm{font-weight:600;font-size:14.5px;line-height:1.35;}
+#priceShell .pl-item .ds{font-size:12.5px;color:var(--pl-muted);margin-top:3px;line-height:1.45;}
+#priceShell .pl-item .pr{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:20px;margin-top:10px;color:var(--pl-denim);}
+#priceShell .pl-item .pr small{font-size:11.5px;color:var(--pl-muted);font-weight:500;}
+#priceShell .pl-item .old{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--pl-muted);text-decoration:line-through;margin-left:6px;}
+#priceShell .pl-item .mo{font-size:11.5px;color:var(--pl-muted);margin-top:4px;}
+#priceShell .pl-badge{display:inline-block;font-family:'Bebas Neue';font-size:12px;letter-spacing:.06em;padding:2px 9px;border-radius:999px;margin-left:6px;vertical-align:middle;color:#fff;}
+#priceShell .pl-badge.naik{background:var(--pl-rust);} #priceShell .pl-badge.turun{background:var(--pl-green);} #priceShell .pl-badge.baru{background:var(--pl-amber);} #priceShell .pl-badge.ubah{background:var(--pl-denim);} #priceShell .pl-badge.hapus{background:#777;}
+#priceShell .pl-card{background:var(--pl-white);border:1.5px solid var(--pl-line);border-radius:12px;padding:16px 18px;margin-bottom:16px;}
+#priceShell .pl-card h3{margin:0 0 10px;font-family:'Bebas Neue';font-size:19px;letter-spacing:.04em;}
+#priceShell .pl-empty{background:var(--pl-white);border:1.5px dashed var(--pl-line);border-radius:12px;padding:34px 18px;text-align:center;color:var(--pl-muted);font-size:14px;line-height:1.6;}
+#priceShell .pl-day{font-family:'Bebas Neue';font-size:15px;letter-spacing:.06em;color:var(--pl-muted);margin:18px 0 8px;}
+#priceShell .pl-log{display:flex;gap:12px;align-items:flex-start;background:var(--pl-white);border:1.5px solid var(--pl-line);border-radius:10px;padding:11px 14px;margin-bottom:8px;}
+#priceShell .pl-log .t{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--pl-muted);min-width:42px;padding-top:3px;}
+#priceShell .pl-log .b{flex:1;font-size:13.5px;line-height:1.5;}
+#priceShell .pl-log .b .cat{font-size:11.5px;color:var(--pl-muted);}
+#priceShell .pl-log .arrow{font-family:'JetBrains Mono',monospace;font-size:12.5px;}
+#priceShell .pl-tbl-wrap{overflow-x:auto;}
+#priceShell table.pl-tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:680px;}
+#priceShell table.pl-tbl th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pl-muted);padding:8px 8px;border-bottom:2px solid var(--pl-line);}
+#priceShell table.pl-tbl td{padding:8px 8px;border-bottom:1px solid var(--pl-line);vertical-align:middle;}
+#priceShell table.pl-tbl tr.off td{opacity:.5;}
+#priceShell .pl-inp{width:100%;border:1.5px solid var(--pl-line);border-radius:7px;padding:8px 10px;font-family:inherit;font-size:13.5px;background:#fff;color:var(--pl-ink);}
+#priceShell .pl-inp:focus{outline:2px solid #6B87AC;border-color:var(--pl-denim);}
+#priceShell .pl-price-inp{width:120px;font-family:'JetBrains Mono',monospace;font-weight:700;}
+#priceShell label.pl-l{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pl-muted);font-weight:700;margin:10px 0 4px;}
+#priceShell .pl-btn{font-family:'Bebas Neue';font-size:14px;letter-spacing:.05em;background:var(--pl-denim);color:#fff;border:none;border-radius:8px;padding:9px 16px;cursor:pointer;}
+#priceShell .pl-btn.ghost{background:transparent;color:var(--pl-ink);border:1.5px solid var(--pl-line);}
+#priceShell .pl-btn.danger{background:var(--pl-rust);}
+#priceShell .pl-btn.sm{padding:6px 11px;font-size:12.5px;}
+@media(pointer:coarse){#priceShell .pl-btn{min-height:40px;}#priceShell .pl-chip,#priceShell .pl-tabs button{min-height:38px;}}
+#priceShell .pl-btn:disabled{opacity:.6;cursor:default;}
+#priceShell .pl-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+#priceShell .pl-err{font-size:12.5px;color:var(--pl-rust);margin-top:8px;}
+#priceShell .pl-ok{font-size:12.5px;color:var(--pl-green);margin-top:8px;}
+#priceShell .pl-modal-bg{position:fixed;inset:0;background:rgba(20,16,12,.55);z-index:900;display:flex;align-items:center;justify-content:center;padding:16px;}
+#priceShell .pl-modal{background:var(--pl-white);border-radius:14px;max-width:460px;width:100%;max-height:92vh;overflow-y:auto;padding:20px 22px;}
+#priceShell .pl-modal h3{margin:0 0 4px;font-family:'Bebas Neue';font-size:22px;letter-spacing:.04em;}
+#priceShell .pl-2c{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:640px){
+  #priceShell .pl-header{padding:14px 14px;}
+  #priceShell .pl-header h1{font-size:22px;}
+  #priceShell .pl-role{width:100%;} #priceShell .pl-role button{flex:1;padding:9px 8px;}
+  #priceShell main{padding:14px 12px calc(90px + env(safe-area-inset-bottom,0px));}
+  #priceShell .pl-tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;margin-left:-12px;margin-right:-12px;padding:0 12px 4px;scrollbar-width:none;}
+  #priceShell .pl-tabs::-webkit-scrollbar{display:none;}
+  #priceShell .pl-tabs button{flex:none;white-space:nowrap;padding:9px 13px;}
+  #priceShell .pl-chips{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;margin-left:-12px;margin-right:-12px;padding:0 12px 4px;scrollbar-width:none;}
+  #priceShell .pl-chips::-webkit-scrollbar{display:none;}
+  #priceShell .pl-chip{flex:none;white-space:nowrap;}
+  #priceShell .pl-tools{flex-direction:column;align-items:stretch;}
+  #priceShell .pl-search{max-width:none;width:100%;min-width:0;}
+  #priceShell .pl-tools .pl-btn,#priceShell .pl-tools .pl-chip{width:100%;}
+  #priceShell .pl-grid{grid-template-columns:1fr;}
+  #priceShell .pl-2c{grid-template-columns:1fr;}
+  #priceShell .pl-inp,#priceShell .pl-search{font-size:16px;} /* cegah zoom otomatis iOS */
+  #priceShell .pl-log{padding:10px 12px;gap:10px;}
+  #priceShell .pl-modal-bg{align-items:flex-end;padding:0;}
+  #priceShell .pl-modal{max-width:none;border-radius:16px 16px 0 0;max-height:94vh;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));}
+  #priceShell .pl-modal .pl-row .pl-btn{flex:1;}
+  /* tabel owner -> kartu */
+  #priceShell .pl-card{padding:12px;}
+  #priceShell .pl-tbl-wrap{overflow:visible;}
+  #priceShell table.pl-tbl{min-width:0;display:block;}
+  #priceShell table.pl-tbl thead{display:none;}
+  #priceShell table.pl-tbl tbody{display:block;}
+  #priceShell table.pl-tbl tr{display:block;border:1.5px solid var(--pl-line);border-radius:10px;padding:10px 12px;margin-bottom:10px;background:#fff;}
+  #priceShell table.pl-tbl td{display:flex;justify-content:space-between;align-items:center;gap:12px;border:none;padding:6px 0;}
+  #priceShell table.pl-tbl td::before{content:attr(data-label);font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--pl-muted);font-weight:700;flex:none;}
+  #priceShell table.pl-tbl td.pl-c-nama{display:block;padding-bottom:8px;border-bottom:1px solid var(--pl-line);margin-bottom:4px;}
+  #priceShell table.pl-tbl td.pl-c-nama::before{display:none;}
+  #priceShell table.pl-tbl td.pl-c-act{justify-content:stretch;gap:8px;padding-top:10px;}
+  #priceShell table.pl-tbl td.pl-c-act::before{display:none;}
+  #priceShell table.pl-tbl td.pl-c-act .pl-btn{flex:1;padding:10px;}
+  #priceShell .pl-price-inp{width:140px;text-align:right;}
+  #priceShell input[type=checkbox]{width:22px;height:22px;}
+}
 </style>
 </head>
 <body>
@@ -1713,6 +1828,7 @@ body{overflow-x:hidden;}
     <button id="gn-btn-finance" onclick="showMode('finance')">FINANCE</button>
     <button id="gn-btn-absensi" onclick="showMode('absensi')">Workspace</button>
     <button id="gn-btn-sop" onclick="showMode('sop')">SOP</button>
+    <button id="gn-btn-pricelist" onclick="showMode('pricelist')">Harga Reseller</button>
   </div>
 </div>
 
@@ -1759,6 +1875,12 @@ body{overflow-x:hidden;}
       <h2>SOP TenX Apparel</h2>
       <p>Standar Operasional Prosedur resmi yang berlaku efektif 15 September 2026. Bisa dibaca langsung di aplikasi — lengkap dengan pencarian aturan, KPI Marketing/Produksi/Desain, jam kerja, piket, bonus, komisi, dan reward. Tidak perlu buka file Word lagi.</p>
       <span class="ls-cta">Baca SOP &rarr;</span>
+    </button>
+    <button class="ls-card ls-card-pricelist" onclick="showMode('pricelist')">
+      <div class="ls-icon">07</div>
+      <h2>Harga Reseller</h2>
+      <p>Price list internal TENX Apparel (kaos, polo, jersey, dll.) untuk reseller. Reseller cukup melihat harga &amp; update terbaru; hanya Owner yang bisa mengubah harga lewat dashboard.</p>
+      <span class="ls-cta">Lihat Harga &rarr;</span>
     </button>
   </div>
   <div class="ls-hint">Tips: dari halaman detail sebuah project di Alur Kerja, Admin bisa klik "Buat Nota untuk Client Ini" — nama client, ukuran, dan qty akan otomatis terisi di Generator Nota.</div>
@@ -2166,6 +2288,18 @@ body{overflow-x:hidden;}
     <button class="sop-btn sop-back" onclick="showMode('absensi')" style="background:transparent;border-color:rgba(255,255,255,.35);color:#fff;">&larr; Workspace</button>
   </div>
   <main id="sopApp"><div class="sop-empty">Memuat SOP&hellip;</div></main>
+</div>
+
+<div id="priceShell" style="display:none;">
+  <div class="pl-header">
+    <div>
+      <h1>HARGA RESELLER</h1>
+      <div class="sub">Price List Internal &middot; TENX APPAREL</div>
+    </div>
+    <div class="pl-role" id="plRoleSwitch"></div>
+  </div>
+  <main id="plApp"><div class="pl-empty">Memuat harga&hellip;</div></main>
+  <div id="plModalRoot"></div>
 </div>
 
 <div id="absensiApp" style="display:none;">
@@ -9361,6 +9495,7 @@ function showMode(mode){
   document.getElementById('financeApp').style.display = (mode==='finance') ? 'block' : 'none';
   document.getElementById('absensiApp').style.display = (mode==='absensi') ? 'block' : 'none';
   document.getElementById('sopShell').style.display = (mode==='sop') ? 'block' : 'none';
+  document.getElementById('priceShell').style.display = (mode==='pricelist') ? 'block' : 'none';
 
   document.querySelectorAll('#globalNav .gn-links button').forEach(b=>b.classList.remove('active'));
   const activeBtn = document.getElementById('gn-btn-'+mode);
@@ -9387,6 +9522,9 @@ function showMode(mode){
   }
   if(mode==='sop'){
     initSop();
+  }
+  if(mode==='pricelist'){
+    initPriceList();
   }
 }
 
@@ -10504,6 +10642,363 @@ async function wfcSend(text){
   }
   m.streaming = false; WFC.busy = false; WFC.forceScroll = true; wfcRender();
 }
+
+
+/* =====================================================================
+   ===================== HARGA RESELLER (PRICE LIST) =====================
+   Koleksi Firestore baru (terpisah dari modul lain):
+   - resellerProducts      : daftar produk & harga (diubah Owner/Admin, dibaca Reseller)
+   - resellerPriceLog      : riwayat perubahan harga -> jadi feed "Update Terbaru"
+   - resellerSettings/config : pengumuman & nomor WhatsApp admin
+   Reseller: LIHAT SAJA. Owner/Admin: login (akun yang sama dengan Workspace) untuk ubah harga.
+   ===================================================================== */
+let plProducts = [], plLog = [], plConfig = { pengumuman:'', wa:'', updatedAt:0 };
+let plInited = false, plLoading = true;
+const PL_NEW_DAYS = 7;
+const PL_UNITS = ['pcs','lusin','set','stel','meter'];
+let plState = { role:'reseller', tab:'harga', cat:'Semua', q:'', onlyNew:false, ownerTab:'kelola', ownerQ:'', modalId:null };
+try{ plState.role = localStorage.getItem('tenx_pl_role') || 'reseller'; }catch(e){}
+
+function plIsOwner(){ return plState.role==='owner' && typeof wspIsOwnerAuthed==='function' && wspIsOwnerAuthed(); }
+function plRp(n){ return formatRupiah(n); }
+function plIsRecent(ts){ return ts && (Date.now()-ts) < PL_NEW_DAYS*86400000; }
+function plDateTime(ts){ return ts ? new Date(ts).toLocaleString('id-ID',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '-'; }
+function plDayLabel(ts){ return new Date(ts).toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'}); }
+function plTime(ts){ return new Date(ts).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}); }
+function plCats(list){ return [...new Set(list.map(p=>p.kategori||'Lainnya'))].sort((a,b)=>a.localeCompare(b,'id')); }
+function plLastUpdate(){
+  let t = plConfig.updatedAt||0;
+  plProducts.forEach(p=>{ t = Math.max(t, p.changedAt||p.updatedAt||0); });
+  plLog.forEach(l=>{ t = Math.max(t, l.at||0); });
+  return t;
+}
+
+function initPriceList(){
+  if(!plInited){
+    plInited = true;
+    if(!CONFIG_READY){ plLoading = false; }
+    else {
+      db.collection('resellerProducts').onSnapshot(snap=>{
+        plProducts = snap.docs.map(d=>Object.assign({id:d.id}, d.data()));
+        plLoading = false; if(currentMode==='pricelist') renderPriceList();
+      }, err=>{ console.warn('resellerProducts',err); plLoading=false; if(currentMode==='pricelist') renderPriceList(); });
+      db.collection('resellerPriceLog').orderBy('at','desc').limit(150).onSnapshot(snap=>{
+        plLog = snap.docs.map(d=>Object.assign({id:d.id}, d.data()));
+        if(currentMode==='pricelist') renderPriceList();
+      }, err=>console.warn('resellerPriceLog',err));
+      db.collection('resellerSettings').doc('config').onSnapshot(doc=>{
+        if(doc.exists) plConfig = Object.assign({ pengumuman:'', wa:'', updatedAt:0 }, doc.data());
+        if(currentMode==='pricelist') renderPriceList();
+      }, err=>console.warn('resellerSettings',err));
+    }
+  }
+  renderPriceList();
+}
+
+function plSetRole(r){
+  plState.role = r;
+  try{ localStorage.setItem('tenx_pl_role', r); }catch(e){}
+  renderPriceList();
+}
+function plSetTab(t){ plState.tab = t; renderPriceList(); }
+function plSetOwnerTab(t){ plState.ownerTab = t; renderPriceList(); }
+function plSetCat(c){ plState.cat = c; renderPriceList(); }
+function plToggleNew(){ plState.onlyNew = !plState.onlyNew; renderPriceList(); }
+function plSearch(v){
+  plState.q = v; renderPriceList();
+  const i = document.getElementById('plSearchInp'); if(i){ i.focus(); i.setSelectionRange(v.length,v.length); }
+}
+function plOwnerSearch(v){
+  plState.ownerQ = v; renderPriceList();
+  const i = document.getElementById('plOwnerSearchInp'); if(i){ i.focus(); i.setSelectionRange(v.length,v.length); }
+}
+
+function renderPriceList(){
+  const sw = document.getElementById('plRoleSwitch');
+  if(sw) sw.innerHTML =
+    '<button class="'+(plState.role==='reseller'?'active':'')+'" onclick="plSetRole(\'reseller\')">RESELLER</button>'+
+    '<button class="'+(plState.role==='owner'?'active':'')+'" onclick="plSetRole(\'owner\')">OWNER</button>';
+  const app = document.getElementById('plApp'); if(!app) return;
+  if(!CONFIG_READY){ app.innerHTML = '<div class="pl-empty"><b>Belum terhubung ke Firebase.</b><br>Lengkapi firebaseConfig agar price list bisa dipakai.</div>'; return; }
+  if(plLoading){ app.innerHTML = '<div class="pl-empty">Memuat harga&hellip;</div>'; return; }
+  if(plState.role==='owner') app.innerHTML = plIsOwner() ? plOwnerHtml() : plLoginHtml();
+  else app.innerHTML = plResellerHtml();
+}
+
+/* ---------------- TAMPILAN RESELLER (LIHAT SAJA) ---------------- */
+function plBadge(type){
+  const L = { naik:'HARGA NAIK', turun:'HARGA TURUN', baru:'BARU', ubah:'DIUBAH', hapus:'DIHAPUS' };
+  return '<span class="pl-badge '+type+'">'+(L[type]||type)+'</span>';
+}
+function plResellerHtml(){
+  const active = plProducts.filter(p=>p.aktif!==false);
+  const last = plLastUpdate();
+  let h = '';
+  if(plConfig.pengumuman && plConfig.pengumuman.trim()) h += '<div class="pl-banner"><b>📢 PENGUMUMAN</b>'+escapeHtml(plConfig.pengumuman)+'</div>';
+  h += '<div class="pl-meta">'+(last?'Terakhir diperbarui: <b>'+plDateTime(last)+'</b> · ':'')+active.length+' produk. Halaman ini hanya untuk melihat harga.</div>';
+  h += '<div class="pl-tabs"><button class="'+(plState.tab==='harga'?'active':'')+'" onclick="plSetTab(\'harga\')">Daftar Harga</button>'+
+       '<button class="'+(plState.tab==='update'?'active':'')+'" onclick="plSetTab(\'update\')">Update Terbaru</button></div>';
+  h += plState.tab==='update' ? plFeedHtml(false) : plListHtml(active);
+  if(plConfig.wa) h += '<div class="pl-meta" style="margin-top:22px;">Mau order / tanya harga? Hubungi admin: <b>'+escapeHtml(plConfig.wa)+'</b></div>';
+  return h;
+}
+function plListHtml(active){
+  const cats = ['Semua'].concat(plCats(active));
+  if(!cats.includes(plState.cat)) plState.cat = 'Semua';
+  const q = plState.q.trim().toLowerCase();
+  let list = active.filter(p=>{
+    if(plState.cat!=='Semua' && (p.kategori||'Lainnya')!==plState.cat) return false;
+    if(plState.onlyNew && !(plIsRecent(p.changedAt) && p.lastType)) return false;
+    if(q && !((p.nama||'')+' '+(p.keterangan||'')+' '+(p.kategori||'')).toLowerCase().includes(q)) return false;
+    return true;
+  });
+  let h = '<div class="pl-tools"><input class="pl-search" id="plSearchInp" placeholder="Cari produk (mis. kaos, polo, hoodie)…" value="'+escapeHtml(plState.q)+'" oninput="plSearch(this.value)">'+
+          '<button class="pl-chip '+(plState.onlyNew?'active':'')+'" onclick="plToggleNew()">Baru berubah ('+PL_NEW_DAYS+' hari)</button></div>';
+  h += '<div class="pl-chips">'+cats.map(c=>'<button class="pl-chip '+(plState.cat===c?'active':'')+'" onclick="plSetCat(\''+escapeHtml(c).replace(/'/g,"\\'")+'\')">'+escapeHtml(c)+'</button>').join('')+'</div>';
+  if(!active.length) return h+'<div class="pl-empty">Daftar harga belum tersedia. Silakan cek lagi nanti.</div>';
+  if(!list.length) return h+'<div class="pl-empty">Tidak ada produk yang cocok dengan pencarian/filter.</div>';
+  const byCat = {};
+  list.forEach(p=>{ (byCat[p.kategori||'Lainnya'] = byCat[p.kategori||'Lainnya'] || []).push(p); });
+  Object.keys(byCat).sort((a,b)=>a.localeCompare(b,'id')).forEach(c=>{
+    h += '<div class="pl-cat"><h2>'+escapeHtml(c)+'</h2><div class="ln"></div></div><div class="pl-grid">';
+    byCat[c].sort((a,b)=>(a.nama||'').localeCompare(b.nama||'','id')).forEach(p=>{
+      const recent = plIsRecent(p.changedAt) && p.lastType;
+      h += '<div class="pl-item"><div class="nm">'+escapeHtml(p.nama)+(recent?plBadge(p.lastType):'')+'</div>'+
+        (p.keterangan?'<div class="ds">'+escapeHtml(p.keterangan)+'</div>':'')+
+        '<div class="pr">'+plRp(p.harga)+' <small>/ '+escapeHtml(p.satuan||'pcs')+'</small>'+
+          (recent && (p.lastType==='naik'||p.lastType==='turun') && p.hargaLama!=null ? '<span class="old">'+plRp(p.hargaLama)+'</span>' : '')+'</div>'+
+        (p.minOrder>1?'<div class="mo">Min. order: '+p.minOrder+' '+escapeHtml(p.satuan||'pcs')+'</div>':'')+
+        (recent?'<div class="mo">Diperbarui '+plDateTime(p.changedAt)+'</div>':'')+
+        '</div>';
+    });
+    h += '</div>';
+  });
+  return h;
+}
+function plFeedHtml(isOwner){
+  if(!plLog.length) return '<div class="pl-empty">Belum ada riwayat perubahan harga.</div>';
+  let h = '', lastDay = '';
+  plLog.forEach(l=>{
+    const day = plDayLabel(l.at);
+    if(day!==lastDay){ h += '<div class="pl-day">'+day+'</div>'; lastDay = day; }
+    let detail = '';
+    if((l.type==='naik'||l.type==='turun'||l.type==='ubah') && l.oldPrice!=null)
+      detail = '<div class="arrow">'+plRp(l.oldPrice)+' → <b>'+plRp(l.newPrice)+'</b>'+(l.oldPrice>0?' ('+(l.newPrice>=l.oldPrice?'+':'')+((l.newPrice-l.oldPrice)/l.oldPrice*100).toFixed(1).replace('.',',')+'%)':'')+'</div>';
+    else if(l.type==='baru') detail = '<div class="arrow">Harga: <b>'+plRp(l.newPrice)+'</b></div>';
+    h += '<div class="pl-log"><div class="t">'+plTime(l.at)+'</div><div class="b"><b>'+escapeHtml(l.nama||'-')+'</b>'+plBadge(l.type)+
+         '<div class="cat">'+escapeHtml(l.kategori||'')+(isOwner&&l.by?' · oleh '+escapeHtml(l.by):'')+'</div>'+detail+'</div></div>';
+  });
+  return h;
+}
+
+/* ---------------- LOGIN OWNER ---------------- */
+function plLoginHtml(){
+  return '<div class="pl-card" style="max-width:420px;margin:0 auto;"><h3>Login Owner / Admin</h3>'+
+    '<div style="font-size:13px;color:var(--pl-muted);">Masuk dengan akun Owner/Admin (sama dengan Workspace) untuk mengubah harga.</div>'+
+    '<label class="pl-l">Email</label><input class="pl-inp" id="plLoginEmail" autocomplete="username">'+
+    '<label class="pl-l">Password</label><input class="pl-inp" type="password" id="plLoginPass" autocomplete="current-password" onkeydown="if(event.key===\'Enter\')plLogin()">'+
+    '<div class="pl-err" id="plLoginErr"></div>'+
+    '<button class="pl-btn" style="width:100%;margin-top:14px;" onclick="plLogin()">Masuk</button></div>';
+}
+function plLogin(){
+  const acc = wspFindAdminAccount(document.getElementById('plLoginEmail').value, document.getElementById('plLoginPass').value);
+  if(!acc){ document.getElementById('plLoginErr').textContent = 'Email atau password salah.'; return; }
+  wspState.ownerEmail = acc.email;
+  try{ localStorage.setItem('tenx_wsp_owner_email', acc.email); }catch(e){}
+  renderPriceList();
+}
+function plLogout(){
+  if(!confirm('Keluar dari akun Owner/Admin?')) return;
+  wspState.ownerEmail = '';
+  try{ localStorage.removeItem('tenx_wsp_owner_email'); }catch(e){}
+  renderPriceList();
+}
+
+/* ---------------- DASHBOARD OWNER ---------------- */
+function plOwnerHtml(){
+  let h = '<div class="pl-row" style="justify-content:space-between;margin-bottom:14px;"><div style="font-size:12.5px;color:var(--pl-muted);">Masuk sebagai <b style="color:var(--pl-ink);">'+escapeHtml(wspState.ownerEmail)+'</b></div>'+
+          '<button class="pl-btn ghost sm" onclick="plLogout()">Keluar</button></div>';
+  h += '<div class="pl-tabs">'+[['kelola','Kelola Harga'],['riwayat','Riwayat Perubahan'],['broadcast','Pesan Update (WA)'],['setelan','Pengaturan']]
+    .map(t=>'<button class="'+(plState.ownerTab===t[0]?'active':'')+'" onclick="plSetOwnerTab(\''+t[0]+'\')">'+t[1]+'</button>').join('')+'</div>';
+  if(plState.ownerTab==='kelola') h += plOwnerManageHtml();
+  else if(plState.ownerTab==='riwayat') h += plFeedHtml(true);
+  else if(plState.ownerTab==='broadcast') h += plBroadcastHtml();
+  else h += plSettingsHtml();
+  return h;
+}
+function plOwnerManageHtml(){
+  const q = plState.ownerQ.trim().toLowerCase();
+  const list = plProducts.filter(p=>!q || ((p.nama||'')+' '+(p.kategori||'')).toLowerCase().includes(q))
+    .sort((a,b)=>(a.kategori||'').localeCompare(b.kategori||'','id') || (a.nama||'').localeCompare(b.nama||'','id'));
+  let h = '<div class="pl-tools"><input class="pl-search" id="plOwnerSearchInp" placeholder="Cari produk…" value="'+escapeHtml(plState.ownerQ)+'" oninput="plOwnerSearch(this.value)">'+
+          '<button class="pl-btn" onclick="plOpenModal(null)">+ Tambah Produk</button></div>';
+  if(!plProducts.length){
+    return h+'<div class="pl-empty">Belum ada produk.<br>Tambah manual, atau isi contoh produk (kaos, polo, jersey, dll.) yang tersimpan <b>nonaktif</b> sehingga belum terlihat reseller sampai Anda mengisi harganya dan mengaktifkannya.<br><br><button class="pl-btn ghost" onclick="plSeed()">Isi Contoh Produk</button></div>';
+  }
+  h += '<div class="pl-card"><div class="pl-tbl-wrap"><table class="pl-tbl"><thead><tr><th>Produk</th><th>Kategori</th><th>Harga (Rp)</th><th>Satuan</th><th>Tampil</th><th></th></tr></thead><tbody>';
+  list.forEach(p=>{
+    h += '<tr class="'+(p.aktif===false?'off':'')+'"><td class="pl-c-nama"><b>'+escapeHtml(p.nama)+'</b>'+(p.keterangan?'<div style="font-size:11.5px;color:var(--pl-muted);">'+escapeHtml(p.keterangan)+'</div>':'')+'</td>'+
+      '<td data-label="Kategori">'+escapeHtml(p.kategori||'-')+'</td>'+
+      '<td data-label="Harga (Rp)"><input class="pl-inp pl-price-inp" type="number" min="0" value="'+(Number(p.harga)||0)+'" onchange="plQuickPrice(\''+p.id+'\',this)"></td>'+
+      '<td data-label="Satuan">'+escapeHtml(p.satuan||'pcs')+'</td>'+
+      '<td data-label="Tampil ke reseller"><input type="checkbox" '+(p.aktif!==false?'checked':'')+' onchange="plToggleActive(\''+p.id+'\',this.checked)"></td>'+
+      '<td class="pl-c-act" style="white-space:nowrap;"><button class="pl-btn ghost sm" onclick="plOpenModal(\''+p.id+'\')">Edit</button> <button class="pl-btn danger sm" onclick="plDelete(\''+p.id+'\')">Hapus</button></td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  h += '<div class="pl-meta">Ubah angka harga langsung di tabel — otomatis tersimpan & muncul di halaman reseller beserta penanda naik/turun.</div>';
+  return h;
+}
+
+/* --- penyimpanan --- */
+function plBy(){ return wspState.ownerEmail || 'owner'; }
+function plLogEntry(p, type, oldPrice, newPrice){
+  return { productId:p.id, nama:p.nama, kategori:p.kategori||'Lainnya', type:type, oldPrice:oldPrice, newPrice:newPrice, at:Date.now(), by:plBy() };
+}
+async function plSaveProduct(rec, prev){
+  const batch = db.batch();
+  const ref = db.collection('resellerProducts').doc(rec.id);
+  const now = Date.now();
+  rec.updatedAt = now;
+  let logType = null;
+  if(!prev){ logType = rec.aktif!==false ? 'baru' : null; rec.changedAt = now; rec.lastType = logType||'baru'; rec.hargaLama = null; }
+  else {
+    rec.hargaLama = prev.hargaLama!=null ? prev.hargaLama : null;
+    rec.changedAt = prev.changedAt||0; rec.lastType = prev.lastType||null;
+    if(Number(prev.harga)!==Number(rec.harga)){
+      logType = rec.harga>prev.harga ? 'naik' : 'turun';
+      rec.hargaLama = prev.harga; rec.changedAt = now; rec.lastType = logType;
+    } else if(prev.aktif===false && rec.aktif!==false){ logType = 'baru'; rec.changedAt = now; rec.lastType = 'baru'; rec.hargaLama = null; }
+    else if(rec.aktif!==false && ((prev.nama!==rec.nama)||(prev.keterangan!==rec.keterangan)||(prev.satuan!==rec.satuan)||(prev.minOrder!==rec.minOrder))){
+      logType = 'ubah'; rec.changedAt = now; rec.lastType = 'ubah';
+    }
+  }
+  batch.set(ref, rec);
+  if(logType && rec.aktif!==false){
+    batch.set(db.collection('resellerPriceLog').doc(), plLogEntry(rec, logType, prev?prev.harga:null, rec.harga));
+  }
+  await batch.commit();
+}
+async function plQuickPrice(id, inp){
+  const prev = plProducts.find(x=>x.id===id); if(!prev) return;
+  const v = Math.round(Number(inp.value));
+  if(!isFinite(v) || v<0){ inp.value = prev.harga; return; }
+  if(v===Number(prev.harga)) return;
+  try{ await plSaveProduct(Object.assign({}, prev, { harga:v }), prev); }
+  catch(e){ alert('Gagal menyimpan harga: '+(e.message||e)); inp.value = prev.harga; }
+}
+async function plToggleActive(id, on){
+  const prev = plProducts.find(x=>x.id===id); if(!prev) return;
+  try{ await plSaveProduct(Object.assign({}, prev, { aktif:on }), prev); }
+  catch(e){ alert('Gagal menyimpan: '+(e.message||e)); renderPriceList(); }
+}
+async function plDelete(id){
+  const p = plProducts.find(x=>x.id===id); if(!p) return;
+  if(!confirm('Hapus "'+p.nama+'" dari price list?')) return;
+  try{
+    const b = db.batch();
+    b.delete(db.collection('resellerProducts').doc(id));
+    if(p.aktif!==false) b.set(db.collection('resellerPriceLog').doc(), plLogEntry(p,'hapus',p.harga,null));
+    await b.commit();
+  }catch(e){ alert('Gagal menghapus: '+(e.message||e)); }
+}
+
+/* --- modal tambah/edit --- */
+function plOpenModal(id){
+  plState.modalId = id;
+  const p = id ? plProducts.find(x=>x.id===id) : null;
+  const cats = plCats(plProducts);
+  const root = document.getElementById('plModalRoot');
+  root.innerHTML = '<div class="pl-modal-bg" onclick="if(event.target===this)plCloseModal()"><div class="pl-modal">'+
+    '<h3>'+(p?'Edit Produk':'Tambah Produk')+'</h3>'+
+    '<label class="pl-l">Nama produk</label><input class="pl-inp" id="plfNama" placeholder="mis. Kaos Cotton Combed 30s" value="'+escapeHtml(p?p.nama:'')+'">'+
+    '<label class="pl-l">Kategori</label><input class="pl-inp" id="plfKat" list="plCatList" placeholder="mis. Kaos" value="'+escapeHtml(p?(p.kategori||''):'')+'"><datalist id="plCatList">'+cats.map(c=>'<option value="'+escapeHtml(c)+'">').join('')+'</datalist>'+
+    '<label class="pl-l">Keterangan (bahan, varian, sablon, dll.)</label><textarea class="pl-inp" id="plfKet" rows="2">'+escapeHtml(p?(p.keterangan||''):'')+'</textarea>'+
+    '<div class="pl-2c"><div><label class="pl-l">Harga reseller (Rp)</label><input class="pl-inp" id="plfHarga" type="number" min="0" value="'+(p?(Number(p.harga)||0):'')+'"></div>'+
+    '<div><label class="pl-l">Satuan</label><select class="pl-inp" id="plfSat">'+PL_UNITS.map(u=>'<option '+((p?p.satuan:'pcs')===u?'selected':'')+'>'+u+'</option>').join('')+'</select></div></div>'+
+    '<label class="pl-l">Minimal order</label><input class="pl-inp" id="plfMin" type="number" min="1" value="'+(p?(p.minOrder||1):1)+'">'+
+    '<label class="pl-l" style="display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;font-size:13px;"><input type="checkbox" id="plfAktif" '+(!p||p.aktif!==false?'checked':'')+'> Tampilkan ke reseller</label>'+
+    '<div class="pl-err" id="plfErr"></div>'+
+    '<div class="pl-row" style="margin-top:16px;justify-content:flex-end;"><button class="pl-btn ghost" onclick="plCloseModal()">Batal</button><button class="pl-btn" id="plfSave" onclick="plSubmitModal()">Simpan</button></div>'+
+    '</div></div>';
+}
+function plCloseModal(){ const r=document.getElementById('plModalRoot'); if(r) r.innerHTML=''; plState.modalId=null; }
+async function plSubmitModal(){
+  const nama = document.getElementById('plfNama').value.trim();
+  const harga = Math.round(Number(document.getElementById('plfHarga').value));
+  const err = document.getElementById('plfErr');
+  if(!nama){ err.textContent='Nama produk wajib diisi.'; return; }
+  if(!isFinite(harga) || harga<0 || document.getElementById('plfHarga').value===''){ err.textContent='Harga tidak valid.'; return; }
+  const prev = plState.modalId ? plProducts.find(x=>x.id===plState.modalId) : null;
+  const rec = Object.assign({}, prev||{}, {
+    id: prev ? prev.id : db.collection('resellerProducts').doc().id,
+    nama:nama, kategori:document.getElementById('plfKat').value.trim()||'Lainnya',
+    keterangan:document.getElementById('plfKet').value.trim(), harga:harga,
+    satuan:document.getElementById('plfSat').value, minOrder:Math.max(1,parseInt(document.getElementById('plfMin').value)||1),
+    aktif:document.getElementById('plfAktif').checked, createdAt: prev?prev.createdAt:Date.now()
+  });
+  const btn = document.getElementById('plfSave'); btn.disabled = true;
+  try{ await plSaveProduct(rec, prev); plCloseModal(); }
+  catch(e){ err.textContent = 'Gagal menyimpan: '+(e.message||e); btn.disabled = false; }
+}
+async function plSeed(){
+  const seed = [
+    ['Kaos','Kaos Cotton Combed 30s Lengan Pendek','Sablon belum termasuk'],
+    ['Kaos','Kaos Cotton Combed 24s Lengan Pendek','Sablon belum termasuk'],
+    ['Kaos','Kaos Cotton Combed 30s Lengan Panjang','Sablon belum termasuk'],
+    ['Polo','Polo Shirt Lacoste','Bordir/sablon belum termasuk'],
+    ['Jersey','Jersey Printing Full','Nama & nomor punggung sesuai pesanan'],
+    ['Hoodie','Hoodie Fleece','Sablon belum termasuk']
+  ];
+  try{
+    const b = db.batch(), now = Date.now();
+    seed.forEach(s=>{
+      const id = db.collection('resellerProducts').doc().id;
+      b.set(db.collection('resellerProducts').doc(id), { id:id, kategori:s[0], nama:s[1], keterangan:s[2], harga:0, satuan:'pcs', minOrder:1, aktif:false, createdAt:now, updatedAt:now, changedAt:0, lastType:null, hargaLama:null });
+    });
+    await b.commit();
+  }catch(e){ alert('Gagal mengisi contoh: '+(e.message||e)); }
+}
+
+/* --- pesan broadcast & pengaturan --- */
+function plBroadcastText(days){
+  const since = Date.now() - days*86400000;
+  const rows = plLog.filter(l=>l.at>=since && l.type!=='hapus');
+  const last = {};
+  rows.forEach(l=>{ if(!last[l.productId]) last[l.productId] = l; }); // plLog sudah terbaru -> terbaru
+  const arr = Object.values(last);
+  if(!arr.length) return '';
+  const lines = arr.map(l=>{
+    if(l.type==='baru') return '🆕 '+l.nama+' — '+plRp(l.newPrice);
+    if(l.type==='ubah') return '✏️ '+l.nama+' — '+plRp(l.newPrice)+' (info produk diperbarui)';
+    return (l.type==='naik'?'🔺 ':'🔻 ')+l.nama+': '+plRp(l.oldPrice)+' → '+plRp(l.newPrice);
+  });
+  return '*UPDATE HARGA RESELLER — TENX APPAREL*\n'+new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})+'\n\n'+lines.join('\n')+
+    (plConfig.pengumuman?'\n\n'+plConfig.pengumuman:'')+'\n\nDaftar harga lengkap dapat dilihat di aplikasi TENX.';
+}
+function plBroadcastHtml(){
+  const t = plBroadcastText(7);
+  return '<div class="pl-card"><h3>Pesan Update untuk Grup Reseller</h3><div style="font-size:13px;color:var(--pl-muted);margin-bottom:10px;">Ringkasan perubahan harga 7 hari terakhir, siap disalin ke WhatsApp.</div>'+
+    (t ? '<textarea class="pl-inp" id="plBcText" rows="12" readonly>'+escapeHtml(t)+'</textarea><div class="pl-row" style="margin-top:10px;"><button class="pl-btn" onclick="plCopyBc()">Salin Pesan</button><span class="pl-ok" id="plBcOk"></span></div>'
+       : '<div class="pl-empty" style="padding:22px;">Belum ada perubahan harga dalam 7 hari terakhir.</div>')+'</div>';
+}
+function plCopyBc(){
+  const el = document.getElementById('plBcText'); if(!el) return;
+  const done = ()=>{ const o=document.getElementById('plBcOk'); if(o) o.textContent='Tersalin ✓'; };
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(el.value).then(done).catch(()=>{ el.select(); document.execCommand('copy'); done(); });
+  else { el.select(); document.execCommand('copy'); done(); }
+}
+function plSettingsHtml(){
+  return '<div class="pl-card"><h3>Pengaturan Halaman Reseller</h3>'+
+    '<label class="pl-l">Pengumuman (tampil di atas daftar harga reseller)</label><textarea class="pl-inp" id="plsPeng" rows="3" placeholder="mis. Harga berlaku mulai 1 November. Order di atas 100 pcs hubungi admin.">'+escapeHtml(plConfig.pengumuman||'')+'</textarea>'+
+    '<label class="pl-l">Kontak admin (WhatsApp)</label><input class="pl-inp" id="plsWa" placeholder="mis. 0812-3456-7890" value="'+escapeHtml(plConfig.wa||'')+'">'+
+    '<div class="pl-row" style="margin-top:14px;"><button class="pl-btn" onclick="plSaveSettings()">Simpan</button><span class="pl-ok" id="plsOk"></span></div></div>';
+}
+async function plSaveSettings(){
+  const cfg = { pengumuman:document.getElementById('plsPeng').value.trim(), wa:document.getElementById('plsWa').value.trim(), updatedAt:Date.now(), updatedBy:plBy() };
+  try{ await db.collection('resellerSettings').doc('config').set(cfg, {merge:true}); const o=document.getElementById('plsOk'); if(o) o.textContent='Tersimpan ✓'; }
+  catch(e){ alert('Gagal menyimpan: '+(e.message||e)); }
+}
+
 
 </script>
 </body>
