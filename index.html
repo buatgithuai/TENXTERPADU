@@ -1810,9 +1810,69 @@ body{overflow-x:hidden;}
   #priceShell .pl-price-inp{width:140px;text-align:right;}
   #priceShell input[type=checkbox]{width:22px;height:22px;}
 }
+
+/* ===================== LOGIN GATE & ROLE ===================== */
+#authGate{display:none;position:fixed;inset:0;z-index:3000;align-items:center;justify-content:center;padding:20px;overflow-y:auto;
+  background:radial-gradient(circle at 20% 20%, #233858 0%, #0e1a3d 45%, #17140f 100%);font-family:'Segoe UI',Arial,sans-serif;color:#fff;}
+body.tx-locked #authGate{display:flex;}
+body.tx-locked > *:not(#authGate){display:none !important;}
+#authGate *{box-sizing:border-box;}
+#authGate .ag-card{width:100%;max-width:400px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.16);border-radius:18px;padding:28px 24px;text-align:center;margin:auto;}
+#authGate .ag-mark{width:58px;height:58px;border-radius:50%;background:#f5c518;color:#152452;font-weight:800;font-size:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;letter-spacing:1px;}
+#authGate h1{font-size:24px;letter-spacing:2px;margin:0 0 6px;}
+#authGate .ag-sub{color:#c6d0ec;font-size:13.5px;line-height:1.55;margin:0 0 18px;}
+#authGate label{display:block;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#9fb0d8;font-weight:700;margin:12px 0 5px;}
+#authGate input{width:100%;border:1.5px solid rgba(255,255,255,.22);background:rgba(255,255,255,.1);color:#fff;border-radius:10px;padding:13px 14px;font-size:16px;font-family:inherit;}
+#authGate input::placeholder{color:#8393bb;}
+#authGate input:focus{outline:2px solid #f5c518;border-color:#f5c518;}
+#authGate .ag-btn{width:100%;margin-top:16px;border:none;background:#f5c518;color:#0e1a3d;font-weight:800;font-size:15px;padding:14px;border-radius:10px;cursor:pointer;font-family:inherit;}
+#authGate .ag-btn:disabled{opacity:.6;cursor:default;}
+#authGate .ag-link{background:none;border:none;color:#9fb0d8;text-decoration:underline;font-size:12.5px;cursor:pointer;margin-top:16px;font-family:inherit;padding:8px;}
+#authGate .ag-err{color:#ffb4a0;font-size:13px;margin-top:12px;min-height:18px;line-height:1.45;}
+#globalNav .gn-user{font-size:11.5px;color:#c6d0ec;padding:0 4px;align-self:center;white-space:nowrap;}
+#globalNav .gn-links button#gn-btn-logout{background:transparent;}
+/* RESELLER: hanya halaman Harga Reseller */
+body.tx-reseller #landingScreen,body.tx-reseller #workflowApp,body.tx-reseller #notaApp,body.tx-reseller #keuanganApp,
+body.tx-reseller #financeApp,body.tx-reseller #absensiApp,body.tx-reseller #sopShell,
+body.tx-reseller .wfc-fab,body.tx-reseller .kgchat-fab,body.tx-reseller .wai-fab,
+body.tx-reseller #wfChat,body.tx-reseller #kgChat,body.tx-reseller #waiPanel{display:none !important;}
+body.tx-reseller #globalNav .gn-links button:not(#gn-btn-pricelist):not(#gn-btn-logout){display:none;}
+body.tx-reseller #globalNav .gn-brand{cursor:default;}
+/* kode akses (dashboard owner) */
+#priceShell .pl-tok{background:var(--pl-white);border:1.5px solid var(--pl-line);border-radius:10px;padding:12px 14px;margin-bottom:10px;}
+#priceShell .pl-tok.off{opacity:.55;}
+#priceShell .pl-tok .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+#priceShell .pl-tok .code{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:16px;letter-spacing:.04em;background:#fff;border:1.5px dashed #C9BFA8;border-radius:8px;padding:9px 12px;margin:10px 0 6px;word-break:break-all;cursor:pointer;}
+#priceShell .pl-tok .mt{font-size:11.5px;color:var(--pl-muted);line-height:1.5;}
+#priceShell .pl-tok .act{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+#priceShell .pl-tok .act .pl-btn{flex:1;min-width:110px;}
+#priceShell .pl-rolebadge{display:inline-block;font-family:'Bebas Neue';font-size:12px;letter-spacing:.06em;padding:2px 9px;border-radius:999px;margin-left:6px;color:#fff;vertical-align:middle;}
+#priceShell .pl-rolebadge.reseller{background:var(--pl-denim);} #priceShell .pl-rolebadge.karyawan{background:var(--pl-amber);}
 </style>
 </head>
-<body>
+<body class="tx-locked">
+<div id="authGate">
+  <div class="ag-card">
+    <div class="ag-mark">TX</div>
+    <h1>TENX APPAREL</h1>
+    <p class="ag-sub" id="agSub">Masukkan kode akses dari admin untuk melanjutkan.</p>
+    <div id="agToken">
+      <label for="agCode">Kode Akses</label>
+      <input id="agCode" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="mis. TNX-AB12-CD34" onkeydown="if(event.key==='Enter')authLoginToken()">
+      <button class="ag-btn" id="agBtn" onclick="authLoginToken()">Masuk</button>
+    </div>
+    <div id="agOwner" style="display:none;">
+      <label for="agEmail">Email Owner / Admin</label>
+      <input id="agEmail" type="text" autocomplete="username" autocapitalize="none">
+      <label for="agPass">Password</label>
+      <input id="agPass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')authLoginOwner()">
+      <button class="ag-btn" onclick="authLoginOwner()">Masuk sebagai Owner</button>
+    </div>
+    <div class="ag-err" id="authErr"></div>
+    <button class="ag-link" id="agToggle" onclick="authToggleOwner()">Login Owner / Admin</button>
+  </div>
+</div>
+
 
 
 <div id="globalNav">
@@ -1829,6 +1889,8 @@ body{overflow-x:hidden;}
     <button id="gn-btn-absensi" onclick="showMode('absensi')">Workspace</button>
     <button id="gn-btn-sop" onclick="showMode('sop')">SOP</button>
     <button id="gn-btn-pricelist" onclick="showMode('pricelist')">Harga Reseller</button>
+    <span class="gn-user" id="gnUser"></span>
+    <button id="gn-btn-logout" onclick="authLogout()" style="display:none;">Keluar</button>
   </div>
 </div>
 
@@ -9487,6 +9549,10 @@ function openSopFromWorkspace(){ showMode('sop'); }
 let currentMode = 'landing';
 
 function showMode(mode){
+  if(typeof authSession!=='undefined'){
+    if(!authSession){ authApply(); return; }
+    if(authSession.role==='reseller' && mode!=='pricelist') mode = 'pricelist';
+  }
   currentMode = mode;
   document.getElementById('landingScreen').style.display = (mode==='landing') ? 'flex' : 'none';
   document.getElementById('workflowApp').style.display = (mode==='workflow') ? 'block' : 'none';
@@ -10659,7 +10725,7 @@ const PL_UNITS = ['pcs','lusin','set','stel','meter'];
 let plState = { role:'reseller', tab:'harga', cat:'Semua', q:'', onlyNew:false, ownerTab:'kelola', ownerQ:'', modalId:null };
 try{ plState.role = localStorage.getItem('tenx_pl_role') || 'reseller'; }catch(e){}
 
-function plIsOwner(){ return plState.role==='owner' && typeof wspIsOwnerAuthed==='function' && wspIsOwnerAuthed(); }
+function plIsOwner(){ return !authIsReseller() && plState.role==='owner' && typeof wspIsOwnerAuthed==='function' && wspIsOwnerAuthed(); }
 function plRp(n){ return formatRupiah(n); }
 function plIsRecent(ts){ return ts && (Date.now()-ts) < PL_NEW_DAYS*86400000; }
 function plDateTime(ts){ return ts ? new Date(ts).toLocaleString('id-ID',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '-'; }
@@ -10714,8 +10780,9 @@ function plOwnerSearch(v){
 }
 
 function renderPriceList(){
+  if(authIsReseller()) plState.role = 'reseller';
   const sw = document.getElementById('plRoleSwitch');
-  if(sw) sw.innerHTML =
+  if(sw) sw.innerHTML = authIsReseller() ? '' : 
     '<button class="'+(plState.role==='reseller'?'active':'')+'" onclick="plSetRole(\'reseller\')">RESELLER</button>'+
     '<button class="'+(plState.role==='owner'?'active':'')+'" onclick="plSetRole(\'owner\')">OWNER</button>';
   const app = document.getElementById('plApp'); if(!app) return;
@@ -10808,6 +10875,7 @@ function plLogin(){
   renderPriceList();
 }
 function plLogout(){
+  if(authIsOwner()){ authLogout(); return; }
   if(!confirm('Keluar dari akun Owner/Admin?')) return;
   wspState.ownerEmail = '';
   try{ localStorage.removeItem('tenx_wsp_owner_email'); }catch(e){}
@@ -10818,11 +10886,12 @@ function plLogout(){
 function plOwnerHtml(){
   let h = '<div class="pl-row" style="justify-content:space-between;margin-bottom:14px;"><div style="font-size:12.5px;color:var(--pl-muted);">Masuk sebagai <b style="color:var(--pl-ink);">'+escapeHtml(wspState.ownerEmail)+'</b></div>'+
           '<button class="pl-btn ghost sm" onclick="plLogout()">Keluar</button></div>';
-  h += '<div class="pl-tabs">'+[['kelola','Kelola Harga'],['riwayat','Riwayat Perubahan'],['broadcast','Pesan Update (WA)'],['setelan','Pengaturan']]
+  h += '<div class="pl-tabs">'+[['kelola','Kelola Harga'],['riwayat','Riwayat Perubahan'],['broadcast','Pesan Update (WA)'],['akses','Akses Login'],['setelan','Pengaturan']]
     .map(t=>'<button class="'+(plState.ownerTab===t[0]?'active':'')+'" onclick="plSetOwnerTab(\''+t[0]+'\')">'+t[1]+'</button>').join('')+'</div>';
   if(plState.ownerTab==='kelola') h += plOwnerManageHtml();
   else if(plState.ownerTab==='riwayat') h += plFeedHtml(true);
   else if(plState.ownerTab==='broadcast') h += plBroadcastHtml();
+  else if(plState.ownerTab==='akses') h += plAksesHtml();
   else h += plSettingsHtml();
   return h;
 }
@@ -10999,6 +11068,338 @@ async function plSaveSettings(){
   catch(e){ alert('Gagal menyimpan: '+(e.message||e)); }
 }
 
+
+
+/* =====================================================================
+   ===================== LOGIN LOKAL & PEMBAGIAN ROLE =====================
+   Login TIDAK memakai Firebase. Semua diverifikasi di dalam aplikasi, bisa offline.
+   Role:
+   - owner    : email + password (WSP_ADMIN_ACCOUNTS). Akses semua + ubah harga + buat kode akses.
+   - karyawan : kode akses berawalan K. Akses semua menu (harga reseller hanya lihat).
+   - reseller : kode akses berawalan R. HANYA halaman Harga Reseller (lihat saja).
+   Kode akses dibuat Owner lewat dashboard (Harga Reseller -> Akses Login). Kodenya bertanda tangan
+   (HMAC memakai AUTH_SECRET), jadi valid di perangkat mana pun yang memakai file aplikasi ini.
+   JANGAN mengubah AUTH_SECRET setelah kode dibagikan, karena semua kode lama jadi tidak berlaku.
+   Pencabutan kode: daftar kode dicabut dipasang ke aplikasi lewat tombol "Unduh index.html terbaru".
+   ===================================================================== */
+const AUTH_SECRET = '349285f2f3175260431b4318eea86589d6460a81';
+const AUTH_REVOKED = [];
+const AUTH_KEY = 'tenx_session';
+const AUTH_REG_KEY = 'tenx_tokens_v1';
+const AUTH_ALPHA = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+let authSession = null;
+const AUTH_ROLE_LABEL = { owner:'Owner', karyawan:'Karyawan', reseller:'Reseller' };
+
+/* ---------- SHA-256 + HMAC (tanpa dependensi, jalan di http/https/file) ---------- */
+const authSha = (function(){
+  const K = [], H0 = [];
+  for(let c = 0, cand = 2; c < 64; cand++){
+    let prime = true; for(let i = 2; i*i <= cand; i++){ if(cand % i === 0){ prime = false; break; } }
+    if(!prime) continue;
+    if(c < 8) H0[c] = ((Math.pow(cand, 1/2) % 1) * 4294967296) | 0;
+    K[c] = ((Math.pow(cand, 1/3) % 1) * 4294967296) | 0; c++;
+  }
+  return function(bytes){
+    const l = bytes.length, buf = new Uint8Array(((l + 9 + 63) >> 6) * 64);
+    buf.set(bytes); buf[l] = 0x80;
+    const dv = new DataView(buf.buffer);
+    dv.setUint32(buf.length - 8, Math.floor(l * 8 / 4294967296)); dv.setUint32(buf.length - 4, (l * 8) >>> 0);
+    const h = H0.slice(), w = new Array(64);
+    for(let o = 0; o < buf.length; o += 64){
+      for(let i = 0; i < 16; i++) w[i] = dv.getUint32(o + i*4);
+      for(let i = 16; i < 64; i++){
+        const a = w[i-15], b = w[i-2];
+        const s0 = ((a>>>7)|(a<<25)) ^ ((a>>>18)|(a<<14)) ^ (a>>>3);
+        const s1 = ((b>>>17)|(b<<15)) ^ ((b>>>19)|(b<<13)) ^ (b>>>10);
+        w[i] = (w[i-16] + s0 + w[i-7] + s1) | 0;
+      }
+      let a = h[0], b = h[1], c = h[2], d = h[3], e = h[4], f = h[5], g = h[6], hh = h[7];
+      for(let i = 0; i < 64; i++){
+        const S1 = ((e>>>6)|(e<<26)) ^ ((e>>>11)|(e<<21)) ^ ((e>>>25)|(e<<7));
+        const t1 = (hh + S1 + ((e & f) ^ (~e & g)) + K[i] + w[i]) | 0;
+        const S0 = ((a>>>2)|(a<<30)) ^ ((a>>>13)|(a<<19)) ^ ((a>>>22)|(a<<10));
+        const t2 = (S0 + ((a & b) ^ (a & c) ^ (b & c))) | 0;
+        hh = g; g = f; f = e; e = (d + t1) | 0; d = c; c = b; b = a; a = (t1 + t2) | 0;
+      }
+      h[0] = (h[0]+a)|0; h[1] = (h[1]+b)|0; h[2] = (h[2]+c)|0; h[3] = (h[3]+d)|0;
+      h[4] = (h[4]+e)|0; h[5] = (h[5]+f)|0; h[6] = (h[6]+g)|0; h[7] = (h[7]+hh)|0;
+    }
+    const out = new Uint8Array(32), ov = new DataView(out.buffer);
+    h.forEach((v, i)=>ov.setUint32(i*4, v));
+    return out;
+  };
+})();
+function authHmac(msg){
+  const enc = new TextEncoder(), key = enc.encode(AUTH_SECRET), m = enc.encode(msg);
+  const ipad = new Uint8Array(64), opad = new Uint8Array(64);
+  for(let i = 0; i < 64; i++){ const kb = key[i] || 0; ipad[i] = kb ^ 0x36; opad[i] = kb ^ 0x5c; }
+  const inner = new Uint8Array(64 + m.length); inner.set(ipad); inner.set(m, 64);
+  const ih = authSha(inner), outer = new Uint8Array(96); outer.set(opad); outer.set(ih, 64);
+  return authSha(outer);
+}
+function authMapBytes(bytes, n){ let s = ''; for(let i = 0; i < n; i++) s += AUTH_ALPHA[bytes[i] % AUTH_ALPHA.length]; return s; }
+function authSig(body){ return authMapBytes(authHmac('tnx|'+body), 8); }
+function authProof(text){ return authMapBytes(authHmac('proof|'+text), 16); }
+
+/* ---------- Pembuatan & pembacaan kode ---------- */
+function authMake(role){
+  const a = new Uint32Array(6); (window.crypto || window.msCrypto).getRandomValues(a);
+  const body = (role==='karyawan' ? 'K' : 'R') + Array.from(a).map(n=>AUTH_ALPHA[n % AUTH_ALPHA.length]).join('');
+  const canon = body + authSig(body);
+  return { body:body, canon:canon, display:'TNX-'+canon.slice(0,5)+'-'+canon.slice(5,10)+'-'+canon.slice(10) };
+}
+function authParse(raw){
+  let c = String(raw||'').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if(c.length === 18 && c.indexOf('TNX') === 0) c = c.slice(3);
+  if(c.length !== 15) return null;
+  const body = c.slice(0,7), sig = c.slice(7);
+  if(body[0] !== 'R' && body[0] !== 'K') return null;
+  if(authSig(body) !== sig) return null;
+  return { body:body, canon:c, role: body[0]==='K' ? 'karyawan' : 'reseller' };
+}
+function authRegLoad(){ try{ const a = JSON.parse(localStorage.getItem(AUTH_REG_KEY)||'[]'); return Array.isArray(a) ? a : []; }catch(e){ return []; } }
+function authRegSave(arr){
+  try{ localStorage.setItem(AUTH_REG_KEY, JSON.stringify(arr)); return true; }
+  catch(e){ alert('Penyimpanan di perangkat ini penuh atau ditolak browser, daftar kode tidak tersimpan.'); return false; }
+}
+let plTokens = authRegLoad();
+function authIsRevoked(body){
+  return AUTH_REVOKED.indexOf(body) >= 0 || plTokens.some(t=>t.id===body && t.revoked);
+}
+
+/* ---------- Sesi & gerbang login ---------- */
+function authIsReseller(){ return !!authSession && authSession.role==='reseller'; }
+function authIsOwner(){ return !!authSession && authSession.role==='owner'; }
+function authSave(){ try{ localStorage.setItem(AUTH_KEY, JSON.stringify(authSession)); }catch(e){} }
+function authClear(){ try{ localStorage.removeItem(AUTH_KEY); localStorage.removeItem('tenx_wsp_owner_email'); }catch(e){} }
+function authApply(){
+  document.body.classList.toggle('tx-locked', !authSession);
+  document.body.classList.toggle('tx-reseller', authIsReseller());
+  const u = document.getElementById('gnUser');
+  if(u) u.textContent = authSession ? ('👤 '+(authSession.nama||'')+' · '+(AUTH_ROLE_LABEL[authSession.role]||'')) : '';
+  const lo = document.getElementById('gn-btn-logout');
+  if(lo) lo.style.display = authSession ? '' : 'none';
+}
+function authToggleOwner(){
+  const own = document.getElementById('agOwner'), tok = document.getElementById('agToken');
+  const showOwner = own.style.display==='none';
+  own.style.display = showOwner ? 'block' : 'none'; tok.style.display = showOwner ? 'none' : 'block';
+  document.getElementById('agToggle').textContent = showOwner ? 'Kembali ke login kode akses' : 'Login Owner / Admin';
+  document.getElementById('agSub').textContent = showOwner ? 'Masuk dengan akun Owner / Admin.' : 'Masukkan kode akses dari admin untuk melanjutkan.';
+  document.getElementById('authErr').textContent = '';
+}
+function authEnter(){
+  authApply();
+  showMode(authIsReseller() ? 'pricelist' : 'landing');
+}
+function authLoginToken(){
+  const err = document.getElementById('authErr');
+  err.textContent = '';
+  const raw = (document.getElementById('agCode').value || '').trim();
+  if(!raw){ err.textContent = 'Masukkan kode akses terlebih dahulu.'; return; }
+  const p = authParse(raw);
+  if(!p){ err.textContent = 'Kode akses tidak valid. Periksa penulisannya atau minta kode baru ke admin.'; return; }
+  if(authIsRevoked(p.body)){ err.textContent = 'Kode akses ini sudah dicabut oleh admin.'; return; }
+  const reg = plTokens.find(t=>t.id===p.body);
+  authSession = { role:p.role, nama: reg ? reg.nama : (AUTH_ROLE_LABEL[p.role]+' '+p.body.slice(1,5)), code:p.canon };
+  authSave();
+  try{ localStorage.removeItem('tenx_wsp_owner_email'); }catch(e){}
+  wspState.ownerEmail = '';
+  document.getElementById('agCode').value = '';
+  authEnter();
+}
+function authLoginOwner(){
+  const err = document.getElementById('authErr');
+  const acc = wspFindAdminAccount(document.getElementById('agEmail').value, document.getElementById('agPass').value);
+  if(!acc){ err.textContent = 'Email atau password salah.'; return; }
+  authSession = { role:'owner', nama:acc.email, email:acc.email, proof:authProof('owner|'+acc.email.toLowerCase()) };
+  authSave();
+  wspState.ownerEmail = acc.email;
+  try{ localStorage.setItem('tenx_wsp_owner_email', acc.email); }catch(e){}
+  document.getElementById('agPass').value = '';
+  err.textContent = '';
+  authEnter();
+}
+function authLogout(){
+  if(!confirm('Keluar dari akun ini?')) return;
+  authClear(); location.reload();
+}
+function authKick(msg){
+  try{ sessionStorage.setItem('tenx_auth_msg', msg); }catch(e){}
+  authClear(); location.reload();
+}
+function authInit(){
+  let msg = '';
+  try{ authSession = JSON.parse(localStorage.getItem(AUTH_KEY)||'null'); }catch(e){ authSession = null; }
+  if(authSession){
+    if(authSession.role==='owner'){
+      const email = String(authSession.email||'').toLowerCase();
+      const ok = WSP_ADMIN_ACCOUNTS.some(a=>a.email.toLowerCase()===email) && authSession.proof===authProof('owner|'+email);
+      if(ok){ wspState.ownerEmail = authSession.email; try{ localStorage.setItem('tenx_wsp_owner_email', authSession.email); }catch(e){} }
+      else { authSession = null; authClear(); }
+    } else {
+      const p = authParse(authSession.code);
+      if(!p || p.role!==authSession.role){ authSession = null; authClear(); }
+      else if(authIsRevoked(p.body)){ authSession = null; authClear(); msg = 'Akses Anda sudah dicabut oleh admin. Hubungi admin untuk kode baru.'; }
+    }
+  }
+  try{ msg = msg || sessionStorage.getItem('tenx_auth_msg') || ''; sessionStorage.removeItem('tenx_auth_msg'); }catch(e){}
+  if(msg){ const e = document.getElementById('authErr'); if(e) e.textContent = msg; }
+  authApply();
+  if(authSession) authEnter();
+}
+
+/* ---------- Kelola kode akses (dashboard Owner) ---------- */
+plState.tk = { nama:'', role:'reseller', msg:'', err:'', bulk:'', bulkOpen:false, q:'', f:'all', limit:30 };
+function plTokField(k, v){ plState.tk[k] = v; }
+function plTokNew(nama, role){
+  const used = new Set(plTokens.map(x=>x.id));
+  let m; do{ m = authMake(role); }while(used.has(m.body));
+  return { id:m.body, kode:m.display, nama:String(nama).slice(0,80), role:role, createdAt:Date.now(), revoked:false };
+}
+function plTokCreate(){
+  const t = plState.tk; t.err = ''; t.msg = '';
+  const nama = (t.nama||'').trim();
+  if(!nama){ t.err = 'Nama pemilik kode wajib diisi.'; renderPriceList(); return; }
+  const rec = plTokNew(nama, t.role);
+  plTokens.unshift(rec);
+  if(authRegSave(plTokens)){ t.nama = ''; t.msg = 'Kode dibuat untuk '+rec.nama+': '+rec.kode; }
+  else plTokens.shift();
+  renderPriceList();
+}
+function plTokBulk(){
+  const t = plState.tk; t.err = ''; t.msg = '';
+  const names = (t.bulk||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  if(!names.length){ t.err = 'Isi daftar nama dulu (satu nama per baris).'; renderPriceList(); return; }
+  if(names.length > 500){ t.err = 'Maksimal 500 nama per proses. Bagi jadi beberapa kali.'; renderPriceList(); return; }
+  if(!confirm('Buat '+names.length+' kode akses ('+(AUTH_ROLE_LABEL[t.role]||t.role)+')?')) return;
+  const before = plTokens.slice();
+  names.forEach(nm=>{ plTokens.unshift(plTokNew(nm, t.role)); });
+  if(authRegSave(plTokens)){
+    plState.tk = Object.assign({}, t, { bulk:'', bulkOpen:false, f:'all', q:'', limit:30, err:'', msg:names.length+' kode akses berhasil dibuat. Klik "Ekspor CSV" untuk mengunduh nama + kodenya.' });
+  } else plTokens = before;
+  renderPriceList();
+}
+function plTokToggle(id){
+  const tk = plTokens.find(x=>x.id===id); if(!tk) return;
+  if(tk.revoked && AUTH_REVOKED.indexOf(id) >= 0){ alert('Kode ini sudah terpasang sebagai "dicabut" di file aplikasi, jadi tidak bisa diaktifkan lagi. Buat kode baru untuk orangnya.'); return; }
+  if(!tk.revoked && !confirm('Cabut kode akses milik "'+tk.nama+'"?')) { renderPriceList(); return; }
+  tk.revoked = !tk.revoked;
+  authRegSave(plTokens); renderPriceList();
+}
+function plTokCopy(id, full){
+  const tk = plTokens.find(x=>x.id===id); if(!tk) return;
+  const url = /^https?:/.test(location.protocol) ? location.href.split('#')[0].split('?')[0] : '';
+  const text = full
+    ? 'Halo '+tk.nama+', ini kode akses TENX APPAREL ('+(AUTH_ROLE_LABEL[tk.role]||tk.role)+'):\n\n'+tk.kode+'\n\n'+(url ? 'Buka '+url+' lalu masukkan kode tersebut.' : 'Buka aplikasi TENX lalu masukkan kode tersebut.')+' Jangan dibagikan ke orang lain.'
+    : tk.kode;
+  const done = ()=>{ plState.tk.msg = full ? 'Pesan untuk '+tk.nama+' tersalin ✓' : 'Kode tersalin ✓'; renderPriceList(); };
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(()=>prompt('Salin manual:', text));
+  else prompt('Salin manual:', text);
+}
+function plTokFiltered(){
+  const t = plState.tk, q = (t.q||'').trim().toLowerCase();
+  return plTokens.filter(x=>{
+    if(t.f==='reseller' && x.role!=='reseller') return false;
+    if(t.f==='karyawan' && x.role!=='karyawan') return false;
+    if(t.f==='off' && !x.revoked) return false;
+    if(q && !(((x.nama||'')+' '+(x.kode||'')).toLowerCase().includes(q))) return false;
+    return true;
+  }).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+}
+function plTokSearch(v){
+  plState.tk.q = v; plState.tk.limit = 30; renderPriceList();
+  const i = document.getElementById('plTokSearch'); if(i){ i.focus(); i.setSelectionRange(v.length, v.length); }
+}
+function plTokSetF(f){ plState.tk.f = f; plState.tk.limit = 30; renderPriceList(); }
+function plTokMore(){ plState.tk.limit += 30; renderPriceList(); }
+function plTokBulkToggle(){ plState.tk.bulkOpen = !plState.tk.bulkOpen; renderPriceList(); }
+function plDownload(name, mime, content){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], {type:mime}));
+  a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+}
+function plTokExport(){
+  const rows = [['Nama','Role','Kode','Status','Dibuat']].concat(plTokFiltered().map(x=>[
+    x.nama||'', AUTH_ROLE_LABEL[x.role]||x.role||'', x.kode, x.revoked?'Dicabut':'Aktif', plDateTime(x.createdAt)
+  ]));
+  plDownload('kode-akses-tenx.csv', 'text/csv;charset=utf-8', '\uFEFF'+rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n'));
+}
+function plTokBackup(){ plDownload('backup-kode-akses-tenx.json', 'application/json', JSON.stringify(plTokens, null, 1)); }
+function plTokRestore(input){
+  const f = input.files && input.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    try{
+      const arr = JSON.parse(r.result);
+      if(!Array.isArray(arr)) throw new Error('format salah');
+      let added = 0;
+      arr.forEach(x=>{
+        if(!x || !x.id || !x.kode || !authParse(x.kode)) return;
+        if(!plTokens.some(t=>t.id===x.id)){ plTokens.push({ id:x.id, kode:x.kode, nama:String(x.nama||'').slice(0,80), role:authParse(x.kode).role, createdAt:x.createdAt||Date.now(), revoked:!!x.revoked }); added++; }
+      });
+      authRegSave(plTokens);
+      plState.tk.msg = added+' kode dipulihkan dari backup.'; plState.tk.err = '';
+    }catch(e){ plState.tk.err = 'File backup tidak valid.'; }
+    renderPriceList();
+  };
+  r.readAsText(f); input.value = '';
+}
+function plRevokedIds(){ return [...new Set(AUTH_REVOKED.concat(plTokens.filter(t=>t.revoked).map(t=>t.id)))]; }
+function plRevokedPending(){ return plTokens.filter(t=>t.revoked && AUTH_REVOKED.indexOf(t.id) < 0).length; }
+async function plTokDownloadApp(){
+  const lit = 'const AUTH_REVOKED = ' + JSON.stringify(plRevokedIds()) + ';';
+  try{
+    const res = await fetch(location.href.split('#')[0].split('?')[0], { cache:'no-store' });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const src = await res.text();
+    const re = /const AUTH_REVOKED = \[[^\]]*\];/;
+    if(!re.test(src)) throw new Error('penanda tidak ditemukan');
+    plDownload('index.html', 'text/html;charset=utf-8', src.replace(re, ()=>lit));
+    plState.tk.msg = 'index.html terbaru terunduh. Pasang/upload file itu menggantikan yang lama agar kode dicabut ditolak di semua perangkat.'; plState.tk.err = '';
+  }catch(e){
+    prompt('Tidak bisa mengunduh otomatis ('+(e.message||e)+'). Salin baris ini lalu ganti baris yang diawali "const AUTH_REVOKED" di file index.html:', lit);
+  }
+  renderPriceList();
+}
+function plAksesHtml(){
+  const t = plState.tk;
+  const total = plTokens.length, revoked = plTokens.filter(x=>x.revoked).length;
+  const pending = plRevokedPending();
+  let h = '<div class="pl-card" id="plTokForm"><h3>Buat Kode Akses</h3>'+
+    '<div style="font-size:13px;color:var(--pl-muted);line-height:1.5;">Kode dibuat di sini dan langsung bisa dipakai login di perangkat mana pun, tanpa Firebase. <b>Reseller</b> hanya bisa membuka Harga Reseller (lihat saja). <b>Karyawan</b> bisa membuka semua menu aplikasi.</div>'+
+    '<div class="pl-2c"><div><label class="pl-l">Role</label><select class="pl-inp" onchange="plTokField(\'role\',this.value)"><option value="reseller" '+(t.role==='reseller'?'selected':'')+'>Reseller</option><option value="karyawan" '+(t.role==='karyawan'?'selected':'')+'>Karyawan</option></select></div><div></div></div>'+
+    '<div class="pl-tabs" style="margin:14px 0 0;"><button class="'+(!t.bulkOpen?'active':'')+'" onclick="'+(t.bulkOpen?'plTokBulkToggle()':'')+'">Satu per satu</button><button class="'+(t.bulkOpen?'active':'')+'" onclick="'+(t.bulkOpen?'':'plTokBulkToggle()')+'">Banyak sekaligus</button></div>';
+  if(!t.bulkOpen){
+    h += '<label class="pl-l">Nama pemilik kode</label><input class="pl-inp" value="'+escapeHtml(t.nama)+'" placeholder="mis. Toko Budi" oninput="plTokField(\'nama\',this.value)">';
+  } else {
+    h += '<label class="pl-l">Daftar nama (satu nama per baris, maks. 500)</label><textarea class="pl-inp" rows="7" placeholder="Toko Budi\nCV Maju Jaya\nSiti Collection" oninput="plTokField(\'bulk\',this.value)">'+escapeHtml(t.bulk||'')+'</textarea>'+
+      '<div class="pl-meta" style="margin:6px 0 0;">Tiap nama otomatis dibuatkan kode unik. Tempel langsung dari Excel/Spreadsheet juga bisa.</div>';
+  }
+  h += (t.err?'<div class="pl-err">'+escapeHtml(t.err)+'</div>':'')+(t.msg?'<div class="pl-ok">'+escapeHtml(t.msg)+'</div>':'')+
+    '<button class="pl-btn" style="width:100%;margin-top:14px;" onclick="'+(t.bulkOpen?'plTokBulk()':'plTokCreate()')+'">'+(t.bulkOpen?'Buat Semua Kode':'Buat Kode Akses')+'</button></div>';
+
+  if(pending>0) h += '<div class="pl-banner"><b>⚠ '+pending+' KODE DICABUT BELUM TERPASANG</b>Kode yang dicabut baru ditolak di perangkat ini. Agar ditolak di semua perangkat reseller, unduh file aplikasi terbaru lalu upload/pasang menggantikan file lama.<div style="margin-top:10px;"><button class="pl-btn" onclick="plTokDownloadApp()">Unduh index.html terbaru</button></div></div>';
+
+  h += '<div class="pl-meta"><b>'+total+'</b> kode · <b>'+(total-revoked)+'</b> aktif · <b>'+revoked+'</b> dicabut. Daftar ini tersimpan di perangkat Owner ini, jadi rutin <b>Backup</b>.</div>';
+  h += '<div class="pl-tools"><input class="pl-search" id="plTokSearch" placeholder="Cari nama atau kode…" value="'+escapeHtml(t.q||'')+'" oninput="plTokSearch(this.value)"><button class="pl-btn ghost" onclick="plTokExport()">Ekspor CSV</button><button class="pl-btn ghost" onclick="plTokBackup()">Backup</button><label class="pl-btn ghost" style="display:inline-block;text-align:center;cursor:pointer;">Pulihkan<input type="file" accept=".json,application/json" style="display:none;" onchange="plTokRestore(this)"></label></div>';
+  h += '<div class="pl-chips">'+[['all','Semua'],['reseller','Reseller'],['karyawan','Karyawan'],['off','Dicabut']]
+    .map(f=>'<button class="pl-chip '+((t.f||'all')===f[0]?'active':'')+'" onclick="plTokSetF(\''+f[0]+'\')">'+f[1]+'</button>').join('')+'</div>';
+  const list = plTokFiltered();
+  if(!total) return h + '<div class="pl-empty">Belum ada kode akses.</div>';
+  if(!list.length) return h + '<div class="pl-empty">Tidak ada kode yang cocok.</div>';
+  list.slice(0, t.limit||30).forEach(tk=>{
+    h += '<div class="pl-tok '+(tk.revoked?'off':'')+'"><div class="top"><div><b>'+escapeHtml(tk.nama||'-')+'</b><span class="pl-rolebadge '+escapeHtml(tk.role||'')+'">'+escapeHtml((AUTH_ROLE_LABEL[tk.role]||tk.role||'').toUpperCase())+'</span>'+(tk.revoked?'<span class="pl-badge hapus">DICABUT</span>':'')+'</div></div>'+
+      '<div class="code" title="Ketuk untuk menyalin" onclick="plTokCopy(\''+tk.id+'\',false)">'+escapeHtml(tk.kode)+'</div>'+
+      '<div class="mt">Dibuat '+plDateTime(tk.createdAt)+'</div>'+
+      '<div class="act"><button class="pl-btn ghost sm" onclick="plTokCopy(\''+tk.id+'\',true)">Salin Pesan</button><button class="pl-btn '+(tk.revoked?'ghost':'danger')+' sm" onclick="plTokToggle(\''+tk.id+'\')">'+(tk.revoked?'Aktifkan lagi':'Cabut')+'</button></div></div>';
+  });
+  if(list.length > (t.limit||30)) h += '<button class="pl-btn ghost" style="width:100%;" onclick="plTokMore()">Tampilkan '+Math.min(30, list.length-(t.limit||30))+' lagi (sisa '+(list.length-(t.limit||30))+')</button>';
+  return h;
+}
+
+authInit();
 
 </script>
 </body>
