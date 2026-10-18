@@ -11,6 +11,32 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.3/chart.umd.min.js"></script>
+<script>
+/* Cadangan Chart.js: kalau CDN utama gagal/terblokir, coba CDN lain lalu gambar ulang grafik otomatis. */
+window.tenxChartLoading = false; window.tenxChartFailed = false;
+window.tenxEnsureChart = function(){
+  if(typeof Chart !== 'undefined' || window.tenxChartLoading || window.tenxChartFailed) return;
+  window.tenxChartLoading = true;
+  var srcs = ['https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js',
+              'https://unpkg.com/chart.js@4.4.3/dist/chart.umd.min.js'];
+  var i = 0;
+  (function next(){
+    if(i >= srcs.length){
+      window.tenxChartLoading = false; window.tenxChartFailed = true;
+      try{ if(typeof renderKgChart==='function') renderKgChart(); if(typeof renderKgLaba==='function') renderKgLaba(); }catch(e){}
+      return;
+    }
+    var s = document.createElement('script');
+    s.src = srcs[i++];
+    s.onload = function(){
+      window.tenxChartLoading = false;
+      try{ if(typeof renderKgChart==='function') renderKgChart(); if(typeof renderKgLaba==='function') renderKgLaba(); }catch(e){ console.error(e); }
+    };
+    s.onerror = function(){ s.remove(); next(); };
+    document.head.appendChild(s);
+  })();
+};
+</script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 :root{
@@ -163,7 +189,7 @@
 #workflowApp .btn.small{padding:6px 12px;font-size:12px;}
 #workflowApp .btn.block{width:100%;}
 #workflowApp .btn:disabled{opacity:.5;cursor:not-allowed;}
-#workflowApp .fab{position:fixed;right:26px;bottom:26px;box-shadow:0 8px 20px rgba(51,80,122,0.35);padding:14px 24px;font-size:16px;border-radius:999px;z-index:40;}
+#workflowApp .fab{position:fixed;left:26px;right:auto;bottom:26px;box-shadow:0 8px 20px rgba(51,80,122,0.35);padding:14px 24px;font-size:16px;border-radius:999px;z-index:40;}
 #workflowApp label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);margin:14px 0 6px;}
 #workflowApp label:first-child{margin-top:0;}
 #workflowApp input[type=text], #workflowApp input[type=tel], #workflowApp input[type=date], #workflowApp input[type=number], #workflowApp textarea, #workflowApp select{
@@ -235,7 +261,7 @@
 #workflowApp .img-preview-strip img{width:74px;height:74px;}
 #workflowApp .btn{padding:12px 18px;font-size:15px;}
 #workflowApp .btn.small{padding:9px 14px;font-size:13px;}
-#workflowApp .fab{right:16px;bottom:16px;padding:14px 20px;}
+#workflowApp .fab{left:16px;right:auto;bottom:16px;padding:14px 20px;}
 #workflowApp input[type=text], #workflowApp input[type=tel], #workflowApp input[type=date], #workflowApp input[type=number], #workflowApp textarea, #workflowApp select{
       font-size:16px; 
       padding:12px 12px;
@@ -247,6 +273,60 @@
 #workflowApp table.rekap{font-size:12.5px;}
 #workflowApp table.rekap th, #workflowApp table.rekap td{padding:8px 6px;}
 #workflowApp .lightbox-close{top:10px;right:10px;}}
+
+
+/* ===== TEMA ALUR KERJA = SAMA DENGAN DATA MARKETING (kartu solid, pill filter, strip statistik, tombol WA hijau) ===== */
+#workflowApp .tag-card{background:#fff;border:1.5px solid var(--line);border-left:5px solid var(--line);border-radius:12px;padding:16px 18px 14px 18px;}
+#workflowApp .tag-card::before{content:none;display:none;}
+#workflowApp .tag-card:hover{transform:none;box-shadow:0 4px 14px rgba(33,29,26,0.09);border-color:var(--denim-light);}
+#workflowApp .tag-card.st-baru{border-left-color:var(--amber);}
+#workflowApp .tag-card.st-diproses_desainer{border-left-color:var(--denim);}
+#workflowApp .tag-card.st-desain_selesai{border-left-color:var(--purple);}
+#workflowApp .tag-card.st-diproses_produksi{border-left-color:var(--rust);}
+#workflowApp .tag-card.st-selesai{border-left-color:var(--green);}
+#workflowApp .tag-card.late{border-color:var(--rust);background:#FFF8F4;}
+#workflowApp .badge{transform:none;letter-spacing:.05em;}
+#workflowApp .stage-pill{background:#fff;padding:6px 14px;font-size:12px;display:inline-flex;align-items:center;gap:6px;transition:all .15s ease;}
+#workflowApp .stage-pill:hover{border-color:var(--denim);color:var(--ink);}
+#workflowApp .stage-pill.active:hover{color:#fff;}
+#workflowApp .stage-pill .count{margin-left:0;background:rgba(0,0,0,0.07);color:inherit;font-family:'Work Sans',sans-serif;font-weight:600;font-size:11px;padding:1px 6px;}
+#workflowApp .stage-pill.active .count{background:rgba(255,255,255,0.28);color:#fff;}
+#workflowApp .search-box::before{content:"🔍";position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;opacity:.55;pointer-events:none;}
+#workflowApp .search-box input{padding-left:34px;}
+#workflowApp .wf-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:14px;}
+#workflowApp .wf-stat{background:var(--white);border:1.5px solid var(--line);border-radius:10px;padding:12px 16px;}
+#workflowApp .wf-stat .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);}
+#workflowApp .wf-stat .val{font-family:'Bebas Neue';font-size:28px;line-height:1.1;}
+#workflowApp .wf-stat.late .val{color:var(--rust);}
+#workflowApp .wf-stat.late{border-color:var(--rust);background:#FFF8F4;}
+#workflowApp .wf-stat.ok .val{color:var(--green);}
+#workflowApp label.wf-auto{display:flex;align-items:center;gap:8px;font-size:12.5px;text-transform:none;letter-spacing:0;color:var(--ink-soft);margin:0 0 16px;cursor:pointer;}
+#workflowApp label.wf-auto input{width:auto;margin:0;}
+#workflowApp .wf-steps{display:flex;gap:4px;margin:2px 0 10px;}
+#workflowApp .wf-steps i{flex:1;height:6px;border-radius:3px;background:var(--canvas-2);border:1px solid var(--line);}
+#workflowApp .wf-steps i.on{background:var(--denim);border-color:var(--denim);}
+#workflowApp .tag-card.st-diproses_produksi .wf-steps i.on{background:var(--rust);border-color:var(--rust);}
+#workflowApp .tag-card.st-selesai .wf-steps i.on{background:var(--green);border-color:var(--green);}
+#workflowApp .wf-act{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);}
+#workflowApp .wf-go{flex:1 1 140px;background:var(--denim);color:#fff;border:none;border-radius:8px;padding:10px 14px;font-family:'Bebas Neue';letter-spacing:.05em;font-size:14px;cursor:pointer;}
+#workflowApp .wf-go:hover{background:var(--denim-deep);}
+#workflowApp .wf-done{flex:1 1 140px;font-family:'Bebas Neue';letter-spacing:.05em;font-size:14px;color:var(--green);}
+#workflowApp .wf-wa{background:#25D366;color:#fff;border:none;border-radius:6px;padding:9px 12px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:'Work Sans',sans-serif;transition:all .15s ease;}
+#workflowApp .wf-wa:hover{background:#1EBE5D;transform:scale(1.04);box-shadow:0 2px 6px rgba(37,211,102,0.3);}
+#workflowApp .wf-sorry{background:var(--rust);color:#fff;border:none;border-radius:6px;padding:9px 12px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:'Work Sans',sans-serif;}
+#workflowApp .wf-sorry:hover{filter:brightness(.92);}
+#workflowApp .modal{background:var(--white);border:1.5px solid var(--line);}
+/* Toast urungkan (di luar #workflowApp karena ditempel ke body) */
+#wfToast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;transition:all .2s ease;z-index:900;background:#211D1A;color:#F6F3EC;border-radius:12px;padding:12px 14px;display:flex;gap:14px;align-items:center;width:480px;max-width:calc(100vw - 24px);box-shadow:0 10px 30px rgba(0,0,0,.35);font-family:'Work Sans',sans-serif;font-size:13px;border-left:5px solid #33507A;}
+#wfToast.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0);}
+#wfToast .wt-msg{flex:1;min-width:0;line-height:1.35;}
+#wfToast .wt-msg small{display:block;color:#B9C3D6;font-size:11.5px;margin-top:2px;}
+#wfToast .wt-act{display:flex;gap:6px;align-items:center;flex-shrink:0;}
+#wfToast button{border:none;border-radius:8px;padding:9px 12px;font-weight:700;cursor:pointer;font-family:'Work Sans',sans-serif;font-size:12px;}
+#wfToast .undo{background:#C98A2C;color:#fff;}
+#wfToast .wa{background:#25D366;color:#fff;}
+#wfToast .x{background:transparent;color:#B9C3D6;font-size:18px;padding:4px 8px;}
+@media(max-width:520px){#wfToast{flex-direction:column;align-items:stretch;gap:8px;}#wfToast .wt-act{justify-content:flex-end;}}
 
 #notaApp{
     --navy:#152452;
@@ -1179,6 +1259,68 @@
 #absensiApp .ab-progress-bar{height:8px;border-radius:999px;background:var(--ab-line);overflow:hidden;margin-top:6px;}
 #absensiApp .ab-progress-bar > div{height:100%;background:var(--ab-green);}
 #absensiApp .ab-progress-bar.over > div{background:var(--ab-amber);}
+
+/* ===== PAPAN EVALUASI (lampu indikator merah / kuning / hijau) ===== */
+#absensiApp{ --tl-merah:#C8402F; --tl-kuning:#E3A619; --tl-hijau:#2F9461; }
+#absensiApp .tl-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+#absensiApp .tl-head h2{margin:0;font-size:28px;}
+#absensiApp .tl-tools{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;}
+#absensiApp .tl-tools label{margin:0 0 4px;}
+#absensiApp .tl-legend{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 4px;}
+#absensiApp .tl-legend span{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;padding:6px 12px;border-radius:999px;background:#fff;border:1.5px solid var(--ab-line);}
+#absensiApp .tl-legend i{width:12px;height:12px;border-radius:50%;display:inline-block;}
+#absensiApp .tl-legend .l-merah i{background:var(--tl-merah);}
+#absensiApp .tl-legend .l-kuning i{background:var(--tl-kuning);}
+#absensiApp .tl-legend .l-hijau i{background:var(--tl-hijau);}
+#absensiApp .tl-sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0 0;}
+#absensiApp .tl-sum .tl-box{border-radius:12px;padding:12px 16px;color:#fff;}
+#absensiApp .tl-sum .tl-box b{display:block;font-family:'Bebas Neue',sans-serif;font-size:34px;line-height:1;}
+#absensiApp .tl-sum .tl-box span{font-size:12px;opacity:.95;}
+#absensiApp .tl-sum .b-merah{background:var(--tl-merah);}
+#absensiApp .tl-sum .b-kuning{background:var(--tl-kuning);color:#2b2200;}
+#absensiApp .tl-sum .b-hijau{background:var(--tl-hijau);}
+#absensiApp .tl-list{display:flex;flex-direction:column;gap:12px;margin-top:16px;}
+#absensiApp .tl-card{display:flex;align-items:center;gap:16px;background:var(--ab-white);border:1.5px solid var(--ab-line);border-left-width:10px;border-radius:12px;padding:14px 18px;}
+#absensiApp .tl-card.tl-merah{border-left-color:var(--tl-merah);}
+#absensiApp .tl-card.tl-kuning{border-left-color:var(--tl-kuning);}
+#absensiApp .tl-card.tl-hijau{border-left-color:var(--tl-hijau);}
+#absensiApp .tl-dot{flex:0 0 auto;width:30px;height:30px;border-radius:50%;}
+#absensiApp .tl-merah .tl-dot{background:var(--tl-merah);box-shadow:0 0 0 5px rgba(200,64,47,.18);}
+#absensiApp .tl-kuning .tl-dot{background:var(--tl-kuning);box-shadow:0 0 0 5px rgba(227,166,25,.22);}
+#absensiApp .tl-hijau .tl-dot{background:var(--tl-hijau);box-shadow:0 0 0 5px rgba(47,148,97,.22);animation:tlPulse 2s ease-in-out infinite;}
+@keyframes tlPulse{0%,100%{box-shadow:0 0 0 4px rgba(47,148,97,.22);}50%{box-shadow:0 0 0 10px rgba(47,148,97,.08);}}
+@media (prefers-reduced-motion:reduce){#absensiApp .tl-hijau .tl-dot{animation:none;}}
+#absensiApp .tl-main{flex:1;min-width:0;}
+#absensiApp .tl-name{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:.03em;line-height:1.1;}
+#absensiApp .tl-div{font-size:11px;color:var(--ab-muted);text-transform:uppercase;letter-spacing:.1em;margin-left:8px;}
+#absensiApp .tl-detail{font-size:12.5px;color:var(--ab-muted);margin-top:2px;}
+#absensiApp .tl-bar{height:10px;border-radius:999px;background:var(--ab-line);overflow:hidden;margin-top:8px;}
+#absensiApp .tl-bar > div{height:100%;border-radius:999px;}
+#absensiApp .tl-merah .tl-bar > div{background:var(--tl-merah);}
+#absensiApp .tl-kuning .tl-bar > div{background:var(--tl-kuning);}
+#absensiApp .tl-hijau .tl-bar > div{background:var(--tl-hijau);}
+#absensiApp .tl-score{flex:0 0 220px;text-align:right;}
+#absensiApp .tl-score b{display:block;font-family:'Bebas Neue',sans-serif;font-size:36px;line-height:1;}
+#absensiApp .tl-merah .tl-score b{color:var(--tl-merah);}
+#absensiApp .tl-kuning .tl-score b{color:#A97800;}
+#absensiApp .tl-hijau .tl-score b{color:var(--tl-hijau);}
+#absensiApp .tl-score span{display:block;font-size:11.5px;font-weight:700;letter-spacing:.04em;margin-top:3px;}
+@media (max-width:640px){
+  #absensiApp .tl-card{flex-wrap:wrap;gap:10px;padding:12px 14px;}
+  #absensiApp .tl-score{min-width:0;text-align:left;flex:1 1 100%;}
+  #absensiApp .tl-score b{display:inline;font-size:28px;margin-right:8px;}
+  #absensiApp .tl-score span{display:inline;}
+}
+#absensiApp:fullscreen{overflow:auto;}
+#absensiApp:fullscreen main{max-width:1500px;}
+#absensiApp:fullscreen .tl-name{font-size:38px;}
+#absensiApp:fullscreen .tl-score b{font-size:56px;}
+#absensiApp:fullscreen .tl-score span{font-size:15px;}
+#absensiApp:fullscreen .tl-detail{font-size:16px;}
+#absensiApp:fullscreen .tl-dot{width:44px;height:44px;}
+#absensiApp:fullscreen .tl-bar{height:14px;}
+#absensiApp:fullscreen .tl-head h2{font-size:44px;}
+#absensiApp:fullscreen .tl-sum .tl-box b{font-size:52px;}
 #absensiApp .ab-note{background:var(--ab-bg2);border:1px dashed var(--ab-line);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--ab-muted);margin-top:10px;}
 #absensiApp .overlay{position:fixed;inset:0;background:rgba(33,29,26,0.6);display:flex;align-items:flex-start;justify-content:center;padding:30px 14px;overflow-y:auto;z-index:900;}
 #absensiApp .modal{background:var(--ab-bg);border-radius:14px;max-width:560px;width:100%;padding:24px 22px 22px;position:relative;border:1px solid var(--ab-line);}
@@ -1827,6 +1969,10 @@ body.tx-locked > *:not(#authGate){display:none !important;}
 #authGate input:focus{outline:2px solid #f5c518;border-color:#f5c518;}
 #authGate .ag-btn{width:100%;margin-top:16px;border:none;background:#f5c518;color:#0e1a3d;font-weight:800;font-size:15px;padding:14px;border-radius:10px;cursor:pointer;font-family:inherit;}
 #authGate .ag-btn:disabled{opacity:.6;cursor:default;}
+#authGate .ag-note{font-size:12px;color:#9fb0d8;line-height:1.5;margin-top:10px;}
+#authGate .ag-ok{font-size:13px;color:#8ee0a8;margin-top:12px;line-height:1.5;}
+#authGate #agReg{text-align:left;}
+#authGate #agReg input{margin-bottom:6px;}
 #authGate .ag-link{background:none;border:none;color:#9fb0d8;text-decoration:underline;font-size:12.5px;cursor:pointer;margin-top:16px;font-family:inherit;padding:8px;}
 #authGate .ag-err{color:#ffb4a0;font-size:13px;margin-top:12px;min-height:18px;line-height:1.45;}
 #globalNav .gn-user{font-size:11.5px;color:#c6d0ec;padding:0 4px;align-self:center;white-space:nowrap;}
@@ -1856,6 +2002,10 @@ body.tx-reseller #globalNav .gn-brand{cursor:default;}
     <div class="ag-mark">TX</div>
     <h1>TENX APPAREL</h1>
     <p class="ag-sub" id="agSub">Masukkan kode akses dari admin untuk melanjutkan.</p>
+    <div id="agQuick" style="display:none;margin-bottom:14px;">
+      <button class="ag-btn" onclick="authQuickEnter()">Lanjut sebagai <span id="agQuickName"></span></button>
+      <button class="ag-link" onclick="authQuickForget()">Bukan saya / pakai kode lain</button>
+    </div>
     <div id="agToken">
       <label for="agCode">Kode Akses</label>
       <input id="agCode" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="mis. TNX-AB12-CD34" onkeydown="if(event.key==='Enter')authLoginToken()">
@@ -1868,7 +2018,17 @@ body.tx-reseller #globalNav .gn-brand{cursor:default;}
       <input id="agPass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')authLoginOwner()">
       <button class="ag-btn" onclick="authLoginOwner()">Masuk sebagai Owner</button>
     </div>
+    <div id="agReg" style="display:none;">
+      <label for="agRegNama">Nama Lengkap / Nama Toko <b style="color:#f5c518;">*</b></label>
+      <input id="agRegNama" type="text" autocomplete="name" placeholder="mis. Toko Budi">
+      <label for="agRegWa">No. WhatsApp <b style="color:#f5c518;">*</b></label>
+      <input id="agRegWa" type="tel" inputmode="tel" autocomplete="tel" placeholder="mis. 0812xxxxxxxx" onkeydown="if(event.key==='Enter')authRegisterSubmit()">
+      <div class="ag-note">Admin akan membuatkan kode akses lalu mengirimkannya langsung ke nomor WhatsApp ini. Pastikan nomornya aktif.</div>
+      <button class="ag-btn" id="agRegBtn" onclick="authRegisterSubmit()">Kirim Pendaftaran</button>
+    </div>
     <div class="ag-err" id="authErr"></div>
+    <div class="ag-ok" id="authOk"></div>
+    <button class="ag-link" id="agRegToggle" onclick="authToggleReg()">Belum punya kode? Daftar sebagai reseller</button><br>
     <button class="ag-link" id="agToggle" onclick="authToggleOwner()">Login Owner / Admin</button>
   </div>
 </div>
@@ -2232,6 +2392,14 @@ body.tx-reseller #globalNav .gn-brand{cursor:default;}
       <div class="kg-section">
         <h2>Pemasukan vs Pengeluaran per Bulan</h2>
         <div class="kg-chart-wrap"><canvas id="kgLabaChartCanvas"></canvas></div>
+        <div class="kg-note" id="kgLabaBepNote" style="margin:14px 0 0;"></div>
+      </div>
+
+      <div class="kg-section">
+        <h2>Titik Impas (BEP) — Pemasukan vs Pengeluaran</h2>
+        <div class="kg-summary" id="kgBepSummary"></div>
+        <div class="kg-chart-wrap" style="height:330px;"><canvas id="kgBepChartCanvas"></canvas></div>
+        <div class="kg-note" id="kgBepNote" style="margin:14px 0 0;"></div>
       </div>
 
       <div class="kg-section">
@@ -2954,7 +3122,18 @@ function renderAdminView(){
     ${q ? `<div class="search-hint">${sorted.length} project ditemukan untuk "${escapeHtml(state.searchQuery.trim())}"</div>` : ''}
   `;
 
-  return sub + searchBox + `
+  const lateN = all.filter(wfIsLateActive).length;
+  const stats = `
+    <div class="wf-stats">
+      <div class="wf-stat"><div class="lbl">Project Aktif</div><div class="val">${all.length - counts.selesai}</div></div>
+      <div class="wf-stat"><div class="lbl">Sedang Didesain</div><div class="val">${counts.diproses_desainer}</div></div>
+      <div class="wf-stat"><div class="lbl">Sedang Produksi</div><div class="val">${counts.diproses_produksi}</div></div>
+      <div class="wf-stat ${lateN?'late':''}"><div class="lbl">Telat Deadline</div><div class="val">${lateN}</div></div>
+      <div class="wf-stat ok"><div class="lbl">Selesai</div><div class="val">${counts.selesai}</div></div>
+    </div>
+    <label class="wf-auto"><input type="checkbox" ${wfAutoWa()?'checked':''} onchange="wfSetAutoWa(this.checked)"> Otomatis buka WA client saat progres diubah (ada tombol Urungkan)</label>`;
+
+  return sub + stats + searchBox + `
     <div class="stage-nav">
       ${pill('all','Semua',counts.all)}
       ${pill('baru','Baru',counts.baru)}
@@ -3309,14 +3488,24 @@ function emptyState(title,sub){
 function projectCard(p){
   const refImgs = (p.referensi||[]).slice(0,4);
   const qty = totalQty(p);
+  const late = wfIsLateActive(p);
+  const n = WF_STEP[p.status] || 1;
+  const steps = [1,2,3,4,5].map(i=>`<i class="${i<=n?'on':''}"></i>`).join('');
+  let go = '';
+  if(wfCanQuick(p)) go = `<button class="wf-go" onclick="event.stopPropagation();wfQuickAdvance('${p.id}')">${WF_NEXT_LABEL[p.status]} →</button>`;
+  else if(state.role==='desainer' && p.status==='diproses_desainer' && sameName(p.namaDesainer)) go = `<button class="wf-go" onclick="event.stopPropagation();openDetailModal('${p.id}')">Isi Pedoman &amp; Selesaikan →</button>`;
+  else if(p.status==='selesai') go = `<span class="wf-done">✓ Pesanan selesai</span>`;
+  const wa = `<button class="wf-wa" title="Kirim progres terbaru ke WA client" onclick="event.stopPropagation();wfSendNow('${p.id}')">WA Client</button>`;
+  const sorry = late ? `<button class="wf-sorry" onclick="event.stopPropagation();wfApologyModal('${p.id}')">Minta Maaf</button>` : '';
   return `
-    <div class="tag-card" onclick="openDetailModal('${p.id}')">
+    <div class="tag-card st-${p.status}${late?' late':''}" onclick="openDetailModal('${p.id}')">
       <div class="tag-top">
         <span class="tag-id mono">${p.id}</span>
         <span class="badge ${p.status}">${STATUS_LABEL[p.status]}</span>
       </div>
       <h3>${escapeHtml(p.namaKlien)}</h3>
-      <div class="tag-meta">${escapeHtml(p.via)} · ${p.noHp} · masuk ${fmtDate(p.createdAt)} · ${qty} pcs</div>
+      <div class="tag-meta">${escapeHtml(p.via)} · ${escapeHtml(p.noHp||'')} · masuk ${fmtDate(p.createdAt)} · ${qty} pcs</div>
+      <div class="wf-steps" title="Tahap ${n} dari 5">${steps}</div>
       <div class="assign-row">
         <span class="assign-chip">Desainer: <b>${escapeHtml(p.namaDesainer||'-')}</b></span>
         <span class="assign-chip">Produksi: <b>${escapeHtml(p.namaProduksi||'-')}</b></span>
@@ -3325,8 +3514,9 @@ function projectCard(p){
       ${p.komisiPerPcs ? `<div class="komisi-tag">Komisi: ${rupiah(p.komisiPerPcs)}/pcs → total ${rupiah(totalKomisi(p))}</div>` : ''}
       <div class="tag-foot">
         <div class="thumbs">${refImgs.map(src=>renderFileThumb(src,34)).join('')}${(p.referensi||[]).length>4?`<span class="mono" style="font-size:11px;color:var(--ink-soft);align-self:center;">+${p.referensi.length-4}</span>`:''}</div>
-        ${p.deadline ? `<span class="mono" style="font-size:11.5px;color:var(--rust);">DL ${fmtDate(p.deadline)}</span>` : ''}
+        ${p.deadline ? `<span class="mono" style="font-size:11.5px;color:var(--rust);">DL ${fmtDate(p.deadline)}${late?` · <b>TELAT ${wfLateDays(p)} HARI</b>`:''}</span>` : ''}
       </div>
+      <div class="wf-act">${go}${wa}${sorry}</div>
     </div>
   `;
 }
@@ -3708,6 +3898,8 @@ function openDetailModal(id){
     `;
   }
 
+  body += wfDetailHtml(p);
+
   renderModal(`
     <button class="close" onclick="closeModal()">×</button>
     <h2>${escapeHtml(p.namaKlien)}</h2>
@@ -3754,13 +3946,16 @@ function removePedomanImg(i){ tempPedomanImgs.splice(i,1); renderPedomanPreview(
 async function startDesain(id){
   const p = projectsCache.find(x=>x.id===id);
   if(!p) return;
+  const snap = wfSnap(p);
   p.status = 'diproses_desainer';
   p.desainMulai = Date.now();
+  const opened = wfOpenWa(p);
   const ok = await saveProject(p);
-  if(!ok) return;
+  if(!ok){ Object.assign(p, snap); return; }
+  closeModal();
   await refresh(false);
-  openDetailModal(id);
   render();
+  wfToast(id, snap, opened);
 }
 
 async function saveDesainerDraft(id){
@@ -3785,45 +3980,263 @@ async function finishDesain(id){
     alert('Isi minimal Pedoman Desain dan Deadline sebelum menandai selesai.');
     return;
   }
+  const snap = wfSnap(p);
   p.pedomanDesain = pedoman;
   p.listDesain = document.getElementById('f_listdesain').value.trim();
   p.deadline = deadline;
   p.pedomanGambar = [...tempPedomanImgs];
   p.status = 'desain_selesai';
+  const opened = wfOpenWa(p);
   const ok = await saveProject(p);
-  if(!ok) return;
+  if(!ok){ Object.assign(p, snap); return; }
   closeModal();
   await refresh();
+  wfToast(id, snap, opened);
 }
 
 async function startProduksi(id){
   const p = projectsCache.find(x=>x.id===id);
   if(!p) return;
+  const snap = wfSnap(p);
   p.status = 'diproses_produksi';
   p.produksiMulai = Date.now();
+  const opened = wfOpenWa(p);
   const ok = await saveProject(p);
-  if(!ok) return;
+  if(!ok){ Object.assign(p, snap); return; }
   closeModal();
   await refresh();
+  wfToast(id, snap, opened);
 }
 async function finishProduksi(id){
   const p = projectsCache.find(x=>x.id===id);
   if(!p) return;
+  const snap = wfSnap(p);
   p.status = 'selesai';
   p.selesaiAt = Date.now();
+  const opened = wfOpenWa(p);
   const ok = await saveProject(p);
-  if(!ok) return;
+  if(!ok){ Object.assign(p, snap); return; }
   closeModal();
   await refresh();
+  wfToast(id, snap, opened);
 }
 async function manualSetStatus(id){
   const p = projectsCache.find(x=>x.id===id);
   if(!p) return;
-  p.status = document.getElementById('f_manualstatus').value;
+  const newSt = document.getElementById('f_manualstatus').value;
+  if(newSt === p.status){ closeModal(); return; }
+  const snap = wfSnap(p);
+  p.status = newSt;
+  if(newSt==='selesai' && !p.selesaiAt) p.selesaiAt = Date.now();
+  const opened = wfOpenWa(p);
   const ok = await saveProject(p);
-  if(!ok) return;
+  if(!ok){ Object.assign(p, snap); return; }
   closeModal();
   await refresh();
+  wfToast(id, snap, opened);
+}
+
+/* ===================== NOTIFIKASI WA KE CLIENT (progres & permintaan maaf) =====================
+   - Tombol progres langsung di kartu project (tanpa buka detail).
+   - Begitu status naik, WhatsApp client otomatis terbuka dengan pesan rapi (format WhatsApp: *tebal*, daftar tahap).
+     Tinggal tekan kirim. Bisa dimatikan lewat centang "Otomatis buka WA client".
+   - Setiap perubahan ada tombol URUNGKAN (15 detik) kalau salah pencet.                                      */
+const WF_STEP = { baru:1, diproses_desainer:2, desain_selesai:3, diproses_produksi:4, selesai:5 };
+const WF_NEXT = { baru:'diproses_desainer', diproses_desainer:'desain_selesai', desain_selesai:'diproses_produksi', diproses_produksi:'selesai' };
+const WF_NEXT_LABEL = { baru:'Mulai Desain', diproses_desainer:'Desain Selesai', desain_selesai:'Mulai Produksi', diproses_produksi:'Produksi Selesai' };
+function wfDayStart(v){
+  if(typeof v==='string' && /^\d{4}-\d{2}-\d{2}$/.test(v)){ const a=v.split('-'); return new Date(+a[0], +a[1]-1, +a[2]); }
+  const d = new Date(v); return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+/* jumlah hari terlambat dari deadline (0 = tidak telat). Project selesai dihitung dari tanggal selesainya. */
+function wfLateDays(p){
+  if(!p || !p.deadline) return 0;
+  const end = (p.status==='selesai' && p.selesaiAt) ? wfDayStart(p.selesaiAt) : wfDayStart(Date.now());
+  const diff = Math.round((end - wfDayStart(p.deadline)) / 86400000);
+  return diff > 0 ? diff : 0;
+}
+function wfIsLateActive(p){ return !!p && p.status!=='selesai' && wfLateDays(p) > 0; }
+
+/* ---- Pesan WhatsApp (pakai format WA: *tebal*, emoji, baris pendek) ---- */
+function wfSapaan(){
+  const h = new Date().getHours();
+  return h < 11 ? 'Selamat pagi' : h < 15 ? 'Selamat siang' : h < 18 ? 'Selamat sore' : 'Selamat malam';
+}
+function wfStepLines(p){
+  const names = ['Pesanan diterima','Desain dikerjakan','Desain selesai','Proses produksi','Pesanan selesai'];
+  const done = { baru:1, diproses_desainer:1, desain_selesai:3, diproses_produksi:3, selesai:5 }[p.status] || 1;
+  const cur  = { diproses_desainer:2, diproses_produksi:4 }[p.status] || 0;
+  return names.map((n,i)=>{
+    const k = i+1;
+    if(k <= done) return k + '. ' + n + ' - _selesai_';
+    if(k === cur) return k + '. *' + n + '* - _sedang berjalan_';
+    return k + '. ' + n;
+  }).join('\n');
+}
+function wfClientMsg(p){
+  const lead = {
+    baru: 'Pesanan Kakak telah kami terima dan saat ini masuk dalam antrean desain.',
+    diproses_desainer: 'Desain pesanan Kakak sedang kami kerjakan.',
+    desain_selesai: 'Desain pesanan Kakak telah *selesai* dan akan segera masuk ke tahap produksi.',
+    diproses_produksi: 'Pesanan Kakak kini berada pada tahap *produksi*.',
+    selesai: 'Pesanan Kakak telah *selesai*. Silakan menghubungi kami untuk pengambilan atau pengiriman.'
+  }[p.status] || ('Status pesanan saat ini: ' + (STATUS_LABEL[p.status]||p.status) + '.');
+  const L = [];
+  L.push('*TENX APPAREL*');
+  L.push('_Informasi Progres Pesanan_');
+  L.push('');
+  L.push(wfSapaan() + ', Kak *' + (p.namaKlien||'') + '*.');
+  L.push(lead);
+  L.push('');
+  L.push('No. Pesanan : *' + p.id + '*');
+  L.push('Jumlah      : ' + totalQty(p) + ' pcs');
+  if(p.deadline && p.status!=='selesai') L.push('Target      : ' + fmtDate(p.deadline));
+  L.push('');
+  L.push('*Progres*');
+  L.push(wfStepLines(p));
+  const late = wfLateDays(p);
+  if(late > 0){
+    L.push('');
+    L.push('Mohon maaf, pesanan ini melewati target waktu (' + late + ' hari). Kami terus mengupayakan penyelesaian secepatnya.');
+  }
+  L.push('');
+  L.push('Terima kasih atas kepercayaan Kakak kepada TENX APPAREL.');
+  return L.join('\n');
+}
+function wfApologyMsg(p, newDate){
+  const late = wfLateDays(p);
+  const L = [];
+  L.push('*TENX APPAREL*');
+  L.push('_Permohonan Maaf_');
+  L.push('');
+  L.push(wfSapaan() + ', Kak *' + (p.namaKlien||'') + '*.');
+  L.push('Kami mohon maaf atas keterlambatan pesanan *' + p.id + '*, yang melewati target ' + (p.deadline ? fmtDate(p.deadline) : '-') + (late ? ' (' + late + ' hari)' : '') + '.');
+  L.push('');
+  L.push('*Posisi pesanan saat ini*');
+  L.push(wfStepLines(p));
+  L.push('');
+  L.push(newDate ? ('Estimasi terbaru: selesai paling lambat *' + fmtDate(newDate) + '*.') : 'Tim kami sedang memprioritaskan pesanan Kakak dan akan segera menyampaikan estimasi penyelesaiannya.');
+  L.push('');
+  L.push('Terima kasih atas kesabaran dan pengertian Kakak.');
+  return L.join('\n');
+}
+/* Bersihkan simbol rusak / emoji agar pesan WA selalu tampil rapi */
+function wfCleanText(t){
+  return String(t==null?'':t)
+    .replace(/[\uFFFD\uFE0F\u200D]/g,'')
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}]/gu,'')
+    .replace(/[ \t]+\n/g,'\n');
+}
+function wfWaUrl(p, text){
+  const num = wspPhoneForWhatsApp((p && p.noHp) || '');
+  if(!num || num.length < 9) return '';
+  return 'https://wa.me/' + num + '?text=' + encodeURIComponent(wfCleanText(text));
+}
+function wfAutoWa(){ try{ return localStorage.getItem('tenx_wf_autowa') !== '0'; }catch(e){ return true; } }
+function wfSetAutoWa(v){ try{ localStorage.setItem('tenx_wf_autowa', v ? '1' : '0'); }catch(e){} render(); }
+/* Buka WA client (harus dipanggil langsung dari klik, sebelum await, supaya tidak diblokir browser) */
+function wfOpenWa(p){
+  if(!wfAutoWa()) return false;
+  const url = wfWaUrl(p, wfClientMsg(p)); if(!url) return false;
+  try{ return !!window.open(url, '_blank'); }catch(e){ return false; }
+}
+function wfSendNow(id){
+  const p = projectsCache.find(x=>x.id===id); if(!p) return;
+  const url = wfWaUrl(p, wfClientMsg(p));
+  if(!url){ alert('No. HP client belum valid: ' + (p.noHp||'-') + '. Perbaiki lewat Edit Data Project.'); return; }
+  window.open(url, '_blank');
+}
+function wfSend(id, taId){
+  const p = projectsCache.find(x=>x.id===id); if(!p) return;
+  const url = wfWaUrl(p, document.getElementById(taId).value);
+  if(!url){ alert('No. HP client belum valid: ' + (p.noHp||'-') + '. Perbaiki lewat Edit Data Project.'); return; }
+  window.open(url, '_blank'); closeModal();
+}
+
+/* ---- Undo ---- */
+let wfUndoState = null, wfToastTimer = null;
+function wfSnap(p){
+  return { status:p.status, desainMulai:p.desainMulai||null, produksiMulai:p.produksiMulai||null, selesaiAt:p.selesaiAt||null,
+           pedomanDesain:p.pedomanDesain||'', listDesain:p.listDesain||'', deadline:p.deadline||'', pedomanGambar:[...(p.pedomanGambar||[])] };
+}
+function wfToastEl(){
+  let el = document.getElementById('wfToast');
+  if(!el){ el = document.createElement('div'); el.id = 'wfToast'; document.body.appendChild(el); }
+  return el;
+}
+function wfToastHide(){ const el = document.getElementById('wfToast'); if(el) el.classList.remove('show'); clearTimeout(wfToastTimer); }
+function wfToastShow(html, ms){
+  const el = wfToastEl(); el.innerHTML = html; el.classList.add('show');
+  clearTimeout(wfToastTimer); wfToastTimer = setTimeout(wfToastHide, ms || 15000);
+}
+function wfToast(id, snap, opened){
+  const p = projectsCache.find(x=>x.id===id); if(!p) return;
+  wfUndoState = { id:id, snap:snap };
+  const hasWa = !!wfWaUrl(p, 'x');
+  const note = opened ? 'WA client dibuka — jangan kirim pesannya kalau salah pencet.' : (hasWa ? 'Belum dikirim ke client.' : 'No. HP client tidak valid, WA tidak dibuka.');
+  wfToastShow('<div class="wt-msg"><b>' + escapeHtml(p.namaKlien||'') + '</b> → ' + escapeHtml(STATUS_LABEL[p.status]||p.status) + '<small>' + note + '</small></div>' +
+    '<div class="wt-act"><button class="undo" onclick="wfUndo()">↩ Urungkan</button>' +
+    ((!opened && hasWa) ? '<button class="wa" onclick="wfSendNow(\'' + id + '\')">Kirim WA</button>' : '') +
+    '<button class="x" onclick="wfToastHide()">×</button></div>');
+}
+async function wfUndo(){
+  const u = wfUndoState; if(!u) return;
+  const p = projectsCache.find(x=>x.id===u.id); if(!p) return;
+  Object.assign(p, u.snap);
+  const ok = await saveProject(p); if(!ok) return;
+  wfUndoState = null;
+  await refresh(false); render();
+  wfToastShow('<div class="wt-msg"><b>Dibatalkan ✓</b><small>' + escapeHtml(p.namaKlien||'') + ' kembali ke "' + escapeHtml(STATUS_LABEL[p.status]||p.status) + '".</small></div><div class="wt-act"><button class="x" onclick="wfToastHide()">×</button></div>', 4000);
+}
+
+/* ---- Tombol progres langsung di kartu ---- */
+function wfCanQuick(p){
+  if(!WF_NEXT[p.status]) return false;
+  if(state.role==='admin') return true;
+  if(state.role==='desainer') return p.status==='baru' && sameName(p.namaDesainer);
+  if(state.role==='produksi') return (p.status==='desain_selesai' || p.status==='diproses_produksi') && sameName(p.namaProduksi);
+  return false;
+}
+async function wfQuickAdvance(id){
+  const p = projectsCache.find(x=>x.id===id); if(!p || !WF_NEXT[p.status]) return;
+  const snap = wfSnap(p), next = WF_NEXT[p.status];
+  p.status = next;
+  if(next==='diproses_desainer') p.desainMulai = Date.now();
+  if(next==='diproses_produksi') p.produksiMulai = Date.now();
+  if(next==='selesai') p.selesaiAt = Date.now();
+  const opened = wfOpenWa(p);                       // sinkron dari klik
+  const ok = await saveProject(p);
+  if(!ok){ Object.assign(p, snap); render(); return; }
+  await refresh(false); render();
+  wfToast(id, snap, opened);
+}
+
+/* ---- Bagian "Kabari Client" di detail project ---- */
+function wfApologyModal(id){
+  const p = projectsCache.find(x=>x.id===id); if(!p) return;
+  renderModal(`
+    <button class="close" onclick="closeModal()">×</button>
+    <h2>Permintaan Maaf — Telat ${wfLateDays(p)} Hari</h2>
+    <div class="modal-sub mono">${escapeHtml(p.namaKlien)} · ${escapeHtml(p.noHp||'-')} · Deadline ${fmtDate(p.deadline)}</div>
+    <label>Estimasi selesai terbaru (opsional)</label>
+    <input type="date" id="wfNewDate" onchange="document.getElementById('wfApoText').value = wfApologyMsg(projectsCache.find(x=>x.id==='${p.id}'), this.value)">
+    <label>Pesan ke client</label>
+    <textarea id="wfApoText" rows="12" style="min-height:240px;font-family:'Work Sans',sans-serif;line-height:1.5;">${escapeHtml(wfApologyMsg(p, ''))}</textarea>
+    <div class="modal-actions">
+      <button class="btn ghost" style="flex:1;" onclick="closeModal()">Batal</button>
+      <button class="btn green" style="flex:2;" onclick="wfSend('${p.id}','wfApoText')">Kirim Permintaan Maaf ke WA</button>
+    </div>
+  `);
+}
+function wfDetailHtml(p){
+  const late = wfIsLateActive(p);
+  return `<div class="divider"></div>
+    <label>Kabari Client (WhatsApp)</label>
+    ${late ? `<div class="note-box" style="border-color:var(--rust);color:var(--rust);">⚠ Project ini sudah telat ${wfLateDays(p)} hari dari deadline ${fmtDate(p.deadline)}.</div>` : ''}
+    <div class="modal-actions">
+      <button class="btn ghost" style="flex:1;" onclick="wfSendNow('${p.id}')">Kirim Update Progres ke WA</button>
+      ${late ? `<button class="btn rust" style="flex:1;" onclick="wfApologyModal('${p.id}')">Kirim Permintaan Maaf</button>` : ''}
+    </div>`;
 }
 
 /* ===================== MODAL SHELL ===================== */
@@ -4368,9 +4781,29 @@ function renderKeuangan(){
   renderKgLaba();   // halaman FINANCE ikut ter-update saat data nota/pengeluaran berubah
 }
 
+/* Pesan di dalam kotak grafik (mis. Chart.js gagal dimuat) supaya tidak blank tanpa penjelasan */
+function kgChartMsg(canvas, text){
+  const wrap = canvas && canvas.parentElement; if(!wrap) return;
+  let m = wrap.querySelector('.kg-chart-msg');
+  if(!text){ if(m) m.remove(); return; }
+  if(!m){
+    m = document.createElement('div'); m.className = 'kg-chart-msg';
+    m.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;font-size:13px;color:#6b6255;';
+    wrap.appendChild(m);
+  }
+  m.textContent = text;
+}
+function kgChartReady(canvas){
+  if(typeof Chart !== 'undefined'){ kgChartMsg(canvas, ''); return true; }
+  if(window.tenxChartFailed) kgChartMsg(canvas, 'Grafik belum bisa tampil: pustaka Chart.js gagal diunduh. Cek koneksi internet lalu muat ulang halaman.');
+  else kgChartMsg(canvas, 'Memuat grafik…');
+  if(window.tenxEnsureChart) window.tenxEnsureChart();
+  return false;
+}
+
 function renderKgChart(){
   const canvas = document.getElementById('kgChartCanvas');
-  if(!canvas || typeof Chart==='undefined') return;
+  if(!canvas || !kgChartReady(canvas)) return;
   const entries = kgIncomeEntries(combinedTransactions());   // hanya uang yang sudah masuk
   const sumBy = fn => entries.filter(fn).reduce((s,e)=>s+e.amount,0);
 
@@ -4401,7 +4834,8 @@ function renderKgChart(){
     });
   }
 
-  if(kgChartInstance) kgChartInstance.destroy();
+  if(kgChartInstance){ try{ kgChartInstance.destroy(); }catch(e){} kgChartInstance = null; }
+  try{
   kgChartInstance = new Chart(canvas.getContext('2d'), {
     type: kgChartMode==='harian' ? 'line' : 'bar',
     data: { labels, datasets: [{
@@ -4416,10 +4850,11 @@ function renderKgChart(){
     }]},
     options:{
       responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: c => formatRupiah(c.parsed.y) } } },
-      scales:{ y:{ ticks:{ callback: v => 'Rp ' + (v/1000) + 'rb' } } }
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: c => kgShortRp(c.parsed.y) } } },
+      scales:{ y:{ beginAtZero:true, ticks:{ callback: v => kgShortRp(v) } } }
     }
   });
+  }catch(e){ console.error('Grafik pemasukan gagal dirender', e); kgChartMsg(canvas, 'Grafik gagal dirender: ' + (e.message||e)); }
 }
 
 
@@ -4446,6 +4881,19 @@ function setKgExpFilter(g){
   renderExpenseList();
 }
 
+/* Angka ringkas untuk sumbu grafik: ribu / jt / milyar / triliun (mis. Rp 2,5 jt) */
+function kgShortRp(v){
+  v = Number(v)||0;
+  const neg = v < 0, a = Math.abs(v);
+  const f = x => (Math.round(x*100)/100).toLocaleString('id-ID', {maximumFractionDigits:2});
+  let s;
+  if(a >= 1e12) s = f(a/1e12) + ' triliun';
+  else if(a >= 1e9) s = f(a/1e9) + ' milyar';
+  else if(a >= 1e6) s = f(a/1e6) + ' jt';
+  else if(a >= 1e3) s = f(a/1e3) + ' ribu';
+  else s = f(a);
+  return (neg ? '-' : '') + 'Rp ' + s;
+}
 /* Rp dengan tanda minus yang rapi */
 function kgRp(n){
   n = Math.round(Number(n)||0);
@@ -4576,30 +5024,114 @@ function renderKgLaba(){
   }
 
   renderKgLabaChart(L);
+  try{ renderKgBep(L); }catch(e){ console.error('Grafik BEP gagal dirender', e); }
   renderExpenseList();
   try{ renderKgAi(); }catch(e){ console.error('Analisis AI gagal dirender', e); }
 }
 
+/* ===== BEP (Break Even Point) =====
+   Biaya tetap  = rata-rata pengeluaran Operasional per bulan pada periode terpilih
+   Biaya variabel = HPP, sebagai persentase dari pemasukan
+   BEP (Rp pemasukan / bulan) = Biaya tetap ÷ (1 − HPP ÷ Pemasukan)                  */
+let kgBepChartInstance = null;
+function renderKgBep(L){
+  const sumEl = document.getElementById('kgBepSummary'), noteEl = document.getElementById('kgBepNote'), canvas = document.getElementById('kgBepChartCanvas');
+  if(!sumEl || !canvas) return;
+  const kill = () => { if(kgBepChartInstance){ try{ kgBepChartInstance.destroy(); }catch(e){} kgBepChartInstance = null; } };
+  const card = (lbl, val, sub, cls) => `<div class="kg-card ${cls||''}"><div class="lbl">${lbl}</div><div class="val">${val}</div><div class="sub">${sub}</div></div>`;
+  const n = L.monthRows.length;
+  if(!n || L.income <= 0){
+    kill(); sumEl.innerHTML = '';
+    kgChartMsg(canvas, 'Belum ada pemasukan di periode ini, jadi BEP belum bisa dihitung.');
+    if(noteEl) noteEl.textContent = '';
+    return;
+  }
+  const F = L.ops / n;                 // biaya tetap per bulan
+  const R = L.income / n;              // pemasukan rata-rata per bulan
+  const v = L.hpp / L.income;          // biaya variabel (HPP) per Rp pemasukan
+  const cm = 1 - v;
+  if(cm <= 0){
+    kill();
+    sumEl.innerHTML = card('Biaya tetap / bulan', kgRp(F), 'Rata-rata Operasional per bulan', 'expense') + card('Pemasukan rata-rata / bulan', kgRp(R), 'Periode: ' + escapeHtml(L.label), 'income') + card('HPP', kgPctTxt(v*100), 'HPP sudah ≥ pemasukan', 'expense');
+    kgChartMsg(canvas, 'BEP tidak bisa dihitung: biaya produksi (HPP) sudah sama atau lebih besar dari pemasukan. Naikkan harga jual atau turunkan HPP.');
+    if(noteEl) noteEl.textContent = '';
+    return;
+  }
+  const BEP = F / cm;
+  const diff = R - BEP;
+  const ok = diff >= 0;
+  sumEl.innerHTML =
+    card('BEP / bulan', kgRp(BEP), 'Pemasukan minimal per bulan agar tidak rugi', 'margin') +
+    card('Pemasukan rata-rata / bulan', kgRp(R), 'Periode: ' + escapeHtml(L.label), 'income') +
+    card(ok ? 'Sudah di atas BEP' : 'Kurang dari BEP', kgRp(Math.abs(diff)), ok ? ('Zona aman ' + kgPctTxt(diff / R * 100) + ' dari pemasukan') : 'Pemasukan perlu naik sebesar ini per bulan', 'profit ' + (ok ? 'pos' : 'neg')) +
+    card('Biaya tetap / bulan', kgRp(F), 'Operasional · HPP ' + kgPctTxt(v*100) + ' dari pemasukan', 'expense');
+  if(noteEl) noteEl.innerHTML = '<b>Cara baca:</b> titik <b>BEP</b> adalah perpotongan garis hijau (pemasukan) dengan garis merah (total pengeluaran). Di kiri titik itu usaha rugi, di kanan untung. Hitungan: BEP = Biaya tetap ÷ (1 − HPP ÷ Pemasukan), dengan biaya tetap = rata-rata pengeluaran Operasional per bulan (' + n + ' bulan data) dan biaya variabel = HPP.';
+  if(!kgChartReady(canvas)) return;
+  kill();
+  const xmax = Math.max(BEP * 1.6, R * 1.25, 1);
+  const line = (label, pts, color, extra) => Object.assign({ label, data: pts, showLine:true, borderColor:color, backgroundColor:color, borderWidth:2.5, pointRadius:0, tension:0 }, extra||{});
+  try{
+    kgBepChartInstance = new Chart(canvas.getContext('2d'), {
+      type:'scatter',
+      data:{ datasets:[
+        line('Pemasukan', [{x:0,y:0},{x:xmax,y:xmax}], '#1f9d55'),
+        line('Total pengeluaran (tetap + HPP)', [{x:0,y:F},{x:xmax,y:F + v*xmax}], '#b3441f'),
+        line('Biaya tetap (Operasional)', [{x:0,y:F},{x:xmax,y:F}], '#8a8478', { borderDash:[6,5], borderWidth:1.5 }),
+        { label:'BEP', data:[{x:BEP,y:BEP}], showLine:false, pointRadius:9, pointHoverRadius:11, backgroundColor:'#152452', borderColor:'#fff', borderWidth:2 },
+        { label:'Pemasukan rata-rata sekarang', data:[{x:R,y:R}], showLine:false, pointRadius:8, pointStyle:'triangle', backgroundColor: ok ? '#1f9d55' : '#c98a2c', borderColor:'#fff', borderWidth:2 }
+      ]},
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        interaction:{ mode:'nearest', intersect:true },
+        plugins:{
+          legend:{ display:true, position:'bottom' },
+          tooltip:{ callbacks:{ label: c => c.dataset.label + ': ' + kgShortRp(c.parsed.y) + ' (pemasukan ' + kgShortRp(c.parsed.x) + ')' } }
+        },
+        scales:{
+          x:{ type:'linear', min:0, max:xmax, title:{ display:true, text:'Pemasukan per bulan' }, ticks:{ callback: v => kgShortRp(v) } },
+          y:{ min:0, title:{ display:true, text:'Pemasukan / pengeluaran per bulan' }, ticks:{ callback: v => kgShortRp(v) } }
+        }
+      }
+    });
+  }catch(e){ console.error('Grafik BEP gagal', e); kgChartMsg(canvas, 'Grafik gagal dirender: ' + (e.message||e)); }
+}
+
+/* Hitung BEP (dipakai grafik bulanan & grafik BEP) */
+function kgBepCalc(L){
+  const n = L.monthRows.length;
+  if(!n || L.income <= 0) return null;
+  const F = L.ops / n, R = L.income / n, v = L.hpp / L.income, cm = 1 - v;
+  if(cm <= 0) return null;
+  return { F, R, v, n, BEP: F / cm };
+}
 function renderKgLabaChart(L){
   const canvas = document.getElementById('kgLabaChartCanvas');
-  if(!canvas || typeof Chart==='undefined') return;
+  if(!canvas || !kgChartReady(canvas)) return;
   const rows = L.monthRows.slice(-12);
-  if(kgLabaChartInstance) kgLabaChartInstance.destroy();
+  const bepInfo = kgBepCalc(L);
+  const bn = document.getElementById('kgLabaBepNote');
+  if(bn) bn.innerHTML = bepInfo
+    ? '<b>BEP: ' + kgShortRp(bepInfo.BEP) + ' / bulan.</b> Batang hijau (pemasukan) yang melewati garis ungu putus-putus berarti bulan itu sudah di atas BEP (untung); di bawah garis berarti belum balik modal. Rata-rata pemasukan sekarang ' + kgShortRp(bepInfo.R) + ' / bulan.'
+    : 'Garis BEP muncul setelah ada pemasukan dan pengeluaran di periode ini.';
+  if(kgLabaChartInstance){ try{ kgLabaChartInstance.destroy(); }catch(e){} kgLabaChartInstance = null; }
+  try{
   kgLabaChartInstance = new Chart(canvas.getContext('2d'), {
+    type:'bar',
     data:{
       labels: rows.map(r=>kgMonthLabel(r.key)),
       datasets:[
         {type:'bar', label:'Pemasukan', data:rows.map(r=>r.income), backgroundColor:'#1f9d55'},
         {type:'bar', label:'Pengeluaran', data:rows.map(r=>r.hpp+r.ops), backgroundColor:'#b3441f'},
         {type:'line', label:'Untung Bersih', data:rows.map(r=>r.net), borderColor:'#152452', backgroundColor:'#152452', borderWidth:2, tension:.3, pointRadius:3}
-      ]
+      ].concat(bepInfo ? [{type:'line', label:'BEP / bulan (' + kgShortRp(bepInfo.BEP) + ')', data:rows.map(()=>bepInfo.BEP), borderColor:'#7a6fb0', backgroundColor:'#7a6fb0', borderWidth:2.5, borderDash:[7,5], pointRadius:0, tension:0}] : [])
     },
     options:{
       responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{display:true, position:'bottom'}, tooltip:{ callbacks:{ label:c=> c.dataset.label+': '+kgRp(c.parsed.y) } } },
-      scales:{ y:{ ticks:{ callback: v => 'Rp ' + (v/1000) + 'rb' } } }
+      plugins:{ legend:{display:true, position:'bottom'}, tooltip:{ callbacks:{ label:c=> c.dataset.label+': '+kgShortRp(c.parsed.y) } } },
+      scales:{ y:{ ticks:{ callback: v => kgShortRp(v) } } }
     }
   });
+  }catch(e){ console.error('Grafik laba gagal dirender', e); kgChartMsg(canvas, 'Grafik gagal dirender: ' + (e.message||e)); }
 }
 
 /* =====================================================================
@@ -6627,7 +7159,7 @@ let wspEmployeesCache = [];
 let wspAttendanceCache = [];
 let wspMarketingCache = [];
 let wspProspectsCache = [];
-let wspSettings = { kontakTarget: 10, eventTarget: 10, jamMulai: '07:00', jamSelesai: '17:00' };
+let wspSettings = { kontakTarget: 10, eventTarget: 10, jamMulai: '07:00', jamSelesai: '17:00', batasAman: 70, batasBonus: 100 };
 let wspInited = false;
 let wspStream = null;
 let wspCapturedDataUrl = null;
@@ -7386,6 +7918,7 @@ function renderAbsensiRoleSwitch(){
   if(!el) return;
   el.innerHTML = `
     <button class="${wspState.role==='karyawan'?'active':''}" onclick="wspSetRole('karyawan')">KARYAWAN</button>
+    <button class="${wspState.role==='papan'?'active':''}" onclick="wspSetRole('papan')">PAPAN EVALUASI</button>
     <button class="${wspState.role==='owner'?'active':''}" onclick="wspSetRole('owner')">OWNER / ADMIN</button>
   `;
 }
@@ -7406,6 +7939,8 @@ function renderAbsensiCore(){
   }
   if(wspState.role==='karyawan'){
     app.innerHTML = renderKaryawanView();
+  } else if(wspState.role==='papan'){
+    app.innerHTML = renderPapanEvaluasi();
   } else {
     app.innerHTML = wspIsOwnerAuthed() ? renderOwnerView() : renderOwnerLogin();
   }
@@ -8943,28 +9478,39 @@ function wspOpenMarketingDetail(employeeId){
 }
 
 /* ===================== DASHBOARD KPI KARYAWAN (terhubung otomatis) ===================== */
-function renderOwnerKpiBoard(){
-  const month = wspState.kpiMonth;
+/* ---------- Skor KPI & lampu indikator (dipakai Papan Evaluasi + dashboard Owner) ----------
+   Merah  = skor di bawah "batas aman"            -> di bawah target
+   Kuning = skor >= batas aman, < batas bonus     -> gaji pokok aman, bonus belum terbuka
+   Hijau  = skor >= batas bonus                   -> bonus over-target cair
+   Batas bisa diubah Owner di tab "Pengaturan KPI & Jam" (default 70% dan 100%). */
+function wspTrafficLimits(){
+  let aman = Number(wspSettings.batasAman); if(!(aman>0)) aman = 70;
+  let bonus = Number(wspSettings.batasBonus); if(!(bonus>0)) bonus = 100;
+  if(aman > bonus){ const t = aman; aman = bonus; bonus = t; }
+  return { aman, bonus };
+}
+function wspTrafficLevel(scorePct){
+  const L = wspTrafficLimits();
+  if(scorePct >= L.bonus) return 'hijau';
+  if(scorePct >= L.aman) return 'kuning';
+  return 'merah';
+}
+function wspKpiRows(month){
   const workingDays = wspWorkingDaysInMonth(month);
   const kTarget = Number(wspSettings.kontakTarget) || 10;
   const eTarget = Number(wspSettings.eventTarget) || 10;
   const activeEmployees = wspEmployeesCache.filter(e=>e.active!==false);
   const monthAttendance = wspAttendanceCache.filter(a=>a.date && a.date.startsWith(month));
-  const monthMarketing = wspMarketingCache.filter(m=>m.date && m.date.startsWith(month));
-
   const rows = activeEmployees.map(e=>{
     let scorePct, detail, metricLabel;
     if(e.division === 'marketing'){
       const mt = wspMonthTotals(e.id, month);
-      const recs = {length: mt.lapor};
-      const totalKontak = mt.kontak;
-      const totalEvent = mt.event;
       const targetKontak = workingDays * kTarget;
       const targetEvent = workingDays * eTarget;
-      const pctK = targetKontak ? (totalKontak/targetKontak)*100 : 0;
-      const pctE = targetEvent ? (totalEvent/targetEvent)*100 : 0;
+      const pctK = targetKontak ? (mt.kontak/targetKontak)*100 : 0;
+      const pctE = targetEvent ? (mt.event/targetEvent)*100 : 0;
       scorePct = Math.round((pctK+pctE)/2);
-      detail = `Kontak ${totalKontak}/${targetKontak} · Event ${totalEvent}/${targetEvent} · ${recs.length}/${workingDays} hari lapor`;
+      detail = `Kontak ${mt.kontak}/${targetKontak} · Event ${mt.event}/${targetEvent} · ${mt.lapor}/${workingDays} hari lapor`;
       metricLabel = 'Progress Marketing';
     } else {
       const count = monthAttendance.filter(a=>a.employeeId===e.id).length;
@@ -8972,14 +9518,82 @@ function renderOwnerKpiBoard(){
       detail = `Hadir ${count}/${workingDays} hari kerja`;
       metricLabel = 'Kedisiplinan Absensi';
     }
-    let statusClass, statusLabel;
-    if(scorePct >= 100){ statusClass='tercapai'; statusLabel='TERCAPAI'; }
-    else if(scorePct >= 70){ statusClass='proses'; statusLabel='PROSES'; }
-    else { statusClass='kurang'; statusLabel='PERLU PERHATIAN'; }
-    return { emp:e, scorePct, detail, metricLabel, statusClass, statusLabel };
+    const level = wspTrafficLevel(scorePct);
+    const statusClass = level==='hijau' ? 'tercapai' : level==='kuning' ? 'proses' : 'kurang';
+    const statusLabel = level==='hijau' ? 'TERCAPAI' : level==='kuning' ? 'PROSES' : 'PERLU PERHATIAN';
+    return { emp:e, scorePct, detail, metricLabel, statusClass, statusLabel, level };
   });
-
   rows.sort((a,b)=>b.scorePct-a.scorePct);
+  return rows;
+}
+
+/* ---------- PAPAN EVALUASI SABTUAN: tampilan terbuka untuk seluruh tim ----------
+   Hanya menampilkan persentase pencapaian + warna status. Tidak menampilkan nominal gaji/bonus. */
+const WSP_TL_TEXT = {
+  merah:  { t:'DI BAWAH TARGET',        s:'Ayo kejar target' },
+  kuning: { t:'AMAN · GAJI POKOK',      s:'Bonus belum terbuka' },
+  hijau:  { t:'BONUS OVER-TARGET CAIR', s:'Target terlampaui' }
+};
+function wspPapanFullscreen(){
+  const el = document.getElementById('absensiApp');
+  if(!el) return;
+  try{
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else if(el.requestFullscreen){ el.requestFullscreen(); }
+    else { wspToast('Browser ini tidak mendukung layar penuh.'); }
+  }catch(e){ console.warn('fullscreen', e); }
+}
+function renderPapanEvaluasi(){
+  const month = wspState.kpiMonth;
+  const rows = wspKpiRows(month);
+  const L = wspTrafficLimits();
+  const cnt = lv => rows.filter(r=>r.level===lv).length;
+  const cards = rows.map(r=>{
+    const tx = WSP_TL_TEXT[r.level];
+    return `
+    <div class="tl-card tl-${r.level}">
+      <div class="tl-dot"></div>
+      <div class="tl-main">
+        <div><span class="tl-name">${escapeHtml(r.emp.name)}</span><span class="tl-div">${r.emp.division==='marketing'?'Marketing':'Umum'}</span></div>
+        <div class="tl-detail">${r.metricLabel} · ${r.detail}</div>
+        <div class="tl-bar"><div style="width:${Math.min(r.scorePct,100)}%"></div></div>
+      </div>
+      <div class="tl-score"><b>${r.scorePct}%</b><span>${tx.t}</span></div>
+    </div>`;
+  }).join('');
+  return `
+    <div class="ab-card">
+      <div class="tl-head">
+        <div>
+          <h2>Papan Evaluasi Sabtuan</h2>
+          <div class="sub" style="font-size:13px;color:var(--ab-muted);">Progress ${wspMonthLabel(month)} · terhitung otomatis &amp; realtime dari laporan harian.</div>
+        </div>
+        <div class="tl-tools">
+          <div><label>Bulan</label><input type="month" value="${month}" onchange="wspChangeKpiMonth(this.value)"></div>
+          <button class="btn" onclick="wspPapanFullscreen()">Layar Penuh</button>
+        </div>
+      </div>
+      <div class="tl-legend">
+        <span class="l-merah"><i></i>Merah: di bawah ${L.aman}% (di bawah target)</span>
+        <span class="l-kuning"><i></i>Kuning: ${L.aman}–${L.bonus>L.aman?L.bonus-1:L.bonus}% (batas aman gaji pokok)</span>
+        <span class="l-hijau"><i></i>Hijau: ${L.bonus}% ke atas (bonus over-target cair)</span>
+      </div>
+      <div class="tl-sum">
+        <div class="tl-box b-hijau"><b>${cnt('hijau')}</b><span>Bonus over-target</span></div>
+        <div class="tl-box b-kuning"><b>${cnt('kuning')}</b><span>Aman gaji pokok</span></div>
+        <div class="tl-box b-merah"><b>${cnt('merah')}</b><span>Di bawah target</span></div>
+      </div>
+      <div class="tl-list">${cards || '<div class="ab-empty">Belum ada data karyawan untuk bulan ini.</div>'}</div>
+      <div class="ab-note">Skor Marketing = rata-rata pencapaian target kontak &amp; event. Skor divisi lain = kehadiran dibanding hari kerja. Batas warna diatur Owner di tab Pengaturan KPI &amp; Jam.</div>
+    </div>`;
+}
+
+function renderOwnerKpiBoard(){
+  const month = wspState.kpiMonth;
+  const workingDays = wspWorkingDaysInMonth(month);
+  const kTarget = Number(wspSettings.kontakTarget) || 10;
+  const eTarget = Number(wspSettings.eventTarget) || 10;
+  const rows = wspKpiRows(month);
 
   const totalKaryawan = rows.length;
   const avgScore = totalKaryawan ? Math.round(rows.reduce((s,r)=>s+r.scorePct,0)/totalKaryawan) : 0;
@@ -9058,6 +9672,16 @@ function renderOwnerKpi(){
           <input type="time" id="wspCfgJamSelesai" value="${wspSettings.jamSelesai || '17:00'}">
         </div>
       </div>
+      <div class="ab-row2">
+        <div>
+          <label>Batas Aman Gaji Pokok (% skor) — di bawah ini = MERAH</label>
+          <input type="number" id="wspCfgAman" min="1" max="200" value="${wspTrafficLimits().aman}">
+        </div>
+        <div>
+          <label>Batas Bonus Over-Target (% skor) — mulai angka ini = HIJAU</label>
+          <input type="number" id="wspCfgBonus" min="1" max="300" value="${wspTrafficLimits().bonus}">
+        </div>
+      </div>
       <div id="wspCfgStatus" style="font-size:12px;color:var(--ab-green);margin-top:8px;"></div>
       <button class="btn block" style="margin-top:14px;" onclick="wspSaveKpiForm()">Simpan Pengaturan</button>
       <div class="ab-note">Absen hanya bisa dilakukan Senin–Sabtu pada rentang jam di atas. Hari Minggu otomatis libur untuk semua karyawan.</div>
@@ -9070,8 +9694,11 @@ async function wspSaveKpiForm(){
     eventTarget: Number(document.getElementById('wspCfgEvent').value) || 10,
     jamMulai: document.getElementById('wspCfgJamMulai').value || '07:00',
     jamSelesai: document.getElementById('wspCfgJamSelesai').value || '17:00',
+    batasAman: Number(document.getElementById('wspCfgAman').value) || 70,
+    batasBonus: Number(document.getElementById('wspCfgBonus').value) || 100,
     updatedAt: new Date().toISOString()
   };
+  if(cfg.batasAman > cfg.batasBonus){ const t = cfg.batasAman; cfg.batasAman = cfg.batasBonus; cfg.batasBonus = t; }
   const ok = await wspSaveSettings(cfg);
   const statusEl = document.getElementById('wspCfgStatus');
   if(ok){
@@ -9578,10 +10205,12 @@ function showMode(mode){
   }
   if(mode==='keuangan'){
     initKeuangan();
+    setTimeout(()=>{ try{ renderKgChart(); }catch(e){ console.error(e); } }, 80);
   }
   if(mode==='finance'){
     initKeuangan();      // memakai data nota & pengeluaran yang sama (realtime)
     renderKgLaba();
+    setTimeout(()=>{ try{ renderKgLaba(); }catch(e){ console.error(e); } }, 80);
   }
   if(mode==='absensi'){
     initAbsensi();
@@ -11164,14 +11793,47 @@ function authRegSave(arr){
 }
 let plTokens = authRegLoad();
 function authIsRevoked(body){
-  return AUTH_REVOKED.indexOf(body) >= 0 || plTokens.some(t=>t.id===body && t.revoked);
+  return AUTH_REVOKED.indexOf(body) >= 0 || plTokens.some(t=>t.id===body && (t.revoked || t.deleted));
 }
 
 /* ---------- Sesi & gerbang login ---------- */
 function authIsReseller(){ return !!authSession && authSession.role==='reseller'; }
 function authIsOwner(){ return !!authSession && authSession.role==='owner'; }
-function authSave(){ try{ localStorage.setItem(AUTH_KEY, JSON.stringify(authSession)); }catch(e){} }
-function authClear(){ try{ localStorage.removeItem(AUTH_KEY); localStorage.removeItem('tenx_wsp_owner_email'); }catch(e){} }
+/* Sesi disimpan di 3 tempat sekaligus (localStorage + cookie 10 tahun + IndexedDB) supaya tidak hilang
+   walau salah satunya dibersihkan browser (mis. Safari iPhone menghapus localStorage setelah ~7 hari tak dibuka).
+   Sesi baru dihapus kalau pengguna Keluar manual atau kodenya dinonaktifkan/dihapus admin. */
+const AUTH_COOKIE = 'tenx_sess';
+function authCookieSet(v){ try{ document.cookie = AUTH_COOKIE+'='+encodeURIComponent(v)+'; max-age=315360000; path=/; SameSite=Lax'+(location.protocol==='https:'?'; Secure':''); }catch(e){} }
+function authCookieGet(){ try{ const m = document.cookie.match(new RegExp('(?:^|; )'+AUTH_COOKIE+'=([^;]*)')); return m ? decodeURIComponent(m[1]) : ''; }catch(e){ return ''; } }
+function authCookieDel(){ try{ document.cookie = AUTH_COOKIE+'=; max-age=0; path=/; SameSite=Lax'; }catch(e){} }
+function authIdb(){
+  return new Promise((res, rej)=>{
+    try{
+      const rq = indexedDB.open('tenx_auth', 1);
+      rq.onupgradeneeded = ()=>rq.result.createObjectStore('kv');
+      rq.onsuccess = ()=>res(rq.result); rq.onerror = ()=>rej(rq.error);
+    }catch(e){ rej(e); }
+  });
+}
+function authIdbSet(v){ return authIdb().then(d=>new Promise(r=>{ const t=d.transaction('kv','readwrite'); t.objectStore('kv').put(v, AUTH_KEY); t.oncomplete=()=>r(true); t.onerror=()=>r(false); })).catch(()=>false); }
+function authIdbGet(){ return authIdb().then(d=>new Promise(r=>{ const q=d.transaction('kv').objectStore('kv').get(AUTH_KEY); q.onsuccess=()=>r(q.result||''); q.onerror=()=>r(''); })).catch(()=>''); }
+function authIdbDel(){ return authIdb().then(d=>new Promise(r=>{ const t=d.transaction('kv','readwrite'); t.objectStore('kv').delete(AUTH_KEY); t.oncomplete=()=>r(true); t.onerror=()=>r(false); })).catch(()=>false); }
+function authSave(){
+  const raw = JSON.stringify(authSession);
+  try{ localStorage.setItem(AUTH_KEY, raw); }catch(e){}
+  authCookieSet(raw);
+  authIdbSet(raw);
+  try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}   // minta browser tidak menghapus sesi otomatis
+}
+function authClear(){
+  try{ localStorage.removeItem(AUTH_KEY); localStorage.removeItem('tenx_wsp_owner_email'); }catch(e){}
+  authCookieDel();
+  return authIdbDel();
+}
+function authClearThenReload(){
+  let done = false; const go = ()=>{ if(done) return; done = true; location.reload(); };
+  authClear().then(go, go); setTimeout(go, 1500);
+}
 function authApply(){
   document.body.classList.toggle('tx-locked', !authSession);
   document.body.classList.toggle('tx-reseller', authIsReseller());
@@ -11183,6 +11845,8 @@ function authApply(){
 function authToggleOwner(){
   const own = document.getElementById('agOwner'), tok = document.getElementById('agToken');
   const showOwner = own.style.display==='none';
+  const reg = document.getElementById('agReg'); if(reg) reg.style.display = 'none';
+  const ok = document.getElementById('authOk'); if(ok) ok.textContent = '';
   own.style.display = showOwner ? 'block' : 'none'; tok.style.display = showOwner ? 'none' : 'block';
   document.getElementById('agToggle').textContent = showOwner ? 'Kembali ke login kode akses' : 'Login Owner / Admin';
   document.getElementById('agSub').textContent = showOwner ? 'Masuk dengan akun Owner / Admin.' : 'Masukkan kode akses dari admin untuk melanjutkan.';
@@ -11190,9 +11854,10 @@ function authToggleOwner(){
 }
 function authEnter(){
   authApply();
+  try{ authWatch(); }catch(e){ console.warn('authWatch', e); }
   showMode(authIsReseller() ? 'pricelist' : 'landing');
 }
-function authLoginToken(){
+async function authLoginToken(){
   const err = document.getElementById('authErr');
   err.textContent = '';
   const raw = (document.getElementById('agCode').value || '').trim();
@@ -11200,7 +11865,20 @@ function authLoginToken(){
   const p = authParse(raw);
   if(!p){ err.textContent = 'Kode akses tidak valid. Periksa penulisannya atau minta kode baru ke admin.'; return; }
   if(authIsRevoked(p.body)){ err.textContent = 'Kode akses ini sudah dicabut oleh admin.'; return; }
-  const reg = plTokens.find(t=>t.id===p.body);
+  const btn = document.getElementById('agBtn');
+  if(btn){ btn.disabled = true; btn.textContent = 'Memeriksa…'; }
+  let reg = plTokens.find(t=>t.id===p.body);
+  if(typeof CONFIG_READY!=='undefined' && CONFIG_READY && db){
+    try{
+      const doc = await Promise.race([
+        db.collection('authTokens').doc(p.body).get(),
+        new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')), 7000))
+      ]);
+      if(doc.exists){ reg = doc.data(); authRegUpsert(reg); }
+    }catch(e){ console.warn('Registri kode tidak terjangkau, memakai tanda tangan kode saja', e); }
+  }
+  if(btn){ btn.disabled = false; btn.textContent = 'Masuk'; }
+  if(reg && (reg.revoked || reg.deleted)){ err.textContent = 'Kode akses ini sudah dicabut oleh admin.'; return; }
   authSession = { role:p.role, nama: reg ? reg.nama : (AUTH_ROLE_LABEL[p.role]+' '+p.body.slice(1,5)), code:p.canon };
   authSave();
   try{ localStorage.removeItem('tenx_wsp_owner_email'); }catch(e){}
@@ -11220,17 +11898,45 @@ function authLoginOwner(){
   err.textContent = '';
   authEnter();
 }
+/* Keluar TIDAK menghapus kode/akses. Akses tetap tersimpan di perangkat ini, jadi masuk lagi cukup satu ketukan
+   ("Lanjut sebagai ..."). Akses hanya berakhir kalau admin menonaktifkan/menghapus kodenya,
+   atau pengguna sendiri memilih "Bukan saya / pakai kode lain". */
+let authPending = null;
 function authLogout(){
-  if(!confirm('Keluar dari akun ini?')) return;
-  authClear(); location.reload();
+  if(!confirm('Keluar dari akun ini?\nKode Anda tetap tersimpan, jadi bisa masuk lagi dengan satu ketukan.')) return;
+  if(authSession){
+    authSession.out = true; authSave();
+    try{ sessionStorage.setItem('tenx_auth_msg', ''); }catch(e){}
+  }
+  location.reload();
+}
+function authAdoptPending(){
+  if(authSession && authSession.out){ authPending = authSession; authSession = null; authShowQuick(); }
+}
+function authShowQuick(){
+  const box = document.getElementById('agQuick'); if(!box || !authPending) return;
+  document.getElementById('agQuickName').textContent = (authPending.nama || '') + ' · ' + (AUTH_ROLE_LABEL[authPending.role] || '');
+  box.style.display = 'block';
+}
+function authQuickEnter(){
+  if(!authPending) return;
+  authSession = authPending; authPending = null; delete authSession.out;
+  authSave(); document.getElementById('agQuick').style.display = 'none';
+  if(authSession.role !== 'owner'){ try{ localStorage.removeItem('tenx_wsp_owner_email'); }catch(e){} wspState.ownerEmail = ''; }
+  else { wspState.ownerEmail = authSession.email || ''; try{ localStorage.setItem('tenx_wsp_owner_email', authSession.email||''); }catch(e){} }
+  authEnter();
+}
+function authQuickForget(){
+  if(!confirm('Hapus kode yang tersimpan di perangkat ini? Anda perlu memasukkan kode lagi untuk masuk.')) return;
+  authPending = null; authClear(); document.getElementById('agQuick').style.display = 'none';
 }
 function authKick(msg){
   try{ sessionStorage.setItem('tenx_auth_msg', msg); }catch(e){}
-  authClear(); location.reload();
+  authClearThenReload();
 }
-function authInit(){
+/* Periksa sesi yang dimuat (dari penyimpanan mana pun). Mengembalikan pesan bila sesi ditolak. */
+function authCheckLoaded(){
   let msg = '';
-  try{ authSession = JSON.parse(localStorage.getItem(AUTH_KEY)||'null'); }catch(e){ authSession = null; }
   if(authSession){
     if(authSession.role==='owner'){
       const email = String(authSession.email||'').toLowerCase();
@@ -11243,56 +11949,246 @@ function authInit(){
       else if(authIsRevoked(p.body)){ authSession = null; authClear(); msg = 'Akses Anda sudah dicabut oleh admin. Hubungi admin untuk kode baru.'; }
     }
   }
+  return msg;
+}
+function authInit(){
+  let msg = '';
+  try{ authSession = JSON.parse(localStorage.getItem(AUTH_KEY)||'null'); }catch(e){ authSession = null; }
+  if(!authSession){ try{ authSession = JSON.parse(authCookieGet()||'null'); }catch(e){ authSession = null; } }   // cadangan: cookie
+  msg = authCheckLoaded();
+  if(authSession && !msg) authSave();   // salin ke semua penyimpanan
+  authAdoptPending();
+  if(!authSession && !msg){
+    // cadangan terakhir: IndexedDB (async). Kalau ada sesi tersimpan, pulihkan otomatis tanpa minta kode lagi.
+    authIdbGet().then(raw=>{
+      if(!raw || authSession) return;
+      try{ authSession = JSON.parse(raw); }catch(e){ authSession = null; }
+      const m2 = authCheckLoaded();
+      if(authSession && authSession.out){ authSave(); authAdoptPending(); }
+      else if(authSession){ authSave(); authEnter(); }
+      else if(m2){ const e = document.getElementById('authErr'); if(e) e.textContent = m2; }
+    });
+  }
   try{ msg = msg || sessionStorage.getItem('tenx_auth_msg') || ''; sessionStorage.removeItem('tenx_auth_msg'); }catch(e){}
   if(msg){ const e = document.getElementById('authErr'); if(e) e.textContent = msg; }
   authApply();
   if(authSession) authEnter();
+  // Tautan akses dari admin: https://.../#akses=TNX-XXXXX-XXXXX-XXXXX  -> otomatis masuk, lalu tersimpan permanen di perangkat ini
+  let linkCode = '';
+  try{ const m = (location.hash||'').match(/[#&]akses=([A-Za-z0-9\-]+)/); if(m) linkCode = m[1]; }catch(e){}
+  if(linkCode){
+    try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
+    if(!authSession){ const inp = document.getElementById('agCode'); if(inp){ inp.value = linkCode; authLoginToken(); } }
+  }
+}
+
+/* ---------- Registri kode akses di Firestore (koleksi authTokens) ----------
+   Daftar kode, nama, no. WA, dan status dicabut/dihapus tersimpan di server, jadi:
+   - sama di semua perangkat Owner/Admin
+   - pencabutan/penghapusan langsung berlaku di semua perangkat (tanpa upload file baru)
+   - sesi login yang sudah masuk tersimpan permanen di perangkat itu sampai kode dicabut manual.        */
+let authRegUnsub = null, authReqUnsub = null, plRequests = [];
+function authRegUpsert(rec){
+  if(!rec || !rec.id) return;
+  const i = plTokens.findIndex(t=>t.id===rec.id);
+  if(i >= 0) plTokens[i] = Object.assign({}, plTokens[i], rec); else plTokens.push(rec);
+}
+function authRegPush(rec){
+  if(typeof CONFIG_READY==='undefined' || !CONFIG_READY || !db) return Promise.resolve(false);
+  return db.collection('authTokens').doc(rec.id).set(rec).then(()=>true).catch(e=>{ console.error('authTokens set', e); return false; });
+}
+async function authRegPushMany(recs){
+  if(typeof CONFIG_READY==='undefined' || !CONFIG_READY || !db) return false;
+  try{
+    for(let i = 0; i < recs.length; i += 400){
+      const b = db.batch();
+      recs.slice(i, i+400).forEach(r=>b.set(db.collection('authTokens').doc(r.id), r));
+      await b.commit();
+    }
+    return true;
+  }catch(e){ console.error('authTokens batch', e); return false; }
+}
+function authCheckSelf(){
+  if(!authSession || authSession.role==='owner') return;
+  const p = authParse(authSession.code); if(!p) return;
+  if(authIsRevoked(p.body)){ authKick('Akses Anda sudah dicabut oleh admin. Hubungi admin untuk kode baru.'); return; }
+  const reg = plTokens.find(t=>t.id===p.body);
+  if(reg && reg.nama && reg.nama !== authSession.nama){ authSession.nama = reg.nama; authSave(); authApply(); }
+}
+function authWatch(){
+  if(typeof CONFIG_READY==='undefined' || !CONFIG_READY || !db || !authSession) return;
+  if(authSession.role === 'owner'){
+    if(authRegUnsub) return;
+    authRegUnsub = db.collection('authTokens').onSnapshot(snap=>{
+      const remote = snap.docs.map(d=>d.data()).filter(x=>x && x.id);
+      const ids = new Set(remote.map(x=>x.id));
+      const localOnly = plTokens.filter(t=>t && t.id && !ids.has(t.id));
+      if(localOnly.length) authRegPushMany(localOnly);          // migrasi: kode lama yang baru ada di perangkat ini
+      plTokens = remote.concat(localOnly);
+      authRegSave(plTokens);
+      if(typeof currentMode!=='undefined' && currentMode==='pricelist' && typeof renderPriceList==='function') renderPriceList();
+    }, e=>console.error('authTokens realtime', e));
+    if(!authReqUnsub){
+      authReqUnsub = db.collection('authRequests').onSnapshot(snap=>{
+        plRequests = snap.docs.map(d=>d.data()).filter(x=>x && x.id && x.status!=='dibuat').sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+        if(typeof currentMode!=='undefined' && currentMode==='pricelist' && typeof renderPriceList==='function') renderPriceList();
+      }, e=>console.error('authRequests realtime', e));
+    }
+  } else {
+    if(authRegUnsub) return;
+    const p = authParse(authSession.code); if(!p) return;
+    authRegUnsub = db.collection('authTokens').doc(p.body).onSnapshot(doc=>{
+      if(doc.exists){ authRegUpsert(doc.data()); authCheckSelf(); }
+    }, e=>console.error('authTokens self', e));
+  }
+}
+
+/* ---------- Pendaftaran reseller (nama + no. WA wajib) ---------- */
+function authValidWa(raw){
+  const n = wspNormalizePhone(raw);
+  return /^08\d{8,12}$/.test(n) ? n : '';
+}
+function authToggleReg(){
+  const reg = document.getElementById('agReg'), tok = document.getElementById('agToken'), own = document.getElementById('agOwner');
+  const show = reg.style.display === 'none';
+  reg.style.display = show ? 'block' : 'none';
+  tok.style.display = show ? 'none' : 'block'; own.style.display = 'none';
+  document.getElementById('agToggle').textContent = 'Login Owner / Admin';
+  document.getElementById('agRegToggle').textContent = show ? 'Sudah punya kode? Masuk' : 'Belum punya kode? Daftar sebagai reseller';
+  document.getElementById('agSub').textContent = show ? 'Isi nama dan nomor WhatsApp. Kode akses akan dikirim admin lewat WhatsApp.' : 'Masukkan kode akses dari admin untuk melanjutkan.';
+  document.getElementById('authErr').textContent = ''; document.getElementById('authOk').textContent = '';
+}
+async function authRegisterSubmit(){
+  const err = document.getElementById('authErr'), ok = document.getElementById('authOk');
+  err.textContent = ''; ok.textContent = '';
+  const nama = (document.getElementById('agRegNama').value || '').trim();
+  const wa = authValidWa(document.getElementById('agRegWa').value);
+  if(!nama){ err.textContent = 'Nama wajib diisi.'; return; }
+  if(!wa){ err.textContent = 'No. WhatsApp wajib diisi dengan benar (contoh 0812xxxxxxxx).'; return; }
+  if(typeof CONFIG_READY==='undefined' || !CONFIG_READY || !db){ err.textContent = 'Pendaftaran online belum aktif. Hubungi admin langsung.'; return; }
+  const btn = document.getElementById('agRegBtn'); btn.disabled = true; btn.textContent = 'Mengirim…';
+  try{
+    const ref = db.collection('authRequests').doc(wa);
+    const cur = await ref.get();
+    if(cur.exists && cur.data().status === 'dibuat'){
+      // sudah pernah dibuatkan kode: teruskan sebagai permintaan KIRIM ULANG ke admin
+      await ref.set(Object.assign({}, cur.data(), { nama:nama.slice(0,80), status:'baru', resend:true, createdAt:Date.now() }));
+      ok.textContent = 'Nomor ini sudah terdaftar. Permintaan kirim ulang kode sudah diteruskan ke admin ✓ Cek WhatsApp ' + wa + ' sebentar lagi.';
+      document.getElementById('agRegNama').value = ''; document.getElementById('agRegWa').value = '';
+    } else {
+      await ref.set({ id:wa, nama:nama.slice(0,80), wa:wa, role:'reseller', status:'baru', createdAt:Date.now() });
+      ok.textContent = 'Pendaftaran terkirim ✓ Admin akan mengirim kode akses ke WhatsApp ' + wa + '.';
+      document.getElementById('agRegNama').value = ''; document.getElementById('agRegWa').value = '';
+    }
+  }catch(e){ console.error(e); err.textContent = 'Gagal mengirim pendaftaran: ' + (e.message||e); }
+  btn.disabled = false; btn.textContent = 'Kirim Pendaftaran';
 }
 
 /* ---------- Kelola kode akses (dashboard Owner) ---------- */
-plState.tk = { nama:'', role:'reseller', msg:'', err:'', bulk:'', bulkOpen:false, q:'', f:'all', limit:30 };
+plState.tk = { nama:'', wa:'', role:'reseller', msg:'', err:'', bulk:'', bulkOpen:false, q:'', f:'all', limit:30 };
 function plTokField(k, v){ plState.tk[k] = v; }
-function plTokNew(nama, role){
+function plTokNew(nama, role, wa){
   const used = new Set(plTokens.map(x=>x.id));
   let m; do{ m = authMake(role); }while(used.has(m.body));
-  return { id:m.body, kode:m.display, nama:String(nama).slice(0,80), role:role, createdAt:Date.now(), revoked:false };
+  return { id:m.body, kode:m.display, nama:String(nama).slice(0,80), wa:wa||'', role:role, createdAt:Date.now(), revoked:false };
+}
+function plTokLink(tk){
+  const p = authParse(tk.kode);
+  const base = /^https?:/.test(location.protocol) ? location.href.split('#')[0].split('?')[0] : '';
+  return { base:base, link: (base && p) ? base + '#akses=' + p.canon : '' };
+}
+function plTokMsg(tk){
+  const u = plTokLink(tk);
+  return 'Halo '+tk.nama+', ini kode akses TENX APPAREL ('+(AUTH_ROLE_LABEL[tk.role]||tk.role)+'):\n\n'+tk.kode+'\n\n'+
+    (u.link ? 'Cara masuk paling mudah: ketuk tautan ini, langsung masuk:\n'+u.link+'\n\nAtau buka '+u.base+' lalu masukkan kode di atas.' : 'Buka aplikasi TENX lalu masukkan kode di atas.')+
+    '\n\nSetelah masuk, akses tersimpan di perangkat itu sampai admin menonaktifkannya. Di HP/laptop lain, cukup masuk sekali lagi dengan kode yang sama. Jangan dibagikan ke orang lain.';
+}
+function plTokWa(id){
+  const tk = plTokens.find(x=>x.id===id); if(!tk) return;
+  const num = wspPhoneForWhatsApp(tk.wa||'');
+  if(!num){ plState.tk.err = 'Kode ini belum punya nomor WhatsApp.'; plState.tk.msg = ''; renderPriceList(); return; }
+  window.open('https://wa.me/'+num+'?text='+encodeURIComponent(plTokMsg(tk)), '_blank');
 }
 function plTokCreate(){
   const t = plState.tk; t.err = ''; t.msg = '';
   const nama = (t.nama||'').trim();
   if(!nama){ t.err = 'Nama pemilik kode wajib diisi.'; renderPriceList(); return; }
-  const rec = plTokNew(nama, t.role);
+  let wa = '';
+  if(t.role==='reseller'){
+    wa = authValidWa(t.wa);
+    if(!wa){ t.err = 'No. WhatsApp reseller wajib diisi dengan benar (contoh 0812xxxxxxxx) supaya kode bisa langsung dikirim.'; renderPriceList(); return; }
+  } else if((t.wa||'').trim()){
+    wa = authValidWa(t.wa);
+    if(!wa){ t.err = 'Format No. WhatsApp tidak valid (contoh 0812xxxxxxxx).'; renderPriceList(); return; }
+  }
+  const rec = plTokNew(nama, t.role, wa);
   plTokens.unshift(rec);
-  if(authRegSave(plTokens)){ t.nama = ''; t.msg = 'Kode dibuat untuk '+rec.nama+': '+rec.kode; }
-  else plTokens.shift();
+  if(authRegSave(plTokens)){
+    t.nama = ''; t.wa = ''; t.msg = 'Kode dibuat untuk '+rec.nama+': '+rec.kode+(wa?' — klik "Kirim WA" untuk mengirimnya ke '+wa+'.':'');
+    authRegPush(rec).then(ok=>{ if(!ok){ plState.tk.err = 'Kode tersimpan di perangkat ini, tapi gagal disimpan ke server (cek koneksi). Buka halaman ini lagi saat online.'; renderPriceList(); } });
+  } else plTokens.shift();
   renderPriceList();
 }
 function plTokBulk(){
   const t = plState.tk; t.err = ''; t.msg = '';
-  const names = (t.bulk||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
-  if(!names.length){ t.err = 'Isi daftar nama dulu (satu nama per baris).'; renderPriceList(); return; }
-  if(names.length > 500){ t.err = 'Maksimal 500 nama per proses. Bagi jadi beberapa kali.'; renderPriceList(); return; }
-  if(!confirm('Buat '+names.length+' kode akses ('+(AUTH_ROLE_LABEL[t.role]||t.role)+')?')) return;
+  const lines = (t.bulk||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  if(!lines.length){ t.err = 'Isi daftar dulu (satu orang per baris: Nama | No. WhatsApp).'; renderPriceList(); return; }
+  if(lines.length > 500){ t.err = 'Maksimal 500 baris per proses. Bagi jadi beberapa kali.'; renderPriceList(); return; }
+  const items = [];
+  for(let i = 0; i < lines.length; i++){
+    const ln = lines[i];
+    const m = ln.match(/^(.*?)\s*[\t|;,]\s*(\+?\d[\d\s\-\.]{7,})\s*$/) || ln.match(/^(.*\S)\s+(\+?\d[\d\-\.]{8,})\s*$/);
+    const nama = (m ? m[1] : ln).trim();
+    const wa = m ? authValidWa(m[2]) : '';
+    if(!nama){ t.err = 'Baris '+(i+1)+': nama kosong.'; renderPriceList(); return; }
+    if(t.role==='reseller' && !wa){ t.err = 'Baris '+(i+1)+' ("'+ln.slice(0,40)+'"): No. WhatsApp wajib untuk reseller. Format: Nama | 0812xxxxxxxx'; renderPriceList(); return; }
+    items.push({ nama, wa });
+  }
+  if(!confirm('Buat '+items.length+' kode akses ('+(AUTH_ROLE_LABEL[t.role]||t.role)+')?')) return;
   const before = plTokens.slice();
-  names.forEach(nm=>{ plTokens.unshift(plTokNew(nm, t.role)); });
+  const created = [];
+  items.forEach(it=>{ const r = plTokNew(it.nama, t.role, it.wa); created.push(r); plTokens.unshift(r); });
   if(authRegSave(plTokens)){
-    plState.tk = Object.assign({}, t, { bulk:'', bulkOpen:false, f:'all', q:'', limit:30, err:'', msg:names.length+' kode akses berhasil dibuat. Klik "Ekspor CSV" untuk mengunduh nama + kodenya.' });
+    plState.tk = Object.assign({}, t, { bulk:'', bulkOpen:false, f:'all', q:'', limit:30, err:'', msg:items.length+' kode akses berhasil dibuat. Kirim ke WhatsApp masing-masing lewat tombol "Kirim WA" di daftar.' });
+    authRegPushMany(created).then(ok=>{ if(!ok){ plState.tk.err = 'Kode tersimpan di perangkat ini, tapi gagal disimpan ke server (cek koneksi).'; renderPriceList(); } });
   } else plTokens = before;
   renderPriceList();
 }
 function plTokToggle(id){
   const tk = plTokens.find(x=>x.id===id); if(!tk) return;
   if(tk.revoked && AUTH_REVOKED.indexOf(id) >= 0){ alert('Kode ini sudah terpasang sebagai "dicabut" di file aplikasi, jadi tidak bisa diaktifkan lagi. Buat kode baru untuk orangnya.'); return; }
-  if(!tk.revoked && !confirm('Cabut kode akses milik "'+tk.nama+'"?')) { renderPriceList(); return; }
+  if(!tk.revoked && !confirm('Nonaktifkan kode akses milik "'+tk.nama+'"? Perangkat yang sedang login dengan kode ini akan otomatis keluar.')) { renderPriceList(); return; }
   tk.revoked = !tk.revoked;
-  authRegSave(plTokens); renderPriceList();
+  tk.revokedAt = tk.revoked ? Date.now() : null;
+  authRegSave(plTokens); authRegPush(tk); renderPriceList();
+}
+function plTokDelete(id){
+  const tk = plTokens.find(x=>x.id===id); if(!tk) return;
+  if(!confirm('HAPUS kode akses milik "'+tk.nama+'"? Kode ini tidak akan bisa dipakai lagi di perangkat mana pun.')) return;
+  tk.deleted = true; tk.revoked = true; tk.revokedAt = Date.now();
+  authRegSave(plTokens); authRegPush(tk); renderPriceList();
+}
+/* Permintaan pendaftaran reseller (dari gerbang login) */
+function plReqCreate(id){
+  const rq = plRequests.find(x=>x.id===id); if(!rq) return;
+  const wa = authValidWa(rq.wa); if(!wa){ alert('Nomor WhatsApp pendaftar tidak valid.'); return; }
+  // kirim ulang: pakai kode lama yang masih aktif; kalau tidak ada, buat kode baru
+  const old = rq.tokenId ? plTokens.find(t=>t.id===rq.tokenId && !t.deleted && !t.revoked) : null;
+  const rec = old || plTokNew(rq.nama, 'reseller', wa);
+  if(!old){ plTokens.unshift(rec); authRegSave(plTokens); authRegPush(rec); }
+  window.open('https://wa.me/'+wspPhoneForWhatsApp(wa)+'?text='+encodeURIComponent(plTokMsg(rec)), '_blank');   // dibuka langsung agar tidak diblokir popup
+  if(typeof CONFIG_READY!=='undefined' && CONFIG_READY && db) db.collection('authRequests').doc(rq.id).set(Object.assign({}, rq, { status:'dibuat', tokenId:rec.id, doneAt:Date.now() })).catch(e=>console.error(e));
+  plState.tk.msg = 'Kode untuk '+rq.nama+' dibuat dan WhatsApp dibuka. Tekan kirim di WhatsApp.'; plState.tk.err = '';
+  renderPriceList();
+}
+function plReqDelete(id){
+  const rq = plRequests.find(x=>x.id===id); if(!rq) return;
+  if(!confirm('Hapus pendaftaran dari "'+rq.nama+'"?')) return;
+  if(typeof CONFIG_READY!=='undefined' && CONFIG_READY && db) db.collection('authRequests').doc(id).delete().catch(e=>console.error(e));
 }
 function plTokCopy(id, full){
   const tk = plTokens.find(x=>x.id===id); if(!tk) return;
-  const url = /^https?:/.test(location.protocol) ? location.href.split('#')[0].split('?')[0] : '';
-  const text = full
-    ? 'Halo '+tk.nama+', ini kode akses TENX APPAREL ('+(AUTH_ROLE_LABEL[tk.role]||tk.role)+'):\n\n'+tk.kode+'\n\n'+(url ? 'Buka '+url+' lalu masukkan kode tersebut.' : 'Buka aplikasi TENX lalu masukkan kode tersebut.')+' Jangan dibagikan ke orang lain.'
-    : tk.kode;
+  const text = full ? plTokMsg(tk) : tk.kode;
   const done = ()=>{ plState.tk.msg = full ? 'Pesan untuk '+tk.nama+' tersalin ✓' : 'Kode tersalin ✓'; renderPriceList(); };
   if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(()=>prompt('Salin manual:', text));
   else prompt('Salin manual:', text);
@@ -11300,10 +12196,11 @@ function plTokCopy(id, full){
 function plTokFiltered(){
   const t = plState.tk, q = (t.q||'').trim().toLowerCase();
   return plTokens.filter(x=>{
+    if(x.deleted) return false;
     if(t.f==='reseller' && x.role!=='reseller') return false;
     if(t.f==='karyawan' && x.role!=='karyawan') return false;
     if(t.f==='off' && !x.revoked) return false;
-    if(q && !(((x.nama||'')+' '+(x.kode||'')).toLowerCase().includes(q))) return false;
+    if(q && !(((x.nama||'')+' '+(x.kode||'')+' '+(x.wa||'')).toLowerCase().includes(q))) return false;
     return true;
   }).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
 }
@@ -11321,8 +12218,8 @@ function plDownload(name, mime, content){
   setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
 }
 function plTokExport(){
-  const rows = [['Nama','Role','Kode','Status','Dibuat']].concat(plTokFiltered().map(x=>[
-    x.nama||'', AUTH_ROLE_LABEL[x.role]||x.role||'', x.kode, x.revoked?'Dicabut':'Aktif', plDateTime(x.createdAt)
+  const rows = [['Nama','No WhatsApp','Role','Kode','Status','Dibuat']].concat(plTokFiltered().map(x=>[
+    x.nama||'', x.wa||'', AUTH_ROLE_LABEL[x.role]||x.role||'', x.kode, x.revoked?'Dicabut':'Aktif', plDateTime(x.createdAt)
   ]));
   plDownload('kode-akses-tenx.csv', 'text/csv;charset=utf-8', '\uFEFF'+rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n'));
 }
@@ -11337,7 +12234,7 @@ function plTokRestore(input){
       let added = 0;
       arr.forEach(x=>{
         if(!x || !x.id || !x.kode || !authParse(x.kode)) return;
-        if(!plTokens.some(t=>t.id===x.id)){ plTokens.push({ id:x.id, kode:x.kode, nama:String(x.nama||'').slice(0,80), role:authParse(x.kode).role, createdAt:x.createdAt||Date.now(), revoked:!!x.revoked }); added++; }
+        if(!plTokens.some(t=>t.id===x.id)){ const rec = { id:x.id, kode:x.kode, nama:String(x.nama||'').slice(0,80), wa:x.wa||'', role:authParse(x.kode).role, createdAt:x.createdAt||Date.now(), revoked:!!x.revoked, deleted:!!x.deleted }; plTokens.push(rec); authRegPush(rec); added++; }
       });
       authRegSave(plTokens);
       plState.tk.msg = added+' kode dipulihkan dari backup.'; plState.tk.err = '';
@@ -11365,35 +12262,49 @@ async function plTokDownloadApp(){
 }
 function plAksesHtml(){
   const t = plState.tk;
-  const total = plTokens.length, revoked = plTokens.filter(x=>x.revoked).length;
+  const live = plTokens.filter(x=>!x.deleted);
+  const total = live.length, revoked = live.filter(x=>x.revoked).length;
+  const online = (typeof CONFIG_READY!=='undefined' && CONFIG_READY && db);
   const pending = plRevokedPending();
-  let h = '<div class="pl-card" id="plTokForm"><h3>Buat Kode Akses</h3>'+
-    '<div style="font-size:13px;color:var(--pl-muted);line-height:1.5;">Kode dibuat di sini dan langsung bisa dipakai login di perangkat mana pun, tanpa Firebase. <b>Reseller</b> hanya bisa membuka Harga Reseller (lihat saja). <b>Karyawan</b> bisa membuka semua menu aplikasi.</div>'+
-    '<div class="pl-2c"><div><label class="pl-l">Role</label><select class="pl-inp" onchange="plTokField(\'role\',this.value)"><option value="reseller" '+(t.role==='reseller'?'selected':'')+'>Reseller</option><option value="karyawan" '+(t.role==='karyawan'?'selected':'')+'>Karyawan</option></select></div><div></div></div>'+
+  const isRs = t.role==='reseller';
+  let h = '';
+  if(plRequests.length){
+    h += '<div class="pl-card"><h3>Pendaftaran Reseller Baru ('+plRequests.length+')</h3><div class="pl-meta" style="margin:0 0 8px;">Mereka mendaftar sendiri lewat halaman login. Klik <b>Buat Kode &amp; Kirim WA</b> untuk membuatkan kode dan langsung mengirimnya ke WhatsApp pendaftar.</div>';
+    plRequests.forEach(rq=>{
+      h += '<div class="pl-tok"><div class="top"><div><b>'+escapeHtml(rq.nama||'-')+'</b><span class="pl-rolebadge reseller">'+escapeHtml(rq.wa||'')+'</span>'+(rq.resend?'<span class="pl-badge hapus">MINTA KIRIM ULANG</span>':'')+'</div></div>'+
+        '<div class="mt">'+(rq.resend?'Minta kirim ulang ':'Mendaftar ')+plDateTime(rq.createdAt)+'</div>'+
+        '<div class="act"><button class="pl-btn sm" onclick="plReqCreate(\''+escapeHtml(rq.id)+'\')">Buat Kode &amp; Kirim WA</button><button class="pl-btn danger sm" onclick="plReqDelete(\''+escapeHtml(rq.id)+'\')">Hapus</button></div></div>';
+    });
+    h += '</div>';
+  }
+  h += '<div class="pl-card" id="plTokForm"><h3>Buat Kode Akses</h3>'+
+    '<div style="font-size:13px;color:var(--pl-muted);line-height:1.5;">Kode tersimpan di server dan berlaku di perangkat mana pun. Setelah masuk, akses tersimpan permanen di perangkat itu sampai kode dinonaktifkan/dihapus manual di sini. <b>Reseller</b> hanya bisa membuka Harga Reseller (lihat saja) dan <b>wajib</b> diisi nama + No. WhatsApp. <b>Karyawan</b> bisa membuka semua menu aplikasi.'+(online?'':' <b style="color:var(--pl-rust);">Firebase belum aktif, jadi daftar kode hanya tersimpan di perangkat ini.</b>')+'</div>'+
+    '<div class="pl-2c"><div><label class="pl-l">Role</label><select class="pl-inp" onchange="plTokField(\'role\',this.value);renderPriceList();"><option value="reseller" '+(isRs?'selected':'')+'>Reseller</option><option value="karyawan" '+(!isRs?'selected':'')+'>Karyawan</option></select></div><div></div></div>'+
     '<div class="pl-tabs" style="margin:14px 0 0;"><button class="'+(!t.bulkOpen?'active':'')+'" onclick="'+(t.bulkOpen?'plTokBulkToggle()':'')+'">Satu per satu</button><button class="'+(t.bulkOpen?'active':'')+'" onclick="'+(t.bulkOpen?'':'plTokBulkToggle()')+'">Banyak sekaligus</button></div>';
   if(!t.bulkOpen){
-    h += '<label class="pl-l">Nama pemilik kode</label><input class="pl-inp" value="'+escapeHtml(t.nama)+'" placeholder="mis. Toko Budi" oninput="plTokField(\'nama\',this.value)">';
+    h += '<label class="pl-l">Nama pemilik kode <b style="color:var(--pl-rust);">*</b></label><input class="pl-inp" value="'+escapeHtml(t.nama)+'" placeholder="mis. Toko Budi" oninput="plTokField(\'nama\',this.value)">'+
+      '<label class="pl-l">No. WhatsApp '+(isRs?'<b style="color:var(--pl-rust);">* wajib</b>':'(opsional)')+'</label><input class="pl-inp" type="tel" inputmode="tel" value="'+escapeHtml(t.wa||'')+'" placeholder="mis. 0812xxxxxxxx" oninput="plTokField(\'wa\',this.value)">';
   } else {
-    h += '<label class="pl-l">Daftar nama (satu nama per baris, maks. 500)</label><textarea class="pl-inp" rows="7" placeholder="Toko Budi\nCV Maju Jaya\nSiti Collection" oninput="plTokField(\'bulk\',this.value)">'+escapeHtml(t.bulk||'')+'</textarea>'+
-      '<div class="pl-meta" style="margin:6px 0 0;">Tiap nama otomatis dibuatkan kode unik. Tempel langsung dari Excel/Spreadsheet juga bisa.</div>';
+    h += '<label class="pl-l">Daftar (satu orang per baris: Nama | No. WhatsApp, maks. 500)</label><textarea class="pl-inp" rows="7" placeholder="Toko Budi | 081234567890\nCV Maju Jaya | 0813xxxxxxxx\nSiti Collection | 0857xxxxxxxx" oninput="plTokField(\'bulk\',this.value)">'+escapeHtml(t.bulk||'')+'</textarea>'+
+      '<div class="pl-meta" style="margin:6px 0 0;">'+(isRs?'Untuk reseller, setiap baris <b>wajib</b> ada nomor WhatsApp.':'Nomor WhatsApp opsional untuk karyawan.')+' Bisa tempel langsung dari Excel (kolom Nama lalu kolom No. WA).</div>';
   }
   h += (t.err?'<div class="pl-err">'+escapeHtml(t.err)+'</div>':'')+(t.msg?'<div class="pl-ok">'+escapeHtml(t.msg)+'</div>':'')+
     '<button class="pl-btn" style="width:100%;margin-top:14px;" onclick="'+(t.bulkOpen?'plTokBulk()':'plTokCreate()')+'">'+(t.bulkOpen?'Buat Semua Kode':'Buat Kode Akses')+'</button></div>';
 
-  if(pending>0) h += '<div class="pl-banner"><b>⚠ '+pending+' KODE DICABUT BELUM TERPASANG</b>Kode yang dicabut baru ditolak di perangkat ini. Agar ditolak di semua perangkat reseller, unduh file aplikasi terbaru lalu upload/pasang menggantikan file lama.<div style="margin-top:10px;"><button class="pl-btn" onclick="plTokDownloadApp()">Unduh index.html terbaru</button></div></div>';
+  if(pending>0 && !online) h += '<div class="pl-banner"><b>⚠ '+pending+' KODE DICABUT BELUM TERPASANG</b>Firebase belum aktif, jadi kode yang dicabut baru ditolak di perangkat ini. Unduh file aplikasi terbaru lalu upload menggantikan file lama.<div style="margin-top:10px;"><button class="pl-btn" onclick="plTokDownloadApp()">Unduh index.html terbaru</button></div></div>';
 
-  h += '<div class="pl-meta"><b>'+total+'</b> kode · <b>'+(total-revoked)+'</b> aktif · <b>'+revoked+'</b> dicabut. Daftar ini tersimpan di perangkat Owner ini, jadi rutin <b>Backup</b>.</div>';
-  h += '<div class="pl-tools"><input class="pl-search" id="plTokSearch" placeholder="Cari nama atau kode…" value="'+escapeHtml(t.q||'')+'" oninput="plTokSearch(this.value)"><button class="pl-btn ghost" onclick="plTokExport()">Ekspor CSV</button><button class="pl-btn ghost" onclick="plTokBackup()">Backup</button><label class="pl-btn ghost" style="display:inline-block;text-align:center;cursor:pointer;">Pulihkan<input type="file" accept=".json,application/json" style="display:none;" onchange="plTokRestore(this)"></label></div>';
-  h += '<div class="pl-chips">'+[['all','Semua'],['reseller','Reseller'],['karyawan','Karyawan'],['off','Dicabut']]
+  h += '<div class="pl-meta"><b>'+total+'</b> kode · <b>'+(total-revoked)+'</b> aktif · <b>'+revoked+'</b> dinonaktifkan. '+(online?'Daftar tersimpan di server dan sama di semua perangkat Owner/Admin.':'Daftar tersimpan di perangkat Owner ini, jadi rutin <b>Backup</b>.')+'</div>';
+  h += '<div class="pl-tools"><input class="pl-search" id="plTokSearch" placeholder="Cari nama, no. WA, atau kode…" value="'+escapeHtml(t.q||'')+'" oninput="plTokSearch(this.value)"><button class="pl-btn ghost" onclick="plTokExport()">Ekspor CSV</button><button class="pl-btn ghost" onclick="plTokBackup()">Backup</button><label class="pl-btn ghost" style="display:inline-block;text-align:center;cursor:pointer;">Pulihkan<input type="file" accept=".json,application/json" style="display:none;" onchange="plTokRestore(this)"></label></div>';
+  h += '<div class="pl-chips">'+[['all','Semua'],['reseller','Reseller'],['karyawan','Karyawan'],['off','Nonaktif']]
     .map(f=>'<button class="pl-chip '+((t.f||'all')===f[0]?'active':'')+'" onclick="plTokSetF(\''+f[0]+'\')">'+f[1]+'</button>').join('')+'</div>';
   const list = plTokFiltered();
   if(!total) return h + '<div class="pl-empty">Belum ada kode akses.</div>';
   if(!list.length) return h + '<div class="pl-empty">Tidak ada kode yang cocok.</div>';
   list.slice(0, t.limit||30).forEach(tk=>{
-    h += '<div class="pl-tok '+(tk.revoked?'off':'')+'"><div class="top"><div><b>'+escapeHtml(tk.nama||'-')+'</b><span class="pl-rolebadge '+escapeHtml(tk.role||'')+'">'+escapeHtml((AUTH_ROLE_LABEL[tk.role]||tk.role||'').toUpperCase())+'</span>'+(tk.revoked?'<span class="pl-badge hapus">DICABUT</span>':'')+'</div></div>'+
+    h += '<div class="pl-tok '+(tk.revoked?'off':'')+'"><div class="top"><div><b>'+escapeHtml(tk.nama||'-')+'</b><span class="pl-rolebadge '+escapeHtml(tk.role||'')+'">'+escapeHtml((AUTH_ROLE_LABEL[tk.role]||tk.role||'').toUpperCase())+'</span>'+(tk.revoked?'<span class="pl-badge hapus">NONAKTIF</span>':'')+'</div></div>'+
       '<div class="code" title="Ketuk untuk menyalin" onclick="plTokCopy(\''+tk.id+'\',false)">'+escapeHtml(tk.kode)+'</div>'+
-      '<div class="mt">Dibuat '+plDateTime(tk.createdAt)+'</div>'+
-      '<div class="act"><button class="pl-btn ghost sm" onclick="plTokCopy(\''+tk.id+'\',true)">Salin Pesan</button><button class="pl-btn '+(tk.revoked?'ghost':'danger')+' sm" onclick="plTokToggle(\''+tk.id+'\')">'+(tk.revoked?'Aktifkan lagi':'Cabut')+'</button></div></div>';
+      '<div class="mt">'+(tk.wa?'WA '+escapeHtml(tk.wa)+' · ':'')+'Dibuat '+plDateTime(tk.createdAt)+'</div>'+
+      '<div class="act">'+(tk.wa?'<button class="pl-btn sm" onclick="plTokWa(\''+tk.id+'\')">Kirim WA</button>':'')+'<button class="pl-btn ghost sm" onclick="plTokCopy(\''+tk.id+'\',true)">Salin Pesan</button><button class="pl-btn '+(tk.revoked?'ghost':'danger')+' sm" onclick="plTokToggle(\''+tk.id+'\')">'+(tk.revoked?'Aktifkan lagi':'Nonaktifkan')+'</button><button class="pl-btn danger sm" onclick="plTokDelete(\''+tk.id+'\')">Hapus</button></div></div>';
   });
   if(list.length > (t.limit||30)) h += '<button class="pl-btn ghost" style="width:100%;" onclick="plTokMore()">Tampilkan '+Math.min(30, list.length-(t.limit||30))+' lagi (sisa '+(list.length-(t.limit||30))+')</button>';
   return h;
@@ -11404,4 +12315,3 @@ authInit();
 </script>
 </body>
 </html>
-g
