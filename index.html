@@ -165,6 +165,7 @@ window.tenxEnsureChart = function(){
     font-family:'Bebas Neue';font-size:11.5px;letter-spacing:.06em;
     padding:4px 10px;border-radius:999px;color:white;transform:rotate(-2deg); display:inline-block;
   }
+#workflowApp .badge.menunggu_payment{background:#8d8a82;}
 #workflowApp .badge.baru{background:var(--amber);}
 #workflowApp .badge.diproses_desainer{background:var(--denim);}
 #workflowApp .badge.desain_selesai{background:var(--purple);}
@@ -202,6 +203,29 @@ window.tenxEnsureChart = function(){
 #workflowApp .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
 #workflowApp .ukuran-row{display:grid;grid-template-columns:1fr 90px 34px;gap:8px;margin-bottom:8px;align-items:center;}
 #workflowApp .ukuran-row button{background:none;border:none;color:var(--rust);cursor:pointer;font-size:18px;}
+
+/* ===== Form simpel: chip produk, toggle payment, bagian opsional ===== */
+#workflowApp input[type=checkbox]{width:18px;height:18px;accent-color:var(--denim);flex:none;cursor:pointer;}
+#workflowApp label.chk{display:flex;align-items:center;gap:9px;text-transform:none;letter-spacing:0;font-size:13.5px;color:var(--ink);margin:10px 0 0;cursor:pointer;}
+#workflowApp .kv label.chk{margin:0;}
+#workflowApp .chips{display:flex;flex-wrap:wrap;gap:7px;}
+#workflowApp .chip{font-family:'Work Sans';font-size:13px;padding:7px 13px;border-radius:999px;border:1.5px solid var(--line);background:var(--white);color:var(--ink-soft);cursor:pointer;transition:.12s;}
+#workflowApp .chip:hover{border-color:var(--denim-light);}
+#workflowApp .chip.on{background:var(--denim);border-color:var(--denim);color:#fff;font-weight:600;}
+#workflowApp .chip.add{border-style:dashed;color:var(--denim);background:transparent;}
+#workflowApp .prod-add{display:none;gap:8px;margin-top:10px;align-items:center;}
+#workflowApp .seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--canvas-2);padding:4px;border-radius:10px;border:1px solid var(--line);}
+#workflowApp .seg button{border:none;background:transparent;padding:10px 8px;border-radius:8px;font-family:'Work Sans';font-size:13px;font-weight:600;color:var(--ink-soft);cursor:pointer;}
+#workflowApp .seg button.on{background:var(--white);box-shadow:0 1px 3px rgba(33,29,26,.15);}
+#workflowApp .seg button.on[data-v="menunggu"]{color:#6b6860;}
+#workflowApp .seg button.on[data-v="sudah"]{color:var(--green);}
+#workflowApp details.opt{margin-top:18px;border:1.5px dashed var(--line);border-radius:10px;padding:0 14px;}
+#workflowApp details.opt summary{cursor:pointer;padding:12px 0;font-size:13px;font-weight:600;color:var(--denim);list-style:none;}
+#workflowApp details.opt summary::-webkit-details-marker{display:none;}
+#workflowApp details.opt[open] summary{border-bottom:1px solid var(--line);margin-bottom:6px;}
+#workflowApp details.opt .in{padding-bottom:14px;}
+#workflowApp .assign-chip.ok-chip{background:#E4EFE7;border-color:#B9D4C1;color:#2F5E41;}
+#workflowApp .assign-chip.warn-chip{background:#FBEFD9;border-color:#E9CC93;color:#7A5A17;}
 #workflowApp .filehint{font-size:11.5px;color:var(--ink-soft);margin-top:6px;}
 #workflowApp .img-preview-strip{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;}
 #workflowApp .img-preview-strip .ip{position:relative;}
@@ -279,6 +303,7 @@ window.tenxEnsureChart = function(){
 #workflowApp .tag-card{background:#fff;border:1.5px solid var(--line);border-left:5px solid var(--line);border-radius:12px;padding:16px 18px 14px 18px;}
 #workflowApp .tag-card::before{content:none;display:none;}
 #workflowApp .tag-card:hover{transform:none;box-shadow:0 4px 14px rgba(33,29,26,0.09);border-color:var(--denim-light);}
+#workflowApp .tag-card.st-menunggu_payment{border-left-color:#8d8a82;background:#F6F5F2;}
 #workflowApp .tag-card.st-baru{border-left-color:var(--amber);}
 #workflowApp .tag-card.st-diproses_desainer{border-left-color:var(--denim);}
 #workflowApp .tag-card.st-desain_selesai{border-left-color:var(--purple);}
@@ -315,6 +340,19 @@ window.tenxEnsureChart = function(){
 #workflowApp .wf-wa:hover{background:#1EBE5D;transform:scale(1.04);box-shadow:0 2px 6px rgba(37,211,102,0.3);}
 #workflowApp .wf-sorry{background:var(--rust);color:#fff;border:none;border-radius:6px;padding:9px 12px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:'Work Sans',sans-serif;}
 #workflowApp .wf-sorry:hover{filter:brightness(.92);}
+#workflowApp .tag-card.due{border-color:#E0A100;background:#FFFBEF;}
+#workflowApp .tag-card.late.due{border-color:var(--rust);background:#FFF8F4;}
+#workflowApp .due-chip{background:#FFF1C9;color:#8a5a00;border-color:#E0A100;}
+#workflowApp .kat-chip{background:#E8EEF9;color:#1b3a6b;}
+#workflowApp .wf-remind{background:#E0A100;color:#fff;border:none;border-radius:6px;padding:9px 12px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:'Work Sans',sans-serif;}
+#workflowApp .wf-remind:hover{filter:brightness(.92);}
+#workflowApp .wf-due-banner{background:#FFF8E1;border:1.5px solid #E0A100;border-radius:10px;padding:12px 14px;margin-bottom:16px;}
+#workflowApp .wf-due-banner .ttl{font-weight:800;color:#8a5a00;margin-bottom:6px;}
+#workflowApp .wf-due-banner .r{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #f0dca0;}
+#workflowApp .wf-due-banner .r small{display:block;color:#8a5a00;font-size:11.5px;margin-top:2px;}
+#workflowApp .stage-nav.kat-nav{margin:-10px 0 20px;}
+#workflowApp .stage-pill.kat{font-size:12px;}
+#keuanganApp .kg-badge.kat{background:#5d6b8a;}
 #workflowApp .modal{background:var(--white);border:1.5px solid var(--line);}
 /* Toast urungkan (di luar #workflowApp karena ditempel ke body) */
 #wfToast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;transition:all .2s ease;z-index:900;background:#211D1A;color:#F6F3EC;border-radius:12px;padding:12px 14px;display:flex;gap:14px;align-items:center;width:480px;max-width:calc(100vw - 24px);box-shadow:0 10px 30px rgba(0,0,0,.35);font-family:'Work Sans',sans-serif;font-size:13px;border-left:5px solid #33507A;}
@@ -760,6 +798,11 @@ window.tenxEnsureChart = function(){
 #keuanganApp .kg-card.st-none .val{color:var(--rust);}
 #keuanganApp .kg-group-sep{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:6px 0 4px;}
 #keuanganApp .kg-note{font-size:12px;color:var(--muted);background:var(--bg);border:1px dashed var(--line);border-radius:8px;padding:9px 12px;margin:-8px 0 20px;line-height:1.5;}
+#keuanganApp .kg-month{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding:11px 14px;border-radius:10px;margin:26px 0 6px;background:var(--navy-dark);color:#fff;font-size:14.5px;font-weight:800;}
+#keuanganApp .kg-month:first-child{margin-top:0;}
+#keuanganApp .kg-month small{font-weight:600;font-size:12px;opacity:.92;}
+#keuanganApp .kg-month small b{color:var(--yellow);}
+#keuanganApp .kg-terbit{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:6px;background:#EEF1F6;color:#4a5568;border:1px solid #d5dbe6;}
 #keuanganApp .kg-group{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 12px;border-radius:8px;margin:14px 0 2px;font-size:13px;font-weight:800;color:#fff;}
 #keuanganApp .kg-group:first-child{margin-top:0;}
 #keuanganApp .kg-group small{font-weight:600;font-size:11.5px;opacity:.95;}
@@ -1994,6 +2037,59 @@ body.tx-reseller #globalNav .gn-brand{cursor:default;}
 #priceShell .pl-tok .act .pl-btn{flex:1;min-width:110px;}
 #priceShell .pl-rolebadge{display:inline-block;font-family:'Bebas Neue';font-size:12px;letter-spacing:.06em;padding:2px 9px;border-radius:999px;margin-left:6px;color:#fff;vertical-align:middle;}
 #priceShell .pl-rolebadge.reseller{background:var(--pl-denim);} #priceShell .pl-rolebadge.karyawan{background:var(--pl-amber);}
+
+/* ===================== MOBILE FRIENDLY (HP) =====================
+   - Font input 16px di HP → iOS/Android tidak otomatis zoom-in saat kolom diketuk.
+   - Pinch-zoom manual tetap boleh (aksesibilitas), tapi double-tap zoom dimatikan di tombol/kartu.
+   - Konten lebar (tabel, chip) scroll di dalam wadahnya, halaman tidak geser ke samping. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+html,body{max-width:100%;overflow-x:hidden;}
+body{padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);}
+button,a,select,label,summary,[onclick]{touch-action:manipulation;-webkit-tap-highlight-color:rgba(51,80,122,.12);}
+@media (max-width:820px){
+  input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]):not([type=color]),
+  select, textarea{font-size:16px !important;}
+  /* Alur Kerja */
+  #workflowApp .stage-nav{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-left:-12px;margin-right:-12px;padding:0 12px 6px;}
+  #workflowApp .stage-nav::-webkit-scrollbar{display:none;}
+  #workflowApp .stage-pill{white-space:nowrap;flex:none;}
+  #workflowApp .subnav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
+  #workflowApp .subnav button{white-space:nowrap;flex:none;}
+  #workflowApp .search-box{max-width:100%;}
+  #workflowApp .tag-card{overflow:hidden;}
+  #workflowApp .tag-card h3,#workflowApp .tag-meta,#workflowApp .tag-brief{overflow-wrap:anywhere;}
+  #workflowApp .overlay{padding:0;align-items:flex-end;overscroll-behavior:contain;}
+  #workflowApp .modal{max-height:94vh;max-height:94dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));}
+  #workflowApp .fab{bottom:calc(16px + env(safe-area-inset-bottom,0px));}
+  #workflowApp .seg button{padding:11px 6px;font-size:12.5px;}
+  #workflowApp .prod-add input{min-width:0;flex:1;}
+  #workflowApp .ukuran-row{grid-template-columns:1fr 78px 38px;}
+  /* Keuangan */
+  #keuanganApp .kg-toolbar{flex-direction:column;align-items:stretch;}
+  #keuanganApp .kg-toolbar .kg-search{min-width:0;}
+  #keuanganApp .kg-filters{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px;}
+  #keuanganApp .kg-filters::-webkit-scrollbar{display:none;}
+  #keuanganApp .kg-filters button{white-space:nowrap;flex:none;}
+  #keuanganApp .kg-row > div:first-child{min-width:0;}
+  #keuanganApp .kg-row .who{overflow-wrap:anywhere;}
+  #keuanganApp .kg-row .amt{white-space:nowrap;}
+  #keuanganApp .kg-month{padding:10px 12px;font-size:13.5px;}
+  #keuanganApp .kg-section{padding:14px 12px;}
+  #keuanganApp .kg-summary{grid-template-columns:1fr 1fr;gap:10px;}
+  #keuanganApp .kg-card{padding:13px 12px;}
+  #keuanganApp .kg-card .val{font-size:17px;overflow-wrap:anywhere;}
+  #keuanganApp .kg-modal{max-height:94vh;max-height:94dvh;padding-bottom:calc(28px + env(safe-area-inset-bottom,0px));}
+  #keuanganApp .kg-modal .kg-close{position:sticky;float:right;top:0;}
+}
+@media (max-width:380px){
+  #keuanganApp .kg-summary{grid-template-columns:1fr;}
+}
+@media (pointer:coarse){
+  #workflowApp .chip,#workflowApp .wf-go,#workflowApp .wf-wa,#workflowApp .wf-remind,#workflowApp .wf-sorry{min-height:40px;}
+  #keuanganApp .kg-filters button{min-height:38px;}
+  #workflowApp label.chk{min-height:36px;}
+  #workflowApp input[type=checkbox]{width:22px;height:22px;}
+}
 </style>
 </head>
 <body class="tx-locked">
@@ -2334,6 +2430,11 @@ body.tx-reseller #globalNav .gn-brand{cursor:default;}
     </div>
 
     <div class="kg-section">
+      <h2>Omset per Jenis Produk <span style="font-weight:400;font-size:12px;color:var(--muted);">(dikelompokkan otomatis dari nama item di nota · klik untuk memfilter riwayat)</span></h2>
+      <div class="kg-summary" id="kgKatSummary"></div>
+    </div>
+
+    <div class="kg-section">
       <h2>Riwayat Transaksi</h2>
       <div class="kg-toolbar">
         <div class="kg-search"><input type="text" id="kgSearch" placeholder="Cari nama pemesan / no. invoice..." oninput="renderKeuangan()"></div>
@@ -2344,6 +2445,8 @@ body.tx-reseller #globalNav .gn-brand{cursor:default;}
           <button data-f="lunas" onclick="setKgFilter('lunas')">Lunas</button>
         </div>
       </div>
+      <div class="kg-filters" id="kgKatFilters" style="margin:0 0 12px;"></div>
+      <div class="kg-filters" id="kgMonthFilters" style="margin:0 0 14px;"></div>
       <div class="kg-list" id="kgList"></div>
     </div>
   </main>
@@ -2922,6 +3025,7 @@ function subscribeInvoicesRealtime(){
     .onSnapshot(snapshot => {
       invoicesCache = snapshot.docs.map(d => d.data());
       renderKeuangan();
+      try{ wfSyncPaymentStatus(); }catch(e){}
     }, err => console.error('Realtime invoices error', err));
   db.collection('manualSales').orderBy('createdAt', 'desc')
     .onSnapshot(snapshot => {
@@ -2950,11 +3054,13 @@ function genId(){
 
 function subscribeRealtime(){
   if(!CONFIG_READY) return;
+  produkSubscribe();
   db.collection('projects').orderBy('createdAt', 'desc')
     .onSnapshot(snapshot => {
       projectsCache = snapshot.docs.map(d => d.data());
       state.loading = false;
       render();
+      try{ wfSyncPaymentStatus(); }catch(e){}
     }, err => {
       console.error('Realtime error', err);
       state.loading = false;
@@ -2974,6 +3080,7 @@ let state = {
 };
 
 const STATUS_LABEL = {
+  menunggu_payment: 'Menunggu Payment',
   baru: 'Baru / Belum Dikerjakan',
   diproses_desainer: 'Diproses Desainer',
   desain_selesai: 'Desain Selesai',
@@ -3095,6 +3202,7 @@ function renderAdminView(){
   const all = projectsCache;
   const counts = {
     all: all.length,
+    menunggu_payment: all.filter(p=>p.status==='menunggu_payment').length,
     baru: all.filter(p=>p.status==='baru').length,
     diproses_desainer: all.filter(p=>p.status==='diproses_desainer').length,
     desain_selesai: all.filter(p=>p.status==='desain_selesai').length,
@@ -3102,13 +3210,19 @@ function renderAdminView(){
     selesai: all.filter(p=>p.status==='selesai').length,
   };
   let filtered = state.stage==='all' ? all : all.filter(p=>p.status===state.stage);
+  const katSel = state.kategori || 'all';
+  const katCount = {}; all.forEach(p=>projectKategoriList(p).forEach(k=>{ katCount[k] = (katCount[k]||0)+1; }));
+  if(katSel!=='all' && !katCount[katSel]) state.kategori = 'all';
+  if((state.kategori||'all')!=='all') filtered = filtered.filter(p=>projectKategoriList(p).includes(state.kategori));
 
   const q = (state.searchQuery||'').trim().toLowerCase();
   if(q){
     filtered = filtered.filter(p =>
       (p.namaKlien||'').toLowerCase().includes(q) ||
       (p.id||'').toLowerCase().includes(q) ||
-      (p.noHp||'').toLowerCase().includes(q)
+      (p.noHp||'').toLowerCase().includes(q) ||
+      String(p.invNo||'').toLowerCase().includes(q) ||
+      projectKategoriList(p).join(' ').toLowerCase().includes(q)
     );
   }
   const sorted = [...filtered].sort((a,b)=> b.createdAt - a.createdAt);
@@ -3125,23 +3239,30 @@ function renderAdminView(){
   const lateN = all.filter(wfIsLateActive).length;
   const stats = `
     <div class="wf-stats">
-      <div class="wf-stat"><div class="lbl">Project Aktif</div><div class="val">${all.length - counts.selesai}</div></div>
+      <div class="wf-stat"><div class="lbl">Menunggu Payment</div><div class="val">${counts.menunggu_payment}</div></div>
+      <div class="wf-stat"><div class="lbl">Project Aktif</div><div class="val">${all.length - counts.selesai - counts.menunggu_payment}</div></div>
       <div class="wf-stat"><div class="lbl">Sedang Didesain</div><div class="val">${counts.diproses_desainer}</div></div>
       <div class="wf-stat"><div class="lbl">Sedang Produksi</div><div class="val">${counts.diproses_produksi}</div></div>
       <div class="wf-stat ${lateN?'late':''}"><div class="lbl">Telat Deadline</div><div class="val">${lateN}</div></div>
       <div class="wf-stat ok"><div class="lbl">Selesai</div><div class="val">${counts.selesai}</div></div>
     </div>
-    <label class="wf-auto"><input type="checkbox" ${wfAutoWa()?'checked':''} onchange="wfSetAutoWa(this.checked)"> Otomatis buka WA client saat progres diubah (ada tombol Urungkan)</label>`;
+    <label class="wf-auto"><input type="checkbox" ${wfAutoWa()?'checked':''} onchange="wfSetAutoWa(this.checked)"> Otomatis buka WA client saat progres diubah (ada tombol Urungkan)</label>
+    <div style="margin:0 0 14px;"><button class="btn ghost small" onclick="syncNotasToProjects()" title="Buat project untuk nota 60 hari terakhir yang belum masuk Alur Kerja">🔄 Sinkronkan Nota ke Alur Kerja</button></div>`;
 
-  return sub + stats + searchBox + `
+  setTimeout(wfCheckDueToast, 500);
+  const katNav = Object.keys(katCount).length > 1
+    ? `<div class="stage-nav kat-nav">${katPill('all','Semua Produk',all.length)}${Object.keys(katCount).sort((a,b)=>katCount[b]-katCount[a]).map(k=>katPill(k,k,katCount[k])).join('')}</div>` : '';
+  return sub + wfDueBannerHtml() + stats + searchBox + `
     <div class="stage-nav">
       ${pill('all','Semua',counts.all)}
+      ${pill('menunggu_payment','⏳ Menunggu Payment',counts.menunggu_payment)}
       ${pill('baru','Baru',counts.baru)}
       ${pill('diproses_desainer','Diproses Desainer',counts.diproses_desainer)}
       ${pill('desain_selesai','Desain Selesai',counts.desain_selesai)}
       ${pill('diproses_produksi','Diproses Produksi',counts.diproses_produksi)}
       ${pill('selesai','Selesai',counts.selesai)}
     </div>
+    ${katNav}
     <div class="section-title"><h2>Daftar Project</h2><div class="line"></div></div>
     ${sorted.length ? `<div class="grid">${sorted.map(p=>projectCard(p)).join('')}</div>`
       : (q ? emptyState('Tidak ditemukan','Tidak ada project dengan nama pemesan / No. HP / ID yang cocok dengan pencarian ini.')
@@ -3490,25 +3611,32 @@ function projectCard(p){
   const qty = totalQty(p);
   const late = wfIsLateActive(p);
   const n = WF_STEP[p.status] || 1;
-  const steps = [1,2,3,4,5].map(i=>`<i class="${i<=n?'on':''}"></i>`).join('');
+  const steps = [1,2,3,4,5,6].map(i=>`<i class="${i<=n?'on':''}"></i>`).join('');
   let go = '';
   if(wfCanQuick(p)) go = `<button class="wf-go" onclick="event.stopPropagation();wfQuickAdvance('${p.id}')">${WF_NEXT_LABEL[p.status]} →</button>`;
   else if(state.role==='desainer' && p.status==='diproses_desainer' && sameName(p.namaDesainer)) go = `<button class="wf-go" onclick="event.stopPropagation();openDetailModal('${p.id}')">Isi Pedoman &amp; Selesaikan →</button>`;
+  else if(p.status==='menunggu_payment') go = `<span class="wf-done" style="color:#8d8a82;">⏳ Menunggu payment</span>` + (state.role==='admin' ? `<button class="wf-go" style="background:#4C7A5E;" title="Pindahkan ke Baru" onclick="event.stopPropagation();wfForceStart('${p.id}')">✓ Tandai Sudah Payment</button>` : '');
   else if(p.status==='selesai') go = `<span class="wf-done">✓ Pesanan selesai</span>`;
   const wa = `<button class="wf-wa" title="Kirim progres terbaru ke WA client" onclick="event.stopPropagation();wfSendNow('${p.id}')">WA Client</button>`;
+  const due = wfIsDueSoon(p) && !late, reminded = wfReminded(p), dl = wfDaysLeft(p);
+  const remind = (state.role==='admin' && wfIsDueSoon(p)) ? `<button class="wf-remind" onclick="event.stopPropagation();wfRemindClient('${p.id}')">${reminded?'Kabari Lagi':'Kabari H-1'}</button>` : '';
   const sorry = late ? `<button class="wf-sorry" onclick="event.stopPropagation();wfApologyModal('${p.id}')">Minta Maaf</button>` : '';
   return `
-    <div class="tag-card st-${p.status}${late?' late':''}" onclick="openDetailModal('${p.id}')">
+    <div class="tag-card st-${p.status}${late?' late':''}${due?' due':''}" onclick="openDetailModal('${p.id}')">
       <div class="tag-top">
         <span class="tag-id mono">${p.id}</span>
         <span class="badge ${p.status}">${STATUS_LABEL[p.status]}</span>
       </div>
       <h3>${escapeHtml(p.namaKlien)}</h3>
       <div class="tag-meta">${escapeHtml(p.via)} · ${escapeHtml(p.noHp||'')} · masuk ${fmtDate(p.createdAt)} · ${qty} pcs</div>
-      <div class="wf-steps" title="Tahap ${n} dari 5">${steps}</div>
+      <div class="wf-steps" title="Tahap ${n} dari 6">${steps}</div>
       <div class="assign-row">
         <span class="assign-chip">Desainer: <b>${escapeHtml(p.namaDesainer||'-')}</b></span>
         <span class="assign-chip">Produksi: <b>${escapeHtml(p.namaProduksi||'-')}</b></span>
+        ${p.invNo ? `<span class="assign-chip">🧾 Nota <b>#${escapeHtml(String(p.invNo))}</b></span>` : ''}
+        ${p.briefWaTerkirim ? '<span class="assign-chip ok-chip">✓ Brief terkirim WA</span>' : ((state.role==='admin' && (p.status==='menunggu_payment'||p.status==='baru')) ? '<span class="assign-chip warn-chip">📤 Brief belum dikirim WA</span>' : '')}
+        ${projectKategoriList(p).slice(0,2).map(k=>`<span class="assign-chip kat-chip">🏷 ${escapeHtml(k)}</span>`).join('')}
+        ${wfIsDueSoon(p) ? `<span class="assign-chip due-chip">⏰ ${dl===0?'Deadline hari ini':'H-1 · besok'}${reminded?' · ✓ dikabari':''}</span>` : ''}
       </div>
       <div class="tag-brief">${escapeHtml(p.briefDesain)}</div>
       ${p.komisiPerPcs ? `<div class="komisi-tag">Komisi: ${rupiah(p.komisiPerPcs)}/pcs → total ${rupiah(totalKomisi(p))}</div>` : ''}
@@ -3516,7 +3644,7 @@ function projectCard(p){
         <div class="thumbs">${refImgs.map(src=>renderFileThumb(src,34)).join('')}${(p.referensi||[]).length>4?`<span class="mono" style="font-size:11px;color:var(--ink-soft);align-self:center;">+${p.referensi.length-4}</span>`:''}</div>
         ${p.deadline ? `<span class="mono" style="font-size:11.5px;color:var(--rust);">DL ${fmtDate(p.deadline)}${late?` · <b>TELAT ${wfLateDays(p)} HARI</b>`:''}</span>` : ''}
       </div>
-      <div class="wf-act">${go}${wa}${sorry}</div>
+      <div class="wf-act">${go}${wa}${remind}${sorry}</div>
     </div>
   `;
 }
@@ -3526,75 +3654,139 @@ let tempUkuran = [{ukuran:'S', qty:1},{ukuran:'M', qty:1}];
 let tempRefImgs = [];
 let tempRefUploadId = '';
 
+let tempProduk = [];
+let tempBayar = 'menunggu';
+
+function renderProdukChips(){
+  const el = document.getElementById('prodChips'); if(!el) return;
+  const all = produkSemua();
+  tempProduk.forEach(k=>{ if(!all.some(x=>x.toLowerCase()===k.toLowerCase())) all.push(k); });
+  el.innerHTML = all.map(k=>`<button type="button" class="chip ${tempProduk.includes(k)?'on':''}" data-k="${escapeHtml(k)}" onclick="toggleProduk(this.dataset.k)">${escapeHtml(k)}</button>`).join('')
+    + `<button type="button" class="chip add" onclick="produkShowAdd()">+ Produk lain</button>`;
+}
+function toggleProduk(k){ const i = tempProduk.indexOf(k); if(i>=0) tempProduk.splice(i,1); else tempProduk.push(k); renderProdukChips(); }
+function produkShowAdd(){ const r = document.getElementById('prodAddRow'); if(!r) return; r.style.display = 'flex'; const i = document.getElementById('f_produkBaru'); if(i) i.focus(); }
+async function produkSubmitAdd(){
+  const i = document.getElementById('f_produkBaru'); if(!i) return;
+  const k = await produkTambah(i.value);
+  if(!k){ i.focus(); return; }
+  if(!tempProduk.some(x=>x.toLowerCase()===k.toLowerCase())) tempProduk.push(k);
+  i.value = ''; document.getElementById('prodAddRow').style.display = 'none';
+  renderProdukChips();
+}
+function setBayar(v){
+  tempBayar = v;
+  document.querySelectorAll('#bayarSeg button').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
+}
+
+/* Isi form dipakai bersama oleh Project Baru & Edit Project */
+function wfFormHtml(p){
+  const isNew = !p;
+  const v = (k,d='')=> (p && p[k]!=null) ? p[k] : d;
+  const desainerDl = distinctNames('namaDesainer').map(n=>`<option value="${escapeHtml(n)}">`).join('');
+  const produksiDl = distinctNames('namaProduksi').map(n=>`<option value="${escapeHtml(n)}">`).join('');
+  const viaOptions = ['WhatsApp','Telepon','Datang Langsung','Instagram / Sosial Media','Lainnya'];
+  const showBayar = isNew || (!p.invNo && (p.status==='menunggu_payment' || p.status==='baru') && !p.desainMulai);
+  return `
+    <div class="row2">
+      <div>
+        <label>Nama Client</label>
+        <input type="text" id="f_nama" value="${escapeHtml(v('namaKlien'))}" placeholder="cth. Budi Santoso / CV Maju Jaya">
+      </div>
+      <div>
+        <label>No. HP / WA</label>
+        <input type="tel" id="f_hp" value="${escapeHtml(v('noHp'))}" placeholder="08xxxxxxxxxx">
+      </div>
+    </div>
+
+    <label>Produk</label>
+    <div class="chips" id="prodChips"></div>
+    <div class="prod-add" id="prodAddRow">
+      <input type="text" id="f_produkBaru" maxlength="30" placeholder="Nama produk baru, cth. Kemeja Batik" onkeydown="if(event.key==='Enter'){event.preventDefault();produkSubmitAdd();}">
+      <button type="button" class="btn small" onclick="produkSubmitAdd()">Tambah</button>
+    </div>
+    <div class="filehint">Pilih satu atau lebih. Produk baru otomatis tersimpan & muncul di pilihan berikutnya.</div>
+
+    <label>Jumlah & Ukuran</label>
+    <div id="ukuranWrap"></div>
+    <button type="button" class="btn ghost small" onclick="addUkuranRow()">+ Tambah Ukuran</button>
+
+    <label>Brief Desain</label>
+    <textarea id="f_brief" placeholder="Tulis singkat: warna, bahan, konsep, nama/nomor punggung… (boleh kosong kalau sudah dikirim ke WA desainer)">${escapeHtml(isNew ? '' : (v('briefDesain')==='(Brief dikirim via WA ke desainer)' ? '' : v('briefDesain')))}</textarea>
+    <label class="chk"><input type="checkbox" id="f_briefwa" ${v('briefWaTerkirim',false)?'checked':''}> Brief sudah dikirim ke WA desainer</label>
+
+    ${showBayar ? `
+    <label>Pembayaran</label>
+    <div class="seg" id="bayarSeg">
+      <button type="button" data-v="menunggu" class="${tempBayar==='menunggu'?'on':''}" onclick="setBayar('menunggu')">⏳ Menunggu Payment</button>
+      <button type="button" data-v="sudah" class="${tempBayar==='sudah'?'on':''}" onclick="setBayar('sudah')">✓ Sudah Payment / DP</button>
+    </div>
+    <div class="filehint">Selama menunggu payment, project belum bisa dikerjakan desainer.</div>` : ''}
+
+    <details class="opt">
+      <summary>＋ Opsional: via masuk, referensi, penugasan &amp; komisi</summary>
+      <div class="in">
+        <label>Via Masuk</label>
+        <select id="f_via">${viaOptions.map(x=>`<option ${v('via','WhatsApp')===x?'selected':''}>${x}</option>`).join('')}</select>
+
+        <label>Gambar / Dokumen Referensi</label>
+        <input type="file" id="f_ref" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" multiple onchange="handleRefUpload(event)">
+        <div class="upload-status mono" id="refUploadStatus"></div>
+        <div class="img-preview-strip" id="refPreview"></div>
+
+        <div class="row2">
+          <div>
+            <label>Desainer</label>
+            <input type="text" id="f_desainer" list="dl_desainer" value="${escapeHtml(v('namaDesainer'))}" placeholder="Nama desainer">
+            <datalist id="dl_desainer">${desainerDl}</datalist>
+          </div>
+          <div>
+            <label>Bagian Produksi</label>
+            <input type="text" id="f_produksi" list="dl_produksi" value="${escapeHtml(v('namaProduksi'))}" placeholder="Nama produksi">
+            <datalist id="dl_produksi">${produksiDl}</datalist>
+          </div>
+        </div>
+        <label>Komisi Produksi per Pcs (Rp)</label>
+        <input type="number" min="0" id="f_komisi" value="${v('komisiPerPcs',0) || ''}" placeholder="cth. 3000">
+      </div>
+    </details>`;
+}
+
+/* Baca & validasi form. Mengembalikan null (dan memberi peringatan) kalau belum lengkap. */
+function wfReadForm(){
+  const g = id=>{ const e = document.getElementById(id); return e ? e.value : ''; };
+  const f = {
+    nama: g('f_nama').trim(), hp: g('f_hp').trim(), via: g('f_via') || 'WhatsApp',
+    brief: g('f_brief').trim(), briefWa: !!(document.getElementById('f_briefwa') || {}).checked,
+    namaDesainer: g('f_desainer').trim(), namaProduksi: g('f_produksi').trim(),
+    komisiPerPcs: parseFloat(g('f_komisi')) || 0,
+    produk: [...tempProduk],
+    ukuran: tempUkuran.filter(u=>String(u.ukuran||'').trim()!=='')
+  };
+  if(!f.nama || !f.hp){ alert('Mohon isi Nama Client dan No. HP.'); return null; }
+  if(!f.produk.length){ alert('Pilih jenis produk dulu (Kaos, Jersey, atau tambah produk lain).'); return null; }
+  if(!f.brief && !f.briefWa){ alert('Isi brief desain, atau centang "Brief sudah dikirim ke WA desainer".'); return null; }
+  if(!f.brief) f.brief = '(Brief dikirim via WA ke desainer)';
+  return f;
+}
+
 function openNewProjectModal(){
   tempUkuran = [{ukuran:'S', qty:1},{ukuran:'M', qty:1}];
   tempRefImgs = [];
   tempRefUploadId = genId();
-  const desainerDl = distinctNames('namaDesainer').map(n=>`<option value="${escapeHtml(n)}">`).join('');
-  const produksiDl = distinctNames('namaProduksi').map(n=>`<option value="${escapeHtml(n)}">`).join('');
-
+  tempProduk = [];
+  tempBayar = 'menunggu';
   renderModal(`
     <button class="close" onclick="closeModal()">×</button>
     <h2>Project Baru</h2>
-    <div class="modal-sub">Diisi oleh Admin saat pesanan client masuk</div>
-
-    <label>Nama Client</label>
-    <input type="text" id="f_nama" placeholder="cth. Budi Santoso / CV Maju Jaya">
-
-    <div class="row2">
-      <div>
-        <label>No. HP / WA</label>
-        <input type="tel" id="f_hp" placeholder="08xxxxxxxxxx">
-      </div>
-      <div>
-        <label>Via Masuk</label>
-        <select id="f_via">
-          <option>WhatsApp</option>
-          <option>Telepon</option>
-          <option>Datang Langsung</option>
-          <option>Instagram / Sosial Media</option>
-          <option>Lainnya</option>
-        </select>
-      </div>
-    </div>
-
-    <label>Brief Desain</label>
-    <textarea id="f_brief" placeholder="Jelaskan permintaan desain dari client: jenis produk, warna, bahan, konsep, dsb."></textarea>
-
-    <label>List Ukuran & Qty</label>
-    <div id="ukuranWrap"></div>
-    <button type="button" class="btn ghost small" onclick="addUkuranRow()">+ Tambah Ukuran</button>
-
-    <label>Gambar / Dokumen Referensi dari Client</label>
-    <input type="file" id="f_ref" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" multiple onchange="handleRefUpload(event)">
-    <div class="filehint">Bisa upload gambar, PDF, Word, atau Excel — beberapa file sekaligus. Gambar otomatis dikompres dulu supaya cepat & hemat kuota.</div>
-    <div class="upload-status mono" id="refUploadStatus"></div>
-    <div class="img-preview-strip" id="refPreview"></div>
-
-    <div class="divider"></div>
-    <div class="section-title" style="margin:0 0 4px;"><h2 style="font-size:18px;">Penugasan & Komisi</h2><div class="line"></div></div>
-
-    <div class="row2">
-      <div>
-        <label>Nama Desainer (Ditugaskan)</label>
-        <input type="text" id="f_desainer" list="dl_desainer" placeholder="Nama desainer yang mengerjakan">
-        <datalist id="dl_desainer">${desainerDl}</datalist>
-      </div>
-      <div>
-        <label>Nama Bagian Produksi (Ditugaskan)</label>
-        <input type="text" id="f_produksi" list="dl_produksi" placeholder="Nama yang memproduksi">
-        <datalist id="dl_produksi">${produksiDl}</datalist>
-      </div>
-    </div>
-    <label>Komisi Produksi per Pcs (Rp)</label>
-    <input type="number" min="0" id="f_komisi" placeholder="cth. 3000">
-    <div class="filehint">Total komisi akan dihitung otomatis: Komisi per Pcs × Total Pcs, dan tampil ke bagian Produksi yang ditugaskan.</div>
-
+    <div class="modal-sub">Isi yang penting saja — sisanya bisa dilengkapi nanti</div>
+    ${wfFormHtml(null)}
     <div class="modal-actions">
       <button class="btn block" onclick="submitNewProject()">Simpan Project</button>
     </div>
   `);
   renderUkuranRows();
+  renderProdukChips();
 }
 
 function renderUkuranRows(){
@@ -3638,26 +3830,18 @@ function renderRefPreview(){
 function removeRefImg(i){ tempRefImgs.splice(i,1); renderRefPreview(); }
 
 async function submitNewProject(){
-  const nama = document.getElementById('f_nama').value.trim();
-  const hp = document.getElementById('f_hp').value.trim();
-  const via = document.getElementById('f_via').value;
-  const brief = document.getElementById('f_brief').value.trim();
-  const namaDesainer = document.getElementById('f_desainer').value.trim();
-  const namaProduksi = document.getElementById('f_produksi').value.trim();
-  const komisiPerPcs = parseFloat(document.getElementById('f_komisi').value) || 0;
-
-  if(!nama || !hp || !brief){
-    alert('Mohon lengkapi Nama Client, No. HP, dan Brief Desain.');
-    return;
-  }
-  const ukuranClean = tempUkuran.filter(u=>u.ukuran.trim()!=='');
-
+  const f = wfReadForm(); if(!f) return;
+  const sudah = tempBayar === 'sudah';
+  const kaos = f.produk.some(k=>/^(kaos|jersey)$/i.test(k));
   const project = {
     id: genId(),
-    namaKlien: nama, noHp: hp, via: via, briefDesain: brief,
-    ukuran: ukuranClean, referensi: tempRefImgs,
-    namaDesainer, namaProduksi, komisiPerPcs,
-    status: 'baru', createdAt: Date.now(),
+    namaKlien: f.nama, noHp: f.hp, via: f.via, briefDesain: f.brief,
+    briefWaTerkirim: f.briefWa, briefWaAt: f.briefWa ? Date.now() : null,
+    ukuran: f.ukuran, referensi: tempRefImgs,
+    namaDesainer: f.namaDesainer, namaProduksi: f.namaProduksi, komisiPerPcs: f.komisiPerPcs,
+    kategori: f.produk[0], kategoriList: f.produk, jenisOrder: kaos ? 'kaos' : 'lainnya', createdVia: 'manual',
+    status: sudah ? 'baru' : 'menunggu_payment', paidAt: sudah ? Date.now() : null,
+    createdAt: Date.now(),
     desainMulai:null, pedomanDesain:'', pedomanGambar:[], listDesain:'', deadline:'',
     produksiMulai:null, selesaiAt:null
   };
@@ -3671,67 +3855,16 @@ async function submitNewProject(){
 function openEditProjectModal(id){
   const p = projectsCache.find(x=>x.id===id);
   if(!p) return;
-
   tempUkuran = (p.ukuran && p.ukuran.length) ? p.ukuran.map(u=>({...u})) : [{ukuran:'', qty:1}];
   tempRefImgs = [...(p.referensi||[])];
   tempRefUploadId = p.id;
-  const desainerDl = distinctNames('namaDesainer').map(n=>`<option value="${escapeHtml(n)}">`).join('');
-  const produksiDl = distinctNames('namaProduksi').map(n=>`<option value="${escapeHtml(n)}">`).join('');
-  const viaOptions = ['WhatsApp','Telepon','Datang Langsung','Instagram / Sosial Media','Lainnya'];
-
+  tempProduk = projectKategoriList(p).filter(k=>k!==PRODUK_LAINNYA);
+  tempBayar = p.status==='menunggu_payment' ? 'menunggu' : 'sudah';
   renderModal(`
     <button class="close" onclick="closeModal()">×</button>
     <h2>Edit Project</h2>
     <div class="modal-sub mono">${p.id} · Ubah data pencatatan bila ada kesalahan input</div>
-
-    <label>Nama Client</label>
-    <input type="text" id="f_nama" value="${escapeHtml(p.namaKlien||'')}" placeholder="cth. Budi Santoso / CV Maju Jaya">
-
-    <div class="row2">
-      <div>
-        <label>No. HP / WA</label>
-        <input type="tel" id="f_hp" value="${escapeHtml(p.noHp||'')}" placeholder="08xxxxxxxxxx">
-      </div>
-      <div>
-        <label>Via Masuk</label>
-        <select id="f_via">
-          ${viaOptions.map(v=>`<option ${p.via===v?'selected':''}>${v}</option>`).join('')}
-        </select>
-      </div>
-    </div>
-
-    <label>Brief Desain</label>
-    <textarea id="f_brief" placeholder="Jelaskan permintaan desain dari client: jenis produk, warna, bahan, konsep, dsb.">${escapeHtml(p.briefDesain||'')}</textarea>
-
-    <label>List Ukuran & Qty</label>
-    <div id="ukuranWrap"></div>
-    <button type="button" class="btn ghost small" onclick="addUkuranRow()">+ Tambah Ukuran</button>
-
-    <label>Gambar / Dokumen Referensi dari Client</label>
-    <input type="file" id="f_ref" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" multiple onchange="handleRefUpload(event)">
-    <div class="filehint">Bisa upload gambar, PDF, Word, atau Excel — beberapa file sekaligus. Gambar otomatis dikompres dulu supaya cepat & hemat kuota.</div>
-    <div class="upload-status mono" id="refUploadStatus"></div>
-    <div class="img-preview-strip" id="refPreview"></div>
-
-    <div class="divider"></div>
-    <div class="section-title" style="margin:0 0 4px;"><h2 style="font-size:18px;">Penugasan & Komisi</h2><div class="line"></div></div>
-
-    <div class="row2">
-      <div>
-        <label>Nama Desainer (Ditugaskan)</label>
-        <input type="text" id="f_desainer" list="dl_desainer" value="${escapeHtml(p.namaDesainer||'')}" placeholder="Nama desainer yang mengerjakan">
-        <datalist id="dl_desainer">${desainerDl}</datalist>
-      </div>
-      <div>
-        <label>Nama Bagian Produksi (Ditugaskan)</label>
-        <input type="text" id="f_produksi" list="dl_produksi" value="${escapeHtml(p.namaProduksi||'')}" placeholder="Nama yang memproduksi">
-        <datalist id="dl_produksi">${produksiDl}</datalist>
-      </div>
-    </div>
-    <label>Komisi Produksi per Pcs (Rp)</label>
-    <input type="number" min="0" id="f_komisi" value="${p.komisiPerPcs||0}" placeholder="cth. 3000">
-    <div class="filehint">Total komisi akan dihitung otomatis: Komisi per Pcs × Total Pcs, dan tampil ke bagian Produksi yang ditugaskan.</div>
-
+    ${wfFormHtml(p)}
     <div class="modal-actions">
       <button class="btn ghost" style="flex:1;" onclick="openDetailModal('${p.id}')">Batal</button>
       <button class="btn" style="flex:1;" onclick="submitEditProject('${p.id}')">Simpan Perubahan</button>
@@ -3739,35 +3872,25 @@ function openEditProjectModal(id){
   `);
   renderUkuranRows();
   renderRefPreview();
+  renderProdukChips();
 }
 
 async function submitEditProject(id){
   const p = projectsCache.find(x=>x.id===id);
   if(!p) return;
+  const f = wfReadForm(); if(!f) return;
 
-  const nama = document.getElementById('f_nama').value.trim();
-  const hp = document.getElementById('f_hp').value.trim();
-  const via = document.getElementById('f_via').value;
-  const brief = document.getElementById('f_brief').value.trim();
-  const namaDesainer = document.getElementById('f_desainer').value.trim();
-  const namaProduksi = document.getElementById('f_produksi').value.trim();
-  const komisiPerPcs = parseFloat(document.getElementById('f_komisi').value) || 0;
-
-  if(!nama || !hp || !brief){
-    alert('Mohon lengkapi Nama Client, No. HP, dan Brief Desain.');
-    return;
+  p.namaKlien = f.nama; p.noHp = f.hp; p.via = f.via; p.briefDesain = f.brief;
+  p.ukuran = f.ukuran; p.referensi = tempRefImgs;
+  p.namaDesainer = f.namaDesainer; p.namaProduksi = f.namaProduksi; p.komisiPerPcs = f.komisiPerPcs;
+  p.kategori = f.produk[0]; p.kategoriList = f.produk;
+  p.jenisOrder = f.produk.some(k=>/^(kaos|jersey)$/i.test(k)) ? 'kaos' : 'lainnya';
+  p.briefWaTerkirim = f.briefWa;
+  p.briefWaAt = f.briefWa ? (p.briefWaAt || Date.now()) : null;
+  if(document.getElementById('bayarSeg')){
+    if(tempBayar==='sudah' && p.status==='menunggu_payment'){ p.status = 'baru'; p.paidAt = Date.now(); }
+    else if(tempBayar==='menunggu' && p.status==='baru'){ p.status = 'menunggu_payment'; }
   }
-  const ukuranClean = tempUkuran.filter(u=>u.ukuran.trim()!=='');
-
-  p.namaKlien = nama;
-  p.noHp = hp;
-  p.via = via;
-  p.briefDesain = brief;
-  p.ukuran = ukuranClean;
-  p.referensi = tempRefImgs;
-  p.namaDesainer = namaDesainer;
-  p.namaProduksi = namaProduksi;
-  p.komisiPerPcs = komisiPerPcs;
 
   const ok = await saveProject(p);
   if(!ok) return;
@@ -3811,11 +3934,15 @@ function openDetailModal(id){
     <div class="kv"><b>Desainer</b><span>${escapeHtml(p.namaDesainer||'-')}</span></div>
     <div class="kv"><b>Produksi</b><span>${escapeHtml(p.namaProduksi||'-')}</span></div>
     <div class="kv"><b>Brief</b><span>${escapeHtml(p.briefDesain)}</span></div>
+    <div class="kv"><b>Brief WA</b><span>${state.role==='admin' ? `<label class="chk"><input type="checkbox" ${p.briefWaTerkirim?'checked':''} onchange="wfToggleBriefWa('${p.id}',this.checked)"> Sudah dikirim ke WA desainer${p.briefWaAt?' · '+fmtDate(p.briefWaAt):''}</label>` : (p.briefWaTerkirim ? '✓ Sudah dikirim ke WA' : 'Belum dikirim')}</span></div>
     <div class="kv"><b>List Ukuran</b><div>${ukuranHtml}</div></div>
     <div class="kv"><b>Referensi</b><div>${refHtml}</div></div>
   `;
 
-  if(p.status === 'baru'){
+  if(p.status === 'menunggu_payment'){
+    body += `<div class="note-box" style="border-color:#8d8a82;">⏳ Menunggu pembayaran${p.invNo ? ' nota #'+escapeHtml(String(p.invNo)) : ''}. ${p.invNo ? 'Begitu DP/pembayaran tercatat di Keuangan, project otomatis pindah ke <b>Baru</b> dan bisa dikerjakan.' : 'Kalau DP sudah masuk, tandai sudah payment supaya pindah ke <b>Baru</b> dan bisa dikerjakan.'}</div>`;
+    if(state.role==='admin') body += `<div class="modal-actions"><button class="btn green block" onclick="closeModal();wfForceStart('${p.id}')">✓ Tandai Sudah Payment</button></div>`;
+  } else if(p.status === 'baru'){
     body += `<div class="note-box">Project ini belum mulai dikerjakan Desainer.</div>`;
     if(state.role==='desainer' && sameName(p.namaDesainer)){
       body += `<div class="modal-actions"><button class="btn block" onclick="startDesain('${p.id}')">Mulai Desain</button></div>`;
@@ -4041,7 +4168,7 @@ async function manualSetStatus(id){
    - Begitu status naik, WhatsApp client otomatis terbuka dengan pesan rapi (format WhatsApp: *tebal*, daftar tahap).
      Tinggal tekan kirim. Bisa dimatikan lewat centang "Otomatis buka WA client".
    - Setiap perubahan ada tombol URUNGKAN (15 detik) kalau salah pencet.                                      */
-const WF_STEP = { baru:1, diproses_desainer:2, desain_selesai:3, diproses_produksi:4, selesai:5 };
+const WF_STEP = { menunggu_payment:1, baru:2, diproses_desainer:3, desain_selesai:4, diproses_produksi:5, selesai:6 };
 const WF_NEXT = { baru:'diproses_desainer', diproses_desainer:'desain_selesai', desain_selesai:'diproses_produksi', diproses_produksi:'selesai' };
 const WF_NEXT_LABEL = { baru:'Mulai Desain', diproses_desainer:'Desain Selesai', desain_selesai:'Mulai Produksi', diproses_produksi:'Produksi Selesai' };
 function wfDayStart(v){
@@ -4055,7 +4182,7 @@ function wfLateDays(p){
   const diff = Math.round((end - wfDayStart(p.deadline)) / 86400000);
   return diff > 0 ? diff : 0;
 }
-function wfIsLateActive(p){ return !!p && p.status!=='selesai' && wfLateDays(p) > 0; }
+function wfIsLateActive(p){ return !!p && p.status!=='selesai' && p.status!=='menunggu_payment' && wfLateDays(p) > 0; }
 
 /* ---- Pesan WhatsApp (pakai format WA: *tebal*, emoji, baris pendek) ---- */
 function wfSapaan(){
@@ -4064,7 +4191,8 @@ function wfSapaan(){
 }
 function wfStepLines(p){
   const names = ['Pesanan diterima','Desain dikerjakan','Desain selesai','Proses produksi','Pesanan selesai'];
-  const done = { baru:1, diproses_desainer:1, desain_selesai:3, diproses_produksi:3, selesai:5 }[p.status] || 1;
+  const doneMap = { menunggu_payment:0, baru:1, diproses_desainer:1, desain_selesai:3, diproses_produksi:3, selesai:5 };
+  const done = (p.status in doneMap) ? doneMap[p.status] : 1;
   const cur  = { diproses_desainer:2, diproses_produksi:4 }[p.status] || 0;
   return names.map((n,i)=>{
     const k = i+1;
@@ -4075,6 +4203,7 @@ function wfStepLines(p){
 }
 function wfClientMsg(p){
   const lead = {
+    menunggu_payment: 'Pesanan Kakak sudah kami catat. Proses desain akan kami mulai setelah pembayaran (DP) kami terima.',
     baru: 'Pesanan Kakak telah kami terima dan saat ini masuk dalam antrean desain.',
     diproses_desainer: 'Desain pesanan Kakak sedang kami kerjakan.',
     desain_selesai: 'Desain pesanan Kakak telah *selesai* dan akan segera masuk ke tahap produksi.',
@@ -4232,9 +4361,11 @@ function wfDetailHtml(p){
   const late = wfIsLateActive(p);
   return `<div class="divider"></div>
     <label>Kabari Client (WhatsApp)</label>
+    ${wfIsDueSoon(p) ? `<div class="note-box" style="border-color:#E0A100;color:#8a5a00;">⏰ Deadline ${wfDaysLeft(p)===0?'hari ini':'besok'} (${fmtDate(p.deadline)}). ${wfReminded(p)?'✓ Sudah dikabari ke client.':'Belum dikabari ke client.'}</div>` : ''}
     ${late ? `<div class="note-box" style="border-color:var(--rust);color:var(--rust);">⚠ Project ini sudah telat ${wfLateDays(p)} hari dari deadline ${fmtDate(p.deadline)}.</div>` : ''}
     <div class="modal-actions">
       <button class="btn ghost" style="flex:1;" onclick="wfSendNow('${p.id}')">Kirim Update Progres ke WA</button>
+      ${wfIsDueSoon(p) ? `<button class="btn" style="flex:1;background:#E0A100;" onclick="wfRemindClient('${p.id}')">Kabari H-1 ke Client</button>` : ''}
       ${late ? `<button class="btn rust" style="flex:1;" onclick="wfApologyModal('${p.id}')">Kirim Permintaan Maaf</button>` : ''}
     </div>`;
 }
@@ -4282,13 +4413,19 @@ function renderFileThumb(item, size, removeFn, removeIdx){
 }
 
 /* ===================== JEMBATAN KE GENERATOR NOTA ===================== */
+/* nama produk untuk item nota yang dibuat dari project: ikut kategori project (Jersey ≠ Kaos), bukan selalu "KAOS" */
+function notaProdukLabel(p){
+  const k = projectKategoriList(p)[0];
+  return (!k || k===PRODUK_LAINNYA) ? 'PESANAN' : k.toUpperCase();
+}
 function openNotaFromProject(id){
   const p = projectsCache.find(x=>x.id===id);
   if(!p) return;
+  notaSourceProjectId = id;
 
   const sizeItems = (p.ukuran||[]).filter(u=>u.ukuran && (parseInt(u.qty)||0) > 0);
   notaItems = sizeItems.length
-    ? sizeItems.map(u=>({ desc:`KAOS UKURAN ${String(u.ukuran).toUpperCase()}`, price:0, qty:parseInt(u.qty)||0 }))
+    ? sizeItems.map(u=>({ desc:`${notaProdukLabel(p)} UKURAN ${String(u.ukuran).toUpperCase()}`, price:0, qty:parseInt(u.qty)||0 }))
     : [{ desc:(p.briefDesain||'PESANAN').toUpperCase().slice(0,40), price:0, qty: totalQty(p)||1 }];
 
   const custEl = document.getElementById('custName'); if(custEl) custEl.value = p.namaKlien || '';
@@ -4313,6 +4450,333 @@ function openNotaFromProject(id){
 
   closeModal();
   showMode('nota');
+}
+
+/* ===================== KLASIFIKASI PRODUK (kata kunci nama item) =====================
+   Urutan penting: yang spesifik di atas, "Kaos" paling bawah (karena kata "lengan" juga muncul di kemeja/jaket).
+   Tambah/ubah kata kunci di sini kapan saja; semua tampilan (Alur Kerja & Keuangan) otomatis mengikuti. */
+const PRODUK_KATEGORI = [
+  { k:'Workshirt',        re:/work ?shirt|wearpack|coverall|kemeja|\bpdh\b|\bpdl\b|seragam kerja/i },
+  { k:'Jaket',            re:/jaket|jacket|hoodie|sweater|switer|varsity|bomber|rompi|\bvest\b/i },
+  { k:'Celana',           re:/celana|jogger|training pants/i },
+  { k:'Topi',             re:/\btopi\b|\bcap\b|bucket hat/i },
+  { k:'Tas',              re:/\btas\b|tote ?bag|ransel|backpack|pouch/i },
+  { k:'Bendera',          re:/bendera|\bflag\b|umbul|rontek/i },
+  { k:'Banner & Spanduk', re:/banner|spanduk|baliho|backdrop/i },
+  { k:'Stiker',           re:/stiker|sticker|decal|vinyl/i },
+  { k:'Merchandise',      re:/\bmug\b|gelas|lanyard|id ?card|gantungan|\bpin\b|tumbler|payung|merch|goodie/i },
+  { k:'Jersey',           re:/jersey|jersy|jersi/i },
+  { k:'Kaos',             re:/kaos|\bpolo\b|t-?shirt|oblong|singlet|lengan/i }
+];
+const PRODUK_LAINNYA = 'Lainnya';
+/* Produk tambahan buatan admin (disimpan di Firestore meta/produkKategori + cadangan localStorage).
+   Otomatis dikenali juga untuk klasifikasi nama item di nota. */
+let produkCustom = [];
+try{ produkCustom = JSON.parse(localStorage.getItem('tenx_produk_custom')||'[]') || []; }catch(e){ produkCustom = []; }
+function produkNorm(s){ return String(s||'').replace(/\s+/g,' ').trim().slice(0,30); }
+function produkSemua(){
+  const out = [], seen = new Set();
+  const add = k=>{ k = produkNorm(k); if(!k || k===PRODUK_LAINNYA) return; const key = k.toLowerCase(); if(seen.has(key)) return; seen.add(key); out.push(k); };
+  ['Kaos','Jersey'].forEach(add);
+  PRODUK_KATEGORI.forEach(r=>add(r.k));
+  produkCustom.forEach(add);
+  (typeof projectsCache!=='undefined' ? projectsCache : []).forEach(p=>(p.kategoriList||[]).forEach(add));
+  return out;
+}
+async function produkTambah(raw){
+  const k = produkNorm(raw); if(!k) return '';
+  const ada = produkSemua().find(x=>x.toLowerCase()===k.toLowerCase());
+  if(ada) return ada;
+  produkCustom.push(k);
+  try{ localStorage.setItem('tenx_produk_custom', JSON.stringify(produkCustom)); }catch(e){}
+  if(CONFIG_READY){ try{ await db.collection('meta').doc('produkKategori').set({ list: produkCustom, updatedAt: Date.now() }); }catch(e){ console.warn('Gagal simpan produk', e); } }
+  return k;
+}
+function produkSubscribe(){
+  if(!CONFIG_READY) return;
+  try{
+    db.collection('meta').doc('produkKategori').onSnapshot(s=>{
+      const l = s.exists ? s.data().list : null;
+      if(!Array.isArray(l)) return;
+      const have = new Set(produkCustom.map(x=>x.toLowerCase()));
+      l.forEach(k=>{ k = produkNorm(k); if(k && !have.has(k.toLowerCase())){ produkCustom.push(k); have.add(k.toLowerCase()); } });
+      try{ localStorage.setItem('tenx_produk_custom', JSON.stringify(produkCustom)); }catch(e){}
+      if(typeof renderProdukChips==='function') renderProdukChips();
+    }, e=>console.warn('produk realtime', e));
+  }catch(e){}
+}
+function produkKategoriTeks(txt){
+  const t = String(txt||'');
+  const tl = t.toLowerCase();
+  for(const c of produkCustom){ if(c && tl.includes(c.toLowerCase())) return c; }
+  for(const r of PRODUK_KATEGORI){ if(r.re.test(t)) return r.k; }
+  return '';
+}
+/* baris kategori sebuah nota: [{k, value, qty}] diurutkan dari nilai terbesar */
+function notaKategoriRows(inv){
+  const m = {};
+  ((inv && inv.items) || []).forEach(it=>{
+    if(!it || !(it.desc || Number(it.qty))) return;
+    const k = produkKategoriTeks(it.desc) || PRODUK_LAINNYA;
+    const o = m[k] || (m[k] = { k, value:0, qty:0 });
+    o.value += (Number(it.price)||0) * (Number(it.qty)||0);
+    o.qty += Number(it.qty)||0;
+  });
+  const rows = Object.values(m).sort((a,b)=> (b.value-a.value) || (b.qty-a.qty));
+  return rows.length ? rows : [{ k:PRODUK_LAINNYA, value:0, qty:0 }];
+}
+function notaKategoriList(inv){ return notaKategoriRows(inv).map(r=>r.k); }
+/* kategori sebuah project — SELALU mengikuti NAMA ITEM di nota yang tertaut (bukan nama klien):
+   1) item nota (live)  2) kategori yang tersimpan saat project dibuat dari nota  3) project manual: label ukuran/item lalu brief */
+function projectKategoriList(p){
+  if(p.invNo && typeof invoicesCache!=='undefined'){
+    const inv = invoicesCache.find(i=>String(i.invNo)===String(p.invNo));
+    if(inv) return notaKategoriList(inv);
+  }
+  if(Array.isArray(p.kategoriList) && p.kategoriList.length) return p.kategoriList;
+  let k = produkKategoriTeks((p.ukuran||[]).map(u=>u.ukuran).join(' '));
+  if(!k) k = produkKategoriTeks(p.briefDesain||'');
+  if(k) return [k];
+  const sizes = (p.ukuran||[]).filter(u=>u.ukuran);
+  if(!sizes.length || sizes.every(u=>/^(xxs|xs|s|m|l|xl|xxl|xxxl|[2-6]xl|\d{1,2}|anak.*|dewasa.*)$/i.test(String(u.ukuran).trim()))) return ['Kaos'];
+  return [PRODUK_LAINNYA];
+}
+
+/* ===================== PERINGATAN H-1 DEADLINE → UPDATE KE CLIENT ===================== */
+function wfDaysLeft(p){
+  if(!p || !p.deadline || p.status==='selesai' || p.status==='menunggu_payment') return null;
+  return Math.round((wfDayStart(p.deadline) - wfDayStart(Date.now())) / 86400000);
+}
+function wfIsDueSoon(p){ const d = wfDaysLeft(p); return d===0 || d===1; }          // H-1 (besok) atau hari-H
+function wfReminded(p){ return !!p && !!p.deadline && p.remindH1===p.deadline; }       // ganti deadline → peringatan aktif lagi
+function wfNeedsRemind(p){ return wfIsDueSoon(p) && !wfReminded(p); }
+function wfReminderMsg(p){
+  const d = wfDaysLeft(p);
+  const L = [];
+  L.push('*TENX APPAREL*');
+  L.push('_Pengingat & Update Pesanan_');
+  L.push('');
+  L.push(wfSapaan() + ', Kak *' + (p.namaKlien||'') + '*.');
+  L.push('Kami informasikan bahwa target penyelesaian pesanan Kakak adalah *' + (d===0 ? 'hari ini' : 'besok') + '* (' + fmtDate(p.deadline) + ').');
+  L.push('');
+  L.push('No. Pesanan : *' + p.id + '*');
+  L.push('Jumlah      : ' + totalQty(p) + ' pcs');
+  L.push('');
+  L.push('*Posisi pesanan saat ini*');
+  L.push(wfStepLines(p));
+  L.push('');
+  L.push(p.status==='diproses_produksi'
+    ? 'Pesanan sedang kami kebut agar sesuai target. Kami akan segera mengabari Kakak begitu pesanan siap.'
+    : 'Kami terus mengupayakan penyelesaian sesuai target. Jika ada perubahan jadwal, kami akan menginformasikannya lebih awal kepada Kakak.');
+  L.push('');
+  L.push('Terima kasih atas kepercayaan Kakak kepada TENX APPAREL.');
+  return L.join('\n');
+}
+/* dipanggil langsung dari klik (sebelum await) supaya WA tidak diblokir browser */
+function wfRemindClient(id){
+  const p = projectsCache.find(x=>x.id===id); if(!p) return;
+  const url = wfWaUrl(p, wfReminderMsg(p));
+  if(!url){ alert('No. HP client belum valid: ' + (p.noHp||'-') + '. Perbaiki lewat Edit Data Project.'); return; }
+  window.open(url, '_blank');
+  wfMarkReminded(id, true);
+}
+async function wfMarkReminded(id, on){
+  const p = projectsCache.find(x=>x.id===id); if(!p) return;
+  const prev = { remindH1:p.remindH1||'', remindAt:p.remindAt||null };
+  p.remindH1 = on ? (p.deadline||'') : ''; p.remindAt = on ? Date.now() : null;
+  const ok = await saveProject(p);
+  if(!ok){ Object.assign(p, prev); return; }
+  await refresh(false); render();
+  wfToastShow('<div class="wt-msg"><b>' + escapeHtml(p.namaKlien||'') + '</b> ' + (on ? 'ditandai sudah dikabari (H-1)' : 'tanda dikabari dibatalkan') +
+    '<small>' + (on ? 'WA client dibuka. Kalau belum sempat terkirim, klik "Batalkan tanda".' : 'Peringatan H-1 aktif lagi untuk project ini.') + '</small></div>' +
+    '<div class="wt-act">' + (on ? '<button class="undo" onclick="wfMarkReminded(\'' + id + '\',false)">↩ Batalkan tanda</button>' : '') + '<button class="x" onclick="wfToastHide()">×</button></div>', 12000);
+}
+function wfDueBannerHtml(){
+  const list = projectsCache.filter(wfNeedsRemind).sort((a,b)=>String(a.deadline).localeCompare(String(b.deadline)));
+  if(!list.length) return '';
+  return '<div class="wf-due-banner"><div class="ttl">⏰ ' + list.length + ' project mendekati deadline — saatnya update ke client</div>' +
+    list.slice(0,8).map(p=>'<div class="r"><div><b>' + escapeHtml(p.namaKlien||'') + '</b> <span class="mono">' + p.id + '</span><small>' +
+      (wfDaysLeft(p)===0 ? 'Deadline HARI INI' : 'H-1 · deadline besok') + ' (' + fmtDate(p.deadline) + ') · ' + escapeHtml(STATUS_LABEL[p.status]||p.status) + '</small></div>' +
+      '<button class="wf-remind" onclick="wfRemindClient(\'' + p.id + '\')">Kabari Client</button></div>').join('') +
+    (list.length>8 ? '<small>…dan ' + (list.length-8) + ' project lain (lihat kartu bertanda ⏰)</small>' : '') + '</div>';
+}
+/* toast pengingat otomatis: sekali per hari per kondisi saat Admin membuka Alur Kerja */
+function wfCheckDueToast(){
+  if(state.role!=='admin') return;
+  const n = projectsCache.filter(wfNeedsRemind).length; if(!n) return;
+  const key = 'tenx_wf_due_' + kgLocalDate(new Date()) + '_' + n;
+  try{ if(sessionStorage.getItem(key)) return; sessionStorage.setItem(key, '1'); }catch(e){}
+  wfToastShow('<div class="wt-msg"><b>⏰ ' + n + ' project mendekati deadline (H-1)</b><small>Segera update ke client supaya komunikasi tetap terjaga.</small></div>' +
+    '<div class="wt-act"><button class="wa" onclick="wfToastHide();window.scrollTo({top:0,behavior:\'smooth\'})">Lihat</button><button class="x" onclick="wfToastHide()">×</button></div>', 10000);
+}
+
+/* ===================== KLASIFIKASI DI KEUANGAN ===================== */
+let kgKat = 'semua';
+let kgMonth = 'semua';   // filter bulan di Riwayat Transaksi (bulan = tanggal DP / pembayaran pertama)
+function setKgMonth(k){ kgMonth = k; renderKeuangan(); }
+function kgTxKategori(t){
+  if(t.type==='invoice') return notaKategoriList(t.raw);
+  const r = t.raw || {};
+  return [produkKategoriTeks(r.desc || r.label || r.custName || '') || PRODUK_LAINNYA];
+}
+function kgKatStats(all){
+  const st = {};
+  const get = k => st[k] || (st[k] = { k, nilai:0, nota:0, masuk:0 });
+  all.forEach(t=>{
+    if(t.type==='invoice'){
+      const rows = notaKategoriRows(t.raw), tot = rows.reduce((s,r)=>s+r.value,0);
+      rows.forEach(r=>{ const o = get(r.k); o.nota++; o.nilai += r.value; o.masuk += tot>0 ? t.dibayar*(r.value/tot) : t.dibayar/rows.length; });
+    } else { const o = get(kgTxKategori(t)[0]); o.nota++; o.nilai += t.amount; o.masuk += t.dibayar; }
+  });
+  return Object.values(st).sort((a,b)=>b.nilai-a.nilai);
+}
+function setKgKat(k){ kgKat = (kgKat===k && k!=='semua') ? 'semua' : k; renderKeuangan(); }
+function kgRenderKat(all){
+  const stats = kgKatStats(all);
+  const box = document.getElementById('kgKatSummary');
+  if(box){
+    const total = stats.reduce((s,x)=>s+x.nilai,0) || 1;
+    box.innerHTML = stats.length ? stats.map(x=>
+      '<div class="kg-card" style="cursor:pointer;' + (kgKat===x.k ? 'outline:2px solid var(--yellow);' : '') + '" data-k="' + escapeHtml(x.k) + '" onclick="setKgKat(this.dataset.k)">' +
+      '<div class="lbl">' + escapeHtml(x.k) + '</div><div class="val">' + formatRupiah(x.nilai) + '</div>' +
+      '<div class="sub">' + x.nota + ' nota · ' + Math.round(x.nilai/total*100) + '% dari total<br>Sudah masuk ' + formatRupiah(x.masuk) + '</div></div>').join('')
+      : '<div class="kg-empty">Belum ada nota.</div>';
+  }
+  const f = document.getElementById('kgKatFilters');
+  if(f){
+    const cnt = {}; all.forEach(t=>kgTxKategori(t).forEach(k=>{ cnt[k] = (cnt[k]||0)+1; }));
+    const ks = Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]);
+    if(kgKat!=='semua' && !cnt[kgKat]) kgKat = 'semua';
+    f.innerHTML = ['semua'].concat(ks).map(k=>'<button class="' + (kgKat===k?'active':'') + '" data-k="' + escapeHtml(k) + '" onclick="setKgKat(this.dataset.k)">' +
+      (k==='semua' ? 'Semua Produk' : escapeHtml(k)) + ' (' + (k==='semua' ? all.length : cnt[k]) + ')</button>').join('');
+  }
+}
+function setKategori(k){ state.kategori = k; render(); }
+function katPill(k, label, count){
+  return '<button class="stage-pill kat ' + ((state.kategori||'all')===k?'active':'') + '" data-k="' + escapeHtml(k) + '" onclick="setKategori(this.dataset.k)">' + escapeHtml(label) + ' <span class="count">' + count + '</span></button>';
+}
+
+/* ===================== MENUNGGU PAYMENT → BARU (sinkron dengan pembayaran di nota) =====================
+   Nota yang belum ada pembayaran sama sekali (belum DP) → project berstatus "Menunggu Payment" (belum bisa diproses).
+   Begitu pembayaran/DP tercatat di nota (Keuangan), project otomatis pindah ke "Baru" dan bisa dilanjutkan progresnya. */
+let wfPaySyncing = false;
+async function wfSyncPaymentStatus(){
+  if(wfPaySyncing || !CONFIG_READY) return;
+  const todo = projectsCache.filter(p=>{
+    if(p.status!=='menunggu_payment' || !p.invNo) return false;
+    const inv = invoicesCache.find(i=>String(i.invNo)===String(p.invNo));
+    return !!inv && Number(inv.totalDibayar||0) > 0;
+  });
+  if(!todo.length) return;
+  wfPaySyncing = true;
+  try{
+    for(const p of todo){ await db.collection('projects').doc(p.id).update({ status:'baru', paidAt:Date.now() }); }
+    const wa = document.getElementById('workflowApp');
+    if(state.role==='admin' && wa && wa.style.display!=='none'){
+      wfToastShow('<div class="wt-msg"><b>💰 ' + todo.length + ' project masuk ke "Baru"</b><small>' + todo.slice(0,3).map(p=>escapeHtml(p.namaKlien||'')).join(', ') + (todo.length>3?' dll':'') + ' — pembayaran sudah tercatat, siap dikerjakan.</small></div><div class="wt-act"><button class="x" onclick="wfToastHide()">×</button></div>', 9000);
+    }
+  }catch(e){ console.warn('wfSyncPaymentStatus', e); }
+  finally{ wfPaySyncing = false; }
+}
+/* Admin: mulai pengerjaan walau pembayaran belum tercatat di nota (mis. sudah transfer tapi belum dicatat) */
+async function wfForceStart(id){
+  const p = projectsCache.find(x=>x.id===id); if(!p || p.status!=='menunggu_payment') return;
+  if(p.invNo && !confirm('Pembayaran nota #' + p.invNo + ' belum tercatat di Keuangan.\n\nTetap tandai sudah payment dan pindahkan "' + (p.namaKlien||'') + '" ke Baru?\n\nTips: lebih baik catat pembayarannya di Keuangan, maka status pindah otomatis.')) return;
+  const prev = p.status;
+  p.status = 'baru'; p.paidAt = Date.now();
+  const ok = await saveProject(p);
+  if(!ok){ p.status = prev; return; }
+  await refresh(false); render();
+}
+async function wfToggleBriefWa(id, v){
+  const p = projectsCache.find(x=>x.id===id); if(!p) return;
+  p.briefWaTerkirim = !!v; p.briefWaAt = v ? Date.now() : null;
+  const ok = await saveProject(p);
+  if(!ok){ p.briefWaTerkirim = !v; return; }
+  render();
+}
+
+/* ===================== NOTA → ALUR KERJA (project otomatis) ===================== */
+let notaSourceProjectId = '';   // terisi bila form nota dibuka dari sebuah Project
+
+function projectFromInvoice(rec, id, createdAtMs){
+  const items = (rec.items||[]).filter(it=>it && (it.desc || Number(it.qty)));
+  const kats = notaKategoriList({ items });
+  const kaos = kats[0]==='Kaos' || kats[0]==='Jersey';
+  const lines = items.map(it=>`- ${it.desc||'-'} ×${Number(it.qty)||0}`).join('\n');
+  const brief = `[Otomatis dari Nota #${rec.invNo}]\n${lines}`
+    + (rec.notes ? `\nCatatan nota: ${rec.notes}` : '')
+    + (rec.dueDate ? `\nJatuh tempo nota: ${rec.dueDate}` : '');
+  return {
+    id, namaKlien: rec.custName || '(tanpa nama)', noHp: rec.custPhone || '', via: 'Lainnya', briefDesain: brief,
+    ukuran: items.map(it=>({ ukuran: String(it.desc||'ITEM').slice(0,40), qty: Number(it.qty)||0 })),
+    referensi: [], namaDesainer: '', namaProduksi: '', komisiPerPcs: 0,
+    status: Number(rec.totalDibayar||0) > 0 ? 'baru' : 'menunggu_payment', createdAt: createdAtMs || Date.now(),
+    desainMulai: null, pedomanDesain: '', pedomanGambar: [], listDesain: '', deadline: rec.dueDate || '', produksiMulai: null, selesaiAt: null,
+    invNo: rec.invNo, dariNota: true, jenisOrder: kaos ? 'kaos' : 'lainnya', kategori: kats[0], kategoriList: kats, createdVia: 'nota'
+  };
+}
+
+/* Tautkan nota ke project. sourceId = project asal (bila nota dibuka dari project), selain itu project dibuat otomatis.
+   ID project otomatis bersifat tetap (TX-NOTA-<no nota>) sehingga tidak mungkin terbuat dobel. */
+async function ensureProjectForInvoice(rec, sourceId, createdAtMs){
+  if(!CONFIG_READY) return { ok:false, err:'Firebase belum dikonfigurasi' };
+  try{
+    if(sourceId){
+      const sref = db.collection('projects').doc(sourceId);
+      const ssnap = await sref.get();
+      if(ssnap.exists){ await sref.update({ invNo: rec.invNo }); return { ok:true, id:sourceId, linked:true }; }
+    }
+    const id = 'TX-NOTA-' + rec.invNo;
+    const ref = db.collection('projects').doc(id);
+    const snap = await ref.get();
+    if(snap.exists) return { ok:true, id, existed:true };
+    await ref.set(projectFromInvoice(rec, id, createdAtMs));
+    return { ok:true, id, created:true };
+  }catch(e){
+    console.error('Gagal membuat project dari nota', e);
+    return { ok:false, err: e.message || String(e) };
+  }
+}
+
+/* Tombol di Alur Kerja (ADMIN): buat project untuk nota lama yang belum punya project (60 hari terakhir) */
+async function syncNotasToProjects(){
+  if(!CONFIG_READY){ alert('Firebase belum dikonfigurasi.'); return; }
+  let filled = 0;   // project dari nota yang deadline-nya masih kosong → isi dari jatuh tempo nota (supaya peringatan H-1 jalan)
+  for(const p of projectsCache){
+    if(p.dariNota && !p.deadline && p.invNo){
+      const inv = invoicesCache.find(i=>String(i.invNo)===String(p.invNo));
+      if(inv && inv.dueDate){ try{ await db.collection('projects').doc(p.id).update({ deadline: inv.dueDate }); filled++; }catch(e){ console.warn(e); } }
+    }
+  }
+  let held = 0;     // project dari nota yang ternyata belum dibayar & belum dikerjakan → "Menunggu Payment"
+  for(const p of projectsCache){
+    if(p.dariNota && p.status==='baru' && !p.desainMulai && p.invNo){
+      const inv = invoicesCache.find(i=>String(i.invNo)===String(p.invNo));
+      if(inv && !(Number(inv.totalDibayar||0) > 0)){ try{ await db.collection('projects').doc(p.id).update({ status:'menunggu_payment' }); held++; }catch(e){ console.warn(e); } }
+    }
+  }
+  const linked = new Set(projectsCache.map(p=>String(p.invNo||'')).filter(Boolean));
+  const klienAda = new Set(projectsCache.map(p=>String(p.namaKlien||'').trim().toLowerCase()).filter(Boolean));
+  const cutoff = Date.now() - 60*86400000;
+  const recent = invoicesCache.filter(i=>!i.projectId && !linked.has(String(i.invNo)) && ((new Date(i.createdAt||i.invDate).getTime())||0) >= cutoff);
+  const todo = recent.filter(i=>!klienAda.has(String(i.custName||'').trim().toLowerCase()));
+  const skipped = recent.length - todo.length;
+  if(!todo.length){
+    alert('Tidak ada nota (60 hari terakhir) yang perlu dibuatkan project.' + (filled ? '\n\n'+filled+' project dari nota diisi deadline-nya dari jatuh tempo nota.' : '') + (held ? '\n\n'+held+' project dikembalikan ke "Menunggu Payment" karena notanya belum dibayar.' : '') + (skipped ? '\n\n'+skipped+' nota dilewati karena nama kliennya sudah punya project.' : ''));
+    return;
+  }
+  const names = todo.slice(0,8).map(i=>`#${i.invNo} — ${i.custName||'-'}`).join('\n') + (todo.length>8 ? `\n…dan ${todo.length-8} lainnya` : '');
+  if(!confirm(`${todo.length} nota belum punya project di Alur Kerja:\n\n${names}\n\nBuat project (status Baru) untuk semuanya?` + (skipped ? `\n\n(${skipped} nota lain dilewati karena nama kliennya sudah punya project.)` : ''))) return;
+  let ok = 0, fail = 0;
+  for(const inv of todo){
+    const r = await ensureProjectForInvoice(inv, '', (new Date(inv.createdAt||inv.invDate).getTime())||Date.now());
+    if(r.ok){
+      ok++;
+      try{ await db.collection('invoices').doc(String(inv.invNo)).update({ projectId: r.id }); }catch(e){ console.warn(e); }
+    } else fail++;
+  }
+  alert(`Selesai: ${ok} project dibuat` + (fail ? `, ${fail} gagal (coba lagi).` : '.') + (held ? `\n${held} project dikembalikan ke "Menunggu Payment" karena notanya belum dibayar.` : ''));
 }
 
 /* ===================== INIT ===================== */
@@ -4483,9 +4947,21 @@ async function ensureNotaSaved(){
       totalDibayar: dp,
       payments: dp > 0 ? [{ amount: dp, note: 'DP awal saat nota dibuat', by: state.myName || '-', at: new Date().toISOString() }] : [],
       createdBy: state.myName || '-',
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      projectId: notaSourceProjectId || ('TX-NOTA-' + invNo)
     };
-    await saveInvoiceRecord(record);
+    record.kategoriList = notaKategoriList(record); record.kategori = record.kategoriList[0];
+    const okSave = await saveInvoiceRecord(record);
+    if(okSave){
+      const r = await ensureProjectForInvoice(record, notaSourceProjectId);
+      const banner = document.getElementById('notaSourceBanner');
+      if(banner){
+        banner.style.display = 'block';
+        banner.textContent = r.ok
+          ? (r.linked ? `Nota #${invNo} tertaut ke Project ${r.id} di Alur Kerja.` : `✅ Nota #${invNo} tersimpan & project otomatis muncul di Alur Kerja (${r.id}).` + (dp > 0 ? '' : ' Status: Menunggu Payment — otomatis jadi "Baru" begitu pembayaran/DP dicatat.'))
+          : `⚠️ Nota #${invNo} tersimpan, tetapi project di Alur Kerja belum terbuat (${r.err}). Buka Alur Kerja lalu klik "Sinkronkan Nota".`;
+      }
+    }
     renderNota();
     return invNo;
   } finally {
@@ -4509,6 +4985,7 @@ function startNewNota(){
   document.getElementById('dpAmount').value = '';
   document.getElementById('notes').value = '';
   notaItems = [{ desc:"", price:0, qty:1 }];
+  notaSourceProjectId = '';
   const banner = document.getElementById('notaSourceBanner');
   if(banner) banner.style.display = 'none';
   renderItemsForm();
@@ -4731,13 +5208,23 @@ function renderKeuangan(){
   const flab = { semua:'Semua', belum_bayar:'Belum Masuk', dp:'Sudah DP (Belum Lunas)', lunas:'Lunas' };
   document.querySelectorAll('#kgFilters button').forEach(b=>{ const k=b.dataset.f; if(flab[k]) b.textContent = flab[k] + ' (' + cnt[k] + ')'; });
 
+  kgRenderKat(all);
+
   // list dengan search + filter
   const q = (document.getElementById('kgSearch')?.value || '').toLowerCase().trim();
   const list = all.filter(t=>{
     if(kgFilter!=='semua' && t.status!==kgFilter) return false;
+    if(kgKat!=='semua' && !kgTxKategori(t).includes(kgKat)) return false;
     if(!q) return true;
-    return (t.custName||'').toLowerCase().includes(q) || String(t.id).toLowerCase().includes(q);
+    return (t.custName||'').toLowerCase().includes(q) || String(t.id).toLowerCase().includes(q) || kgTxKategori(t).join(' ').toLowerCase().includes(q);
   });
+
+  /* Bulan nota = tanggal DP / pembayaran pertama (sama seperti halaman Finance).
+     Terbit September tapi DP Oktober → masuk Oktober. Belum ada pembayaran → bulan terbit. */
+  const effDate = t => kgAiNotaDate(t) || t.date || '';
+  const effMonth = t => effDate(t).slice(0,7);
+  const incomeByMonth = {};
+  entries.forEach(e=>{ const m = e.date.slice(0,7); incomeByMonth[m] = (incomeByMonth[m]||0) + e.amount; });
 
   const rowHtml = t=>{
     const badge = t.type==='manual'
@@ -4750,30 +5237,55 @@ function renderKeuangan(){
       else if(t.status==='dp') sub = `<small class="in">Sudah masuk ${formatRupiah(t.dibayar)}</small><small class="out">Sisa ${formatRupiah(sisa)}</small>`;
       else sub = `<small class="in">Sudah masuk penuh</small>`;
     }
+    const ed = effDate(t);
+    const terbit = (t.type==='invoice' && t.date && ed && t.date.slice(0,7)!==ed.slice(0,7))
+      ? ` <span class="kg-terbit">terbit ${formatDateID(t.date)}</span>` : '';
     return `
       <div class="kg-row" onclick="${t.type==='invoice' ? `openInvoiceDetail('${t.id}')` : `openManualDetail('${t.id}')`}">
         <div>
           <div class="who">${escapeHtml(t.custName)} ${t.type==='invoice' ? '· #'+t.id : ''}</div>
-          <div class="meta">${formatDateID(t.date)} ${badge}</div>
+          <div class="meta">${formatDateID(ed)} ${badge}${terbit} ${kgTxKategori(t).slice(0,3).map(k=>`<span class="kg-badge kat">${escapeHtml(k)}</span>`).join(' ')}</div>
         </div>
         <div class="amt">${formatRupiah(t.amount)}${sub}</div>
       </div>`;
   };
 
+  // chip bulan (jumlah mengikuti filter status/produk/pencarian yang aktif)
+  const mCnt = {};
+  list.forEach(t=>{ const m = effMonth(t); if(m) mCnt[m] = (mCnt[m]||0)+1; });
+  const months = Object.keys(mCnt).sort().reverse();
+  if(kgMonth!=='semua' && !mCnt[kgMonth]) kgMonth = 'semua';
+  const mf = document.getElementById('kgMonthFilters');
+  if(mf){
+    mf.innerHTML = months.length > 1
+      ? ['semua'].concat(months).map(k=>`<button class="${kgMonth===k?'active':''}" data-m="${k}" onclick="setKgMonth(this.dataset.m)">📅 ${k==='semua' ? 'Semua Bulan' : kgMonthLabel(k)} (${k==='semua' ? list.length : mCnt[k]})</button>`).join('')
+      : '';
+  }
+  const shown = (kgMonth==='semua') ? list : list.filter(t=>effMonth(t)===kgMonth);
+  const MONTH_FULL = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
   const listEl = document.getElementById('kgList');
-  if(list.length===0){
+  if(shown.length===0){
     listEl.innerHTML = `<div class="kg-empty">Belum ada transaksi yang cocok.</div>`;
   } else {
-    // dikelompokkan per status supaya tidak bingung
     const groups = [
       { k:'belum_bayar', title:'Belum Masuk Sama Sekali', info:t=>`Total tagihan ${formatRupiah(t.reduce((x,y)=>x+y.amount,0))}` },
       { k:'dp',          title:'Sudah DP · Belum Lunas',  info:t=>`Sudah masuk ${formatRupiah(t.reduce((x,y)=>x+y.dibayar,0))} · Sisa ${formatRupiah(t.reduce((x,y)=>x+Math.max(y.amount-y.dibayar,0),0))}` },
       { k:'lunas',       title:'Lunas',                   info:t=>`Sudah masuk ${formatRupiah(t.reduce((x,y)=>x+y.dibayar,0))}` }
     ];
-    listEl.innerHTML = groups.map(g=>{
-      const items = list.filter(t=>t.status===g.k);
-      if(!items.length) return '';
-      return `<div class="kg-group g-${g.k}"><span>${g.title} (${items.length})</span><small>${g.info(items)}</small></div>` + items.map(rowHtml).join('');
+    const byMonth = {};
+    shown.forEach(t=>{ const m = effMonth(t) || '0000-00'; (byMonth[m] = byMonth[m] || []).push(t); });
+    listEl.innerHTML = Object.keys(byMonth).sort().reverse().map(m=>{
+      const arr = byMonth[m].slice().sort((x,y)=> (effDate(y) > effDate(x) ? 1 : effDate(y) < effDate(x) ? -1 : (new Date(y.createdAt) - new Date(x.createdAt))));
+      const [yy, mm] = m.split('-');
+      const label = (MONTH_FULL[Number(mm)-1] || '-') + ' ' + yy;
+      const head = `<div class="kg-month"><span>📅 ${label} · ${arr.length} nota</span><small>Uang masuk bulan ini: <b>${formatRupiah(incomeByMonth[m]||0)}</b></small></div>`;
+      const body = groups.map(g=>{
+        const items = arr.filter(t=>t.status===g.k);
+        if(!items.length) return '';
+        return `<div class="kg-group g-${g.k}"><span>${g.title} (${items.length})</span><small>${g.info(items)}</small></div>` + items.map(rowHtml).join('');
+      }).join('');
+      return head + body;
     }).join('');
   }
 
@@ -10497,7 +11009,7 @@ function waiProjectFacts(){
   const telat = aktif.filter(p=>p.deadline && String(p.deadline)<today);
   return {
     jumlah_per_status: per, total_proyek:list.length, aktif:aktif.length, melewati_deadline:telat.length,
-    proyek_aktif: aktif.slice(0,40).map(p=>({klien:p.namaKlien, status:(typeof STATUS_LABEL!=='undefined'&&STATUS_LABEL[p.status])||p.status,
+    proyek_aktif: aktif.slice(0,40).map(p=>({klien:p.namaKlien, nota:p.invNo||null, kategori:projectKategoriList(p)[0], hari_ke_deadline:wfDaysLeft(p), perlu_dikabari_h1:wfNeedsRemind(p), status:(typeof STATUS_LABEL!=='undefined'&&STATUS_LABEL[p.status])||p.status,
       deadline:p.deadline||null, total_pcs:pcs(p), desainer:p.namaDesainer||null, produksi:p.namaProduksi||null,
       dibuat:p.createdAt ? wspLocalDate(p.createdAt) : null, telat: !!(p.deadline && String(p.deadline)<today)})),
     selesai_terbaru: list.filter(p=>p.status==='selesai').slice(0,10).map(p=>({klien:p.namaKlien, total_pcs:pcs(p), selesai:p.selesaiAt ? wspLocalDate(p.selesaiAt) : null}))
@@ -11216,7 +11728,7 @@ async function aixUndo(key, mi, ai){
    ASISTEN ALUR KERJA (khusus tampilan ADMIN di Alur Kerja)
    ===================================================================== */
 const WFC = { open:false, big:false, msgs:[], busy:false, init:false, forceScroll:false };
-const WFC_CHIPS = ['Proyek mana yang berisiko telat?','Ringkas semua proyek yang sedang berjalan','Siapa desainer / produksi dengan beban terbanyak?','Project mana yang belum ditugaskan?'];
+const WFC_CHIPS = ['Proyek mana yang berisiko telat?','Ringkas semua proyek yang sedang berjalan','Siapa desainer / produksi dengan beban terbanyak?','Project mana yang belum ditugaskan?','Project mana yang perlu dikabari ke client (H-1)?'];
 
 function wfcSync(){
   const fab = document.getElementById('wfcFab'), box = document.getElementById('wfChat'); if(!fab || !box) return;
@@ -11277,7 +11789,7 @@ function wfcFacts(){
   const aktif = projectsCache.filter(p=>p.status!=='selesai');
   return {
     tanggal_hari_ini: today, total_proyek: projectsCache.length, jumlah_per_status: per,
-    proyek_aktif: aktif.slice(0,60).map(p=>({ id:p.id, klien:p.namaKlien, status:STATUS_LABEL[p.status]||p.status, deadline:p.deadline||null,
+    proyek_aktif: aktif.slice(0,60).map(p=>({ id:p.id, klien:p.namaKlien, nota:p.invNo||null, kategori:projectKategoriList(p)[0], hari_ke_deadline:wfDaysLeft(p), perlu_dikabari_h1:wfNeedsRemind(p), status:STATUS_LABEL[p.status]||p.status, deadline:p.deadline||null,
       telat:!!(p.deadline && String(p.deadline)<today), total_pcs:totalQty(p), desainer:p.namaDesainer||null, produksi:p.namaProduksi||null,
       dibuat:p.createdAt ? kgLocalDate(new Date(p.createdAt)) : null, brief:String(p.briefDesain||'').slice(0,100) })),
     selesai_terbaru: projectsCache.filter(p=>p.status==='selesai').slice(0,8).map(p=>({klien:p.namaKlien, total_pcs:totalQty(p)}))
