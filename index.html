@@ -2090,6 +2090,16 @@ button,a,select,label,summary,[onclick]{touch-action:manipulation;-webkit-tap-hi
   #workflowApp label.chk{min-height:36px;}
   #workflowApp input[type=checkbox]{width:22px;height:22px;}
 }
+
+/* ===== Edit nota / pembayaran (Keuangan) ===== */
+#keuanganApp .kg-mini{border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:6px;padding:3px 8px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-left:6px;white-space:nowrap;}
+#keuanganApp .kg-pay-row{flex-wrap:wrap;gap:4px 8px;align-items:center;}
+#keuanganApp .kg-erow2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+#keuanganApp .kg-eitem{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--bg);}
+#keuanganApp .kg-eitem .r2{display:grid;grid-template-columns:1fr 84px 38px;gap:8px;margin-top:8px;align-items:center;}
+#keuanganApp .kg-eitem .rm{height:38px;border:none;background:none;color:var(--rust);font-size:18px;cursor:pointer;}
+#keuanganApp .kg-eitem .sub{font-size:11.5px;color:var(--muted);margin-top:5px;text-align:right;}
+@media (max-width:420px){ #keuanganApp .kg-erow2{grid-template-columns:1fr;gap:0;} }
 </style>
 </head>
 <body class="tx-locked">
@@ -7559,7 +7569,8 @@ function openManualDetail(id){
         ${m.note ? `<div style="font-size:12.5px;color:var(--muted);margin-bottom:14px;">${escapeHtml(m.note)}</div>` : ''}
         ${kgProofHtml(m.proofUrl)}
         <div style="font-size:11.5px;color:var(--muted);margin-bottom:14px;">Dicatat oleh ${escapeHtml(m.createdBy||'-')}</div>
-        <button class="btn ghost" style="width:100%;" onclick="confirmDeleteManualSale('${m.id}')">Hapus Transaksi</button>
+        <button class="btn ghost" style="width:100%;border-color:var(--navy);color:var(--navy);font-weight:700;" onclick="openManualEdit('${m.id}')">✏️ Edit Transaksi</button>
+        <button class="btn ghost" style="width:100%;margin-top:8px;" onclick="confirmDeleteManualSale('${m.id}')">Hapus Transaksi</button>
       </div></div>
     </div>`;
 }
@@ -7568,6 +7579,243 @@ async function confirmDeleteManualSale(id){
   if(!confirm('Hapus transaksi manual ini?')) return;
   const ok = await deleteManualSale(id);
   if(ok) closeKgModal();
+}
+
+
+/* ===================== EDIT NOTA / PEMBAYARAN / TRANSAKSI MANUAL (KEUANGAN) =====================
+   Nomor nota TIDAK berubah saat diedit, jadi pengeluaran (HPP) yang sudah tertaut ke nomor itu tetap aman. */
+let kgEditItems = [];
+function kgEditNow(){ return { editedBy: state.myName || '-', editedAt: new Date().toISOString() }; }
+async function kgRefreshCache(coll, id, cacheArr, keyField){
+  try{
+    const s = await db.collection(coll).doc(id).get();
+    if(!s.exists) return;
+    const i = cacheArr.findIndex(x=>String(x[keyField])===String(id));
+    if(i>=0) cacheArr[i] = s.data(); else cacheArr.push(s.data());
+  }catch(e){ console.warn('refresh cache', e); }
+}
+
+/* --- Edit nota --- */
+function kgEditTotal(){ return kgEditItems.reduce((s,it)=>s+(Number(it.price)||0)*(Number(it.qty)||0),0); }
+function kgEditTotalRender(){
+  const t = document.getElementById('kgeTotal'); if(t) t.textContent = formatRupiah(kgEditTotal());
+  kgEditItems.forEach((it,i)=>{ const el = document.getElementById('kgeSub'+i); if(el) el.textContent = 'Subtotal ' + formatRupiah((Number(it.price)||0)*(Number(it.qty)||0)); });
+}
+function kgEditItemsRender(){
+  const el = document.getElementById('kgeItems'); if(!el) return;
+  el.innerHTML = kgEditItems.map((it,i)=>`
+    <div class="kg-eitem">
+      <input type="text" value="${escapeHtml(it.desc||'')}" placeholder="Nama item, cth. Jersey Futsal Custom" oninput="kgEditItemSet(${i},'desc',this.value)">
+      <div class="r2">
+        <input type="number" inputmode="numeric" min="0" value="${it.price||''}" placeholder="Harga satuan" oninput="kgEditItemSet(${i},'price',this.value)">
+        <input type="number" inputmode="numeric" min="0" value="${it.qty===0?0:(it.qty||'')}" placeholder="Qty" oninput="kgEditItemSet(${i},'qty',this.value)">
+        <button type="button" class="rm" title="Hapus item" onclick="kgEditItemDel(${i})">✕</button>
+      </div>
+      <div class="sub" id="kgeSub${i}">Subtotal ${formatRupiah((Number(it.price)||0)*(Number(it.qty)||0))}</div>
+    </div>`).join('');
+  kgEditTotalRender();
+}
+function kgEditItemSet(i, k, v){ if(!kgEditItems[i]) return; kgEditItems[i][k] = (k==='desc') ? v : (v===''?'':Number(v)); kgEditTotalRender(); }
+function kgEditItemDel(i){ kgEditItems.splice(i,1); kgEditItemsRender(); }
+function kgEditItemAdd(){ kgEditItems.push({desc:'', price:0, qty:1}); kgEditItemsRender(); }
+
+function openInvoiceEdit(invNo){
+  const inv = invoicesCache.find(x=>x.invNo===invNo); if(!inv) return;
+  kgEditItems = (inv.items||[]).map(it=>({ desc: it.desc||'', price: Number(it.price)||0, qty: Number(it.qty)||0 }));
+  if(!kgEditItems.length) kgEditItems = [{desc:'', price:0, qty:1}];
+  const root = document.getElementById('kgModalRoot');
+  root.innerHTML = `
+    <div class="kg-modal-bg" onclick="if(event.target===this) closeKgModal()">
+      <div class="kg-modal"><div class="kg-modal-inner">
+        <button class="kg-close" onclick="closeKgModal()">✕</button>
+        <h3>Edit Nota #${escapeHtml(inv.invNo)}</h3>
+        <div class="kg-modal-sub">Nomor nota tetap, jadi pengeluaran &amp; pembayaran yang sudah tertaut tidak berubah.</div>
+        <label>Nama Pemesan</label>
+        <input type="text" id="kgeCust" value="${escapeHtml(inv.custName||'')}">
+        <label>No. HP / WA</label>
+        <input type="tel" id="kgePhone" value="${escapeHtml(inv.custPhone||'')}">
+        <div class="kg-erow2">
+          <div><label>Tanggal Nota</label><input type="date" id="kgeDate" value="${escapeHtml(inv.invDate||'')}"></div>
+          <div><label>Jatuh Tempo</label><input type="date" id="kgeDue" value="${escapeHtml(inv.dueDate||'')}"></div>
+        </div>
+        <label>Item Pesanan</label>
+        <div id="kgeItems"></div>
+        <button type="button" class="btn ghost" style="width:100%;margin-top:2px;" onclick="kgEditItemAdd()">+ Tambah Item</button>
+        <div class="kg-totals">
+          <div class="trow grand"><span>Total Nota</span><span id="kgeTotal">-</span></div>
+          <div class="trow"><span>Sudah masuk (tidak berubah)</span><span>${formatRupiah(inv.totalDibayar||0)}</span></div>
+        </div>
+        <label>Catatan</label>
+        <textarea id="kgeNotes" rows="2">${escapeHtml(inv.notes||'')}</textarea>
+        <button class="btn gold" id="kgeSaveBtn" style="width:100%;margin-top:16px;" onclick="submitInvoiceEdit('${inv.invNo}')">Simpan Perubahan</button>
+        <button class="btn ghost" style="width:100%;margin-top:8px;" onclick="openInvoiceDetail('${inv.invNo}')">Batal</button>
+      </div></div>
+    </div>`;
+  kgEditItemsRender();
+}
+
+async function kgSyncProjectFromInvoice(newInv, oldDue){
+  if(typeof projectsCache==='undefined' || !CONFIG_READY) return;
+  const ps = projectsCache.filter(p=>String(p.invNo)===String(newInv.invNo));
+  for(const p of ps){
+    const u = { namaKlien: newInv.custName, kategori: newInv.kategori, kategoriList: newInv.kategoriList };
+    if(newInv.custPhone) u.noHp = newInv.custPhone;
+    if(p.dariNota) u.ukuran = newInv.items.map(it=>({ ukuran:String(it.desc||'ITEM').slice(0,40), qty:Number(it.qty)||0 }));
+    if(newInv.dueDate && (!p.deadline || p.deadline===oldDue)) u.deadline = newInv.dueDate;
+    try{ await db.collection('projects').doc(p.id).update(u); }catch(e){ console.warn('sync project', e); }
+  }
+}
+
+async function submitInvoiceEdit(invNo){
+  const inv = invoicesCache.find(x=>x.invNo===invNo); if(!inv) return;
+  const g = id => (document.getElementById(id)||{}).value || '';
+  const custName = g('kgeCust').trim();
+  if(!custName){ alert('Nama pemesan tidak boleh kosong.'); return; }
+  const items = kgEditItems.map(it=>({ desc:String(it.desc||'').trim(), price:Number(it.price)||0, qty:Number(it.qty)||0 }))
+    .filter(it=>it.desc || it.price || it.qty);
+  if(!items.length || items.some(it=>!it.desc)){ alert('Setiap item harus punya nama.'); return; }
+  const total = items.reduce((s,it)=>s+it.price*it.qty, 0);
+  if(total<=0){ alert('Total nota harus lebih dari 0.'); return; }
+  const dibayar = Number(inv.totalDibayar||0);
+  if(total < dibayar && !confirm('Total baru ('+formatRupiah(total)+') lebih kecil dari uang yang sudah masuk ('+formatRupiah(dibayar)+').\n\nNota akan tampil lunas dengan kelebihan bayar. Tetap simpan?')) return;
+  const kl = notaKategoriList({ items });
+  const upd = Object.assign({
+    custName, custPhone: g('kgePhone').trim(), invDate: g('kgeDate') || inv.invDate, dueDate: g('kgeDue'),
+    items, subtotal: total, total, notes: g('kgeNotes').trim(), kategoriList: kl, kategori: kl[0]
+  }, kgEditNow());
+  const btn = document.getElementById('kgeSaveBtn'); kgBtnBusy(btn, true);
+  try{
+    await db.collection('invoices').doc(invNo).update(upd);
+  }catch(e){
+    kgBtnBusy(btn, false);
+    alert('Gagal menyimpan perubahan nota: ' + e.message); return;
+  }
+  await kgSyncProjectFromInvoice(Object.assign({}, inv, upd), inv.dueDate);
+  await kgRefreshCache('invoices', invNo, invoicesCache, 'invNo');
+  kgBtnBusy(btn, false);
+  renderKeuangan();
+  openInvoiceDetail(invNo);
+}
+
+/* --- Edit / hapus satu pembayaran (DP / pelunasan) --- */
+async function kgPayMutate(invNo, fn){
+  const ref = db.collection('invoices').doc(invNo);
+  let total = 0;
+  await db.runTransaction(async tx=>{
+    const snap = await tx.get(ref);
+    if(!snap.exists) throw new Error('Nota tidak ditemukan');
+    const d = snap.data();
+    const pays = Array.isArray(d.payments) ? d.payments.map(x=>Object.assign({}, x)) : [];
+    const oldSum = pays.reduce((s,p)=>s+(Number(p.amount)||0), 0);
+    const resid = Math.max(Number(d.totalDibayar||0) - oldSum, 0);   // data lama tanpa rincian tetap dihitung
+    fn(pays);
+    total = pays.reduce((s,p)=>s+(Number(p.amount)||0), 0) + resid;
+    tx.update(ref, Object.assign({ payments: pays, totalDibayar: total }, kgEditNow()));
+  });
+  return total;
+}
+async function kgSyncProjectPayment(invNo, totalDibayar){
+  if(typeof projectsCache==='undefined' || totalDibayar > 0) return;   // naik ke "Baru" sudah otomatis oleh wfSyncPaymentStatus
+  for(const p of projectsCache.filter(x=>String(x.invNo)===String(invNo))){
+    if(p.status==='baru' && !p.desainMulai){ try{ await db.collection('projects').doc(p.id).update({ status:'menunggu_payment' }); }catch(e){ console.warn(e); } }
+  }
+}
+function openPaymentEdit(invNo, i){
+  const inv = invoicesCache.find(x=>x.invNo===invNo); if(!inv) return;
+  const p = (inv.payments||[])[i]; if(!p) return;
+  const root = document.getElementById('kgModalRoot');
+  root.innerHTML = `
+    <div class="kg-modal-bg" onclick="if(event.target===this) closeKgModal()">
+      <div class="kg-modal"><div class="kg-modal-inner">
+        <button class="kg-close" onclick="closeKgModal()">✕</button>
+        <h3>Edit Pembayaran</h3>
+        <div class="kg-modal-sub">Nota #${escapeHtml(inv.invNo)} · ${escapeHtml(inv.custName||'')}</div>
+        <label>Jumlah (Rp)</label>
+        <input type="number" inputmode="numeric" id="kgpAmount" min="0" value="${Number(p.amount)||0}" data-words oninput="kgUpdateWords(this)"><div class="kgs-words"></div>
+        <label>Tanggal Pembayaran</label>
+        <input type="date" id="kgpDate" value="${p.at ? kgLocalDate(p.at) : ''}">
+        <label>Catatan</label>
+        <input type="text" id="kgpNote" value="${escapeHtml(p.note||'')}" placeholder="Contoh: DP awal / Pelunasan">
+        <button class="btn gold" id="kgpSaveBtn" style="width:100%;margin-top:16px;" onclick="submitPaymentEdit('${inv.invNo}', ${i})">Simpan Perubahan</button>
+        <button class="btn ghost" style="width:100%;margin-top:8px;" onclick="openInvoiceDetail('${inv.invNo}')">Batal</button>
+        <button class="btn ghost" style="width:100%;margin-top:8px;color:var(--rust);" onclick="deletePayment('${inv.invNo}', ${i})">Hapus Pembayaran Ini</button>
+      </div></div>
+    </div>`;
+  kgInitWords(root);
+}
+async function submitPaymentEdit(invNo, i){
+  const amount = Number(document.getElementById('kgpAmount').value)||0;
+  if(amount<=0){ alert('Jumlah pembayaran harus lebih dari 0. Kalau pembayaran ini salah total, pakai "Hapus Pembayaran Ini".'); return; }
+  const dv = document.getElementById('kgpDate').value || '';
+  const note = document.getElementById('kgpNote').value || '';
+  const btn = document.getElementById('kgpSaveBtn'); kgBtnBusy(btn, true);
+  try{
+    await kgPayMutate(invNo, pays=>{
+      const p = pays[i]; if(!p) throw new Error('Pembayaran tidak ditemukan (data baru saja berubah), coba buka ulang.');
+      p.amount = amount; p.note = note;
+      if(dv && dv !== (p.at ? kgLocalDate(p.at) : '')) p.at = new Date(dv+'T12:00:00').toISOString();
+      p.editedBy = state.myName || '-';
+    });
+  }catch(e){ kgBtnBusy(btn, false); alert('Gagal menyimpan: ' + e.message); return; }
+  await kgRefreshCache('invoices', invNo, invoicesCache, 'invNo');
+  kgBtnBusy(btn, false);
+  renderKeuangan();
+  openInvoiceDetail(invNo);
+}
+async function deletePayment(invNo, i){
+  if(!confirm('Hapus pembayaran ini? Sisa tagihan nota akan bertambah lagi.\n\nKalau ini satu-satunya pembayaran dan project belum dikerjakan, project di Alur Kerja kembali ke "Menunggu Payment".')) return;
+  let total = 0;
+  try{
+    total = await kgPayMutate(invNo, pays=>{ if(!pays[i]) throw new Error('Pembayaran tidak ditemukan, coba buka ulang.'); pays.splice(i,1); });
+  }catch(e){ alert('Gagal menghapus: ' + e.message); return; }
+  await kgSyncProjectPayment(invNo, total);
+  await kgRefreshCache('invoices', invNo, invoicesCache, 'invNo');
+  renderKeuangan();
+  openInvoiceDetail(invNo);
+}
+
+/* --- Edit transaksi manual --- */
+function openManualEdit(id){
+  const m = manualSalesCache.find(x=>x.id===id); if(!m) return;
+  const root = document.getElementById('kgModalRoot');
+  root.innerHTML = `
+    <div class="kg-modal-bg" onclick="if(event.target===this) closeKgModal()">
+      <div class="kg-modal"><div class="kg-modal-inner">
+        <button class="kg-close" onclick="closeKgModal()">✕</button>
+        <h3>Edit Transaksi Manual</h3>
+        <div class="kg-modal-sub">Perbaiki kalau ada salah input.</div>
+        <label>Tanggal</label>
+        <input type="date" id="kgmDate" value="${escapeHtml(m.date||'')}">
+        <label>Nama Pemesan / Keterangan</label>
+        <input type="text" id="kgmCust" value="${escapeHtml(m.custName||'')}">
+        <label>Kategori (opsional)</label>
+        <input type="text" id="kgmCat" value="${escapeHtml(m.category||'')}">
+        <label>Jumlah (Rp)</label>
+        <input type="number" inputmode="numeric" id="kgmAmount" min="0" value="${Number(m.amount)||0}" data-words oninput="kgUpdateWords(this)"><div class="kgs-words"></div>
+        <label>Catatan (opsional)</label>
+        <textarea id="kgmNote" rows="2">${escapeHtml(m.note||'')}</textarea>
+        <button class="btn gold" id="kgmSaveBtn" style="width:100%;margin-top:16px;" onclick="submitManualEdit('${m.id}')">Simpan Perubahan</button>
+        <button class="btn ghost" style="width:100%;margin-top:8px;" onclick="openManualDetail('${m.id}')">Batal</button>
+      </div></div>
+    </div>`;
+  kgInitWords(root);
+}
+async function submitManualEdit(id){
+  const amount = Number(document.getElementById('kgmAmount').value)||0;
+  if(amount<=0){ alert('Jumlah harus lebih dari 0'); return; }
+  const upd = Object.assign({
+    date: document.getElementById('kgmDate').value || kgLocalDate(new Date()),
+    custName: document.getElementById('kgmCust').value.trim() || 'Transaksi manual',
+    category: document.getElementById('kgmCat').value.trim(),
+    amount, note: document.getElementById('kgmNote').value.trim()
+  }, kgEditNow());
+  const btn = document.getElementById('kgmSaveBtn'); kgBtnBusy(btn, true);
+  try{ await db.collection('manualSales').doc(id).update(upd); }
+  catch(e){ kgBtnBusy(btn, false); alert('Gagal menyimpan: ' + e.message); return; }
+  await kgRefreshCache('manualSales', id, manualSalesCache, 'id');
+  kgBtnBusy(btn, false);
+  renderKeuangan();
+  openManualDetail(id);
 }
 
 async function confirmDeleteInvoice(invNo){
@@ -7591,10 +7839,10 @@ function openInvoiceDetail(invNo){
   `).join('');
 
   const payRows = (inv.payments||[]).length
-    ? inv.payments.map(p=>`
+    ? inv.payments.map((p,pi)=>`
         <div class="kg-pay-row">
           <span>${formatDateID((p.at||'').slice(0,10))} — ${formatRupiah(p.amount)}</span>
-          <span class="p-note">${escapeHtml(p.note||'')}${p.proofUrl ? ` <a class="kgs-paylink" href="${escapeHtml(p.proofUrl)}" target="_blank" rel="noopener">📎 bukti</a>` : ''}</span>
+          <span class="p-note">${escapeHtml(p.note||'')}${p.proofUrl ? ` <a class="kgs-paylink" href="${escapeHtml(p.proofUrl)}" target="_blank" rel="noopener">📎 bukti</a>` : ''} <button type="button" class="kg-mini" title="Edit / hapus pembayaran ini" onclick="openPaymentEdit('${inv.invNo}', ${pi})">✏️ Edit</button></span>
         </div>`).join('')
     : `<div class="kg-pay-row"><span class="p-note">Belum ada pembayaran tercatat.</span></div>`;
 
@@ -7631,8 +7879,9 @@ function openInvoiceDetail(invNo){
         <button class="btn gold" id="paySaveBtn" style="width:100%;margin-top:14px;" onclick="submitPayment('${inv.invNo}', ${sisa})">Simpan Pembayaran</button>
         ` : `<div style="text-align:center;color:var(--green);font-weight:700;margin-top:10px;">Nota ini sudah lunas</div>`}
 
-        <div style="font-size:11.5px;color:var(--muted);margin-top:16px;">Dibuat oleh ${escapeHtml(inv.createdBy||'-')} · ${formatDateID(inv.invDate)}</div>
-        <button class="btn ghost" style="width:100%;margin-top:10px;" onclick="confirmDeleteInvoice('${inv.invNo}')">Hapus Nota Ini</button>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:16px;">Dibuat oleh ${escapeHtml(inv.createdBy||'-')} · ${formatDateID(inv.invDate)}${inv.editedAt ? ' · diedit oleh '+escapeHtml(inv.editedBy||'-')+' ('+formatDateID(String(inv.editedAt).slice(0,10))+')' : ''}</div>
+        <button class="btn ghost" style="width:100%;margin-top:10px;border-color:var(--navy);color:var(--navy);font-weight:700;" onclick="openInvoiceEdit('${inv.invNo}')">✏️ Edit Nota (nama, item, harga, tanggal)</button>
+        <button class="btn ghost" style="width:100%;margin-top:8px;" onclick="confirmDeleteInvoice('${inv.invNo}')">Hapus Nota Ini</button>
       </div></div>
     </div>`;
   kgInitWords(root);
