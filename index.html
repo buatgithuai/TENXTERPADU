@@ -1913,6 +1913,27 @@ body{overflow-x:hidden;}
 #priceShell .pl-fab{position:fixed;left:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:700;align-items:center;gap:8px;border:none;cursor:pointer;background:var(--pl-denim);color:#fff;font-family:'Bebas Neue',sans-serif;letter-spacing:.05em;font-size:16px;padding:12px 18px;border-radius:999px;box-shadow:0 6px 20px rgba(35,56,88,.4);}
 #priceShell .pl-fab:hover{filter:brightness(1.1);}
 @media(max-width:480px){#priceShell .pl-fab{left:12px;}}
+#priceShell .pla-op{border:1.5px solid var(--pl-line);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:#fff;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:start;}
+#priceShell .pla-op.off{opacity:.45;}
+#priceShell .pla-op input[type=checkbox]{width:20px;height:20px;margin-top:2px;}
+#priceShell .pla-op .d{font-size:12.5px;color:var(--pl-muted);line-height:1.55;overflow-wrap:anywhere;}
+#priceShell .pla-op .pl-inp{max-width:200px;padding:6px 9px;margin-top:4px;}
+#priceShell .pla-tag{display:inline-block;color:#fff;font-family:'Bebas Neue';letter-spacing:.06em;font-size:12px;padding:1px 9px;border-radius:999px;margin-right:6px;}
+#priceShell .pla-file{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--pl-line);border-radius:999px;padding:4px 6px 4px 12px;font-size:12.5px;background:#fff;max-width:100%;}
+#priceShell .pla-file button{border:none;background:transparent;font-size:16px;cursor:pointer;color:var(--pl-rust);padding:0 6px;}
+#priceShell .plc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:10px;}
+#priceShell .plc-sw{display:flex;align-items:center;gap:8px;border:1px solid var(--pl-line);border-radius:8px;padding:6px 8px;background:#fff;font-size:12.5px;min-width:0;}
+#priceShell .plc-sw i{width:24px;height:24px;border-radius:50%;border:1px solid rgba(0,0,0,.25);flex:none;}
+#priceShell .plc-sw span{overflow-wrap:anywhere;line-height:1.25;}
+#priceShell .plc-imgs{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;}
+#priceShell .plc-imgs img{height:160px;width:auto;max-width:none;border-radius:8px;border:1px solid var(--pl-line);cursor:zoom-in;flex:none;background:#eee;}
+@media(max-width:640px){
+  #priceShell .plc-imgs img{height:130px;}
+  #priceShell .plc-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  #priceShell .pla-op .pl-inp{max-width:none;}
+  #priceShell .pla-act .pl-btn{width:100%;}
+  #priceShell .pla-act{flex-direction:column;align-items:stretch;}
+}
 #priceShell .plo-row{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:10px;padding:12px 0;border-top:1px dashed var(--pl-line);align-items:end;}
 #priceShell .plo-row:first-of-type{border-top:none;}
 #priceShell .plo-nm small{display:block;color:var(--pl-muted);font-size:12px;margin-top:2px;}
@@ -11444,6 +11465,7 @@ function initPriceList(){
         if(doc.exists) plConfig = Object.assign({ pengumuman:'', wa:'', updatedAt:0 }, doc.data());
         if(currentMode==='pricelist') renderPriceList();
       }, err=>console.warn('resellerSettings',err));
+      db.collection('resellerColors').onSnapshot(snap=>{ plColors = snap.docs.map(d=>Object.assign({id:d.id}, d.data())); if(currentMode==='pricelist') renderPriceList(); }, err=>console.warn('resellerColors',err));
     }
   }
   renderPriceList();
@@ -11703,6 +11725,265 @@ async function plOrdPaySubmit(orderId){
 }
 function plOrdNew(){ plOrd.done = null; plOrd.err = ''; plState.tab = 'pesan'; renderPriceList(); window.scrollTo(0,0); }
 
+/* ===================== AI: IMPORT PRODUK / PERINTAH HARGA / KATALOG WARNA =====================
+   Owner/Admin: lampirkan file (Excel, CSV, PDF, foto daftar harga) atau tempel teks, atau cukup tulis
+   perintah ("naikkan harga kaos 5rb"). AI menyusun daftar perubahan -> ditampilkan sebagai PRATINJAU ->
+   baru disimpan setelah Owner menekan Terapkan (AI tidak menyimpan apa pun sendiri, tidak pernah menghapus). */
+let plColors = [];
+const plAi = { text:'', files:[], busy:false, err:'', ops:null, info:'', note:'', applying:false };
+const plCol = { id:null, nama:'', ket:'', aktif:true, files:[], urls:[], lines:'', busy:false, aiBusy:false, err:'' };
+
+async function plAiCall(parts){
+  if(!scanConfig.geminiApiKey) throw new Error('API key Gemini belum diisi. Isi lewat tombol ⚙ di Asisten AI Workspace (atau scanConfig.geminiApiKey di file).');
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(scanConfig.geminiModel)+':generateContent?key='+encodeURIComponent(scanConfig.geminiApiKey);
+  const ctrl = new AbortController(), to = setTimeout(()=>ctrl.abort(), 90000);
+  let resp;
+  try{
+    resp = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, signal:ctrl.signal,
+      body:JSON.stringify({ contents:[{parts:parts}], generationConfig:{ temperature:0.1, responseMimeType:'application/json' } }) });
+  }catch(e){ throw new Error(e.name==='AbortError' ? 'AI terlalu lama merespons, coba lagi / kurangi ukuran lampiran.' : 'Gagal terhubung ke AI: '+e.message); }
+  finally{ clearTimeout(to); }
+  if(!resp.ok){ let m='AI error '+resp.status; try{ const j=await resp.json(); if(j&&j.error&&j.error.message) m+=': '+j.error.message.slice(0,140); }catch(e){} throw new Error(m); }
+  const j = await resp.json();
+  const txt = ((j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[]).map(x=>x.text||'').join('').replace(/```json|```/g,'').trim();
+  try{ return JSON.parse(txt); }catch(e){ throw new Error('Jawaban AI tidak bisa dibaca, coba perintah/lampiran yang lebih jelas.'); }
+}
+async function plAiFileParts(files){
+  const parts = [];
+  for(const f of files){
+    const n = (f.name||'').toLowerCase();
+    if(f.type && f.type.startsWith('image/')){ const c = await compressImage(f,1800,0.85); parts.push({text:'[Lampiran gambar: '+f.name+']'}, {inline_data:{mime_type:'image/jpeg', data:await kgFileToBase64(c)}}); }
+    else if(n.endsWith('.pdf') || f.type==='application/pdf'){ if(f.size>14*1048576) throw new Error(f.name+' terlalu besar (maks 14 MB).'); parts.push({text:'[Lampiran PDF: '+f.name+']'}, {inline_data:{mime_type:'application/pdf', data:await kgFileToBase64(f)}}); }
+    else if(/\.(xlsx|xls|csv)$/.test(n)){ const wb = XLSX.read(await f.arrayBuffer(), {type:'array'}); parts.push({text:'[Lampiran '+f.name+']\n'+wb.SheetNames.map(sn=>'## Sheet '+sn+'\n'+XLSX.utils.sheet_to_csv(wb.Sheets[sn])).join('\n').slice(0,60000)}); }
+    else parts.push({text:'[Lampiran '+f.name+']\n'+(await f.text()).slice(0,60000)});
+  }
+  return parts;
+}
+function plAiPick(inp){
+  Array.from(inp.files||[]).forEach(f=>{ if(plAi.files.length<8) plAi.files.push(f); });
+  inp.value=''; renderPriceList();
+}
+function plAiDrop(i){ plAi.files.splice(i,1); renderPriceList(); }
+function plAiChip(t){ plAi.text = t; const el = document.getElementById('plAiText'); if(el){ el.value = t; el.focus(); } }
+function plAiHtml(){
+  const chips = ['Naikkan harga semua kaos Rp5.000','Tambah produk Polo Dewasa harga 55rb, min order 12 lusin','Nonaktifkan semua produk hoodie','Turunkan harga jersey 10%'];
+  let h = '';
+  if(!scanConfig.geminiApiKey) h += '<div class="pl-banner" style="background:#fde8e4;border-color:#e5a59a;"><b style="color:#9a3a22;">API KEY GEMINI BELUM DIISI</b>Isi lewat tombol ⚙ di Asisten AI Workspace atau <code>scanConfig.geminiApiKey</code> di file, agar fitur AI di sini aktif.</div>';
+  h += '<div class="pl-card"><h3>Import Sekaligus &amp; Perintah AI</h3><div class="pl-meta">Lampirkan <b>Excel / CSV / PDF / foto daftar harga</b> (bisa banyak sekaligus) dan/atau tulis perintah. AI mencocokkan dengan produk yang sudah ada: yang baru ditambah, yang sudah ada diperbarui harganya. Hasilnya tampil sebagai pratinjau dulu — belum tersimpan sebelum Anda menekan <b>Terapkan</b>.</div>'+
+    '<label class="pl-l">Perintah / tempel daftar harga (opsional jika ada lampiran)</label>'+
+    '<textarea class="pl-inp" id="plAiText" rows="5" placeholder="mis. Tambah kaos cotton combed 30s harga 60rb min order 12 lusin; polo 75rb. Atau: naikkan semua harga kaos 5rb." oninput="plAi.text=this.value">'+escapeHtml(plAi.text)+'</textarea>'+
+    '<div class="pl-chips" style="margin-top:8px;">'+chips.map(c=>'<button class="pl-chip" onclick="plAiChip(this.textContent)">'+escapeHtml(c)+'</button>').join('')+'</div>'+
+    '<div style="margin:10px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">'+plAi.files.map((f,i)=>'<span class="pla-file">'+escapeHtml(f.name.length>28?f.name.slice(0,25)+'…':f.name)+'<button onclick="plAiDrop('+i+')" aria-label="Hapus">×</button></span>').join('')+'</div>'+
+    '<div class="pl-row pla-act" style="gap:8px;"><label class="pl-btn ghost" style="cursor:pointer;display:inline-block;text-align:center;">📎 Lampirkan File / Foto<input type="file" multiple accept="image/*,.pdf,.xlsx,.xls,.csv,.txt" style="display:none;" onchange="plAiPick(this)"></label>'+
+    '<button class="pl-btn" '+(plAi.busy?'disabled':'')+' onclick="plAiRun()">'+(plAi.busy?'AI sedang bekerja…':'Proses dengan AI')+'</button></div>'+
+    (plAi.err?'<div style="color:var(--pl-rust);font-size:13px;margin-top:10px;">'+escapeHtml(plAi.err)+'</div>':'')+'</div>';
+  if(plAi.info) h += '<div class="pl-banner" style="background:#E4F3EA;border-color:#9CCDAF;">'+plAi.info+'</div>';
+  if(plAi.ops) h += plAiPreviewHtml();
+  return h;
+}
+function plAiNorm(v){ return String(v||'').toLowerCase().replace(/\s+/g,' ').trim(); }
+function plAiBuildOps(res){
+  const list = Array.isArray(res) ? res : (res && Array.isArray(res.ops) ? res.ops : []);
+  const byId = {}, byName = {}; plProducts.forEach(p=>{ byId[p.id]=p; byName[plAiNorm(p.nama)]=p; });
+  const ops = []; let drop = 0, same = 0; const used = {};
+  list.forEach(o=>{
+    if(!o || typeof o!=='object') return;
+    const nama = String(o.nama||'').trim();
+    let prev = (o.id && byId[o.id]) || (nama && byName[plAiNorm(nama)]) || null;
+    if(prev && used[prev.id]){ drop++; return; }
+    let harga = (o.harga!==undefined && o.harga!==null && o.harga!=='') ? Math.round(Number(o.harga)) : null;
+    if(harga!==null && (!isFinite(harga) || harga<0)){ drop++; return; }
+    const satuan = (o.satuan && PL_UNITS.indexOf(String(o.satuan).toLowerCase())>=0) ? String(o.satuan).toLowerCase() : null;
+    const mo = (o.minOrder!==undefined && o.minOrder!==null && Number(o.minOrder)>=1) ? Math.round(Number(o.minOrder)) : null;
+    if(prev){
+      const ch = {};
+      if(nama && plAiNorm(nama)!==plAiNorm(prev.nama)) ch.nama = nama;
+      if(o.kategori && String(o.kategori).trim()!==(prev.kategori||'')) ch.kategori = String(o.kategori).trim();
+      if(o.keterangan!==undefined && o.keterangan!==null && String(o.keterangan).trim()!==(prev.keterangan||'')) ch.keterangan = String(o.keterangan).trim();
+      if(harga!==null && harga!==Number(prev.harga)) ch.harga = harga;
+      if(satuan && satuan!==(prev.satuan||'pcs')) ch.satuan = satuan;
+      if(mo!==null && mo!==(Number(prev.minOrder)||1)) ch.minOrder = mo;
+      if(typeof o.aktif==='boolean' && o.aktif!==(prev.aktif!==false)) ch.aktif = o.aktif;
+      if(!Object.keys(ch).length){ same++; return; }
+      used[prev.id] = 1; ops.push({ type:'ubah', prev:prev, ch:ch, on:true });
+    } else {
+      if(!nama){ drop++; return; }
+      const rec = { kategori:(o.kategori&&String(o.kategori).trim())||'Lainnya', nama:nama, keterangan:String(o.keterangan||'').trim(), harga:harga||0, satuan:satuan||'pcs', minOrder:mo||1, aktif: typeof o.aktif==='boolean' ? o.aktif : (harga>0) };
+      ops.push({ type:'tambah', rec:rec, on:true });
+    }
+  });
+  return { ops:ops, drop:drop, same:same };
+}
+async function plAiRun(){
+  if(plAi.busy) return;
+  const text = (plAi.text||'').trim();
+  if(!text && !plAi.files.length){ plAi.err = 'Tempel daftar harga, lampirkan file/foto, atau tulis perintah.'; renderPriceList(); return; }
+  plAi.busy = true; plAi.err = ''; plAi.ops = null; plAi.info = ''; renderPriceList();
+  try{
+    const cur = plProducts.slice(0,400).map(p=>[p.id,p.kategori||'',p.nama,p.harga,p.satuan||'pcs',p.minOrder||1,p.aktif!==false?1:0].join('|')).join('\n');
+    const prompt = `Kamu asisten admin konveksi (TENX Apparel) yang mengelola DAFTAR HARGA RESELLER. Susun perubahan produk berdasarkan PERINTAH dan/atau LAMPIRAN. Balas HANYA JSON valid:
+{"ringkasan":"1 kalimat apa yang kamu lakukan","ops":[{"id":"id produk yang sudah ada atau null","kategori":"","nama":"","keterangan":"","harga":angka_rupiah_bulat,"satuan":"pcs|lusin|set|stel|meter","minOrder":angka,"aktif":true}]}
+ATURAN:
+- Produk SUDAH ADA (daftar di bawah): cocokkan lewat nama yang sama/sangat mirip, isi "id"-nya, dan cantumkan HANYA kolom yang berubah. Produk BARU: id null dan isi lengkap.
+- Harga dalam rupiah bulat: 60rb/60k=60000, 1,5jt=1500000, 55.000=55000. "harga" = harga reseller per satuan.
+- "min order 12 lusin" => minOrder 12, satuan "lusin". Jika tidak disebut, minOrder 1 dan satuan sesuai sumber (default pcs).
+- Perintah relatif (naikkan/turunkan/diskon/samakan) HARUS dihitung jadi harga absolut baru untuk SETIAP produk yang terkena; hanya produk yang terkena yang dimasukkan.
+- "nonaktifkan/sembunyikan" => aktif:false. "aktifkan/tampilkan" => aktif:true. JANGAN pernah menghapus produk.
+- Dari lampiran: ambil SEMUA produk & harga yang benar-benar tertulis. Jangan mengarang produk/harga/kategori yang tidak ada di sumber; angka buram => lewati produk itu. Kategori singkat (Kaos, Polo, Jersey, Hoodie, dst.).
+- Abaikan harga jual ke konsumen jika sumber memuat beberapa jenis harga; ambil harga reseller/grosir. Bila ragu tulis catatan di "ringkasan".
+PRODUK SAAT INI (id|kategori|nama|harga|satuan|minOrder|aktif):
+${cur||'(belum ada produk)'}
+PERINTAH ADMIN: ${text||'(tidak ada — ekstrak semua produk & harga dari lampiran: tambahkan yang baru, perbarui yang sudah ada)'}`;
+    const parts = [{text:prompt}].concat(await plAiFileParts(plAi.files));
+    const res = await plAiCall(parts);
+    const b = plAiBuildOps(res);
+    plAi.ops = b.ops; plAi.note = (res && res.ringkasan) ? String(res.ringkasan).slice(0,300) : '';
+    plAi.info = '';
+    if(!b.ops.length) plAi.err = 'AI tidak menemukan perubahan'+(b.same?' ('+b.same+' produk sudah sama persis)':'')+'. Coba perjelas perintah atau lampiran.';
+    else if(b.drop||b.same) plAi.note += (plAi.note?' · ':'')+(b.same?b.same+' produk tidak berubah. ':'')+(b.drop?b.drop+' baris tidak valid dilewati.':'');
+  }catch(e){ console.error(e); plAi.err = e.message; }
+  plAi.busy = false; renderPriceList();
+}
+function plAiToggle(i, v){ if(plAi.ops && plAi.ops[i]){ plAi.ops[i].on = v; renderPriceList(); } }
+function plAiAll(v){ (plAi.ops||[]).forEach(o=>o.on=v); renderPriceList(); }
+function plAiEditHarga(i, v){ const o = plAi.ops[i]; const n = Math.round(Number(v)); if(!isFinite(n)||n<0) return; if(o.type==='tambah'){ o.rec.harga = n; if(n>0 && o.rec.aktif===false && !o.manualOff) o.rec.aktif = true; } else o.ch.harga = n; }
+function plAiPreviewHtml(){
+  const ops = plAi.ops, n = ops.filter(o=>o.on).length;
+  const nb = ops.filter(o=>o.type==='tambah').length, nu = ops.length-nb;
+  let h = '<div class="pl-card"><h3>Pratinjau Perubahan ('+ops.length+')</h3>'+(plAi.note?'<div class="pl-meta">🤖 '+escapeHtml(plAi.note)+'</div>':'')+
+    '<div class="pl-meta">'+nb+' produk baru · '+nu+' diperbarui. Centang yang ingin diterapkan, harga bisa dikoreksi langsung.</div>'+
+    '<div class="pl-row" style="gap:8px;margin-bottom:10px;"><button class="pl-btn ghost sm" onclick="plAiAll(true)">Pilih semua</button><button class="pl-btn ghost sm" onclick="plAiAll(false)">Kosongkan</button></div>';
+  ops.forEach((o,i)=>{
+    const baru = o.type==='tambah', r = baru ? o.rec : null, nm = baru ? r.nama : (o.ch.nama||o.prev.nama);
+    let d = '';
+    if(baru) d = escapeHtml(r.kategori)+' · '+escapeHtml(r.satuan)+(r.minOrder>1?' · min. '+r.minOrder:'')+(r.keterangan?' · '+escapeHtml(r.keterangan):'')+(r.aktif?'':' · <b>nonaktif</b>');
+    else {
+      const L = [];
+      if(o.ch.harga!==undefined) L.push('Harga: '+plRp(o.prev.harga)+' → <b style="color:'+(o.ch.harga>o.prev.harga?'var(--pl-rust)':'var(--pl-green)')+';">'+plRp(o.ch.harga)+'</b>');
+      if(o.ch.nama!==undefined) L.push('Nama: '+escapeHtml(o.prev.nama)+' → '+escapeHtml(o.ch.nama));
+      if(o.ch.kategori!==undefined) L.push('Kategori: '+escapeHtml(o.prev.kategori||'-')+' → '+escapeHtml(o.ch.kategori));
+      if(o.ch.satuan!==undefined) L.push('Satuan: '+escapeHtml(o.prev.satuan||'pcs')+' → '+escapeHtml(o.ch.satuan));
+      if(o.ch.minOrder!==undefined) L.push('Min. order: '+(o.prev.minOrder||1)+' → '+o.ch.minOrder);
+      if(o.ch.keterangan!==undefined) L.push('Keterangan diubah');
+      if(o.ch.aktif!==undefined) L.push(o.ch.aktif?'<b>Ditampilkan ke reseller</b>':'<b>Disembunyikan dari reseller</b>');
+      d = L.join('<br>');
+    }
+    const hv = baru ? r.harga : o.ch.harga;
+    h += '<div class="pla-op'+(o.on?'':' off')+'"><input type="checkbox" '+(o.on?'checked':'')+' onchange="plAiToggle('+i+',this.checked)"><div><span class="pla-tag" style="background:'+(baru?'var(--pl-green)':'var(--pl-denim)')+'">'+(baru?'BARU':'UBAH')+'</span><b>'+escapeHtml(nm)+'</b><div class="d">'+d+'</div>'+
+      (hv!==undefined?'<input class="pl-inp" type="number" min="0" inputmode="numeric" value="'+hv+'" onchange="plAiEditHarga('+i+',this.value)" aria-label="Harga">':'')+'</div></div>';
+  });
+  h += '<div class="pl-row pla-act" style="gap:8px;margin-top:10px;"><button class="pl-btn" '+((plAi.applying||!n)?'disabled':'')+' onclick="plAiApply()">'+(plAi.applying?'Menyimpan…':'Terapkan '+n+' Perubahan')+'</button><button class="pl-btn ghost" onclick="plAi.ops=null;renderPriceList()">Batalkan</button></div></div>';
+  return h;
+}
+async function plAiApply(){
+  if(plAi.applying || !plAi.ops) return;
+  const sel = plAi.ops.filter(o=>o.on); if(!sel.length) return;
+  if(sel.some(o=>o.type==='tambah' && (!o.rec.harga) && o.rec.aktif!==false) && !confirm('Ada produk baru dengan harga 0 yang akan tampil ke reseller. Lanjut?')) return;
+  plAi.applying = true; plAi.err = ''; renderPriceList();
+  try{
+    const now = Date.now(); let nb = 0, nu = 0;
+    for(let i=0;i<sel.length;i+=150){
+      const batch = db.batch();
+      for(const o of sel.slice(i,i+150)){
+        if(o.type==='tambah'){
+          const rec = Object.assign({ id:db.collection('resellerProducts').doc().id, createdAt:now, updatedAt:now, changedAt:0, lastType:null, hargaLama:null }, o.rec);
+          await plSaveProduct(rec, null, batch); nb++;
+        } else { await plSaveProduct(Object.assign({}, o.prev, o.ch), o.prev, batch); nu++; }
+      }
+      await batch.commit();
+    }
+    plAi.info = '<b>✓ Tersimpan:</b> '+nb+' produk baru, '+nu+' diperbarui. Perubahan harga otomatis tercatat di Riwayat &amp; Update Terbaru reseller.';
+    plAi.ops = null; plAi.files = []; plAi.text = '';
+  }catch(e){ console.error(e); plAi.err = 'Gagal menyimpan: '+e.message; }
+  plAi.applying = false; renderPriceList();
+}
+
+/* ---------------- KATALOG WARNA ---------------- */
+function plHex(h){ return /^#[0-9a-f]{6}$/i.test(String(h||'')) ? h : ''; }
+function plColSwatches(arr){
+  return '<div class="plc-grid">'+(arr||[]).map(w=>'<div class="plc-sw"><i style="background:'+(plHex(w.hex)||'#d9d4c7')+'"></i><span>'+escapeHtml(w.nama)+'</span></div>').join('')+'</div>';
+}
+function plColImgs(urls){
+  return (urls&&urls.length) ? '<div class="plc-imgs">'+urls.map(u=>'<img loading="lazy" decoding="async" src="'+escapeHtml(u)+'" alt="Katalog warna" onclick="openLightbox(this.src)">').join('')+'</div>' : '';
+}
+function plColorsViewHtml(){
+  const list = plColors.filter(c=>c.aktif!==false).sort((a,b)=>(a.nama||'').localeCompare(b.nama||'','id'));
+  if(!list.length) return '<div class="pl-empty">Katalog warna belum tersedia. Silakan cek lagi nanti.</div>';
+  return '<div class="pl-meta">Ketuk gambar untuk memperbesar. Warna di layar bisa sedikit berbeda dari kain asli.</div>'+list.map(c=>
+    '<div class="pl-card"><h3>'+escapeHtml(c.nama)+'</h3>'+(c.keterangan?'<div class="pl-meta">'+escapeHtml(c.keterangan)+'</div>':'')+plColImgs(c.imageUrls)+((c.warna&&c.warna.length)?plColSwatches(c.warna):'')+'</div>').join('');
+}
+function plColorsOwnerHtml(){
+  const list = plColors.slice().sort((a,b)=>(a.nama||'').localeCompare(b.nama||'','id'));
+  let h = '<div class="pl-tools"><button class="pl-btn" onclick="plColOpen(null)">+ Tambah Katalog Warna</button></div><div class="pl-meta">Unggah foto katalog/kartu warna kain, AI membaca daftar warnanya otomatis. Reseller melihatnya di tab <b>Katalog Warna</b>.</div>';
+  if(!list.length) return h+'<div class="pl-empty">Belum ada katalog warna.</div>';
+  return h+list.map(c=>'<div class="pl-card"><h3>'+escapeHtml(c.nama)+(c.aktif===false?'<span class="plo-st" style="background:var(--pl-muted)">DISEMBUNYIKAN</span>':'')+'</h3>'+plColImgs(c.imageUrls)+((c.warna&&c.warna.length)?'<div class="pl-meta" style="margin-top:8px;">'+c.warna.length+' warna</div>'+plColSwatches(c.warna):'')+
+    '<div class="pl-row pla-act" style="gap:8px;margin-top:12px;"><button class="pl-btn sm" onclick="plColOpen(\''+c.id+'\')">Edit</button><label style="display:flex;align-items:center;gap:6px;font-size:13px;"><input type="checkbox" '+(c.aktif!==false?'checked':'')+' onchange="plColToggle(\''+c.id+'\',this.checked)"> Tampil ke reseller</label><button class="pl-btn danger sm" onclick="plColDelete(\''+c.id+'\')">Hapus</button></div></div>').join('');
+}
+async function plColToggle(id, v){ try{ await db.collection('resellerColors').doc(id).update({ aktif:v, updatedAt:Date.now() }); }catch(e){ alert('Gagal: '+e.message); } }
+async function plColDelete(id){ if(!confirm('Hapus katalog warna ini?')) return; try{ await db.collection('resellerColors').doc(id).delete(); }catch(e){ alert('Gagal menghapus: '+e.message); } }
+function plColOpen(id){
+  const c = id ? plColors.find(x=>x.id===id) : null;
+  Object.assign(plCol, { id:id, nama:c?c.nama:'', ket:c?(c.keterangan||''):'', aktif:c?c.aktif!==false:true, files:[], urls:c?(c.imageUrls||[]).slice():[], lines:c?(c.warna||[]).map(w=>w.nama+(w.hex?' | '+w.hex:'')).join('\n'):'', busy:false, aiBusy:false, err:'' });
+  plColRender();
+}
+function plColRender(){
+  const root = document.getElementById('plModalRoot'); if(!root) return;
+  root.innerHTML = '<div class="pl-modal-bg" onclick="if(event.target===this)plCloseModal()"><div class="pl-modal"><h3>'+(plCol.id?'Edit':'Tambah')+' Katalog Warna</h3>'+
+    '<label class="pl-l">Judul katalog</label><input class="pl-inp" value="'+escapeHtml(plCol.nama)+'" placeholder="mis. Warna Cotton Combed 30s" oninput="plCol.nama=this.value">'+
+    '<label class="pl-l">Keterangan (opsional)</label><input class="pl-inp" value="'+escapeHtml(plCol.ket)+'" oninput="plCol.ket=this.value">'+
+    '<label class="pl-l">Gambar katalog warna (boleh banyak)</label><label class="pl-btn ghost" style="cursor:pointer;display:block;text-align:center;">📷 Pilih / Foto Gambar<input type="file" multiple accept="image/*" style="display:none;" onchange="plColPick(this)"></label>'+
+    '<div class="plc-imgs" style="margin-top:8px;">'+plCol.urls.map((u,i)=>'<span style="position:relative;flex:none;"><img src="'+escapeHtml(u)+'" style="height:90px;"><button class="pla-file" style="position:absolute;top:2px;right:2px;padding:0 8px;" onclick="plCol.urls.splice('+i+',1);plColRender()">×</button></span>').join('')+
+      plCol.files.map((f,i)=>'<span style="position:relative;flex:none;"><img src="'+plColPrev(f)+'" style="height:90px;"><button class="pla-file" style="position:absolute;top:2px;right:2px;padding:0 8px;" onclick="plCol.files.splice('+i+',1);plColRender()">×</button></span>').join('')+'</div>'+
+    '<div class="pl-row" style="margin-top:10px;"><button class="pl-btn sm" '+((plCol.aiBusy||!plCol.files.length)?'disabled':'')+' onclick="plColAi()">'+(plCol.aiBusy?'AI membaca warna…':'🤖 Baca Warna dari Gambar (AI)')+'</button></div>'+
+    '<label class="pl-l" style="margin-top:10px;">Daftar warna — satu per baris: <code>Nama | #HEX</code></label><textarea class="pl-inp" id="plColLines" rows="8" placeholder="Navy | #1F2A44&#10;Maroon | #6B1F2A" oninput="plCol.lines=this.value">'+escapeHtml(plCol.lines)+'</textarea>'+
+    '<label style="display:flex;gap:8px;align-items:center;font-size:13px;margin-top:10px;"><input type="checkbox" '+(plCol.aktif?'checked':'')+' onchange="plCol.aktif=this.checked"> Tampilkan ke reseller</label>'+
+    (plCol.err?'<div style="color:var(--pl-rust);font-size:13px;margin-top:8px;">'+escapeHtml(plCol.err)+'</div>':'')+
+    '<div class="pl-row pla-act" style="gap:8px;margin-top:14px;"><button class="pl-btn" '+(plCol.busy?'disabled':'')+' onclick="plColSave()">'+(plCol.busy?'Menyimpan…':'Simpan')+'</button><button class="pl-btn ghost" onclick="plCloseModal()">Batal</button></div></div></div>';
+}
+const plPrevCache = new WeakMap();
+function plColPrev(f){ if(!plPrevCache.has(f)) plPrevCache.set(f, URL.createObjectURL(f)); return plPrevCache.get(f); }
+function plColPick(inp){ Array.from(inp.files||[]).forEach(f=>{ if(f.type.startsWith('image/') && plCol.files.length+plCol.urls.length<8) plCol.files.push(f); }); inp.value=''; plColRender(); }
+function plColParse(){
+  const out = [];
+  String(plCol.lines||'').split('\n').forEach(l=>{
+    const m = l.match(/#[0-9a-fA-F]{6}/), hex = m ? m[0].toUpperCase() : '';
+    const nama = l.replace(/#[0-9a-fA-F]{6}/,'').replace(/[|:;,\-\s]+$/,'').replace(/^[\s|:;,\-•*\d.)]+(?=[A-Za-z])/,'').trim();
+    if(nama) out.push({ nama:nama.slice(0,40), hex:hex });
+  });
+  return out.slice(0,200);
+}
+async function plColAi(){
+  if(plCol.aiBusy || !plCol.files.length) return;
+  plCol.aiBusy = true; plCol.err = ''; plColRender();
+  try{
+    const parts = [{text:`Lihat gambar katalog/kartu warna kain atau bahan ini. Daftarkan SEMUA warna yang tertera atau terlihat, urut sesuai gambar. Balas HANYA JSON: {"judul":"judul katalog jika terlihat atau null","warna":[{"nama":"nama warna persis seperti tulisan di gambar (jika tidak ada tulisan, beri nama umum bahasa Indonesia)","hex":"#RRGGBB perkiraan warna sebenarnya dari kotak/sampel warna"}]}. Jangan mengarang warna yang tidak ada dan jangan menduplikasi.`}];
+    for(const f of plCol.files){ const c = await compressImage(f,1800,0.85); parts.push({inline_data:{mime_type:'image/jpeg', data:await kgFileToBase64(c)}}); }
+    const res = await plAiCall(parts);
+    const arr = Array.isArray(res) ? res : (res.warna||[]);
+    const have = plColParse().map(w=>w.nama.toLowerCase()), add = [];
+    arr.forEach(w=>{ const n = String(w&&w.nama||'').trim(); if(!n || have.indexOf(n.toLowerCase())>=0) return; have.push(n.toLowerCase()); add.push(n+(plHex(w.hex)?' | '+String(w.hex).toUpperCase():'')); });
+    if(!add.length) plCol.err = 'AI tidak menemukan warna baru di gambar. Isi manual bila perlu.';
+    plCol.lines = (plCol.lines?plCol.lines.replace(/\s+$/,'')+'\n':'')+add.join('\n');
+    if(!plCol.nama && res && res.judul) plCol.nama = String(res.judul).slice(0,60);
+  }catch(e){ console.error(e); plCol.err = e.message; }
+  plCol.aiBusy = false; plColRender();
+}
+async function plColSave(){
+  if(plCol.busy) return;
+  const warna = plColParse();
+  if(!plCol.nama.trim()){ plCol.err = 'Isi judul katalog.'; plColRender(); return; }
+  if(!plCol.files.length && !plCol.urls.length && !warna.length){ plCol.err = 'Tambahkan gambar atau daftar warna.'; plColRender(); return; }
+  plCol.busy = true; plCol.err = ''; plColRender();
+  try{
+    let urls = plCol.urls.slice();
+    if(plCol.files.length){ const up = await uploadFilesToStorage(plCol.files, 'tenx/katalog-warna'); urls = urls.concat(up.map(x=>x.url)); }
+    const old = plCol.id ? plColors.find(x=>x.id===plCol.id) : null, now = Date.now();
+    const ref = plCol.id ? db.collection('resellerColors').doc(plCol.id) : db.collection('resellerColors').doc();
+    await ref.set({ id:ref.id, nama:plCol.nama.trim(), keterangan:plCol.ket.trim(), imageUrls:urls, warna:warna, aktif:plCol.aktif, createdAt:old?(old.createdAt||now):now, updatedAt:now, by:plBy() });
+    plCloseModal();
+  }catch(e){ console.error(e); plCol.err = 'Gagal menyimpan: '+e.message; plCol.busy = false; plColRender(); }
+}
+
 /* ---------------- TAMPILAN RESELLER (LIHAT SAJA) ---------------- */
 function plBadge(type){
   const L = { naik:'HARGA NAIK', turun:'HARGA TURUN', baru:'BARU', ubah:'DIUBAH', hapus:'DIHAPUS' };
@@ -11715,10 +11996,11 @@ function plResellerHtml(){
   if(plConfig.pengumuman && plConfig.pengumuman.trim()) h += '<div class="pl-banner"><b>📢 PENGUMUMAN</b>'+escapeHtml(plConfig.pengumuman)+'</div>';
   h += '<div class="pl-meta">'+(last?'Terakhir diperbarui: <b>'+plDateTime(last)+'</b> · ':'')+active.length+' produk. Pesan langsung lewat tab <b>+ Buat Pesanan</b>.</div>';
   h += '<div class="pl-tabs"><button class="'+(plState.tab==='harga'?'active':'')+'" onclick="plSetTab(\'harga\')">Daftar Harga</button>'+
+       '<button class="'+(plState.tab==='warna'?'active':'')+'" onclick="plSetTab(\'warna\')">Katalog Warna</button>'+
        '<button class="'+(plState.tab==='update'?'active':'')+'" onclick="plSetTab(\'update\')">Update Terbaru</button>'+
        '<button class="'+(plState.tab==='pesan'?'active':'')+'" onclick="plSetTab(\'pesan\')">+ Buat Pesanan</button>'+
        '<button class="'+(plState.tab==='pesanan'?'active':'')+'" onclick="plSetTab(\'pesanan\')">Pesanan Saya'+(plOrd.orders.length?' ('+plOrd.orders.length+')':'')+'</button></div>';
-  h += plState.tab==='update' ? plFeedHtml(false) : plState.tab==='pesan' ? plOrdFormHtml() : plState.tab==='pesanan' ? plOrdListHtml() : plListHtml(active);
+  h += plState.tab==='warna' ? plColorsViewHtml() : plState.tab==='update' ? plFeedHtml(false) : plState.tab==='pesan' ? plOrdFormHtml() : plState.tab==='pesanan' ? plOrdListHtml() : plListHtml(active);
   if(plConfig.wa) h += '<div class="pl-meta" style="margin-top:22px;">Mau order / tanya harga? Hubungi admin: <b>'+escapeHtml(plConfig.wa)+'</b></div>';
   return h;
 }
@@ -11799,9 +12081,11 @@ function plLogout(){
 function plOwnerHtml(){
   let h = '<div class="pl-row" style="justify-content:space-between;margin-bottom:14px;"><div style="font-size:12.5px;color:var(--pl-muted);">Masuk sebagai <b style="color:var(--pl-ink);">'+escapeHtml(wspState.ownerEmail)+'</b></div>'+
           '<button class="pl-btn ghost sm" onclick="plLogout()">Keluar</button></div>';
-  h += '<div class="pl-tabs">'+[['kelola','Kelola Harga'],['riwayat','Riwayat Perubahan'],['broadcast','Pesan Update (WA)'],['akses','Akses Login'],['setelan','Pengaturan']]
+  h += '<div class="pl-tabs">'+[['kelola','Kelola Harga'],['ai','AI Import & Perintah'],['warna','Katalog Warna'],['riwayat','Riwayat Perubahan'],['broadcast','Pesan Update (WA)'],['akses','Akses Login'],['setelan','Pengaturan']]
     .map(t=>'<button class="'+(plState.ownerTab===t[0]?'active':'')+'" onclick="plSetOwnerTab(\''+t[0]+'\')">'+t[1]+'</button>').join('')+'</div>';
   if(plState.ownerTab==='kelola') h += plOwnerManageHtml();
+  else if(plState.ownerTab==='ai') h += plAiHtml();
+  else if(plState.ownerTab==='warna') h += plColorsOwnerHtml();
   else if(plState.ownerTab==='riwayat') h += plFeedHtml(true);
   else if(plState.ownerTab==='broadcast') h += plBroadcastHtml();
   else if(plState.ownerTab==='akses') h += plAksesHtml();
@@ -11836,8 +12120,8 @@ function plBy(){ return wspState.ownerEmail || 'owner'; }
 function plLogEntry(p, type, oldPrice, newPrice){
   return { productId:p.id, nama:p.nama, kategori:p.kategori||'Lainnya', type:type, oldPrice:oldPrice, newPrice:newPrice, at:Date.now(), by:plBy() };
 }
-async function plSaveProduct(rec, prev){
-  const batch = db.batch();
+async function plSaveProduct(rec, prev, extBatch){
+  const batch = extBatch || db.batch();
   const ref = db.collection('resellerProducts').doc(rec.id);
   const now = Date.now();
   rec.updatedAt = now;
@@ -11858,7 +12142,7 @@ async function plSaveProduct(rec, prev){
   if(logType && rec.aktif!==false){
     batch.set(db.collection('resellerPriceLog').doc(), plLogEntry(rec, logType, prev?prev.harga:null, rec.harga));
   }
-  await batch.commit();
+  if(!extBatch) await batch.commit();
 }
 async function plQuickPrice(id, inp){
   const prev = plProducts.find(x=>x.id===id); if(!prev) return;
