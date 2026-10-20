@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0e1a3d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>TENX APPAREL — Sistem Terpadu (Alur Kerja &amp; Nota)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -165,7 +168,6 @@ window.tenxEnsureChart = function(){
     font-family:'Bebas Neue';font-size:11.5px;letter-spacing:.06em;
     padding:4px 10px;border-radius:999px;color:white;transform:rotate(-2deg); display:inline-block;
   }
-#workflowApp .badge.menunggu_payment{background:#8d8a82;}
 #workflowApp .badge.baru{background:var(--amber);}
 #workflowApp .badge.diproses_desainer{background:var(--denim);}
 #workflowApp .badge.desain_selesai{background:var(--purple);}
@@ -203,29 +205,6 @@ window.tenxEnsureChart = function(){
 #workflowApp .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
 #workflowApp .ukuran-row{display:grid;grid-template-columns:1fr 90px 34px;gap:8px;margin-bottom:8px;align-items:center;}
 #workflowApp .ukuran-row button{background:none;border:none;color:var(--rust);cursor:pointer;font-size:18px;}
-
-/* ===== Form simpel: chip produk, toggle payment, bagian opsional ===== */
-#workflowApp input[type=checkbox]{width:18px;height:18px;accent-color:var(--denim);flex:none;cursor:pointer;}
-#workflowApp label.chk{display:flex;align-items:center;gap:9px;text-transform:none;letter-spacing:0;font-size:13.5px;color:var(--ink);margin:10px 0 0;cursor:pointer;}
-#workflowApp .kv label.chk{margin:0;}
-#workflowApp .chips{display:flex;flex-wrap:wrap;gap:7px;}
-#workflowApp .chip{font-family:'Work Sans';font-size:13px;padding:7px 13px;border-radius:999px;border:1.5px solid var(--line);background:var(--white);color:var(--ink-soft);cursor:pointer;transition:.12s;}
-#workflowApp .chip:hover{border-color:var(--denim-light);}
-#workflowApp .chip.on{background:var(--denim);border-color:var(--denim);color:#fff;font-weight:600;}
-#workflowApp .chip.add{border-style:dashed;color:var(--denim);background:transparent;}
-#workflowApp .prod-add{display:none;gap:8px;margin-top:10px;align-items:center;}
-#workflowApp .seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--canvas-2);padding:4px;border-radius:10px;border:1px solid var(--line);}
-#workflowApp .seg button{border:none;background:transparent;padding:10px 8px;border-radius:8px;font-family:'Work Sans';font-size:13px;font-weight:600;color:var(--ink-soft);cursor:pointer;}
-#workflowApp .seg button.on{background:var(--white);box-shadow:0 1px 3px rgba(33,29,26,.15);}
-#workflowApp .seg button.on[data-v="menunggu"]{color:#6b6860;}
-#workflowApp .seg button.on[data-v="sudah"]{color:var(--green);}
-#workflowApp details.opt{margin-top:18px;border:1.5px dashed var(--line);border-radius:10px;padding:0 14px;}
-#workflowApp details.opt summary{cursor:pointer;padding:12px 0;font-size:13px;font-weight:600;color:var(--denim);list-style:none;}
-#workflowApp details.opt summary::-webkit-details-marker{display:none;}
-#workflowApp details.opt[open] summary{border-bottom:1px solid var(--line);margin-bottom:6px;}
-#workflowApp details.opt .in{padding-bottom:14px;}
-#workflowApp .assign-chip.ok-chip{background:#E4EFE7;border-color:#B9D4C1;color:#2F5E41;}
-#workflowApp .assign-chip.warn-chip{background:#FBEFD9;border-color:#E9CC93;color:#7A5A17;}
 #workflowApp .filehint{font-size:11.5px;color:var(--ink-soft);margin-top:6px;}
 #workflowApp .img-preview-strip{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;}
 #workflowApp .img-preview-strip .ip{position:relative;}
@@ -303,7 +282,6 @@ window.tenxEnsureChart = function(){
 #workflowApp .tag-card{background:#fff;border:1.5px solid var(--line);border-left:5px solid var(--line);border-radius:12px;padding:16px 18px 14px 18px;}
 #workflowApp .tag-card::before{content:none;display:none;}
 #workflowApp .tag-card:hover{transform:none;box-shadow:0 4px 14px rgba(33,29,26,0.09);border-color:var(--denim-light);}
-#workflowApp .tag-card.st-menunggu_payment{border-left-color:#8d8a82;background:#F6F5F2;}
 #workflowApp .tag-card.st-baru{border-left-color:var(--amber);}
 #workflowApp .tag-card.st-diproses_desainer{border-left-color:var(--denim);}
 #workflowApp .tag-card.st-desain_selesai{border-left-color:var(--purple);}
@@ -340,19 +318,6 @@ window.tenxEnsureChart = function(){
 #workflowApp .wf-wa:hover{background:#1EBE5D;transform:scale(1.04);box-shadow:0 2px 6px rgba(37,211,102,0.3);}
 #workflowApp .wf-sorry{background:var(--rust);color:#fff;border:none;border-radius:6px;padding:9px 12px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:'Work Sans',sans-serif;}
 #workflowApp .wf-sorry:hover{filter:brightness(.92);}
-#workflowApp .tag-card.due{border-color:#E0A100;background:#FFFBEF;}
-#workflowApp .tag-card.late.due{border-color:var(--rust);background:#FFF8F4;}
-#workflowApp .due-chip{background:#FFF1C9;color:#8a5a00;border-color:#E0A100;}
-#workflowApp .kat-chip{background:#E8EEF9;color:#1b3a6b;}
-#workflowApp .wf-remind{background:#E0A100;color:#fff;border:none;border-radius:6px;padding:9px 12px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:'Work Sans',sans-serif;}
-#workflowApp .wf-remind:hover{filter:brightness(.92);}
-#workflowApp .wf-due-banner{background:#FFF8E1;border:1.5px solid #E0A100;border-radius:10px;padding:12px 14px;margin-bottom:16px;}
-#workflowApp .wf-due-banner .ttl{font-weight:800;color:#8a5a00;margin-bottom:6px;}
-#workflowApp .wf-due-banner .r{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #f0dca0;}
-#workflowApp .wf-due-banner .r small{display:block;color:#8a5a00;font-size:11.5px;margin-top:2px;}
-#workflowApp .stage-nav.kat-nav{margin:-10px 0 20px;}
-#workflowApp .stage-pill.kat{font-size:12px;}
-#keuanganApp .kg-badge.kat{background:#5d6b8a;}
 #workflowApp .modal{background:var(--white);border:1.5px solid var(--line);}
 /* Toast urungkan (di luar #workflowApp karena ditempel ke body) */
 #wfToast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;transition:all .2s ease;z-index:900;background:#211D1A;color:#F6F3EC;border-radius:12px;padding:12px 14px;display:flex;gap:14px;align-items:center;width:480px;max-width:calc(100vw - 24px);box-shadow:0 10px 30px rgba(0,0,0,.35);font-family:'Work Sans',sans-serif;font-size:13px;border-left:5px solid #33507A;}
@@ -798,11 +763,6 @@ window.tenxEnsureChart = function(){
 #keuanganApp .kg-card.st-none .val{color:var(--rust);}
 #keuanganApp .kg-group-sep{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:6px 0 4px;}
 #keuanganApp .kg-note{font-size:12px;color:var(--muted);background:var(--bg);border:1px dashed var(--line);border-radius:8px;padding:9px 12px;margin:-8px 0 20px;line-height:1.5;}
-#keuanganApp .kg-month{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding:11px 14px;border-radius:10px;margin:26px 0 6px;background:var(--navy-dark);color:#fff;font-size:14.5px;font-weight:800;}
-#keuanganApp .kg-month:first-child{margin-top:0;}
-#keuanganApp .kg-month small{font-weight:600;font-size:12px;opacity:.92;}
-#keuanganApp .kg-month small b{color:var(--yellow);}
-#keuanganApp .kg-terbit{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:6px;background:#EEF1F6;color:#4a5568;border:1px solid #d5dbe6;}
 #keuanganApp .kg-group{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 12px;border-radius:8px;margin:14px 0 2px;font-size:13px;font-weight:800;color:#fff;}
 #keuanganApp .kg-group:first-child{margin-top:0;}
 #keuanganApp .kg-group small{font-weight:600;font-size:11.5px;opacity:.95;}
@@ -1950,6 +1910,19 @@ body{overflow-x:hidden;}
 #priceShell .pl-btn.sm{padding:6px 11px;font-size:12.5px;}
 @media(pointer:coarse){#priceShell .pl-btn{min-height:40px;}#priceShell .pl-chip,#priceShell .pl-tabs button{min-height:38px;}}
 #priceShell .pl-btn:disabled{opacity:.6;cursor:default;}
+#priceShell .pl-fab{position:fixed;left:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:700;align-items:center;gap:8px;border:none;cursor:pointer;background:var(--pl-denim);color:#fff;font-family:'Bebas Neue',sans-serif;letter-spacing:.05em;font-size:16px;padding:12px 18px;border-radius:999px;box-shadow:0 6px 20px rgba(35,56,88,.4);}
+#priceShell .pl-fab:hover{filter:brightness(1.1);}
+@media(max-width:480px){#priceShell .pl-fab{left:12px;}}
+#priceShell .plo-row{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:10px;padding:12px 0;border-top:1px dashed var(--pl-line);align-items:end;}
+#priceShell .plo-row:first-of-type{border-top:none;}
+#priceShell .plo-nm small{display:block;color:var(--pl-muted);font-size:12px;margin-top:2px;}
+#priceShell .plo-f label{display:block;font-size:11px;color:var(--pl-muted);margin-bottom:3px;}
+#priceShell .plo-sub{grid-column:1/-1;font-size:12.5px;color:var(--pl-muted);min-height:0;}
+#priceShell .plo-sum{background:var(--pl-ink);color:var(--pl-bg);border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:13.5px;line-height:1.7;}
+#priceShell .plo-sum b{font-family:'Bebas Neue';font-size:20px;letter-spacing:.04em;}
+#priceShell .plo-st{display:inline-block;color:#fff;font-family:'Bebas Neue';letter-spacing:.06em;font-size:13px;padding:2px 10px;border-radius:999px;margin-left:6px;}
+#priceShell .plo-pay{font-size:12.5px;padding:4px 0;border-top:1px dashed var(--pl-line);}
+@media(max-width:640px){#priceShell .plo-row{grid-template-columns:1fr 1fr;}#priceShell .plo-nm{grid-column:1/-1;}}
 #priceShell .pl-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
 #priceShell .pl-err{font-size:12.5px;color:var(--pl-rust);margin-top:8px;}
 #priceShell .pl-ok{font-size:12.5px;color:var(--pl-green);margin-top:8px;}
@@ -2038,68 +2011,33 @@ body.tx-reseller #globalNav .gn-brand{cursor:default;}
 #priceShell .pl-rolebadge{display:inline-block;font-family:'Bebas Neue';font-size:12px;letter-spacing:.06em;padding:2px 9px;border-radius:999px;margin-left:6px;color:#fff;vertical-align:middle;}
 #priceShell .pl-rolebadge.reseller{background:var(--pl-denim);} #priceShell .pl-rolebadge.karyawan{background:var(--pl-amber);}
 
-/* ===================== MOBILE FRIENDLY (HP) =====================
-   - Font input 16px di HP → iOS/Android tidak otomatis zoom-in saat kolom diketuk.
-   - Pinch-zoom manual tetap boleh (aksesibilitas), tapi double-tap zoom dimatikan di tombol/kartu.
-   - Konten lebar (tabel, chip) scroll di dalam wadahnya, halaman tidak geser ke samping. */
+/* ===================== MOBILE FRIENDLY & RINGAN (lapisan global) =====================
+   Tujuan: halaman tidak terpotong / tidak bisa digeser menyamping di HP, input tidak
+   auto-zoom di iOS, tap responsif, dan render lebih enteng di perangkat kelas menengah. */
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
-html,body{max-width:100%;overflow-x:hidden;}
-body{padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);}
-button,a,select,label,summary,[onclick]{touch-action:manipulation;-webkit-tap-highlight-color:rgba(51,80,122,.12);}
-@media (max-width:820px){
-  input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]):not([type=color]),
-  select, textarea{font-size:16px !important;}
-  /* Alur Kerja */
-  #workflowApp .stage-nav{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-left:-12px;margin-right:-12px;padding:0 12px 6px;}
-  #workflowApp .stage-nav::-webkit-scrollbar{display:none;}
-  #workflowApp .stage-pill{white-space:nowrap;flex:none;}
-  #workflowApp .subnav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
-  #workflowApp .subnav button{white-space:nowrap;flex:none;}
-  #workflowApp .search-box{max-width:100%;}
-  #workflowApp .tag-card{overflow:hidden;}
-  #workflowApp .tag-card h3,#workflowApp .tag-meta,#workflowApp .tag-brief{overflow-wrap:anywhere;}
-  #workflowApp .overlay{padding:0;align-items:flex-end;overscroll-behavior:contain;}
-  #workflowApp .modal{max-height:94vh;max-height:94dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));}
-  #workflowApp .fab{bottom:calc(16px + env(safe-area-inset-bottom,0px));}
-  #workflowApp .seg button{padding:11px 6px;font-size:12.5px;}
-  #workflowApp .prod-add input{min-width:0;flex:1;}
-  #workflowApp .ukuran-row{grid-template-columns:1fr 78px 38px;}
-  /* Keuangan */
-  #keuanganApp .kg-toolbar{flex-direction:column;align-items:stretch;}
-  #keuanganApp .kg-toolbar .kg-search{min-width:0;}
-  #keuanganApp .kg-filters{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px;}
-  #keuanganApp .kg-filters::-webkit-scrollbar{display:none;}
-  #keuanganApp .kg-filters button{white-space:nowrap;flex:none;}
-  #keuanganApp .kg-row > div:first-child{min-width:0;}
-  #keuanganApp .kg-row .who{overflow-wrap:anywhere;}
-  #keuanganApp .kg-row .amt{white-space:nowrap;}
-  #keuanganApp .kg-month{padding:10px 12px;font-size:13.5px;}
-  #keuanganApp .kg-section{padding:14px 12px;}
-  #keuanganApp .kg-summary{grid-template-columns:1fr 1fr;gap:10px;}
-  #keuanganApp .kg-card{padding:13px 12px;}
-  #keuanganApp .kg-card .val{font-size:17px;overflow-wrap:anywhere;}
-  #keuanganApp .kg-modal{max-height:94vh;max-height:94dvh;padding-bottom:calc(28px + env(safe-area-inset-bottom,0px));}
-  #keuanganApp .kg-modal .kg-close{position:sticky;float:right;top:0;}
+body{overflow-x:hidden;max-width:100%;-webkit-tap-highlight-color:transparent;
+  padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);}
+img{max-width:100%;height:auto;}
+button,a,select,label,input[type=checkbox],input[type=radio],[onclick]{touch-action:manipulation;}
+#priceShell{min-height:calc(100vh - 50px);min-height:calc(100dvh - 50px);}
+#priceShell .pl-card,#priceShell .pl-item,#workflowApp .tag-card{content-visibility:auto;contain-intrinsic-size:auto 170px;}
+@media(max-width:768px){
+  input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=color]),select,textarea{font-size:16px !important;}
+  h1,h2,h3,h4,p,li,td,th,.tag-brief,.tag-meta,.pl-item,.pl-banner{overflow-wrap:anywhere;word-break:normal;}
+  pre,code{white-space:pre-wrap;word-break:break-word;}
+  #keuanganApp table,#financeApp table,#absensiApp table,#sopShell table,#workflowApp table{display:block;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  #globalNav{padding-top:calc(8px + env(safe-area-inset-top,0px));}
+  [id$="Root"] > div[class*="modal"],[class*="modal-bg"] > div{max-width:100vw;}
+  [class*="modal"]{-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+  *{-webkit-backdrop-filter:none !important;backdrop-filter:none !important;}
+  #priceShell .pl-fab{padding:11px 16px;font-size:15px;}
 }
-@media (max-width:380px){
-  #keuanganApp .kg-summary{grid-template-columns:1fr;}
+@media(max-width:380px){
+  #priceShell .plo-row{grid-template-columns:1fr;}
+  #priceShell .pl-header h1{font-size:20px;}
+  #priceShell .pl-tabs button{padding:8px 10px;font-size:13px;}
 }
-@media (pointer:coarse){
-  #workflowApp .chip,#workflowApp .wf-go,#workflowApp .wf-wa,#workflowApp .wf-remind,#workflowApp .wf-sorry{min-height:40px;}
-  #keuanganApp .kg-filters button{min-height:38px;}
-  #workflowApp label.chk{min-height:36px;}
-  #workflowApp input[type=checkbox]{width:22px;height:22px;}
-}
-
-/* ===== Edit nota / pembayaran (Keuangan) ===== */
-#keuanganApp .kg-mini{border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:6px;padding:3px 8px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-left:6px;white-space:nowrap;}
-#keuanganApp .kg-pay-row{flex-wrap:wrap;gap:4px 8px;align-items:center;}
-#keuanganApp .kg-erow2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-#keuanganApp .kg-eitem{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--bg);}
-#keuanganApp .kg-eitem .r2{display:grid;grid-template-columns:1fr 84px 38px;gap:8px;margin-top:8px;align-items:center;}
-#keuanganApp .kg-eitem .rm{height:38px;border:none;background:none;color:var(--rust);font-size:18px;cursor:pointer;}
-#keuanganApp .kg-eitem .sub{font-size:11.5px;color:var(--muted);margin-top:5px;text-align:right;}
-@media (max-width:420px){ #keuanganApp .kg-erow2{grid-template-columns:1fr;gap:0;} }
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important;}}
 </style>
 </head>
 <body class="tx-locked">
@@ -2440,11 +2378,6 @@ button,a,select,label,summary,[onclick]{touch-action:manipulation;-webkit-tap-hi
     </div>
 
     <div class="kg-section">
-      <h2>Omset per Jenis Produk <span style="font-weight:400;font-size:12px;color:var(--muted);">(dikelompokkan otomatis dari nama item di nota · klik untuk memfilter riwayat)</span></h2>
-      <div class="kg-summary" id="kgKatSummary"></div>
-    </div>
-
-    <div class="kg-section">
       <h2>Riwayat Transaksi</h2>
       <div class="kg-toolbar">
         <div class="kg-search"><input type="text" id="kgSearch" placeholder="Cari nama pemesan / no. invoice..." oninput="renderKeuangan()"></div>
@@ -2455,8 +2388,6 @@ button,a,select,label,summary,[onclick]{touch-action:manipulation;-webkit-tap-hi
           <button data-f="lunas" onclick="setKgFilter('lunas')">Lunas</button>
         </div>
       </div>
-      <div class="kg-filters" id="kgKatFilters" style="margin:0 0 12px;"></div>
-      <div class="kg-filters" id="kgMonthFilters" style="margin:0 0 14px;"></div>
       <div class="kg-list" id="kgList"></div>
     </div>
   </main>
@@ -2643,6 +2574,7 @@ button,a,select,label,summary,[onclick]{touch-action:manipulation;-webkit-tap-hi
   </div>
   <main id="plApp"><div class="pl-empty">Memuat harga&hellip;</div></main>
   <div id="plModalRoot"></div>
+  <button id="plFab" class="pl-fab" onclick="plOrdNew()" style="display:none;"><span style="font-size:20px;line-height:1;">＋</span> Pesanan Baru</button>
 </div>
 
 <div id="absensiApp" style="display:none;">
@@ -3035,7 +2967,7 @@ function subscribeInvoicesRealtime(){
     .onSnapshot(snapshot => {
       invoicesCache = snapshot.docs.map(d => d.data());
       renderKeuangan();
-      try{ wfSyncPaymentStatus(); }catch(e){}
+      if(currentMode==='workflow'){ try{ render(); }catch(e){} }
     }, err => console.error('Realtime invoices error', err));
   db.collection('manualSales').orderBy('createdAt', 'desc')
     .onSnapshot(snapshot => {
@@ -3064,13 +2996,11 @@ function genId(){
 
 function subscribeRealtime(){
   if(!CONFIG_READY) return;
-  produkSubscribe();
   db.collection('projects').orderBy('createdAt', 'desc')
     .onSnapshot(snapshot => {
       projectsCache = snapshot.docs.map(d => d.data());
       state.loading = false;
       render();
-      try{ wfSyncPaymentStatus(); }catch(e){}
     }, err => {
       console.error('Realtime error', err);
       state.loading = false;
@@ -3090,7 +3020,6 @@ let state = {
 };
 
 const STATUS_LABEL = {
-  menunggu_payment: 'Menunggu Payment',
   baru: 'Baru / Belum Dikerjakan',
   diproses_desainer: 'Diproses Desainer',
   desain_selesai: 'Desain Selesai',
@@ -3212,7 +3141,6 @@ function renderAdminView(){
   const all = projectsCache;
   const counts = {
     all: all.length,
-    menunggu_payment: all.filter(p=>p.status==='menunggu_payment').length,
     baru: all.filter(p=>p.status==='baru').length,
     diproses_desainer: all.filter(p=>p.status==='diproses_desainer').length,
     desain_selesai: all.filter(p=>p.status==='desain_selesai').length,
@@ -3220,19 +3148,13 @@ function renderAdminView(){
     selesai: all.filter(p=>p.status==='selesai').length,
   };
   let filtered = state.stage==='all' ? all : all.filter(p=>p.status===state.stage);
-  const katSel = state.kategori || 'all';
-  const katCount = {}; all.forEach(p=>projectKategoriList(p).forEach(k=>{ katCount[k] = (katCount[k]||0)+1; }));
-  if(katSel!=='all' && !katCount[katSel]) state.kategori = 'all';
-  if((state.kategori||'all')!=='all') filtered = filtered.filter(p=>projectKategoriList(p).includes(state.kategori));
 
   const q = (state.searchQuery||'').trim().toLowerCase();
   if(q){
     filtered = filtered.filter(p =>
       (p.namaKlien||'').toLowerCase().includes(q) ||
       (p.id||'').toLowerCase().includes(q) ||
-      (p.noHp||'').toLowerCase().includes(q) ||
-      String(p.invNo||'').toLowerCase().includes(q) ||
-      projectKategoriList(p).join(' ').toLowerCase().includes(q)
+      (p.noHp||'').toLowerCase().includes(q)
     );
   }
   const sorted = [...filtered].sort((a,b)=> b.createdAt - a.createdAt);
@@ -3249,30 +3171,23 @@ function renderAdminView(){
   const lateN = all.filter(wfIsLateActive).length;
   const stats = `
     <div class="wf-stats">
-      <div class="wf-stat"><div class="lbl">Menunggu Payment</div><div class="val">${counts.menunggu_payment}</div></div>
-      <div class="wf-stat"><div class="lbl">Project Aktif</div><div class="val">${all.length - counts.selesai - counts.menunggu_payment}</div></div>
+      <div class="wf-stat"><div class="lbl">Project Aktif</div><div class="val">${all.length - counts.selesai}</div></div>
       <div class="wf-stat"><div class="lbl">Sedang Didesain</div><div class="val">${counts.diproses_desainer}</div></div>
       <div class="wf-stat"><div class="lbl">Sedang Produksi</div><div class="val">${counts.diproses_produksi}</div></div>
       <div class="wf-stat ${lateN?'late':''}"><div class="lbl">Telat Deadline</div><div class="val">${lateN}</div></div>
       <div class="wf-stat ok"><div class="lbl">Selesai</div><div class="val">${counts.selesai}</div></div>
     </div>
-    <label class="wf-auto"><input type="checkbox" ${wfAutoWa()?'checked':''} onchange="wfSetAutoWa(this.checked)"> Otomatis buka WA client saat progres diubah (ada tombol Urungkan)</label>
-    <div style="margin:0 0 14px;"><button class="btn ghost small" onclick="syncNotasToProjects()" title="Buat project untuk nota 60 hari terakhir yang belum masuk Alur Kerja">🔄 Sinkronkan Nota ke Alur Kerja</button></div>`;
+    <label class="wf-auto"><input type="checkbox" ${wfAutoWa()?'checked':''} onchange="wfSetAutoWa(this.checked)"> Otomatis buka WA client saat progres diubah (ada tombol Urungkan)</label>`;
 
-  setTimeout(wfCheckDueToast, 500);
-  const katNav = Object.keys(katCount).length > 1
-    ? `<div class="stage-nav kat-nav">${katPill('all','Semua Produk',all.length)}${Object.keys(katCount).sort((a,b)=>katCount[b]-katCount[a]).map(k=>katPill(k,k,katCount[k])).join('')}</div>` : '';
-  return sub + wfDueBannerHtml() + stats + searchBox + `
+  return sub + stats + searchBox + `
     <div class="stage-nav">
       ${pill('all','Semua',counts.all)}
-      ${pill('menunggu_payment','⏳ Menunggu Payment',counts.menunggu_payment)}
       ${pill('baru','Baru',counts.baru)}
       ${pill('diproses_desainer','Diproses Desainer',counts.diproses_desainer)}
       ${pill('desain_selesai','Desain Selesai',counts.desain_selesai)}
       ${pill('diproses_produksi','Diproses Produksi',counts.diproses_produksi)}
       ${pill('selesai','Selesai',counts.selesai)}
     </div>
-    ${katNav}
     <div class="section-title"><h2>Daftar Project</h2><div class="line"></div></div>
     ${sorted.length ? `<div class="grid">${sorted.map(p=>projectCard(p)).join('')}</div>`
       : (q ? emptyState('Tidak ditemukan','Tidak ada project dengan nama pemesan / No. HP / ID yang cocok dengan pencarian ini.')
@@ -3616,37 +3531,41 @@ function emptyState(title,sub){
 }
 
 /* ===================== PROJECT CARD ===================== */
+function wfPayBadge(p){
+  if(!p.invNo) return '';
+  const base = 'display:inline-block;color:#fff;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;margin-right:6px;';
+  const inv = (invoicesCache||[]).find(i=>String(i.invNo)===String(p.invNo));
+  let h = p.via==='Reseller' ? '<span style="'+base+'background:#3b5b8a;">RESELLER</span>' : '';
+  if(!inv) return h+'<span style="'+base+'background:#888;">NOTA #'+escapeHtml(String(p.invNo))+'</span>';
+  const st = invoiceStatus(inv), dib = Number(inv.totalDibayar||0);
+  const m = { lunas:['LUNAS','#2f7d4f'], dp:['SUDAH DP · '+rupiah(dib),'#d98a1a'], belum_bayar:['BELUM BAYAR','#b0452a'] }[st];
+  return h+'<span style="'+base+'background:'+m[1]+';">'+m[0]+'</span><span style="font-size:11px;opacity:.7;">Nota #'+escapeHtml(String(p.invNo))+'</span>';
+}
 function projectCard(p){
   const refImgs = (p.referensi||[]).slice(0,4);
   const qty = totalQty(p);
   const late = wfIsLateActive(p);
   const n = WF_STEP[p.status] || 1;
-  const steps = [1,2,3,4,5,6].map(i=>`<i class="${i<=n?'on':''}"></i>`).join('');
+  const steps = [1,2,3,4,5].map(i=>`<i class="${i<=n?'on':''}"></i>`).join('');
   let go = '';
   if(wfCanQuick(p)) go = `<button class="wf-go" onclick="event.stopPropagation();wfQuickAdvance('${p.id}')">${WF_NEXT_LABEL[p.status]} →</button>`;
   else if(state.role==='desainer' && p.status==='diproses_desainer' && sameName(p.namaDesainer)) go = `<button class="wf-go" onclick="event.stopPropagation();openDetailModal('${p.id}')">Isi Pedoman &amp; Selesaikan →</button>`;
-  else if(p.status==='menunggu_payment') go = `<span class="wf-done" style="color:#8d8a82;">⏳ Menunggu payment</span>` + (state.role==='admin' ? `<button class="wf-go" style="background:#4C7A5E;" title="Pindahkan ke Baru" onclick="event.stopPropagation();wfForceStart('${p.id}')">✓ Tandai Sudah Payment</button>` : '');
   else if(p.status==='selesai') go = `<span class="wf-done">✓ Pesanan selesai</span>`;
   const wa = `<button class="wf-wa" title="Kirim progres terbaru ke WA client" onclick="event.stopPropagation();wfSendNow('${p.id}')">WA Client</button>`;
-  const due = wfIsDueSoon(p) && !late, reminded = wfReminded(p), dl = wfDaysLeft(p);
-  const remind = (state.role==='admin' && wfIsDueSoon(p)) ? `<button class="wf-remind" onclick="event.stopPropagation();wfRemindClient('${p.id}')">${reminded?'Kabari Lagi':'Kabari H-1'}</button>` : '';
   const sorry = late ? `<button class="wf-sorry" onclick="event.stopPropagation();wfApologyModal('${p.id}')">Minta Maaf</button>` : '';
   return `
-    <div class="tag-card st-${p.status}${late?' late':''}${due?' due':''}" onclick="openDetailModal('${p.id}')">
+    <div class="tag-card st-${p.status}${late?' late':''}" onclick="openDetailModal('${p.id}')">
       <div class="tag-top">
         <span class="tag-id mono">${p.id}</span>
         <span class="badge ${p.status}">${STATUS_LABEL[p.status]}</span>
       </div>
       <h3>${escapeHtml(p.namaKlien)}</h3>
+      ${p.invNo ? `<div style="margin:2px 0 6px;">${wfPayBadge(p)}</div>` : ''}
       <div class="tag-meta">${escapeHtml(p.via)} · ${escapeHtml(p.noHp||'')} · masuk ${fmtDate(p.createdAt)} · ${qty} pcs</div>
-      <div class="wf-steps" title="Tahap ${n} dari 6">${steps}</div>
+      <div class="wf-steps" title="Tahap ${n} dari 5">${steps}</div>
       <div class="assign-row">
         <span class="assign-chip">Desainer: <b>${escapeHtml(p.namaDesainer||'-')}</b></span>
         <span class="assign-chip">Produksi: <b>${escapeHtml(p.namaProduksi||'-')}</b></span>
-        ${p.invNo ? `<span class="assign-chip">🧾 Nota <b>#${escapeHtml(String(p.invNo))}</b></span>` : ''}
-        ${p.briefWaTerkirim ? '<span class="assign-chip ok-chip">✓ Brief terkirim WA</span>' : ((state.role==='admin' && (p.status==='menunggu_payment'||p.status==='baru')) ? '<span class="assign-chip warn-chip">📤 Brief belum dikirim WA</span>' : '')}
-        ${projectKategoriList(p).slice(0,2).map(k=>`<span class="assign-chip kat-chip">🏷 ${escapeHtml(k)}</span>`).join('')}
-        ${wfIsDueSoon(p) ? `<span class="assign-chip due-chip">⏰ ${dl===0?'Deadline hari ini':'H-1 · besok'}${reminded?' · ✓ dikabari':''}</span>` : ''}
       </div>
       <div class="tag-brief">${escapeHtml(p.briefDesain)}</div>
       ${p.komisiPerPcs ? `<div class="komisi-tag">Komisi: ${rupiah(p.komisiPerPcs)}/pcs → total ${rupiah(totalKomisi(p))}</div>` : ''}
@@ -3654,7 +3573,7 @@ function projectCard(p){
         <div class="thumbs">${refImgs.map(src=>renderFileThumb(src,34)).join('')}${(p.referensi||[]).length>4?`<span class="mono" style="font-size:11px;color:var(--ink-soft);align-self:center;">+${p.referensi.length-4}</span>`:''}</div>
         ${p.deadline ? `<span class="mono" style="font-size:11.5px;color:var(--rust);">DL ${fmtDate(p.deadline)}${late?` · <b>TELAT ${wfLateDays(p)} HARI</b>`:''}</span>` : ''}
       </div>
-      <div class="wf-act">${go}${wa}${remind}${sorry}</div>
+      <div class="wf-act">${go}${wa}${sorry}</div>
     </div>
   `;
 }
@@ -3664,139 +3583,75 @@ let tempUkuran = [{ukuran:'S', qty:1},{ukuran:'M', qty:1}];
 let tempRefImgs = [];
 let tempRefUploadId = '';
 
-let tempProduk = [];
-let tempBayar = 'menunggu';
-
-function renderProdukChips(){
-  const el = document.getElementById('prodChips'); if(!el) return;
-  const all = produkSemua();
-  tempProduk.forEach(k=>{ if(!all.some(x=>x.toLowerCase()===k.toLowerCase())) all.push(k); });
-  el.innerHTML = all.map(k=>`<button type="button" class="chip ${tempProduk.includes(k)?'on':''}" data-k="${escapeHtml(k)}" onclick="toggleProduk(this.dataset.k)">${escapeHtml(k)}</button>`).join('')
-    + `<button type="button" class="chip add" onclick="produkShowAdd()">+ Produk lain</button>`;
-}
-function toggleProduk(k){ const i = tempProduk.indexOf(k); if(i>=0) tempProduk.splice(i,1); else tempProduk.push(k); renderProdukChips(); }
-function produkShowAdd(){ const r = document.getElementById('prodAddRow'); if(!r) return; r.style.display = 'flex'; const i = document.getElementById('f_produkBaru'); if(i) i.focus(); }
-async function produkSubmitAdd(){
-  const i = document.getElementById('f_produkBaru'); if(!i) return;
-  const k = await produkTambah(i.value);
-  if(!k){ i.focus(); return; }
-  if(!tempProduk.some(x=>x.toLowerCase()===k.toLowerCase())) tempProduk.push(k);
-  i.value = ''; document.getElementById('prodAddRow').style.display = 'none';
-  renderProdukChips();
-}
-function setBayar(v){
-  tempBayar = v;
-  document.querySelectorAll('#bayarSeg button').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
-}
-
-/* Isi form dipakai bersama oleh Project Baru & Edit Project */
-function wfFormHtml(p){
-  const isNew = !p;
-  const v = (k,d='')=> (p && p[k]!=null) ? p[k] : d;
-  const desainerDl = distinctNames('namaDesainer').map(n=>`<option value="${escapeHtml(n)}">`).join('');
-  const produksiDl = distinctNames('namaProduksi').map(n=>`<option value="${escapeHtml(n)}">`).join('');
-  const viaOptions = ['WhatsApp','Telepon','Datang Langsung','Instagram / Sosial Media','Lainnya'];
-  const showBayar = isNew || (!p.invNo && (p.status==='menunggu_payment' || p.status==='baru') && !p.desainMulai);
-  return `
-    <div class="row2">
-      <div>
-        <label>Nama Client</label>
-        <input type="text" id="f_nama" value="${escapeHtml(v('namaKlien'))}" placeholder="cth. Budi Santoso / CV Maju Jaya">
-      </div>
-      <div>
-        <label>No. HP / WA</label>
-        <input type="tel" id="f_hp" value="${escapeHtml(v('noHp'))}" placeholder="08xxxxxxxxxx">
-      </div>
-    </div>
-
-    <label>Produk</label>
-    <div class="chips" id="prodChips"></div>
-    <div class="prod-add" id="prodAddRow">
-      <input type="text" id="f_produkBaru" maxlength="30" placeholder="Nama produk baru, cth. Kemeja Batik" onkeydown="if(event.key==='Enter'){event.preventDefault();produkSubmitAdd();}">
-      <button type="button" class="btn small" onclick="produkSubmitAdd()">Tambah</button>
-    </div>
-    <div class="filehint">Pilih satu atau lebih. Produk baru otomatis tersimpan & muncul di pilihan berikutnya.</div>
-
-    <label>Jumlah & Ukuran</label>
-    <div id="ukuranWrap"></div>
-    <button type="button" class="btn ghost small" onclick="addUkuranRow()">+ Tambah Ukuran</button>
-
-    <label>Brief Desain</label>
-    <textarea id="f_brief" placeholder="Tulis singkat: warna, bahan, konsep, nama/nomor punggung… (boleh kosong kalau sudah dikirim ke WA desainer)">${escapeHtml(isNew ? '' : (v('briefDesain')==='(Brief dikirim via WA ke desainer)' ? '' : v('briefDesain')))}</textarea>
-    <label class="chk"><input type="checkbox" id="f_briefwa" ${v('briefWaTerkirim',false)?'checked':''}> Brief sudah dikirim ke WA desainer</label>
-
-    ${showBayar ? `
-    <label>Pembayaran</label>
-    <div class="seg" id="bayarSeg">
-      <button type="button" data-v="menunggu" class="${tempBayar==='menunggu'?'on':''}" onclick="setBayar('menunggu')">⏳ Menunggu Payment</button>
-      <button type="button" data-v="sudah" class="${tempBayar==='sudah'?'on':''}" onclick="setBayar('sudah')">✓ Sudah Payment / DP</button>
-    </div>
-    <div class="filehint">Selama menunggu payment, project belum bisa dikerjakan desainer.</div>` : ''}
-
-    <details class="opt">
-      <summary>＋ Opsional: via masuk, referensi, penugasan &amp; komisi</summary>
-      <div class="in">
-        <label>Via Masuk</label>
-        <select id="f_via">${viaOptions.map(x=>`<option ${v('via','WhatsApp')===x?'selected':''}>${x}</option>`).join('')}</select>
-
-        <label>Gambar / Dokumen Referensi</label>
-        <input type="file" id="f_ref" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" multiple onchange="handleRefUpload(event)">
-        <div class="upload-status mono" id="refUploadStatus"></div>
-        <div class="img-preview-strip" id="refPreview"></div>
-
-        <div class="row2">
-          <div>
-            <label>Desainer</label>
-            <input type="text" id="f_desainer" list="dl_desainer" value="${escapeHtml(v('namaDesainer'))}" placeholder="Nama desainer">
-            <datalist id="dl_desainer">${desainerDl}</datalist>
-          </div>
-          <div>
-            <label>Bagian Produksi</label>
-            <input type="text" id="f_produksi" list="dl_produksi" value="${escapeHtml(v('namaProduksi'))}" placeholder="Nama produksi">
-            <datalist id="dl_produksi">${produksiDl}</datalist>
-          </div>
-        </div>
-        <label>Komisi Produksi per Pcs (Rp)</label>
-        <input type="number" min="0" id="f_komisi" value="${v('komisiPerPcs',0) || ''}" placeholder="cth. 3000">
-      </div>
-    </details>`;
-}
-
-/* Baca & validasi form. Mengembalikan null (dan memberi peringatan) kalau belum lengkap. */
-function wfReadForm(){
-  const g = id=>{ const e = document.getElementById(id); return e ? e.value : ''; };
-  const f = {
-    nama: g('f_nama').trim(), hp: g('f_hp').trim(), via: g('f_via') || 'WhatsApp',
-    brief: g('f_brief').trim(), briefWa: !!(document.getElementById('f_briefwa') || {}).checked,
-    namaDesainer: g('f_desainer').trim(), namaProduksi: g('f_produksi').trim(),
-    komisiPerPcs: parseFloat(g('f_komisi')) || 0,
-    produk: [...tempProduk],
-    ukuran: tempUkuran.filter(u=>String(u.ukuran||'').trim()!=='')
-  };
-  if(!f.nama || !f.hp){ alert('Mohon isi Nama Client dan No. HP.'); return null; }
-  if(!f.produk.length){ alert('Pilih jenis produk dulu (Kaos, Jersey, atau tambah produk lain).'); return null; }
-  if(!f.brief && !f.briefWa){ alert('Isi brief desain, atau centang "Brief sudah dikirim ke WA desainer".'); return null; }
-  if(!f.brief) f.brief = '(Brief dikirim via WA ke desainer)';
-  return f;
-}
-
 function openNewProjectModal(){
   tempUkuran = [{ukuran:'S', qty:1},{ukuran:'M', qty:1}];
   tempRefImgs = [];
   tempRefUploadId = genId();
-  tempProduk = [];
-  tempBayar = 'menunggu';
+  const desainerDl = distinctNames('namaDesainer').map(n=>`<option value="${escapeHtml(n)}">`).join('');
+  const produksiDl = distinctNames('namaProduksi').map(n=>`<option value="${escapeHtml(n)}">`).join('');
+
   renderModal(`
     <button class="close" onclick="closeModal()">×</button>
     <h2>Project Baru</h2>
-    <div class="modal-sub">Isi yang penting saja — sisanya bisa dilengkapi nanti</div>
-    ${wfFormHtml(null)}
+    <div class="modal-sub">Diisi oleh Admin saat pesanan client masuk</div>
+
+    <label>Nama Client</label>
+    <input type="text" id="f_nama" placeholder="cth. Budi Santoso / CV Maju Jaya">
+
+    <div class="row2">
+      <div>
+        <label>No. HP / WA</label>
+        <input type="tel" id="f_hp" placeholder="08xxxxxxxxxx">
+      </div>
+      <div>
+        <label>Via Masuk</label>
+        <select id="f_via">
+          <option>WhatsApp</option>
+          <option>Telepon</option>
+          <option>Datang Langsung</option>
+          <option>Instagram / Sosial Media</option>
+          <option>Lainnya</option>
+        </select>
+      </div>
+    </div>
+
+    <label>Brief Desain</label>
+    <textarea id="f_brief" placeholder="Jelaskan permintaan desain dari client: jenis produk, warna, bahan, konsep, dsb."></textarea>
+
+    <label>List Ukuran & Qty</label>
+    <div id="ukuranWrap"></div>
+    <button type="button" class="btn ghost small" onclick="addUkuranRow()">+ Tambah Ukuran</button>
+
+    <label>Gambar / Dokumen Referensi dari Client</label>
+    <input type="file" id="f_ref" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" multiple onchange="handleRefUpload(event)">
+    <div class="filehint">Bisa upload gambar, PDF, Word, atau Excel — beberapa file sekaligus. Gambar otomatis dikompres dulu supaya cepat & hemat kuota.</div>
+    <div class="upload-status mono" id="refUploadStatus"></div>
+    <div class="img-preview-strip" id="refPreview"></div>
+
+    <div class="divider"></div>
+    <div class="section-title" style="margin:0 0 4px;"><h2 style="font-size:18px;">Penugasan & Komisi</h2><div class="line"></div></div>
+
+    <div class="row2">
+      <div>
+        <label>Nama Desainer (Ditugaskan)</label>
+        <input type="text" id="f_desainer" list="dl_desainer" placeholder="Nama desainer yang mengerjakan">
+        <datalist id="dl_desainer">${desainerDl}</datalist>
+      </div>
+      <div>
+        <label>Nama Bagian Produksi (Ditugaskan)</label>
+        <input type="text" id="f_produksi" list="dl_produksi" placeholder="Nama yang memproduksi">
+        <datalist id="dl_produksi">${produksiDl}</datalist>
+      </div>
+    </div>
+    <label>Komisi Produksi per Pcs (Rp)</label>
+    <input type="number" min="0" id="f_komisi" placeholder="cth. 3000">
+    <div class="filehint">Total komisi akan dihitung otomatis: Komisi per Pcs × Total Pcs, dan tampil ke bagian Produksi yang ditugaskan.</div>
+
     <div class="modal-actions">
       <button class="btn block" onclick="submitNewProject()">Simpan Project</button>
     </div>
   `);
   renderUkuranRows();
-  renderProdukChips();
 }
 
 function renderUkuranRows(){
@@ -3840,18 +3695,26 @@ function renderRefPreview(){
 function removeRefImg(i){ tempRefImgs.splice(i,1); renderRefPreview(); }
 
 async function submitNewProject(){
-  const f = wfReadForm(); if(!f) return;
-  const sudah = tempBayar === 'sudah';
-  const kaos = f.produk.some(k=>/^(kaos|jersey)$/i.test(k));
+  const nama = document.getElementById('f_nama').value.trim();
+  const hp = document.getElementById('f_hp').value.trim();
+  const via = document.getElementById('f_via').value;
+  const brief = document.getElementById('f_brief').value.trim();
+  const namaDesainer = document.getElementById('f_desainer').value.trim();
+  const namaProduksi = document.getElementById('f_produksi').value.trim();
+  const komisiPerPcs = parseFloat(document.getElementById('f_komisi').value) || 0;
+
+  if(!nama || !hp || !brief){
+    alert('Mohon lengkapi Nama Client, No. HP, dan Brief Desain.');
+    return;
+  }
+  const ukuranClean = tempUkuran.filter(u=>u.ukuran.trim()!=='');
+
   const project = {
     id: genId(),
-    namaKlien: f.nama, noHp: f.hp, via: f.via, briefDesain: f.brief,
-    briefWaTerkirim: f.briefWa, briefWaAt: f.briefWa ? Date.now() : null,
-    ukuran: f.ukuran, referensi: tempRefImgs,
-    namaDesainer: f.namaDesainer, namaProduksi: f.namaProduksi, komisiPerPcs: f.komisiPerPcs,
-    kategori: f.produk[0], kategoriList: f.produk, jenisOrder: kaos ? 'kaos' : 'lainnya', createdVia: 'manual',
-    status: sudah ? 'baru' : 'menunggu_payment', paidAt: sudah ? Date.now() : null,
-    createdAt: Date.now(),
+    namaKlien: nama, noHp: hp, via: via, briefDesain: brief,
+    ukuran: ukuranClean, referensi: tempRefImgs,
+    namaDesainer, namaProduksi, komisiPerPcs,
+    status: 'baru', createdAt: Date.now(),
     desainMulai:null, pedomanDesain:'', pedomanGambar:[], listDesain:'', deadline:'',
     produksiMulai:null, selesaiAt:null
   };
@@ -3865,16 +3728,67 @@ async function submitNewProject(){
 function openEditProjectModal(id){
   const p = projectsCache.find(x=>x.id===id);
   if(!p) return;
+
   tempUkuran = (p.ukuran && p.ukuran.length) ? p.ukuran.map(u=>({...u})) : [{ukuran:'', qty:1}];
   tempRefImgs = [...(p.referensi||[])];
   tempRefUploadId = p.id;
-  tempProduk = projectKategoriList(p).filter(k=>k!==PRODUK_LAINNYA);
-  tempBayar = p.status==='menunggu_payment' ? 'menunggu' : 'sudah';
+  const desainerDl = distinctNames('namaDesainer').map(n=>`<option value="${escapeHtml(n)}">`).join('');
+  const produksiDl = distinctNames('namaProduksi').map(n=>`<option value="${escapeHtml(n)}">`).join('');
+  const viaOptions = ['WhatsApp','Telepon','Datang Langsung','Instagram / Sosial Media','Reseller','Lainnya'];
+
   renderModal(`
     <button class="close" onclick="closeModal()">×</button>
     <h2>Edit Project</h2>
     <div class="modal-sub mono">${p.id} · Ubah data pencatatan bila ada kesalahan input</div>
-    ${wfFormHtml(p)}
+
+    <label>Nama Client</label>
+    <input type="text" id="f_nama" value="${escapeHtml(p.namaKlien||'')}" placeholder="cth. Budi Santoso / CV Maju Jaya">
+
+    <div class="row2">
+      <div>
+        <label>No. HP / WA</label>
+        <input type="tel" id="f_hp" value="${escapeHtml(p.noHp||'')}" placeholder="08xxxxxxxxxx">
+      </div>
+      <div>
+        <label>Via Masuk</label>
+        <select id="f_via">
+          ${viaOptions.map(v=>`<option ${p.via===v?'selected':''}>${v}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+
+    <label>Brief Desain</label>
+    <textarea id="f_brief" placeholder="Jelaskan permintaan desain dari client: jenis produk, warna, bahan, konsep, dsb.">${escapeHtml(p.briefDesain||'')}</textarea>
+
+    <label>List Ukuran & Qty</label>
+    <div id="ukuranWrap"></div>
+    <button type="button" class="btn ghost small" onclick="addUkuranRow()">+ Tambah Ukuran</button>
+
+    <label>Gambar / Dokumen Referensi dari Client</label>
+    <input type="file" id="f_ref" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" multiple onchange="handleRefUpload(event)">
+    <div class="filehint">Bisa upload gambar, PDF, Word, atau Excel — beberapa file sekaligus. Gambar otomatis dikompres dulu supaya cepat & hemat kuota.</div>
+    <div class="upload-status mono" id="refUploadStatus"></div>
+    <div class="img-preview-strip" id="refPreview"></div>
+
+    <div class="divider"></div>
+    <div class="section-title" style="margin:0 0 4px;"><h2 style="font-size:18px;">Penugasan & Komisi</h2><div class="line"></div></div>
+
+    <div class="row2">
+      <div>
+        <label>Nama Desainer (Ditugaskan)</label>
+        <input type="text" id="f_desainer" list="dl_desainer" value="${escapeHtml(p.namaDesainer||'')}" placeholder="Nama desainer yang mengerjakan">
+        <datalist id="dl_desainer">${desainerDl}</datalist>
+      </div>
+      <div>
+        <label>Nama Bagian Produksi (Ditugaskan)</label>
+        <input type="text" id="f_produksi" list="dl_produksi" value="${escapeHtml(p.namaProduksi||'')}" placeholder="Nama yang memproduksi">
+        <datalist id="dl_produksi">${produksiDl}</datalist>
+      </div>
+    </div>
+    <label>Komisi Produksi per Pcs (Rp)</label>
+    <input type="number" min="0" id="f_komisi" value="${p.komisiPerPcs||0}" placeholder="cth. 3000">
+    <div class="filehint">Total komisi akan dihitung otomatis: Komisi per Pcs × Total Pcs, dan tampil ke bagian Produksi yang ditugaskan.</div>
+
     <div class="modal-actions">
       <button class="btn ghost" style="flex:1;" onclick="openDetailModal('${p.id}')">Batal</button>
       <button class="btn" style="flex:1;" onclick="submitEditProject('${p.id}')">Simpan Perubahan</button>
@@ -3882,25 +3796,35 @@ function openEditProjectModal(id){
   `);
   renderUkuranRows();
   renderRefPreview();
-  renderProdukChips();
 }
 
 async function submitEditProject(id){
   const p = projectsCache.find(x=>x.id===id);
   if(!p) return;
-  const f = wfReadForm(); if(!f) return;
 
-  p.namaKlien = f.nama; p.noHp = f.hp; p.via = f.via; p.briefDesain = f.brief;
-  p.ukuran = f.ukuran; p.referensi = tempRefImgs;
-  p.namaDesainer = f.namaDesainer; p.namaProduksi = f.namaProduksi; p.komisiPerPcs = f.komisiPerPcs;
-  p.kategori = f.produk[0]; p.kategoriList = f.produk;
-  p.jenisOrder = f.produk.some(k=>/^(kaos|jersey)$/i.test(k)) ? 'kaos' : 'lainnya';
-  p.briefWaTerkirim = f.briefWa;
-  p.briefWaAt = f.briefWa ? (p.briefWaAt || Date.now()) : null;
-  if(document.getElementById('bayarSeg')){
-    if(tempBayar==='sudah' && p.status==='menunggu_payment'){ p.status = 'baru'; p.paidAt = Date.now(); }
-    else if(tempBayar==='menunggu' && p.status==='baru'){ p.status = 'menunggu_payment'; }
+  const nama = document.getElementById('f_nama').value.trim();
+  const hp = document.getElementById('f_hp').value.trim();
+  const via = document.getElementById('f_via').value;
+  const brief = document.getElementById('f_brief').value.trim();
+  const namaDesainer = document.getElementById('f_desainer').value.trim();
+  const namaProduksi = document.getElementById('f_produksi').value.trim();
+  const komisiPerPcs = parseFloat(document.getElementById('f_komisi').value) || 0;
+
+  if(!nama || !hp || !brief){
+    alert('Mohon lengkapi Nama Client, No. HP, dan Brief Desain.');
+    return;
   }
+  const ukuranClean = tempUkuran.filter(u=>u.ukuran.trim()!=='');
+
+  p.namaKlien = nama;
+  p.noHp = hp;
+  p.via = via;
+  p.briefDesain = brief;
+  p.ukuran = ukuranClean;
+  p.referensi = tempRefImgs;
+  p.namaDesainer = namaDesainer;
+  p.namaProduksi = namaProduksi;
+  p.komisiPerPcs = komisiPerPcs;
 
   const ok = await saveProject(p);
   if(!ok) return;
@@ -3944,15 +3868,11 @@ function openDetailModal(id){
     <div class="kv"><b>Desainer</b><span>${escapeHtml(p.namaDesainer||'-')}</span></div>
     <div class="kv"><b>Produksi</b><span>${escapeHtml(p.namaProduksi||'-')}</span></div>
     <div class="kv"><b>Brief</b><span>${escapeHtml(p.briefDesain)}</span></div>
-    <div class="kv"><b>Brief WA</b><span>${state.role==='admin' ? `<label class="chk"><input type="checkbox" ${p.briefWaTerkirim?'checked':''} onchange="wfToggleBriefWa('${p.id}',this.checked)"> Sudah dikirim ke WA desainer${p.briefWaAt?' · '+fmtDate(p.briefWaAt):''}</label>` : (p.briefWaTerkirim ? '✓ Sudah dikirim ke WA' : 'Belum dikirim')}</span></div>
     <div class="kv"><b>List Ukuran</b><div>${ukuranHtml}</div></div>
     <div class="kv"><b>Referensi</b><div>${refHtml}</div></div>
   `;
 
-  if(p.status === 'menunggu_payment'){
-    body += `<div class="note-box" style="border-color:#8d8a82;">⏳ Menunggu pembayaran${p.invNo ? ' nota #'+escapeHtml(String(p.invNo)) : ''}. ${p.invNo ? 'Begitu DP/pembayaran tercatat di Keuangan, project otomatis pindah ke <b>Baru</b> dan bisa dikerjakan.' : 'Kalau DP sudah masuk, tandai sudah payment supaya pindah ke <b>Baru</b> dan bisa dikerjakan.'}</div>`;
-    if(state.role==='admin') body += `<div class="modal-actions"><button class="btn green block" onclick="closeModal();wfForceStart('${p.id}')">✓ Tandai Sudah Payment</button></div>`;
-  } else if(p.status === 'baru'){
+  if(p.status === 'baru'){
     body += `<div class="note-box">Project ini belum mulai dikerjakan Desainer.</div>`;
     if(state.role==='desainer' && sameName(p.namaDesainer)){
       body += `<div class="modal-actions"><button class="btn block" onclick="startDesain('${p.id}')">Mulai Desain</button></div>`;
@@ -4178,7 +4098,7 @@ async function manualSetStatus(id){
    - Begitu status naik, WhatsApp client otomatis terbuka dengan pesan rapi (format WhatsApp: *tebal*, daftar tahap).
      Tinggal tekan kirim. Bisa dimatikan lewat centang "Otomatis buka WA client".
    - Setiap perubahan ada tombol URUNGKAN (15 detik) kalau salah pencet.                                      */
-const WF_STEP = { menunggu_payment:1, baru:2, diproses_desainer:3, desain_selesai:4, diproses_produksi:5, selesai:6 };
+const WF_STEP = { baru:1, diproses_desainer:2, desain_selesai:3, diproses_produksi:4, selesai:5 };
 const WF_NEXT = { baru:'diproses_desainer', diproses_desainer:'desain_selesai', desain_selesai:'diproses_produksi', diproses_produksi:'selesai' };
 const WF_NEXT_LABEL = { baru:'Mulai Desain', diproses_desainer:'Desain Selesai', desain_selesai:'Mulai Produksi', diproses_produksi:'Produksi Selesai' };
 function wfDayStart(v){
@@ -4192,7 +4112,7 @@ function wfLateDays(p){
   const diff = Math.round((end - wfDayStart(p.deadline)) / 86400000);
   return diff > 0 ? diff : 0;
 }
-function wfIsLateActive(p){ return !!p && p.status!=='selesai' && p.status!=='menunggu_payment' && wfLateDays(p) > 0; }
+function wfIsLateActive(p){ return !!p && p.status!=='selesai' && wfLateDays(p) > 0; }
 
 /* ---- Pesan WhatsApp (pakai format WA: *tebal*, emoji, baris pendek) ---- */
 function wfSapaan(){
@@ -4201,8 +4121,7 @@ function wfSapaan(){
 }
 function wfStepLines(p){
   const names = ['Pesanan diterima','Desain dikerjakan','Desain selesai','Proses produksi','Pesanan selesai'];
-  const doneMap = { menunggu_payment:0, baru:1, diproses_desainer:1, desain_selesai:3, diproses_produksi:3, selesai:5 };
-  const done = (p.status in doneMap) ? doneMap[p.status] : 1;
+  const done = { baru:1, diproses_desainer:1, desain_selesai:3, diproses_produksi:3, selesai:5 }[p.status] || 1;
   const cur  = { diproses_desainer:2, diproses_produksi:4 }[p.status] || 0;
   return names.map((n,i)=>{
     const k = i+1;
@@ -4213,7 +4132,6 @@ function wfStepLines(p){
 }
 function wfClientMsg(p){
   const lead = {
-    menunggu_payment: 'Pesanan Kakak sudah kami catat. Proses desain akan kami mulai setelah pembayaran (DP) kami terima.',
     baru: 'Pesanan Kakak telah kami terima dan saat ini masuk dalam antrean desain.',
     diproses_desainer: 'Desain pesanan Kakak sedang kami kerjakan.',
     desain_selesai: 'Desain pesanan Kakak telah *selesai* dan akan segera masuk ke tahap produksi.',
@@ -4371,11 +4289,9 @@ function wfDetailHtml(p){
   const late = wfIsLateActive(p);
   return `<div class="divider"></div>
     <label>Kabari Client (WhatsApp)</label>
-    ${wfIsDueSoon(p) ? `<div class="note-box" style="border-color:#E0A100;color:#8a5a00;">⏰ Deadline ${wfDaysLeft(p)===0?'hari ini':'besok'} (${fmtDate(p.deadline)}). ${wfReminded(p)?'✓ Sudah dikabari ke client.':'Belum dikabari ke client.'}</div>` : ''}
     ${late ? `<div class="note-box" style="border-color:var(--rust);color:var(--rust);">⚠ Project ini sudah telat ${wfLateDays(p)} hari dari deadline ${fmtDate(p.deadline)}.</div>` : ''}
     <div class="modal-actions">
       <button class="btn ghost" style="flex:1;" onclick="wfSendNow('${p.id}')">Kirim Update Progres ke WA</button>
-      ${wfIsDueSoon(p) ? `<button class="btn" style="flex:1;background:#E0A100;" onclick="wfRemindClient('${p.id}')">Kabari H-1 ke Client</button>` : ''}
       ${late ? `<button class="btn rust" style="flex:1;" onclick="wfApologyModal('${p.id}')">Kirim Permintaan Maaf</button>` : ''}
     </div>`;
 }
@@ -4395,7 +4311,7 @@ function openLightbox(src){
   document.getElementById('lightboxRoot').innerHTML = `
     <div class="lightbox-overlay" onclick="closeLightbox()">
       <button class="lightbox-close" onclick="closeLightbox()">×</button>
-      <img src="${src}" onclick="event.stopPropagation()">
+      <img loading="lazy" decoding="async" src="${src}" onclick="event.stopPropagation()">
     </div>
   `;
 }
@@ -4417,25 +4333,19 @@ function renderFileThumb(item, size, removeFn, removeIdx){
   const f = normalizeFileItem(item);
   const removeBtn = (removeFn!=null && removeIdx!=null) ? `<button class="rm" onclick="event.stopPropagation();${removeFn}(${removeIdx})">×</button>` : '';
   if(f.isImage){
-    return `<div class="ip"><img src="${f.url}" style="width:${size}px;height:${size}px;" onclick="event.stopPropagation();openLightbox(this.src)">${removeBtn}</div>`;
+    return `<div class="ip"><img loading="lazy" decoding="async" src="${f.url}" style="width:${size}px;height:${size}px;" onclick="event.stopPropagation();openLightbox(this.src)">${removeBtn}</div>`;
   }
   return `<div class="ip"><a href="${f.url}" target="_blank" rel="noopener" class="file-chip" style="width:${size}px;height:${size}px;" onclick="event.stopPropagation();" title="${f.name}"><span class="file-chip-icon">${fileIconFor(f.name)}</span><span class="file-chip-name">${f.name}</span></a>${removeBtn}</div>`;
 }
 
 /* ===================== JEMBATAN KE GENERATOR NOTA ===================== */
-/* nama produk untuk item nota yang dibuat dari project: ikut kategori project (Jersey ≠ Kaos), bukan selalu "KAOS" */
-function notaProdukLabel(p){
-  const k = projectKategoriList(p)[0];
-  return (!k || k===PRODUK_LAINNYA) ? 'PESANAN' : k.toUpperCase();
-}
 function openNotaFromProject(id){
   const p = projectsCache.find(x=>x.id===id);
   if(!p) return;
-  notaSourceProjectId = id;
 
   const sizeItems = (p.ukuran||[]).filter(u=>u.ukuran && (parseInt(u.qty)||0) > 0);
   notaItems = sizeItems.length
-    ? sizeItems.map(u=>({ desc:`${notaProdukLabel(p)} UKURAN ${String(u.ukuran).toUpperCase()}`, price:0, qty:parseInt(u.qty)||0 }))
+    ? sizeItems.map(u=>({ desc:`KAOS UKURAN ${String(u.ukuran).toUpperCase()}`, price:0, qty:parseInt(u.qty)||0 }))
     : [{ desc:(p.briefDesain||'PESANAN').toUpperCase().slice(0,40), price:0, qty: totalQty(p)||1 }];
 
   const custEl = document.getElementById('custName'); if(custEl) custEl.value = p.namaKlien || '';
@@ -4462,333 +4372,6 @@ function openNotaFromProject(id){
   showMode('nota');
 }
 
-/* ===================== KLASIFIKASI PRODUK (kata kunci nama item) =====================
-   Urutan penting: yang spesifik di atas, "Kaos" paling bawah (karena kata "lengan" juga muncul di kemeja/jaket).
-   Tambah/ubah kata kunci di sini kapan saja; semua tampilan (Alur Kerja & Keuangan) otomatis mengikuti. */
-const PRODUK_KATEGORI = [
-  { k:'Workshirt',        re:/work ?shirt|wearpack|coverall|kemeja|\bpdh\b|\bpdl\b|seragam kerja/i },
-  { k:'Jaket',            re:/jaket|jacket|hoodie|sweater|switer|varsity|bomber|rompi|\bvest\b/i },
-  { k:'Celana',           re:/celana|jogger|training pants/i },
-  { k:'Topi',             re:/\btopi\b|\bcap\b|bucket hat/i },
-  { k:'Tas',              re:/\btas\b|tote ?bag|ransel|backpack|pouch/i },
-  { k:'Bendera',          re:/bendera|\bflag\b|umbul|rontek/i },
-  { k:'Banner & Spanduk', re:/banner|spanduk|baliho|backdrop/i },
-  { k:'Stiker',           re:/stiker|sticker|decal|vinyl/i },
-  { k:'Merchandise',      re:/\bmug\b|gelas|lanyard|id ?card|gantungan|\bpin\b|tumbler|payung|merch|goodie/i },
-  { k:'Jersey',           re:/jersey|jersy|jersi/i },
-  { k:'Kaos',             re:/kaos|\bpolo\b|t-?shirt|oblong|singlet|lengan/i }
-];
-const PRODUK_LAINNYA = 'Lainnya';
-/* Produk tambahan buatan admin (disimpan di Firestore meta/produkKategori + cadangan localStorage).
-   Otomatis dikenali juga untuk klasifikasi nama item di nota. */
-let produkCustom = [];
-try{ produkCustom = JSON.parse(localStorage.getItem('tenx_produk_custom')||'[]') || []; }catch(e){ produkCustom = []; }
-function produkNorm(s){ return String(s||'').replace(/\s+/g,' ').trim().slice(0,30); }
-function produkSemua(){
-  const out = [], seen = new Set();
-  const add = k=>{ k = produkNorm(k); if(!k || k===PRODUK_LAINNYA) return; const key = k.toLowerCase(); if(seen.has(key)) return; seen.add(key); out.push(k); };
-  ['Kaos','Jersey'].forEach(add);
-  PRODUK_KATEGORI.forEach(r=>add(r.k));
-  produkCustom.forEach(add);
-  (typeof projectsCache!=='undefined' ? projectsCache : []).forEach(p=>(p.kategoriList||[]).forEach(add));
-  return out;
-}
-async function produkTambah(raw){
-  const k = produkNorm(raw); if(!k) return '';
-  const ada = produkSemua().find(x=>x.toLowerCase()===k.toLowerCase());
-  if(ada) return ada;
-  produkCustom.push(k);
-  try{ localStorage.setItem('tenx_produk_custom', JSON.stringify(produkCustom)); }catch(e){}
-  if(CONFIG_READY){ try{ await db.collection('meta').doc('produkKategori').set({ list: produkCustom, updatedAt: Date.now() }); }catch(e){ console.warn('Gagal simpan produk', e); } }
-  return k;
-}
-function produkSubscribe(){
-  if(!CONFIG_READY) return;
-  try{
-    db.collection('meta').doc('produkKategori').onSnapshot(s=>{
-      const l = s.exists ? s.data().list : null;
-      if(!Array.isArray(l)) return;
-      const have = new Set(produkCustom.map(x=>x.toLowerCase()));
-      l.forEach(k=>{ k = produkNorm(k); if(k && !have.has(k.toLowerCase())){ produkCustom.push(k); have.add(k.toLowerCase()); } });
-      try{ localStorage.setItem('tenx_produk_custom', JSON.stringify(produkCustom)); }catch(e){}
-      if(typeof renderProdukChips==='function') renderProdukChips();
-    }, e=>console.warn('produk realtime', e));
-  }catch(e){}
-}
-function produkKategoriTeks(txt){
-  const t = String(txt||'');
-  const tl = t.toLowerCase();
-  for(const c of produkCustom){ if(c && tl.includes(c.toLowerCase())) return c; }
-  for(const r of PRODUK_KATEGORI){ if(r.re.test(t)) return r.k; }
-  return '';
-}
-/* baris kategori sebuah nota: [{k, value, qty}] diurutkan dari nilai terbesar */
-function notaKategoriRows(inv){
-  const m = {};
-  ((inv && inv.items) || []).forEach(it=>{
-    if(!it || !(it.desc || Number(it.qty))) return;
-    const k = produkKategoriTeks(it.desc) || PRODUK_LAINNYA;
-    const o = m[k] || (m[k] = { k, value:0, qty:0 });
-    o.value += (Number(it.price)||0) * (Number(it.qty)||0);
-    o.qty += Number(it.qty)||0;
-  });
-  const rows = Object.values(m).sort((a,b)=> (b.value-a.value) || (b.qty-a.qty));
-  return rows.length ? rows : [{ k:PRODUK_LAINNYA, value:0, qty:0 }];
-}
-function notaKategoriList(inv){ return notaKategoriRows(inv).map(r=>r.k); }
-/* kategori sebuah project — SELALU mengikuti NAMA ITEM di nota yang tertaut (bukan nama klien):
-   1) item nota (live)  2) kategori yang tersimpan saat project dibuat dari nota  3) project manual: label ukuran/item lalu brief */
-function projectKategoriList(p){
-  if(p.invNo && typeof invoicesCache!=='undefined'){
-    const inv = invoicesCache.find(i=>String(i.invNo)===String(p.invNo));
-    if(inv) return notaKategoriList(inv);
-  }
-  if(Array.isArray(p.kategoriList) && p.kategoriList.length) return p.kategoriList;
-  let k = produkKategoriTeks((p.ukuran||[]).map(u=>u.ukuran).join(' '));
-  if(!k) k = produkKategoriTeks(p.briefDesain||'');
-  if(k) return [k];
-  const sizes = (p.ukuran||[]).filter(u=>u.ukuran);
-  if(!sizes.length || sizes.every(u=>/^(xxs|xs|s|m|l|xl|xxl|xxxl|[2-6]xl|\d{1,2}|anak.*|dewasa.*)$/i.test(String(u.ukuran).trim()))) return ['Kaos'];
-  return [PRODUK_LAINNYA];
-}
-
-/* ===================== PERINGATAN H-1 DEADLINE → UPDATE KE CLIENT ===================== */
-function wfDaysLeft(p){
-  if(!p || !p.deadline || p.status==='selesai' || p.status==='menunggu_payment') return null;
-  return Math.round((wfDayStart(p.deadline) - wfDayStart(Date.now())) / 86400000);
-}
-function wfIsDueSoon(p){ const d = wfDaysLeft(p); return d===0 || d===1; }          // H-1 (besok) atau hari-H
-function wfReminded(p){ return !!p && !!p.deadline && p.remindH1===p.deadline; }       // ganti deadline → peringatan aktif lagi
-function wfNeedsRemind(p){ return wfIsDueSoon(p) && !wfReminded(p); }
-function wfReminderMsg(p){
-  const d = wfDaysLeft(p);
-  const L = [];
-  L.push('*TENX APPAREL*');
-  L.push('_Pengingat & Update Pesanan_');
-  L.push('');
-  L.push(wfSapaan() + ', Kak *' + (p.namaKlien||'') + '*.');
-  L.push('Kami informasikan bahwa target penyelesaian pesanan Kakak adalah *' + (d===0 ? 'hari ini' : 'besok') + '* (' + fmtDate(p.deadline) + ').');
-  L.push('');
-  L.push('No. Pesanan : *' + p.id + '*');
-  L.push('Jumlah      : ' + totalQty(p) + ' pcs');
-  L.push('');
-  L.push('*Posisi pesanan saat ini*');
-  L.push(wfStepLines(p));
-  L.push('');
-  L.push(p.status==='diproses_produksi'
-    ? 'Pesanan sedang kami kebut agar sesuai target. Kami akan segera mengabari Kakak begitu pesanan siap.'
-    : 'Kami terus mengupayakan penyelesaian sesuai target. Jika ada perubahan jadwal, kami akan menginformasikannya lebih awal kepada Kakak.');
-  L.push('');
-  L.push('Terima kasih atas kepercayaan Kakak kepada TENX APPAREL.');
-  return L.join('\n');
-}
-/* dipanggil langsung dari klik (sebelum await) supaya WA tidak diblokir browser */
-function wfRemindClient(id){
-  const p = projectsCache.find(x=>x.id===id); if(!p) return;
-  const url = wfWaUrl(p, wfReminderMsg(p));
-  if(!url){ alert('No. HP client belum valid: ' + (p.noHp||'-') + '. Perbaiki lewat Edit Data Project.'); return; }
-  window.open(url, '_blank');
-  wfMarkReminded(id, true);
-}
-async function wfMarkReminded(id, on){
-  const p = projectsCache.find(x=>x.id===id); if(!p) return;
-  const prev = { remindH1:p.remindH1||'', remindAt:p.remindAt||null };
-  p.remindH1 = on ? (p.deadline||'') : ''; p.remindAt = on ? Date.now() : null;
-  const ok = await saveProject(p);
-  if(!ok){ Object.assign(p, prev); return; }
-  await refresh(false); render();
-  wfToastShow('<div class="wt-msg"><b>' + escapeHtml(p.namaKlien||'') + '</b> ' + (on ? 'ditandai sudah dikabari (H-1)' : 'tanda dikabari dibatalkan') +
-    '<small>' + (on ? 'WA client dibuka. Kalau belum sempat terkirim, klik "Batalkan tanda".' : 'Peringatan H-1 aktif lagi untuk project ini.') + '</small></div>' +
-    '<div class="wt-act">' + (on ? '<button class="undo" onclick="wfMarkReminded(\'' + id + '\',false)">↩ Batalkan tanda</button>' : '') + '<button class="x" onclick="wfToastHide()">×</button></div>', 12000);
-}
-function wfDueBannerHtml(){
-  const list = projectsCache.filter(wfNeedsRemind).sort((a,b)=>String(a.deadline).localeCompare(String(b.deadline)));
-  if(!list.length) return '';
-  return '<div class="wf-due-banner"><div class="ttl">⏰ ' + list.length + ' project mendekati deadline — saatnya update ke client</div>' +
-    list.slice(0,8).map(p=>'<div class="r"><div><b>' + escapeHtml(p.namaKlien||'') + '</b> <span class="mono">' + p.id + '</span><small>' +
-      (wfDaysLeft(p)===0 ? 'Deadline HARI INI' : 'H-1 · deadline besok') + ' (' + fmtDate(p.deadline) + ') · ' + escapeHtml(STATUS_LABEL[p.status]||p.status) + '</small></div>' +
-      '<button class="wf-remind" onclick="wfRemindClient(\'' + p.id + '\')">Kabari Client</button></div>').join('') +
-    (list.length>8 ? '<small>…dan ' + (list.length-8) + ' project lain (lihat kartu bertanda ⏰)</small>' : '') + '</div>';
-}
-/* toast pengingat otomatis: sekali per hari per kondisi saat Admin membuka Alur Kerja */
-function wfCheckDueToast(){
-  if(state.role!=='admin') return;
-  const n = projectsCache.filter(wfNeedsRemind).length; if(!n) return;
-  const key = 'tenx_wf_due_' + kgLocalDate(new Date()) + '_' + n;
-  try{ if(sessionStorage.getItem(key)) return; sessionStorage.setItem(key, '1'); }catch(e){}
-  wfToastShow('<div class="wt-msg"><b>⏰ ' + n + ' project mendekati deadline (H-1)</b><small>Segera update ke client supaya komunikasi tetap terjaga.</small></div>' +
-    '<div class="wt-act"><button class="wa" onclick="wfToastHide();window.scrollTo({top:0,behavior:\'smooth\'})">Lihat</button><button class="x" onclick="wfToastHide()">×</button></div>', 10000);
-}
-
-/* ===================== KLASIFIKASI DI KEUANGAN ===================== */
-let kgKat = 'semua';
-let kgMonth = 'semua';   // filter bulan di Riwayat Transaksi (bulan = tanggal DP / pembayaran pertama)
-function setKgMonth(k){ kgMonth = k; renderKeuangan(); }
-function kgTxKategori(t){
-  if(t.type==='invoice') return notaKategoriList(t.raw);
-  const r = t.raw || {};
-  return [produkKategoriTeks(r.desc || r.label || r.custName || '') || PRODUK_LAINNYA];
-}
-function kgKatStats(all){
-  const st = {};
-  const get = k => st[k] || (st[k] = { k, nilai:0, nota:0, masuk:0 });
-  all.forEach(t=>{
-    if(t.type==='invoice'){
-      const rows = notaKategoriRows(t.raw), tot = rows.reduce((s,r)=>s+r.value,0);
-      rows.forEach(r=>{ const o = get(r.k); o.nota++; o.nilai += r.value; o.masuk += tot>0 ? t.dibayar*(r.value/tot) : t.dibayar/rows.length; });
-    } else { const o = get(kgTxKategori(t)[0]); o.nota++; o.nilai += t.amount; o.masuk += t.dibayar; }
-  });
-  return Object.values(st).sort((a,b)=>b.nilai-a.nilai);
-}
-function setKgKat(k){ kgKat = (kgKat===k && k!=='semua') ? 'semua' : k; renderKeuangan(); }
-function kgRenderKat(all){
-  const stats = kgKatStats(all);
-  const box = document.getElementById('kgKatSummary');
-  if(box){
-    const total = stats.reduce((s,x)=>s+x.nilai,0) || 1;
-    box.innerHTML = stats.length ? stats.map(x=>
-      '<div class="kg-card" style="cursor:pointer;' + (kgKat===x.k ? 'outline:2px solid var(--yellow);' : '') + '" data-k="' + escapeHtml(x.k) + '" onclick="setKgKat(this.dataset.k)">' +
-      '<div class="lbl">' + escapeHtml(x.k) + '</div><div class="val">' + formatRupiah(x.nilai) + '</div>' +
-      '<div class="sub">' + x.nota + ' nota · ' + Math.round(x.nilai/total*100) + '% dari total<br>Sudah masuk ' + formatRupiah(x.masuk) + '</div></div>').join('')
-      : '<div class="kg-empty">Belum ada nota.</div>';
-  }
-  const f = document.getElementById('kgKatFilters');
-  if(f){
-    const cnt = {}; all.forEach(t=>kgTxKategori(t).forEach(k=>{ cnt[k] = (cnt[k]||0)+1; }));
-    const ks = Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]);
-    if(kgKat!=='semua' && !cnt[kgKat]) kgKat = 'semua';
-    f.innerHTML = ['semua'].concat(ks).map(k=>'<button class="' + (kgKat===k?'active':'') + '" data-k="' + escapeHtml(k) + '" onclick="setKgKat(this.dataset.k)">' +
-      (k==='semua' ? 'Semua Produk' : escapeHtml(k)) + ' (' + (k==='semua' ? all.length : cnt[k]) + ')</button>').join('');
-  }
-}
-function setKategori(k){ state.kategori = k; render(); }
-function katPill(k, label, count){
-  return '<button class="stage-pill kat ' + ((state.kategori||'all')===k?'active':'') + '" data-k="' + escapeHtml(k) + '" onclick="setKategori(this.dataset.k)">' + escapeHtml(label) + ' <span class="count">' + count + '</span></button>';
-}
-
-/* ===================== MENUNGGU PAYMENT → BARU (sinkron dengan pembayaran di nota) =====================
-   Nota yang belum ada pembayaran sama sekali (belum DP) → project berstatus "Menunggu Payment" (belum bisa diproses).
-   Begitu pembayaran/DP tercatat di nota (Keuangan), project otomatis pindah ke "Baru" dan bisa dilanjutkan progresnya. */
-let wfPaySyncing = false;
-async function wfSyncPaymentStatus(){
-  if(wfPaySyncing || !CONFIG_READY) return;
-  const todo = projectsCache.filter(p=>{
-    if(p.status!=='menunggu_payment' || !p.invNo) return false;
-    const inv = invoicesCache.find(i=>String(i.invNo)===String(p.invNo));
-    return !!inv && Number(inv.totalDibayar||0) > 0;
-  });
-  if(!todo.length) return;
-  wfPaySyncing = true;
-  try{
-    for(const p of todo){ await db.collection('projects').doc(p.id).update({ status:'baru', paidAt:Date.now() }); }
-    const wa = document.getElementById('workflowApp');
-    if(state.role==='admin' && wa && wa.style.display!=='none'){
-      wfToastShow('<div class="wt-msg"><b>💰 ' + todo.length + ' project masuk ke "Baru"</b><small>' + todo.slice(0,3).map(p=>escapeHtml(p.namaKlien||'')).join(', ') + (todo.length>3?' dll':'') + ' — pembayaran sudah tercatat, siap dikerjakan.</small></div><div class="wt-act"><button class="x" onclick="wfToastHide()">×</button></div>', 9000);
-    }
-  }catch(e){ console.warn('wfSyncPaymentStatus', e); }
-  finally{ wfPaySyncing = false; }
-}
-/* Admin: mulai pengerjaan walau pembayaran belum tercatat di nota (mis. sudah transfer tapi belum dicatat) */
-async function wfForceStart(id){
-  const p = projectsCache.find(x=>x.id===id); if(!p || p.status!=='menunggu_payment') return;
-  if(p.invNo && !confirm('Pembayaran nota #' + p.invNo + ' belum tercatat di Keuangan.\n\nTetap tandai sudah payment dan pindahkan "' + (p.namaKlien||'') + '" ke Baru?\n\nTips: lebih baik catat pembayarannya di Keuangan, maka status pindah otomatis.')) return;
-  const prev = p.status;
-  p.status = 'baru'; p.paidAt = Date.now();
-  const ok = await saveProject(p);
-  if(!ok){ p.status = prev; return; }
-  await refresh(false); render();
-}
-async function wfToggleBriefWa(id, v){
-  const p = projectsCache.find(x=>x.id===id); if(!p) return;
-  p.briefWaTerkirim = !!v; p.briefWaAt = v ? Date.now() : null;
-  const ok = await saveProject(p);
-  if(!ok){ p.briefWaTerkirim = !v; return; }
-  render();
-}
-
-/* ===================== NOTA → ALUR KERJA (project otomatis) ===================== */
-let notaSourceProjectId = '';   // terisi bila form nota dibuka dari sebuah Project
-
-function projectFromInvoice(rec, id, createdAtMs){
-  const items = (rec.items||[]).filter(it=>it && (it.desc || Number(it.qty)));
-  const kats = notaKategoriList({ items });
-  const kaos = kats[0]==='Kaos' || kats[0]==='Jersey';
-  const lines = items.map(it=>`- ${it.desc||'-'} ×${Number(it.qty)||0}`).join('\n');
-  const brief = `[Otomatis dari Nota #${rec.invNo}]\n${lines}`
-    + (rec.notes ? `\nCatatan nota: ${rec.notes}` : '')
-    + (rec.dueDate ? `\nJatuh tempo nota: ${rec.dueDate}` : '');
-  return {
-    id, namaKlien: rec.custName || '(tanpa nama)', noHp: rec.custPhone || '', via: 'Lainnya', briefDesain: brief,
-    ukuran: items.map(it=>({ ukuran: String(it.desc||'ITEM').slice(0,40), qty: Number(it.qty)||0 })),
-    referensi: [], namaDesainer: '', namaProduksi: '', komisiPerPcs: 0,
-    status: Number(rec.totalDibayar||0) > 0 ? 'baru' : 'menunggu_payment', createdAt: createdAtMs || Date.now(),
-    desainMulai: null, pedomanDesain: '', pedomanGambar: [], listDesain: '', deadline: rec.dueDate || '', produksiMulai: null, selesaiAt: null,
-    invNo: rec.invNo, dariNota: true, jenisOrder: kaos ? 'kaos' : 'lainnya', kategori: kats[0], kategoriList: kats, createdVia: 'nota'
-  };
-}
-
-/* Tautkan nota ke project. sourceId = project asal (bila nota dibuka dari project), selain itu project dibuat otomatis.
-   ID project otomatis bersifat tetap (TX-NOTA-<no nota>) sehingga tidak mungkin terbuat dobel. */
-async function ensureProjectForInvoice(rec, sourceId, createdAtMs){
-  if(!CONFIG_READY) return { ok:false, err:'Firebase belum dikonfigurasi' };
-  try{
-    if(sourceId){
-      const sref = db.collection('projects').doc(sourceId);
-      const ssnap = await sref.get();
-      if(ssnap.exists){ await sref.update({ invNo: rec.invNo }); return { ok:true, id:sourceId, linked:true }; }
-    }
-    const id = 'TX-NOTA-' + rec.invNo;
-    const ref = db.collection('projects').doc(id);
-    const snap = await ref.get();
-    if(snap.exists) return { ok:true, id, existed:true };
-    await ref.set(projectFromInvoice(rec, id, createdAtMs));
-    return { ok:true, id, created:true };
-  }catch(e){
-    console.error('Gagal membuat project dari nota', e);
-    return { ok:false, err: e.message || String(e) };
-  }
-}
-
-/* Tombol di Alur Kerja (ADMIN): buat project untuk nota lama yang belum punya project (60 hari terakhir) */
-async function syncNotasToProjects(){
-  if(!CONFIG_READY){ alert('Firebase belum dikonfigurasi.'); return; }
-  let filled = 0;   // project dari nota yang deadline-nya masih kosong → isi dari jatuh tempo nota (supaya peringatan H-1 jalan)
-  for(const p of projectsCache){
-    if(p.dariNota && !p.deadline && p.invNo){
-      const inv = invoicesCache.find(i=>String(i.invNo)===String(p.invNo));
-      if(inv && inv.dueDate){ try{ await db.collection('projects').doc(p.id).update({ deadline: inv.dueDate }); filled++; }catch(e){ console.warn(e); } }
-    }
-  }
-  let held = 0;     // project dari nota yang ternyata belum dibayar & belum dikerjakan → "Menunggu Payment"
-  for(const p of projectsCache){
-    if(p.dariNota && p.status==='baru' && !p.desainMulai && p.invNo){
-      const inv = invoicesCache.find(i=>String(i.invNo)===String(p.invNo));
-      if(inv && !(Number(inv.totalDibayar||0) > 0)){ try{ await db.collection('projects').doc(p.id).update({ status:'menunggu_payment' }); held++; }catch(e){ console.warn(e); } }
-    }
-  }
-  const linked = new Set(projectsCache.map(p=>String(p.invNo||'')).filter(Boolean));
-  const klienAda = new Set(projectsCache.map(p=>String(p.namaKlien||'').trim().toLowerCase()).filter(Boolean));
-  const cutoff = Date.now() - 60*86400000;
-  const recent = invoicesCache.filter(i=>!i.projectId && !linked.has(String(i.invNo)) && ((new Date(i.createdAt||i.invDate).getTime())||0) >= cutoff);
-  const todo = recent.filter(i=>!klienAda.has(String(i.custName||'').trim().toLowerCase()));
-  const skipped = recent.length - todo.length;
-  if(!todo.length){
-    alert('Tidak ada nota (60 hari terakhir) yang perlu dibuatkan project.' + (filled ? '\n\n'+filled+' project dari nota diisi deadline-nya dari jatuh tempo nota.' : '') + (held ? '\n\n'+held+' project dikembalikan ke "Menunggu Payment" karena notanya belum dibayar.' : '') + (skipped ? '\n\n'+skipped+' nota dilewati karena nama kliennya sudah punya project.' : ''));
-    return;
-  }
-  const names = todo.slice(0,8).map(i=>`#${i.invNo} — ${i.custName||'-'}`).join('\n') + (todo.length>8 ? `\n…dan ${todo.length-8} lainnya` : '');
-  if(!confirm(`${todo.length} nota belum punya project di Alur Kerja:\n\n${names}\n\nBuat project (status Baru) untuk semuanya?` + (skipped ? `\n\n(${skipped} nota lain dilewati karena nama kliennya sudah punya project.)` : ''))) return;
-  let ok = 0, fail = 0;
-  for(const inv of todo){
-    const r = await ensureProjectForInvoice(inv, '', (new Date(inv.createdAt||inv.invDate).getTime())||Date.now());
-    if(r.ok){
-      ok++;
-      try{ await db.collection('invoices').doc(String(inv.invNo)).update({ projectId: r.id }); }catch(e){ console.warn(e); }
-    } else fail++;
-  }
-  alert(`Selesai: ${ok} project dibuat` + (fail ? `, ${fail} gagal (coba lagi).` : '.') + (held ? `\n${held} project dikembalikan ke "Menunggu Payment" karena notanya belum dibayar.` : ''));
-}
-
 /* ===================== INIT ===================== */
 let workflowInited = false;
 function initWorkflow(){
@@ -4798,6 +4381,7 @@ function initWorkflow(){
   render();
   subscribeRealtime();
   subscribeKomisiClaimsRealtime();
+  initKeuangan();   // data nota realtime untuk badge DP/Lunas di kartu project
 }
 
 
@@ -4957,21 +4541,9 @@ async function ensureNotaSaved(){
       totalDibayar: dp,
       payments: dp > 0 ? [{ amount: dp, note: 'DP awal saat nota dibuat', by: state.myName || '-', at: new Date().toISOString() }] : [],
       createdBy: state.myName || '-',
-      createdAt: new Date().toISOString(),
-      projectId: notaSourceProjectId || ('TX-NOTA-' + invNo)
+      createdAt: new Date().toISOString()
     };
-    record.kategoriList = notaKategoriList(record); record.kategori = record.kategoriList[0];
-    const okSave = await saveInvoiceRecord(record);
-    if(okSave){
-      const r = await ensureProjectForInvoice(record, notaSourceProjectId);
-      const banner = document.getElementById('notaSourceBanner');
-      if(banner){
-        banner.style.display = 'block';
-        banner.textContent = r.ok
-          ? (r.linked ? `Nota #${invNo} tertaut ke Project ${r.id} di Alur Kerja.` : `✅ Nota #${invNo} tersimpan & project otomatis muncul di Alur Kerja (${r.id}).` + (dp > 0 ? '' : ' Status: Menunggu Payment — otomatis jadi "Baru" begitu pembayaran/DP dicatat.'))
-          : `⚠️ Nota #${invNo} tersimpan, tetapi project di Alur Kerja belum terbuat (${r.err}). Buka Alur Kerja lalu klik "Sinkronkan Nota".`;
-      }
-    }
+    await saveInvoiceRecord(record);
     renderNota();
     return invNo;
   } finally {
@@ -4995,7 +4567,6 @@ function startNewNota(){
   document.getElementById('dpAmount').value = '';
   document.getElementById('notes').value = '';
   notaItems = [{ desc:"", price:0, qty:1 }];
-  notaSourceProjectId = '';
   const banner = document.getElementById('notaSourceBanner');
   if(banner) banner.style.display = 'none';
   renderItemsForm();
@@ -5218,23 +4789,13 @@ function renderKeuangan(){
   const flab = { semua:'Semua', belum_bayar:'Belum Masuk', dp:'Sudah DP (Belum Lunas)', lunas:'Lunas' };
   document.querySelectorAll('#kgFilters button').forEach(b=>{ const k=b.dataset.f; if(flab[k]) b.textContent = flab[k] + ' (' + cnt[k] + ')'; });
 
-  kgRenderKat(all);
-
   // list dengan search + filter
   const q = (document.getElementById('kgSearch')?.value || '').toLowerCase().trim();
   const list = all.filter(t=>{
     if(kgFilter!=='semua' && t.status!==kgFilter) return false;
-    if(kgKat!=='semua' && !kgTxKategori(t).includes(kgKat)) return false;
     if(!q) return true;
-    return (t.custName||'').toLowerCase().includes(q) || String(t.id).toLowerCase().includes(q) || kgTxKategori(t).join(' ').toLowerCase().includes(q);
+    return (t.custName||'').toLowerCase().includes(q) || String(t.id).toLowerCase().includes(q);
   });
-
-  /* Bulan nota = tanggal DP / pembayaran pertama (sama seperti halaman Finance).
-     Terbit September tapi DP Oktober → masuk Oktober. Belum ada pembayaran → bulan terbit. */
-  const effDate = t => kgAiNotaDate(t) || t.date || '';
-  const effMonth = t => effDate(t).slice(0,7);
-  const incomeByMonth = {};
-  entries.forEach(e=>{ const m = e.date.slice(0,7); incomeByMonth[m] = (incomeByMonth[m]||0) + e.amount; });
 
   const rowHtml = t=>{
     const badge = t.type==='manual'
@@ -5247,55 +4808,30 @@ function renderKeuangan(){
       else if(t.status==='dp') sub = `<small class="in">Sudah masuk ${formatRupiah(t.dibayar)}</small><small class="out">Sisa ${formatRupiah(sisa)}</small>`;
       else sub = `<small class="in">Sudah masuk penuh</small>`;
     }
-    const ed = effDate(t);
-    const terbit = (t.type==='invoice' && t.date && ed && t.date.slice(0,7)!==ed.slice(0,7))
-      ? ` <span class="kg-terbit">terbit ${formatDateID(t.date)}</span>` : '';
     return `
       <div class="kg-row" onclick="${t.type==='invoice' ? `openInvoiceDetail('${t.id}')` : `openManualDetail('${t.id}')`}">
         <div>
           <div class="who">${escapeHtml(t.custName)} ${t.type==='invoice' ? '· #'+t.id : ''}</div>
-          <div class="meta">${formatDateID(ed)} ${badge}${terbit} ${kgTxKategori(t).slice(0,3).map(k=>`<span class="kg-badge kat">${escapeHtml(k)}</span>`).join(' ')}</div>
+          <div class="meta">${formatDateID(t.date)} ${badge}</div>
         </div>
         <div class="amt">${formatRupiah(t.amount)}${sub}</div>
       </div>`;
   };
 
-  // chip bulan (jumlah mengikuti filter status/produk/pencarian yang aktif)
-  const mCnt = {};
-  list.forEach(t=>{ const m = effMonth(t); if(m) mCnt[m] = (mCnt[m]||0)+1; });
-  const months = Object.keys(mCnt).sort().reverse();
-  if(kgMonth!=='semua' && !mCnt[kgMonth]) kgMonth = 'semua';
-  const mf = document.getElementById('kgMonthFilters');
-  if(mf){
-    mf.innerHTML = months.length > 1
-      ? ['semua'].concat(months).map(k=>`<button class="${kgMonth===k?'active':''}" data-m="${k}" onclick="setKgMonth(this.dataset.m)">📅 ${k==='semua' ? 'Semua Bulan' : kgMonthLabel(k)} (${k==='semua' ? list.length : mCnt[k]})</button>`).join('')
-      : '';
-  }
-  const shown = (kgMonth==='semua') ? list : list.filter(t=>effMonth(t)===kgMonth);
-  const MONTH_FULL = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-
   const listEl = document.getElementById('kgList');
-  if(shown.length===0){
+  if(list.length===0){
     listEl.innerHTML = `<div class="kg-empty">Belum ada transaksi yang cocok.</div>`;
   } else {
+    // dikelompokkan per status supaya tidak bingung
     const groups = [
       { k:'belum_bayar', title:'Belum Masuk Sama Sekali', info:t=>`Total tagihan ${formatRupiah(t.reduce((x,y)=>x+y.amount,0))}` },
       { k:'dp',          title:'Sudah DP · Belum Lunas',  info:t=>`Sudah masuk ${formatRupiah(t.reduce((x,y)=>x+y.dibayar,0))} · Sisa ${formatRupiah(t.reduce((x,y)=>x+Math.max(y.amount-y.dibayar,0),0))}` },
       { k:'lunas',       title:'Lunas',                   info:t=>`Sudah masuk ${formatRupiah(t.reduce((x,y)=>x+y.dibayar,0))}` }
     ];
-    const byMonth = {};
-    shown.forEach(t=>{ const m = effMonth(t) || '0000-00'; (byMonth[m] = byMonth[m] || []).push(t); });
-    listEl.innerHTML = Object.keys(byMonth).sort().reverse().map(m=>{
-      const arr = byMonth[m].slice().sort((x,y)=> (effDate(y) > effDate(x) ? 1 : effDate(y) < effDate(x) ? -1 : (new Date(y.createdAt) - new Date(x.createdAt))));
-      const [yy, mm] = m.split('-');
-      const label = (MONTH_FULL[Number(mm)-1] || '-') + ' ' + yy;
-      const head = `<div class="kg-month"><span>📅 ${label} · ${arr.length} nota</span><small>Uang masuk bulan ini: <b>${formatRupiah(incomeByMonth[m]||0)}</b></small></div>`;
-      const body = groups.map(g=>{
-        const items = arr.filter(t=>t.status===g.k);
-        if(!items.length) return '';
-        return `<div class="kg-group g-${g.k}"><span>${g.title} (${items.length})</span><small>${g.info(items)}</small></div>` + items.map(rowHtml).join('');
-      }).join('');
-      return head + body;
+    listEl.innerHTML = groups.map(g=>{
+      const items = list.filter(t=>t.status===g.k);
+      if(!items.length) return '';
+      return `<div class="kg-group g-${g.k}"><span>${g.title} (${items.length})</span><small>${g.info(items)}</small></div>` + items.map(rowHtml).join('');
     }).join('');
   }
 
@@ -7569,8 +7105,7 @@ function openManualDetail(id){
         ${m.note ? `<div style="font-size:12.5px;color:var(--muted);margin-bottom:14px;">${escapeHtml(m.note)}</div>` : ''}
         ${kgProofHtml(m.proofUrl)}
         <div style="font-size:11.5px;color:var(--muted);margin-bottom:14px;">Dicatat oleh ${escapeHtml(m.createdBy||'-')}</div>
-        <button class="btn ghost" style="width:100%;border-color:var(--navy);color:var(--navy);font-weight:700;" onclick="openManualEdit('${m.id}')">✏️ Edit Transaksi</button>
-        <button class="btn ghost" style="width:100%;margin-top:8px;" onclick="confirmDeleteManualSale('${m.id}')">Hapus Transaksi</button>
+        <button class="btn ghost" style="width:100%;" onclick="confirmDeleteManualSale('${m.id}')">Hapus Transaksi</button>
       </div></div>
     </div>`;
 }
@@ -7579,243 +7114,6 @@ async function confirmDeleteManualSale(id){
   if(!confirm('Hapus transaksi manual ini?')) return;
   const ok = await deleteManualSale(id);
   if(ok) closeKgModal();
-}
-
-
-/* ===================== EDIT NOTA / PEMBAYARAN / TRANSAKSI MANUAL (KEUANGAN) =====================
-   Nomor nota TIDAK berubah saat diedit, jadi pengeluaran (HPP) yang sudah tertaut ke nomor itu tetap aman. */
-let kgEditItems = [];
-function kgEditNow(){ return { editedBy: state.myName || '-', editedAt: new Date().toISOString() }; }
-async function kgRefreshCache(coll, id, cacheArr, keyField){
-  try{
-    const s = await db.collection(coll).doc(id).get();
-    if(!s.exists) return;
-    const i = cacheArr.findIndex(x=>String(x[keyField])===String(id));
-    if(i>=0) cacheArr[i] = s.data(); else cacheArr.push(s.data());
-  }catch(e){ console.warn('refresh cache', e); }
-}
-
-/* --- Edit nota --- */
-function kgEditTotal(){ return kgEditItems.reduce((s,it)=>s+(Number(it.price)||0)*(Number(it.qty)||0),0); }
-function kgEditTotalRender(){
-  const t = document.getElementById('kgeTotal'); if(t) t.textContent = formatRupiah(kgEditTotal());
-  kgEditItems.forEach((it,i)=>{ const el = document.getElementById('kgeSub'+i); if(el) el.textContent = 'Subtotal ' + formatRupiah((Number(it.price)||0)*(Number(it.qty)||0)); });
-}
-function kgEditItemsRender(){
-  const el = document.getElementById('kgeItems'); if(!el) return;
-  el.innerHTML = kgEditItems.map((it,i)=>`
-    <div class="kg-eitem">
-      <input type="text" value="${escapeHtml(it.desc||'')}" placeholder="Nama item, cth. Jersey Futsal Custom" oninput="kgEditItemSet(${i},'desc',this.value)">
-      <div class="r2">
-        <input type="number" inputmode="numeric" min="0" value="${it.price||''}" placeholder="Harga satuan" oninput="kgEditItemSet(${i},'price',this.value)">
-        <input type="number" inputmode="numeric" min="0" value="${it.qty===0?0:(it.qty||'')}" placeholder="Qty" oninput="kgEditItemSet(${i},'qty',this.value)">
-        <button type="button" class="rm" title="Hapus item" onclick="kgEditItemDel(${i})">✕</button>
-      </div>
-      <div class="sub" id="kgeSub${i}">Subtotal ${formatRupiah((Number(it.price)||0)*(Number(it.qty)||0))}</div>
-    </div>`).join('');
-  kgEditTotalRender();
-}
-function kgEditItemSet(i, k, v){ if(!kgEditItems[i]) return; kgEditItems[i][k] = (k==='desc') ? v : (v===''?'':Number(v)); kgEditTotalRender(); }
-function kgEditItemDel(i){ kgEditItems.splice(i,1); kgEditItemsRender(); }
-function kgEditItemAdd(){ kgEditItems.push({desc:'', price:0, qty:1}); kgEditItemsRender(); }
-
-function openInvoiceEdit(invNo){
-  const inv = invoicesCache.find(x=>x.invNo===invNo); if(!inv) return;
-  kgEditItems = (inv.items||[]).map(it=>({ desc: it.desc||'', price: Number(it.price)||0, qty: Number(it.qty)||0 }));
-  if(!kgEditItems.length) kgEditItems = [{desc:'', price:0, qty:1}];
-  const root = document.getElementById('kgModalRoot');
-  root.innerHTML = `
-    <div class="kg-modal-bg" onclick="if(event.target===this) closeKgModal()">
-      <div class="kg-modal"><div class="kg-modal-inner">
-        <button class="kg-close" onclick="closeKgModal()">✕</button>
-        <h3>Edit Nota #${escapeHtml(inv.invNo)}</h3>
-        <div class="kg-modal-sub">Nomor nota tetap, jadi pengeluaran &amp; pembayaran yang sudah tertaut tidak berubah.</div>
-        <label>Nama Pemesan</label>
-        <input type="text" id="kgeCust" value="${escapeHtml(inv.custName||'')}">
-        <label>No. HP / WA</label>
-        <input type="tel" id="kgePhone" value="${escapeHtml(inv.custPhone||'')}">
-        <div class="kg-erow2">
-          <div><label>Tanggal Nota</label><input type="date" id="kgeDate" value="${escapeHtml(inv.invDate||'')}"></div>
-          <div><label>Jatuh Tempo</label><input type="date" id="kgeDue" value="${escapeHtml(inv.dueDate||'')}"></div>
-        </div>
-        <label>Item Pesanan</label>
-        <div id="kgeItems"></div>
-        <button type="button" class="btn ghost" style="width:100%;margin-top:2px;" onclick="kgEditItemAdd()">+ Tambah Item</button>
-        <div class="kg-totals">
-          <div class="trow grand"><span>Total Nota</span><span id="kgeTotal">-</span></div>
-          <div class="trow"><span>Sudah masuk (tidak berubah)</span><span>${formatRupiah(inv.totalDibayar||0)}</span></div>
-        </div>
-        <label>Catatan</label>
-        <textarea id="kgeNotes" rows="2">${escapeHtml(inv.notes||'')}</textarea>
-        <button class="btn gold" id="kgeSaveBtn" style="width:100%;margin-top:16px;" onclick="submitInvoiceEdit('${inv.invNo}')">Simpan Perubahan</button>
-        <button class="btn ghost" style="width:100%;margin-top:8px;" onclick="openInvoiceDetail('${inv.invNo}')">Batal</button>
-      </div></div>
-    </div>`;
-  kgEditItemsRender();
-}
-
-async function kgSyncProjectFromInvoice(newInv, oldDue){
-  if(typeof projectsCache==='undefined' || !CONFIG_READY) return;
-  const ps = projectsCache.filter(p=>String(p.invNo)===String(newInv.invNo));
-  for(const p of ps){
-    const u = { namaKlien: newInv.custName, kategori: newInv.kategori, kategoriList: newInv.kategoriList };
-    if(newInv.custPhone) u.noHp = newInv.custPhone;
-    if(p.dariNota) u.ukuran = newInv.items.map(it=>({ ukuran:String(it.desc||'ITEM').slice(0,40), qty:Number(it.qty)||0 }));
-    if(newInv.dueDate && (!p.deadline || p.deadline===oldDue)) u.deadline = newInv.dueDate;
-    try{ await db.collection('projects').doc(p.id).update(u); }catch(e){ console.warn('sync project', e); }
-  }
-}
-
-async function submitInvoiceEdit(invNo){
-  const inv = invoicesCache.find(x=>x.invNo===invNo); if(!inv) return;
-  const g = id => (document.getElementById(id)||{}).value || '';
-  const custName = g('kgeCust').trim();
-  if(!custName){ alert('Nama pemesan tidak boleh kosong.'); return; }
-  const items = kgEditItems.map(it=>({ desc:String(it.desc||'').trim(), price:Number(it.price)||0, qty:Number(it.qty)||0 }))
-    .filter(it=>it.desc || it.price || it.qty);
-  if(!items.length || items.some(it=>!it.desc)){ alert('Setiap item harus punya nama.'); return; }
-  const total = items.reduce((s,it)=>s+it.price*it.qty, 0);
-  if(total<=0){ alert('Total nota harus lebih dari 0.'); return; }
-  const dibayar = Number(inv.totalDibayar||0);
-  if(total < dibayar && !confirm('Total baru ('+formatRupiah(total)+') lebih kecil dari uang yang sudah masuk ('+formatRupiah(dibayar)+').\n\nNota akan tampil lunas dengan kelebihan bayar. Tetap simpan?')) return;
-  const kl = notaKategoriList({ items });
-  const upd = Object.assign({
-    custName, custPhone: g('kgePhone').trim(), invDate: g('kgeDate') || inv.invDate, dueDate: g('kgeDue'),
-    items, subtotal: total, total, notes: g('kgeNotes').trim(), kategoriList: kl, kategori: kl[0]
-  }, kgEditNow());
-  const btn = document.getElementById('kgeSaveBtn'); kgBtnBusy(btn, true);
-  try{
-    await db.collection('invoices').doc(invNo).update(upd);
-  }catch(e){
-    kgBtnBusy(btn, false);
-    alert('Gagal menyimpan perubahan nota: ' + e.message); return;
-  }
-  await kgSyncProjectFromInvoice(Object.assign({}, inv, upd), inv.dueDate);
-  await kgRefreshCache('invoices', invNo, invoicesCache, 'invNo');
-  kgBtnBusy(btn, false);
-  renderKeuangan();
-  openInvoiceDetail(invNo);
-}
-
-/* --- Edit / hapus satu pembayaran (DP / pelunasan) --- */
-async function kgPayMutate(invNo, fn){
-  const ref = db.collection('invoices').doc(invNo);
-  let total = 0;
-  await db.runTransaction(async tx=>{
-    const snap = await tx.get(ref);
-    if(!snap.exists) throw new Error('Nota tidak ditemukan');
-    const d = snap.data();
-    const pays = Array.isArray(d.payments) ? d.payments.map(x=>Object.assign({}, x)) : [];
-    const oldSum = pays.reduce((s,p)=>s+(Number(p.amount)||0), 0);
-    const resid = Math.max(Number(d.totalDibayar||0) - oldSum, 0);   // data lama tanpa rincian tetap dihitung
-    fn(pays);
-    total = pays.reduce((s,p)=>s+(Number(p.amount)||0), 0) + resid;
-    tx.update(ref, Object.assign({ payments: pays, totalDibayar: total }, kgEditNow()));
-  });
-  return total;
-}
-async function kgSyncProjectPayment(invNo, totalDibayar){
-  if(typeof projectsCache==='undefined' || totalDibayar > 0) return;   // naik ke "Baru" sudah otomatis oleh wfSyncPaymentStatus
-  for(const p of projectsCache.filter(x=>String(x.invNo)===String(invNo))){
-    if(p.status==='baru' && !p.desainMulai){ try{ await db.collection('projects').doc(p.id).update({ status:'menunggu_payment' }); }catch(e){ console.warn(e); } }
-  }
-}
-function openPaymentEdit(invNo, i){
-  const inv = invoicesCache.find(x=>x.invNo===invNo); if(!inv) return;
-  const p = (inv.payments||[])[i]; if(!p) return;
-  const root = document.getElementById('kgModalRoot');
-  root.innerHTML = `
-    <div class="kg-modal-bg" onclick="if(event.target===this) closeKgModal()">
-      <div class="kg-modal"><div class="kg-modal-inner">
-        <button class="kg-close" onclick="closeKgModal()">✕</button>
-        <h3>Edit Pembayaran</h3>
-        <div class="kg-modal-sub">Nota #${escapeHtml(inv.invNo)} · ${escapeHtml(inv.custName||'')}</div>
-        <label>Jumlah (Rp)</label>
-        <input type="number" inputmode="numeric" id="kgpAmount" min="0" value="${Number(p.amount)||0}" data-words oninput="kgUpdateWords(this)"><div class="kgs-words"></div>
-        <label>Tanggal Pembayaran</label>
-        <input type="date" id="kgpDate" value="${p.at ? kgLocalDate(p.at) : ''}">
-        <label>Catatan</label>
-        <input type="text" id="kgpNote" value="${escapeHtml(p.note||'')}" placeholder="Contoh: DP awal / Pelunasan">
-        <button class="btn gold" id="kgpSaveBtn" style="width:100%;margin-top:16px;" onclick="submitPaymentEdit('${inv.invNo}', ${i})">Simpan Perubahan</button>
-        <button class="btn ghost" style="width:100%;margin-top:8px;" onclick="openInvoiceDetail('${inv.invNo}')">Batal</button>
-        <button class="btn ghost" style="width:100%;margin-top:8px;color:var(--rust);" onclick="deletePayment('${inv.invNo}', ${i})">Hapus Pembayaran Ini</button>
-      </div></div>
-    </div>`;
-  kgInitWords(root);
-}
-async function submitPaymentEdit(invNo, i){
-  const amount = Number(document.getElementById('kgpAmount').value)||0;
-  if(amount<=0){ alert('Jumlah pembayaran harus lebih dari 0. Kalau pembayaran ini salah total, pakai "Hapus Pembayaran Ini".'); return; }
-  const dv = document.getElementById('kgpDate').value || '';
-  const note = document.getElementById('kgpNote').value || '';
-  const btn = document.getElementById('kgpSaveBtn'); kgBtnBusy(btn, true);
-  try{
-    await kgPayMutate(invNo, pays=>{
-      const p = pays[i]; if(!p) throw new Error('Pembayaran tidak ditemukan (data baru saja berubah), coba buka ulang.');
-      p.amount = amount; p.note = note;
-      if(dv && dv !== (p.at ? kgLocalDate(p.at) : '')) p.at = new Date(dv+'T12:00:00').toISOString();
-      p.editedBy = state.myName || '-';
-    });
-  }catch(e){ kgBtnBusy(btn, false); alert('Gagal menyimpan: ' + e.message); return; }
-  await kgRefreshCache('invoices', invNo, invoicesCache, 'invNo');
-  kgBtnBusy(btn, false);
-  renderKeuangan();
-  openInvoiceDetail(invNo);
-}
-async function deletePayment(invNo, i){
-  if(!confirm('Hapus pembayaran ini? Sisa tagihan nota akan bertambah lagi.\n\nKalau ini satu-satunya pembayaran dan project belum dikerjakan, project di Alur Kerja kembali ke "Menunggu Payment".')) return;
-  let total = 0;
-  try{
-    total = await kgPayMutate(invNo, pays=>{ if(!pays[i]) throw new Error('Pembayaran tidak ditemukan, coba buka ulang.'); pays.splice(i,1); });
-  }catch(e){ alert('Gagal menghapus: ' + e.message); return; }
-  await kgSyncProjectPayment(invNo, total);
-  await kgRefreshCache('invoices', invNo, invoicesCache, 'invNo');
-  renderKeuangan();
-  openInvoiceDetail(invNo);
-}
-
-/* --- Edit transaksi manual --- */
-function openManualEdit(id){
-  const m = manualSalesCache.find(x=>x.id===id); if(!m) return;
-  const root = document.getElementById('kgModalRoot');
-  root.innerHTML = `
-    <div class="kg-modal-bg" onclick="if(event.target===this) closeKgModal()">
-      <div class="kg-modal"><div class="kg-modal-inner">
-        <button class="kg-close" onclick="closeKgModal()">✕</button>
-        <h3>Edit Transaksi Manual</h3>
-        <div class="kg-modal-sub">Perbaiki kalau ada salah input.</div>
-        <label>Tanggal</label>
-        <input type="date" id="kgmDate" value="${escapeHtml(m.date||'')}">
-        <label>Nama Pemesan / Keterangan</label>
-        <input type="text" id="kgmCust" value="${escapeHtml(m.custName||'')}">
-        <label>Kategori (opsional)</label>
-        <input type="text" id="kgmCat" value="${escapeHtml(m.category||'')}">
-        <label>Jumlah (Rp)</label>
-        <input type="number" inputmode="numeric" id="kgmAmount" min="0" value="${Number(m.amount)||0}" data-words oninput="kgUpdateWords(this)"><div class="kgs-words"></div>
-        <label>Catatan (opsional)</label>
-        <textarea id="kgmNote" rows="2">${escapeHtml(m.note||'')}</textarea>
-        <button class="btn gold" id="kgmSaveBtn" style="width:100%;margin-top:16px;" onclick="submitManualEdit('${m.id}')">Simpan Perubahan</button>
-        <button class="btn ghost" style="width:100%;margin-top:8px;" onclick="openManualDetail('${m.id}')">Batal</button>
-      </div></div>
-    </div>`;
-  kgInitWords(root);
-}
-async function submitManualEdit(id){
-  const amount = Number(document.getElementById('kgmAmount').value)||0;
-  if(amount<=0){ alert('Jumlah harus lebih dari 0'); return; }
-  const upd = Object.assign({
-    date: document.getElementById('kgmDate').value || kgLocalDate(new Date()),
-    custName: document.getElementById('kgmCust').value.trim() || 'Transaksi manual',
-    category: document.getElementById('kgmCat').value.trim(),
-    amount, note: document.getElementById('kgmNote').value.trim()
-  }, kgEditNow());
-  const btn = document.getElementById('kgmSaveBtn'); kgBtnBusy(btn, true);
-  try{ await db.collection('manualSales').doc(id).update(upd); }
-  catch(e){ kgBtnBusy(btn, false); alert('Gagal menyimpan: ' + e.message); return; }
-  await kgRefreshCache('manualSales', id, manualSalesCache, 'id');
-  kgBtnBusy(btn, false);
-  renderKeuangan();
-  openManualDetail(id);
 }
 
 async function confirmDeleteInvoice(invNo){
@@ -7839,10 +7137,10 @@ function openInvoiceDetail(invNo){
   `).join('');
 
   const payRows = (inv.payments||[]).length
-    ? inv.payments.map((p,pi)=>`
+    ? inv.payments.map(p=>`
         <div class="kg-pay-row">
           <span>${formatDateID((p.at||'').slice(0,10))} — ${formatRupiah(p.amount)}</span>
-          <span class="p-note">${escapeHtml(p.note||'')}${p.proofUrl ? ` <a class="kgs-paylink" href="${escapeHtml(p.proofUrl)}" target="_blank" rel="noopener">📎 bukti</a>` : ''} <button type="button" class="kg-mini" title="Edit / hapus pembayaran ini" onclick="openPaymentEdit('${inv.invNo}', ${pi})">✏️ Edit</button></span>
+          <span class="p-note">${escapeHtml(p.note||'')}${p.proofUrl ? ` <a class="kgs-paylink" href="${escapeHtml(p.proofUrl)}" target="_blank" rel="noopener">📎 bukti</a>` : ''}</span>
         </div>`).join('')
     : `<div class="kg-pay-row"><span class="p-note">Belum ada pembayaran tercatat.</span></div>`;
 
@@ -7879,9 +7177,8 @@ function openInvoiceDetail(invNo){
         <button class="btn gold" id="paySaveBtn" style="width:100%;margin-top:14px;" onclick="submitPayment('${inv.invNo}', ${sisa})">Simpan Pembayaran</button>
         ` : `<div style="text-align:center;color:var(--green);font-weight:700;margin-top:10px;">Nota ini sudah lunas</div>`}
 
-        <div style="font-size:11.5px;color:var(--muted);margin-top:16px;">Dibuat oleh ${escapeHtml(inv.createdBy||'-')} · ${formatDateID(inv.invDate)}${inv.editedAt ? ' · diedit oleh '+escapeHtml(inv.editedBy||'-')+' ('+formatDateID(String(inv.editedAt).slice(0,10))+')' : ''}</div>
-        <button class="btn ghost" style="width:100%;margin-top:10px;border-color:var(--navy);color:var(--navy);font-weight:700;" onclick="openInvoiceEdit('${inv.invNo}')">✏️ Edit Nota (nama, item, harga, tanggal)</button>
-        <button class="btn ghost" style="width:100%;margin-top:8px;" onclick="confirmDeleteInvoice('${inv.invNo}')">Hapus Nota Ini</button>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:16px;">Dibuat oleh ${escapeHtml(inv.createdBy||'-')} · ${formatDateID(inv.invDate)}</div>
+        <button class="btn ghost" style="width:100%;margin-top:10px;" onclick="confirmDeleteInvoice('${inv.invNo}')">Hapus Nota Ini</button>
       </div></div>
     </div>`;
   kgInitWords(root);
@@ -8755,7 +8052,7 @@ function renderKaryawanView(){
     <tr onclick="wspLightbox('${a.photoUrl}')">
       <td>${formatDateID(a.date)}<br><span style="font-size:11px;color:var(--ab-muted);">${wspDayName(a.date)}</span></td>
       <td>${escapeHtml(a.time)}</td>
-      <td><img src="${a.photoUrl}" class="ab-thumb"></td>
+      <td><img loading="lazy" decoding="async" src="${a.photoUrl}" class="ab-thumb"></td>
     </tr>`).join('');
 
   let marketingBlock = '';
@@ -9973,7 +9270,7 @@ function wspOpenRekapDetail(employeeId){
     <tr onclick="wspLightbox('${a.photoUrl}')">
       <td>${formatDateID(a.date)}<br><span style="font-size:11px;color:var(--ab-muted);">${wspDayName(a.date)}</span></td>
       <td>${escapeHtml(a.time)}</td>
-      <td><img src="${a.photoUrl}" class="ab-thumb"></td>
+      <td><img loading="lazy" decoding="async" src="${a.photoUrl}" class="ab-thumb"></td>
     </tr>`).join('');
   const root = document.getElementById('abModalRoot');
   root.innerHTML = `
@@ -10218,7 +9515,7 @@ function wspOpenMarketingDetail(employeeId){
       <td>${formatDateID(r.date)}</td>
       <td>${r.kontak}${Number(r.kontak)>=kTarget?' (tercapai)':''}</td>
       <td>${r.event}${Number(r.event)>=eTarget?' (tercapai)':''}</td>
-      <td>${r.proofUrl ? `<img src="${r.proofUrl}" class="ab-thumb">` : '<span style="font-size:11px;color:var(--ab-muted);">Otomatis Database</span>'}</td>
+      <td>${r.proofUrl ? `<img loading="lazy" decoding="async" src="${r.proofUrl}" class="ab-thumb">` : '<span style="font-size:11px;color:var(--ab-muted);">Otomatis Database</span>'}</td>
     </tr>`).join('');
   const root = document.getElementById('abModalRoot');
   root.innerHTML = `
@@ -11258,7 +10555,7 @@ function waiProjectFacts(){
   const telat = aktif.filter(p=>p.deadline && String(p.deadline)<today);
   return {
     jumlah_per_status: per, total_proyek:list.length, aktif:aktif.length, melewati_deadline:telat.length,
-    proyek_aktif: aktif.slice(0,40).map(p=>({klien:p.namaKlien, nota:p.invNo||null, kategori:projectKategoriList(p)[0], hari_ke_deadline:wfDaysLeft(p), perlu_dikabari_h1:wfNeedsRemind(p), status:(typeof STATUS_LABEL!=='undefined'&&STATUS_LABEL[p.status])||p.status,
+    proyek_aktif: aktif.slice(0,40).map(p=>({klien:p.namaKlien, status:(typeof STATUS_LABEL!=='undefined'&&STATUS_LABEL[p.status])||p.status,
       deadline:p.deadline||null, total_pcs:pcs(p), desainer:p.namaDesainer||null, produksi:p.namaProduksi||null,
       dibuat:p.createdAt ? wspLocalDate(p.createdAt) : null, telat: !!(p.deadline && String(p.deadline)<today)})),
     selesai_terbaru: list.filter(p=>p.status==='selesai').slice(0,10).map(p=>({klien:p.namaKlien, total_pcs:pcs(p), selesai:p.selesaiAt ? wspLocalDate(p.selesaiAt) : null}))
@@ -11977,7 +11274,7 @@ async function aixUndo(key, mi, ai){
    ASISTEN ALUR KERJA (khusus tampilan ADMIN di Alur Kerja)
    ===================================================================== */
 const WFC = { open:false, big:false, msgs:[], busy:false, init:false, forceScroll:false };
-const WFC_CHIPS = ['Proyek mana yang berisiko telat?','Ringkas semua proyek yang sedang berjalan','Siapa desainer / produksi dengan beban terbanyak?','Project mana yang belum ditugaskan?','Project mana yang perlu dikabari ke client (H-1)?'];
+const WFC_CHIPS = ['Proyek mana yang berisiko telat?','Ringkas semua proyek yang sedang berjalan','Siapa desainer / produksi dengan beban terbanyak?','Project mana yang belum ditugaskan?'];
 
 function wfcSync(){
   const fab = document.getElementById('wfcFab'), box = document.getElementById('wfChat'); if(!fab || !box) return;
@@ -12038,7 +11335,7 @@ function wfcFacts(){
   const aktif = projectsCache.filter(p=>p.status!=='selesai');
   return {
     tanggal_hari_ini: today, total_proyek: projectsCache.length, jumlah_per_status: per,
-    proyek_aktif: aktif.slice(0,60).map(p=>({ id:p.id, klien:p.namaKlien, nota:p.invNo||null, kategori:projectKategoriList(p)[0], hari_ke_deadline:wfDaysLeft(p), perlu_dikabari_h1:wfNeedsRemind(p), status:STATUS_LABEL[p.status]||p.status, deadline:p.deadline||null,
+    proyek_aktif: aktif.slice(0,60).map(p=>({ id:p.id, klien:p.namaKlien, status:STATUS_LABEL[p.status]||p.status, deadline:p.deadline||null,
       telat:!!(p.deadline && String(p.deadline)<today), total_pcs:totalQty(p), desainer:p.namaDesainer||null, produksi:p.namaProduksi||null,
       dibuat:p.createdAt ? kgLocalDate(new Date(p.createdAt)) : null, brief:String(p.briefDesain||'').slice(0,100) })),
     selesai_terbaru: projectsCache.filter(p=>p.status==='selesai').slice(0,8).map(p=>({klien:p.namaKlien, total_pcs:totalQty(p)}))
@@ -12130,6 +11427,7 @@ function plLastUpdate(){
 }
 
 function initPriceList(){
+  try{ plOrdInit(); }catch(e){ console.warn(e); }
   if(!plInited){
     plInited = true;
     if(!CONFIG_READY){ plLoading = false; }
@@ -12160,9 +11458,10 @@ function plSetTab(t){ plState.tab = t; renderPriceList(); }
 function plSetOwnerTab(t){ plState.ownerTab = t; renderPriceList(); }
 function plSetCat(c){ plState.cat = c; renderPriceList(); }
 function plToggleNew(){ plState.onlyNew = !plState.onlyNew; renderPriceList(); }
+let plSearchT = null;
 function plSearch(v){
-  plState.q = v; renderPriceList();
-  const i = document.getElementById('plSearchInp'); if(i){ i.focus(); i.setSelectionRange(v.length,v.length); }
+  plState.q = v; clearTimeout(plSearchT);
+  plSearchT = setTimeout(()=>{ renderPriceList(); const i = document.getElementById('plSearchInp'); if(i){ i.focus(); i.setSelectionRange(v.length,v.length); } }, 180);
 }
 function plOwnerSearch(v){
   plState.ownerQ = v; renderPriceList();
@@ -12171,6 +11470,7 @@ function plOwnerSearch(v){
 
 function renderPriceList(){
   if(authIsReseller()) plState.role = 'reseller';
+  const fab = document.getElementById('plFab'); if(fab) fab.style.display = (plState.role==='reseller' && plState.tab!=='pesan' && CONFIG_READY) ? 'flex' : 'none';
   const sw = document.getElementById('plRoleSwitch');
   if(sw) sw.innerHTML = authIsReseller() ? '' : 
     '<button class="'+(plState.role==='reseller'?'active':'')+'" onclick="plSetRole(\'reseller\')">RESELLER</button>'+
@@ -12182,6 +11482,227 @@ function renderPriceList(){
   else app.innerHTML = plResellerHtml();
 }
 
+/* ===================== PESANAN RESELLER (order -> nota -> workflow -> pembayaran) =====================
+   Koleksi baru: resellerOrders. Saat reseller memesan, sistem otomatis membuat:
+   - nota di koleksi 'invoices' (atas nama reseller, harga = harga reseller dari Owner)
+   - project di koleksi 'projects' (masuk alur kerja, via "Reseller")
+   - pesan WhatsApp ke admin
+   Bukti transfer -> masuk ke payments nota yang sama (sama seperti DP biasa) -> status DP/Lunas otomatis. */
+const plOrd = { cart:{}, jual:{}, nama:'', wa:'', note:'', busy:false, err:'', done:null, orders:[], invs:{}, inited:'', payFor:null, payAmt:'', payBusy:false, payErr:'', payFile:null, payPrev:'', payScan:null, payReading:false, paySisa:0, notice:'' };
+function plOrdWa(v){
+  let d = String(v||'').replace(/\D/g,'');
+  if(d.startsWith('0')) d = '62'+d.slice(1);
+  else if(d.startsWith('8')) d = '62'+d;
+  return (d.startsWith('62') && d.length>=10 && d.length<=15) ? d : '';
+}
+function plOrdKey(){ const w = plOrdWa(plOrd.wa); return (authSession && authSession.code) || (w ? 'wa'+w : ''); }
+function plOrdInit(){
+  if(!plOrd.nama) plOrd.nama = (authSession && authSession.nama) || '';
+  if(!plOrd.wa){ try{ plOrd.wa = (authSession && authSession.wa) || localStorage.getItem('tenx_rs_wa') || ''; }catch(e){} }
+  const key = plOrdKey();
+  if(!CONFIG_READY || !key || plOrd.inited===key) return;
+  plOrd.inited = key;
+  const redraw = ()=>{ if(currentMode==='pricelist') renderPriceList(); };
+  db.collection('resellerOrders').where('resellerKey','==',key).onSnapshot(sn=>{
+    plOrd.orders = sn.docs.map(d=>d.data()).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    if(plState.tab==='pesanan') redraw();
+  }, e=>console.warn('resellerOrders', e));
+  db.collection('invoices').where('resellerKey','==',key).onSnapshot(sn=>{
+    plOrd.invs = {}; sn.docs.forEach(d=>{ const x=d.data(); plOrd.invs[String(x.invNo)] = x; });
+    if(plState.tab==='pesanan') redraw();
+  }, e=>console.warn('invoices reseller', e));
+}
+function plOrdProducts(){ return plProducts.filter(p=>p.aktif!==false && Number(p.harga)>0).sort((a,b)=>(a.nama||'').localeCompare(b.nama||'','id')); }
+function plOrdLines(){
+  return plOrdProducts().map(p=>{
+    const qty = Number(plOrd.cart[p.id])||0, modal = Number(p.harga)||0, jual = Number(plOrd.jual[p.id])||modal;
+    return { pid:p.id, nama:p.nama, satuan:p.satuan||'pcs', qty, min:Number(p.minOrder)||1, hargaModal:modal, hargaJual:jual };
+  }).filter(l=>l.qty>0);
+}
+function plOrdSet(id, f, v){ if(f==='qty') plOrd.cart[id] = Number(v)||0; else plOrd.jual[id] = Number(v)||0; plOrdRecalc(); }
+function plOrdRecalc(){
+  plOrdProducts().forEach(p=>{
+    const el = document.getElementById('plos-'+p.id); if(!el) return;
+    const q = Number(plOrd.cart[p.id])||0, m = Number(p.harga)||0, j = Number(plOrd.jual[p.id])||m, mo = Number(p.minOrder)||1;
+    el.innerHTML = q>0 ? 'Tagihan ke admin <b>'+plRp(m*q)+'</b> · Penjualan Anda '+plRp(j*q)+' · Untung <b>'+plRp((j-m)*q)+'</b>'+(q<mo?' <span style="color:var(--pl-rust);">⚠ min. order '+mo+' '+escapeHtml(p.satuan||'pcs')+'</span>':'') : '';
+  });
+  const L = plOrdLines(), tm = L.reduce((a,l)=>a+l.qty*l.hargaModal,0), tj = L.reduce((a,l)=>a+l.qty*l.hargaJual,0);
+  const sm = document.getElementById('plOrdSum');
+  if(sm) sm.innerHTML = L.length ? 'Total tagihan ke admin: <b>'+plRp(tm)+'</b><br>Total penjualan Anda: '+plRp(tj)+' · Estimasi untung: <b>'+plRp(tj-tm)+'</b>' : 'Isi jumlah di produk yang ingin dipesan.';
+}
+function plOrdFormHtml(){
+  plOrdInit();
+  if(plOrd.done) return plOrdDoneHtml();
+  const act = plOrdProducts();
+  let h = '<div class="pl-card"><h3>Data Pemesan</h3><div class="pl-2c"><div><label class="pl-l">Nama reseller</label><input class="pl-inp" value="'+escapeHtml(plOrd.nama)+'" oninput="plOrd.nama=this.value"></div>'+
+    '<div><label class="pl-l">No. WhatsApp</label><input class="pl-inp" inputmode="tel" placeholder="0812xxxxxxxx" value="'+escapeHtml(plOrd.wa)+'" oninput="plOrd.wa=this.value"></div></div></div>';
+  h += '<div class="pl-card"><h3>Pilih Produk</h3><div class="pl-meta">Harga reseller ditetapkan Owner. Isi <b>harga jual Anda</b> ke pelanggan untuk melihat estimasi untung — nota ke admin tetap memakai harga reseller.</div>';
+  if(!act.length) h += '<div class="pl-empty">Belum ada produk berharga yang aktif.</div>';
+  act.forEach(p=>{
+    const u = escapeHtml(p.satuan||'pcs');
+    h += '<div class="plo-row"><div class="plo-nm"><b>'+escapeHtml(p.nama)+'</b><small>'+plRp(p.harga)+' / '+u+((Number(p.minOrder)||1)>1?' · min. order '+p.minOrder+' '+u:'')+'</small></div>'+
+      '<div class="plo-f"><label>Jumlah ('+u+')</label><input class="pl-inp" type="number" min="0" inputmode="numeric" value="'+(plOrd.cart[p.id]||'')+'" oninput="plOrdSet(\''+p.id+'\',\'qty\',this.value)"></div>'+
+      '<div class="plo-f"><label>Harga jual Anda (Rp)</label><input class="pl-inp" type="number" min="0" inputmode="numeric" placeholder="'+Number(p.harga)+'" value="'+(plOrd.jual[p.id]||'')+'" oninput="plOrdSet(\''+p.id+'\',\'jual\',this.value)"></div>'+
+      '<div class="plo-sub" id="plos-'+p.id+'"></div></div>';
+  });
+  h += '</div><div class="pl-card"><label class="pl-l">Catatan untuk admin (warna, ukuran, desain, deadline)</label><textarea class="pl-inp" rows="3" oninput="plOrd.note=this.value">'+escapeHtml(plOrd.note)+'</textarea></div>';
+  h += '<div class="plo-sum" id="plOrdSum"></div>';
+  h += (plOrd.err?'<div class="pl-banner" style="background:#fde8e4;border-color:#e5a59a;">'+escapeHtml(plOrd.err)+'</div>':'')+
+       '<button class="pl-btn" '+(plOrd.busy?'disabled':'')+' onclick="plOrdSubmit()">'+(plOrd.busy?'Memproses…':'Buat Pesanan &amp; Kirim ke Admin')+'</button>';
+  setTimeout(plOrdRecalc, 0);
+  return h;
+}
+function plOrdWaText(o){
+  return '*PESANAN RESELLER BARU — Nota #'+o.invNo+'*\nReseller: '+o.resellerName+' ('+o.resellerWa+')\n\n'+
+    o.items.map(i=>'• '+i.nama+': '+i.qty+' '+i.satuan+' × '+plRp(i.hargaModal)+' = '+plRp(i.qty*i.hargaModal)).join('\n')+
+    '\n\nTotal tagihan: *'+plRp(o.totalModal)+'*'+(o.catatan?'\nCatatan: '+o.catatan:'')+'\n\nSaya akan transfer dan upload bukti di aplikasi. Mohon diproses 🙏';
+}
+function plOrdWaUrl(o){ const a = plOrdWa(plConfig.wa); return a ? 'https://wa.me/'+a+'?text='+encodeURIComponent(plOrdWaText(o)) : ''; }
+async function plOrdSubmit(){
+  if(plOrd.busy) return;
+  const nama = (plOrd.nama||'').trim(), wa = plOrdWa(plOrd.wa), L = plOrdLines();
+  let err = '';
+  if(!CONFIG_READY) err = 'Belum terhubung ke Firebase.';
+  else if(!nama) err = 'Isi nama reseller.';
+  else if(!wa) err = 'Isi No. WhatsApp yang benar (contoh 0812xxxxxxxx).';
+  else if(!L.length) err = 'Pilih minimal satu produk dan isi jumlahnya.';
+  else { const bad = L.find(l=>l.qty<l.min); if(bad) err = bad.nama+': minimal order '+bad.min+' '+bad.satuan+'.'; }
+  if(err){ plOrd.err = err; renderPriceList(); return; }
+  plOrd.err = ''; plOrd.busy = true; renderPriceList();
+  try{
+    try{ localStorage.setItem('tenx_rs_wa', plOrd.wa); }catch(e){}
+    plOrd.inited = ''; const key = plOrdKey();
+    const invNo = await getNextInvoiceNumber();
+    const now = Date.now(), iso = new Date(now).toISOString(), today = iso.slice(0,10);
+    const orderRef = db.collection('resellerOrders').doc(), projId = genId();
+    const tm = L.reduce((a,l)=>a+l.qty*l.hargaModal,0), tj = L.reduce((a,l)=>a+l.qty*l.hargaJual,0);
+    const order = { id:orderRef.id, resellerKey:key, resellerName:nama, resellerWa:wa, items:L.map(l=>({pid:l.pid,nama:l.nama,satuan:l.satuan,qty:l.qty,hargaModal:l.hargaModal,hargaJual:l.hargaJual})),
+      totalModal:tm, totalJual:tj, catatan:(plOrd.note||'').trim(), invNo:invNo, projectId:projId, status:'baru', createdAt:now };
+    const inv = { invNo:invNo, custName:nama+' (Reseller)', custPhone:wa, invDate:today, dueDate:'',
+      items:L.map(l=>({desc:l.nama+' ('+l.satuan+')', price:l.hargaModal, qty:l.qty})), subtotal:tm, total:tm,
+      notes:'Pesanan reseller. '+(order.catatan?order.catatan+' | ':'')+'Harga jual reseller: '+plRp(tj), totalDibayar:0, payments:[],
+      createdBy:nama, createdAt:iso, source:'reseller', resellerKey:key, resellerOrderId:order.id, hargaJualReseller:tj };
+    const proj = { id:projId, namaKlien:nama+' (Reseller)', noHp:wa, via:'Reseller',
+      briefDesain:'Pesanan reseller #'+invNo+': '+L.map(l=>l.nama+' '+l.qty+' '+l.satuan).join(', ')+(order.catatan?' — '+order.catatan:''),
+      ukuran:L.map(l=>({ukuran:l.nama+' ('+l.qty+' '+l.satuan+')', qty:l.qty*(l.satuan==='lusin'?12:1)})), referensi:[],
+      namaDesainer:'', namaProduksi:'', komisiPerPcs:0, status:'baru', createdAt:now,
+      desainMulai:null, pedomanDesain:'', pedomanGambar:[], listDesain:'', deadline:'', produksiMulai:null, selesaiAt:null,
+      invNo:invNo, resellerOrderId:order.id, resellerKey:key };
+    const b = db.batch();
+    b.set(orderRef, order); b.set(db.collection('invoices').doc(String(invNo)), inv); b.set(db.collection('projects').doc(projId), proj);
+    await b.commit();
+    plOrd.done = order; plOrd.cart = {}; plOrd.jual = {}; plOrd.note = '';
+    plOrdInit();
+    const u = plOrdWaUrl(order); if(u){ try{ window.open(u,'_blank'); }catch(e){} }
+  }catch(e){ console.error(e); plOrd.err = 'Gagal membuat pesanan: '+e.message; }
+  plOrd.busy = false; renderPriceList();
+}
+function plOrdDoneHtml(){
+  const o = plOrd.done, u = plOrdWaUrl(o);
+  return '<div class="pl-card"><h3>Pesanan Terkirim ✓</h3><div style="font-size:14px;line-height:1.6;">Nota <b>#'+o.invNo+'</b> atas nama <b>'+escapeHtml(o.resellerName)+'</b> sudah terbit dan pesanan masuk ke alur kerja admin. Total tagihan <b>'+plRp(o.totalModal)+'</b>.<br>Silakan transfer, lalu upload bukti di <b>Pesanan Saya</b> — status DP/lunas terupdate otomatis.</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">'+
+    (u?'<a class="pl-btn" style="text-decoration:none;" href="'+u+'" target="_blank" rel="noopener">Kirim ke WhatsApp Admin</a>':'<span class="pl-meta">Nomor WhatsApp admin belum diatur Owner — hubungi admin langsung.</span>')+
+    '<button class="pl-btn ghost" onclick="plOrd.done=null;plSetTab(\'pesanan\')">Upload Bukti Transfer</button><button class="pl-btn ghost" onclick="plOrd.done=null;renderPriceList()">Buat Pesanan Lagi</button></div></div>';
+}
+function plOrdListHtml(){
+  plOrdInit();
+  if(!plOrd.orders.length) return '<div class="pl-empty">Belum ada pesanan. Buat lewat tab <b>+ Buat Pesanan</b>.</div>';
+  const ST = { lunas:['LUNAS','var(--pl-green)'], dp:['SUDAH DP','var(--pl-amber)'], belum_bayar:['BELUM BAYAR','var(--pl-rust)'] };
+  return (plOrd.notice?'<div class="pl-banner" style="background:#E4F3EA;border-color:#9CCDAF;">'+plOrd.notice+'</div>':'')+plOrd.orders.map(o=>{
+    const inv = plOrd.invs[String(o.invNo)] || { total:o.totalModal, totalDibayar:0, payments:[] };
+    const st = invoiceStatus(inv), dib = Number(inv.totalDibayar||0), sisa = Math.max(0,(Number(inv.total)||0)-dib), s = ST[st];
+    let h = '<div class="pl-card"><h3>Nota #'+o.invNo+'<span class="plo-st" style="background:'+s[1]+'">'+s[0]+'</span></h3>'+
+      '<div class="pl-meta" style="margin-bottom:8px;">'+plDateTime(o.createdAt)+'</div>'+
+      o.items.map(i=>'<div style="font-size:13.5px;">• '+escapeHtml(i.nama)+' — '+i.qty+' '+escapeHtml(i.satuan)+' × '+plRp(i.hargaModal)+' <span style="color:var(--pl-muted);">(jual Anda '+plRp(i.hargaJual)+')</span></div>').join('')+
+      '<div style="margin-top:8px;font-size:13.5px;line-height:1.7;">Tagihan: <b>'+plRp(inv.total)+'</b> · Sudah dibayar: <b>'+plRp(dib)+'</b> · Sisa: <b>'+plRp(sisa)+'</b><br>Estimasi untung Anda: <b>'+plRp((o.totalJual||0)-(o.totalModal||0))+'</b></div>';
+    (inv.payments||[]).forEach(p=>{ h += '<div class="plo-pay">'+plDateTime(Date.parse(p.at)||0)+' · '+plRp(p.amount)+(p.proofUrl?' · <a href="'+escapeHtml(p.proofUrl)+'" target="_blank" rel="noopener">lihat bukti</a>':'')+'</div>'; });
+    if(sisa<=0) h += '<div class="pl-banner" style="margin:10px 0 0;background:#E4F3EA;border-color:#9CCDAF;"><b style="color:#1f6b3f;">LUNAS ✓</b>Pembayaran nota ini sudah penuh. Terima kasih.</div>';
+    else {
+      if(dib>0) h += '<div class="pl-banner" style="margin:10px 0 0;"><b>BELUM LUNAS</b>Sudah masuk '+plRp(dib)+' dari '+plRp(inv.total)+'. Sisa yang harus dibayar: <b>'+plRp(sisa)+'</b>. Silakan transfer sisanya lalu upload bukti transfer berikutnya.</div>';
+      if(plOrd.payFor===o.id) h += plOrdPayFormHtml(o, sisa);
+      else h += '<div style="margin-top:10px;"><button class="pl-btn sm" onclick="plOrdPayOpen(\''+o.id+'\')">'+(dib>0?'Upload Bukti Transfer Berikutnya':'Upload Bukti Transfer')+'</button></div>';
+    }
+    const u = plOrdWaUrl(o); if(u) h += '<div style="margin-top:8px;"><a href="'+u+'" target="_blank" rel="noopener" style="font-size:12.5px;">Kirim ulang ke WA admin</a></div>';
+    return h+'</div>';
+  }).join('');
+}
+function plOrdPayOpen(id){
+  plOrd.payFor = id; plOrd.payAmt = ''; plOrd.payErr = ''; plOrd.payFile = null; plOrd.payPrev = ''; plOrd.payScan = null; plOrd.payReading = false; plOrd.notice = '';
+  renderPriceList();
+}
+function plOrdPayCancel(){ plOrd.payFor = null; plOrd.payFile = null; plOrd.payPrev = ''; plOrd.payScan = null; renderPriceList(); }
+function plOrdPayAmtIn(v){ plOrd.payAmt = v; plOrdPayHint(); }
+function plOrdPayHint(){
+  const el = document.getElementById('plPayHint'); if(!el) return;
+  const amt = Number(plOrd.payAmt)||0, sisa = plOrd.paySisa;
+  if(amt<=0){ el.innerHTML = ''; return; }
+  if(amt>sisa) el.innerHTML = '<span style="color:var(--pl-rust);">Nominal melebihi sisa tagihan ('+plRp(sisa)+').</span>';
+  else if(amt===sisa) el.innerHTML = 'Dengan transfer ini nota menjadi <b style="color:var(--pl-green);">LUNAS</b>.';
+  else el.innerHTML = 'Status menjadi <b style="color:var(--pl-amber);">SUDAH DP</b>. Sisa yang masih harus dibayar: <b>'+plRp(sisa-amt)+'</b>.';
+}
+function plOrdPayFormHtml(o, sisa){
+  plOrd.paySisa = sisa;
+  const sc = plOrd.payScan, r = sc && sc.r;
+  let h = '<div style="margin-top:10px;"><div class="pl-meta" style="margin-bottom:6px;">Sisa tagihan saat ini: <b>'+plRp(sisa)+'</b></div>'+
+    '<label class="pl-l">1. Foto bukti transfer (nominal dibaca otomatis)</label><input class="pl-inp" type="file" accept="image/*" onchange="plOrdPayPick(this)">';
+  if(plOrd.payPrev) h += '<img src="'+plOrd.payPrev+'" alt="Bukti" style="max-width:150px;max-height:150px;border-radius:8px;margin-top:8px;border:1px solid var(--pl-line);">';
+  if(plOrd.payReading) h += '<div class="pl-meta" style="margin-top:6px;">⏳ Membaca bukti transfer…</div>';
+  else if(r && r.total) h += '<div class="pl-meta" style="margin-top:6px;">✓ Terbaca '+(sc.engine==='ai'?'oleh AI':'oleh OCR')+': <b>'+plRp(r.total)+'</b>'+(r.tanggal?' · '+escapeHtml(r.tanggal):'')+' · keyakinan '+r.yakin+'%. Pastikan nominal di bawah benar.</div>';
+  else if(plOrd.payFile) h += '<div class="pl-meta" style="margin-top:6px;color:var(--pl-rust);">Nominal tidak terbaca otomatis — isi manual di bawah.</div>';
+  if(r && r.ragu && r.ragu.length) h += '<div class="pl-meta" style="color:var(--pl-rust);">'+r.ragu.map(escapeHtml).join('<br>')+'</div>';
+  h += '<label class="pl-l" style="margin-top:8px;">2. Nominal yang ditransfer (Rp)</label><input class="pl-inp" id="plPayAmt" type="number" inputmode="numeric" value="'+escapeHtml(plOrd.payAmt)+'" oninput="plOrdPayAmtIn(this.value)">'+
+    '<div class="pl-meta" id="plPayHint" style="margin-top:6px;"></div>'+
+    (plOrd.payErr?'<div style="color:var(--pl-rust);font-size:13px;margin-top:6px;">'+escapeHtml(plOrd.payErr)+'</div>':'')+
+    '<div style="display:flex;gap:8px;margin-top:10px;"><button class="pl-btn" '+((plOrd.payBusy||plOrd.payReading)?'disabled':'')+' onclick="plOrdPaySubmit(\''+o.id+'\')">'+(plOrd.payBusy?'Mengirim…':'Kirim Bukti')+'</button><button class="pl-btn ghost" onclick="plOrdPayCancel()">Batal</button></div></div>';
+  setTimeout(plOrdPayHint, 0);
+  return h;
+}
+async function plOrdPayPick(input){
+  const f = input.files && input.files[0]; if(!f) return;
+  if(f.type && !f.type.startsWith('image/')){ plOrd.payErr = 'File harus berupa foto/screenshot (JPG/PNG).'; renderPriceList(); return; }
+  plOrd.payErr = ''; plOrd.payScan = null; plOrd.payAmt = '';
+  const file = await compressImage(f, 1600, 0.85);
+  plOrd.payFile = file; plOrd.payPrev = URL.createObjectURL(file); plOrd.payReading = true; renderPriceList();
+  let res = null, engine = '';
+  if(scanConfig.geminiApiKey){ try{ res = await kgScanGemini(file, 'payment'); engine = 'ai'; }catch(e){ console.warn('Gemini', e); } }
+  if(!res){ try{ res = await kgScanTesseract(file, 'payment'); engine = 'ocr'; }catch(e){ console.warn('OCR', e); } }
+  plOrd.payReading = false;
+  if(res){ const r = kgScanNormalize(res, 'payment'); plOrd.payScan = { r:r, engine:engine }; if(r.total) plOrd.payAmt = String(r.total); }
+  renderPriceList();
+}
+async function plOrdPaySubmit(orderId){
+  if(plOrd.payBusy || plOrd.payReading) return;
+  const o = plOrd.orders.find(x=>x.id===orderId); if(!o) return;
+  const amt = Number(plOrd.payAmt)||0, f = plOrd.payFile, sc = plOrd.payScan, r = sc && sc.r;
+  const inv = plOrd.invs[String(o.invNo)], sisa = inv ? Math.max(0,(Number(inv.total)||0)-Number(inv.totalDibayar||0)) : o.totalModal;
+  let err = '';
+  if(!f) err = 'Pilih foto/screenshot bukti transfer.';
+  else if(amt<=0) err = 'Nominal transfer belum terbaca/terisi. Isi manual.';
+  else if(amt>sisa) err = 'Nominal melebihi sisa tagihan ('+plRp(sisa)+').';
+  else if(inv && (inv.payments||[]).some(p=> p.scan && ((r && r.ref && p.scan.ref===r.ref) || (r && r.total && r.tanggal && p.scan.readAmount===r.total && p.scan.date===r.tanggal)))) err = 'Bukti transfer ini sepertinya sudah pernah diupload untuk nota ini.';
+  plOrd.payErr = err; if(err){ renderPriceList(); return; }
+  plOrd.payBusy = true; renderPriceList();
+  try{
+    const up = await uploadFilesToStorage([f], 'tenx/bukti-reseller');
+    const ref = db.collection('invoices').doc(String(o.invNo));
+    const scanMeta = { engine: sc ? sc.engine : 'manual', yakin: r ? r.yakin : 0, readAmount: (r && r.total) ? r.total : null, edited: !!(r && r.total && r.total!==amt), ref: (r && r.ref) || '', date: (r && r.tanggal) || '' };
+    const at = (r && r.tanggal) ? new Date(r.tanggal+'T12:00:00').toISOString() : new Date().toISOString();
+    let after = 0, total = 0;
+    await db.runTransaction(async tx=>{
+      const sn = await tx.get(ref); if(!sn.exists) throw new Error('Nota tidak ditemukan');
+      const d = sn.data(), pays = (d.payments||[]).slice();
+      const cur = pays.reduce((a,x)=>a+(Number(x.amount)||0),0);
+      if(amt > (Number(d.total)||0)-cur) throw new Error('Nominal melebihi sisa tagihan terbaru.');
+      pays.push({ amount:amt, note:'Transfer dari reseller (bukti diupload di halaman reseller)', by:o.resellerName, at:at, proofUrl:up[0].url, source:'reseller', verified:false, scan:scanMeta });
+      after = cur+amt; total = Number(d.total)||0;
+      tx.update(ref, { payments:pays, totalDibayar:after });
+    });
+    plOrd.payFor = null; plOrd.payAmt = ''; plOrd.payFile = null; plOrd.payPrev = ''; plOrd.payScan = null;
+    plOrd.notice = after>=total ? '<b>✓ Bukti diterima — Nota #'+o.invNo+' LUNAS.</b> Terima kasih!' : '<b>✓ Bukti diterima — Nota #'+o.invNo+' berstatus SUDAH DP ('+plRp(after)+').</b> Sisa yang harus dibayar: <b>'+plRp(total-after)+'</b>. Upload bukti transfer berikutnya untuk melunasi.';
+  }catch(e){ console.error(e); plOrd.payErr = 'Gagal mengirim bukti: '+e.message; }
+  plOrd.payBusy = false; renderPriceList();
+}
+function plOrdNew(){ plOrd.done = null; plOrd.err = ''; plState.tab = 'pesan'; renderPriceList(); window.scrollTo(0,0); }
+
 /* ---------------- TAMPILAN RESELLER (LIHAT SAJA) ---------------- */
 function plBadge(type){
   const L = { naik:'HARGA NAIK', turun:'HARGA TURUN', baru:'BARU', ubah:'DIUBAH', hapus:'DIHAPUS' };
@@ -12192,10 +11713,12 @@ function plResellerHtml(){
   const last = plLastUpdate();
   let h = '';
   if(plConfig.pengumuman && plConfig.pengumuman.trim()) h += '<div class="pl-banner"><b>📢 PENGUMUMAN</b>'+escapeHtml(plConfig.pengumuman)+'</div>';
-  h += '<div class="pl-meta">'+(last?'Terakhir diperbarui: <b>'+plDateTime(last)+'</b> · ':'')+active.length+' produk. Halaman ini hanya untuk melihat harga.</div>';
+  h += '<div class="pl-meta">'+(last?'Terakhir diperbarui: <b>'+plDateTime(last)+'</b> · ':'')+active.length+' produk. Pesan langsung lewat tab <b>+ Buat Pesanan</b>.</div>';
   h += '<div class="pl-tabs"><button class="'+(plState.tab==='harga'?'active':'')+'" onclick="plSetTab(\'harga\')">Daftar Harga</button>'+
-       '<button class="'+(plState.tab==='update'?'active':'')+'" onclick="plSetTab(\'update\')">Update Terbaru</button></div>';
-  h += plState.tab==='update' ? plFeedHtml(false) : plListHtml(active);
+       '<button class="'+(plState.tab==='update'?'active':'')+'" onclick="plSetTab(\'update\')">Update Terbaru</button>'+
+       '<button class="'+(plState.tab==='pesan'?'active':'')+'" onclick="plSetTab(\'pesan\')">+ Buat Pesanan</button>'+
+       '<button class="'+(plState.tab==='pesanan'?'active':'')+'" onclick="plSetTab(\'pesanan\')">Pesanan Saya'+(plOrd.orders.length?' ('+plOrd.orders.length+')':'')+'</button></div>';
+  h += plState.tab==='update' ? plFeedHtml(false) : plState.tab==='pesan' ? plOrdFormHtml() : plState.tab==='pesanan' ? plOrdListHtml() : plListHtml(active);
   if(plConfig.wa) h += '<div class="pl-meta" style="margin-top:22px;">Mau order / tanya harga? Hubungi admin: <b>'+escapeHtml(plConfig.wa)+'</b></div>';
   return h;
 }
@@ -12640,7 +12163,7 @@ async function authLoginToken(){
   }
   if(btn){ btn.disabled = false; btn.textContent = 'Masuk'; }
   if(reg && (reg.revoked || reg.deleted)){ err.textContent = 'Kode akses ini sudah dicabut oleh admin.'; return; }
-  authSession = { role:p.role, nama: reg ? reg.nama : (AUTH_ROLE_LABEL[p.role]+' '+p.body.slice(1,5)), code:p.canon };
+  authSession = { role:p.role, nama: reg ? reg.nama : (AUTH_ROLE_LABEL[p.role]+' '+p.body.slice(1,5)), code:p.canon, wa: reg ? (reg.wa||'') : '' };
   authSave();
   try{ localStorage.removeItem('tenx_wsp_owner_email'); }catch(e){}
   wspState.ownerEmail = '';
