@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -1934,6 +1934,10 @@ body{overflow-x:hidden;}
   #priceShell .pla-act .pl-btn{width:100%;}
   #priceShell .pla-act{flex-direction:column;align-items:stretch;}
 }
+#priceShell .plk-it{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-top:1px dashed var(--pl-line);flex-wrap:wrap;}
+#priceShell .plk-n small{color:var(--pl-muted);margin-left:6px;font-size:12px;}
+#priceShell .plk-a{display:flex;gap:4px;}
+#priceShell .plk-a .pl-btn{padding:6px 10px;min-width:38px;}
 #priceShell .plo-row{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:10px;padding:12px 0;border-top:1px dashed var(--pl-line);align-items:end;}
 #priceShell .plo-row:first-of-type{border-top:none;}
 #priceShell .plo-nm small{display:block;color:var(--pl-muted);font-size:12px;margin-top:2px;}
@@ -2059,6 +2063,24 @@ button,a,select,label,input[type=checkbox],input[type=radio],[onclick]{touch-act
   #priceShell .pl-tabs button{padding:8px 10px;font-size:13px;}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important;}}
+
+#globalNav button[data-rs]{position:relative;}
+#globalNav button[data-rs]::after{content:attr(data-rs);position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#d33a2c;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1;}
+.rs-in{background:var(--white);border:1.5px solid var(--denim);border-radius:12px;padding:12px 14px;margin-bottom:14px;}
+.rs-hd{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;}
+.rs-hd span{font-size:12.5px;color:var(--ink-soft);flex:1;min-width:180px;}
+.rs-it{display:flex;gap:10px;justify-content:space-between;align-items:center;border-top:1px dashed var(--line);padding:10px 0;flex-wrap:wrap;}
+.rs-it small{display:block;color:var(--ink-soft);font-size:12px;line-height:1.5;margin-top:2px;}
+.rs-warn{color:var(--rust);font-weight:700;}
+.rs-ac{display:flex;gap:6px;flex-wrap:wrap;}
+.rs-ac .btn,.rs-ac a.btn{text-decoration:none;font-size:13px;padding:7px 12px;}
+.rs-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:999px;font-size:13.5px;z-index:2000;box-shadow:0 6px 20px rgba(0,0,0,.3);max-width:92vw;text-align:center;}
+@media(max-width:640px){.rs-it{flex-direction:column;align-items:stretch;}.rs-ac .btn,.rs-ac a.btn{flex:1;text-align:center;}}
+
+#workflowApp .wf-prod-lbl{font-family:'Bebas Neue',sans-serif;letter-spacing:.08em;font-size:13px;color:var(--ink-soft);margin:-8px 0 6px;}
+#workflowApp .wf-prod{margin-top:0;}
+#workflowApp .wf-ptag{display:inline-block;font-size:11px;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:1px 9px;margin:0 4px 3px 0;background:var(--white);color:var(--ink);cursor:pointer;}
+@media(max-width:640px){#workflowApp .wf-prod{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;}#workflowApp .wf-prod .stage-pill{flex:none;}}
 </style>
 </head>
 <body class="tx-locked">
@@ -2385,6 +2407,7 @@ button,a,select,label,input[type=checkbox],input[type=radio],[onclick]{touch-act
   </div>
 
   <main>
+    <div id="kgResellerInbox"></div>
     <div class="kg-summary" id="kgSummary"></div>
     <div class="kg-note"><b>Cara hitung:</b> Pemasukan hanya menghitung uang yang <b>sudah benar-benar masuk</b> (DP, pelunasan, atau bayar full langsung) dan transaksi manual. Nota yang <b>belum ada pembayaran sama sekali</b> tidak dihitung, dan nota <b>DP</b> hanya dihitung sebesar DP yang sudah dibayar, sisanya masuk saat dilunasi.</div>
 
@@ -3034,6 +3057,7 @@ let state = {
   role: 'admin',
   adminView: 'projects',
   stage: 'all',
+  prod: 'all',
   searchQuery: '',
   myName: '',
   editingName: false,
@@ -3132,6 +3156,7 @@ function render(){
     app.innerHTML = `<div class="loading">Memuat data…</div>`;
     return;
   }
+  try{ wfBuildTags(); }catch(e){ console.warn('klasifikasi produk', e); }
   if(state.role === 'admin') app.innerHTML = renderAdminView();
   else if(state.role === 'desainer') app.innerHTML = renderPersonView('desainer');
   else app.innerHTML = renderPersonView('produksi');
@@ -3169,6 +3194,17 @@ function renderAdminView(){
     selesai: all.filter(p=>p.status==='selesai').length,
   };
   let filtered = state.stage==='all' ? all : all.filter(p=>p.status===state.stage);
+  // klasifikasi jenis produk (otomatis dari kata kunci di item nota / brief), dihitung dari tahap yang sedang dipilih
+  const prodCount = {};
+  filtered.forEach(p=>(wfTagMap[p.id]||['Lainnya']).forEach(t=>{ prodCount[t] = (prodCount[t]||0)+1; }));
+  const prodKeys = wfClsCats().concat(['Lainnya']).filter(c=>prodCount[c] || state.prod===c);
+  const prodRow = prodKeys.length ? `
+    <div class="wf-prod-lbl">Jenis Produk</div>
+    <div class="stage-nav wf-prod">
+      ${prodPill('all','Semua',filtered.length)}
+      ${prodKeys.map(c=>prodPill(c, escapeHtml(c), prodCount[c]||0)).join('')}
+    </div>` : '';
+  if(state.prod && state.prod!=='all') filtered = filtered.filter(p=>(wfTagMap[p.id]||['Lainnya']).includes(state.prod));
 
   const q = (state.searchQuery||'').trim().toLowerCase();
   if(q){
@@ -3209,6 +3245,7 @@ function renderAdminView(){
       ${pill('diproses_produksi','Diproses Produksi',counts.diproses_produksi)}
       ${pill('selesai','Selesai',counts.selesai)}
     </div>
+    ${prodRow}
     <div class="section-title"><h2>Daftar Project</h2><div class="line"></div></div>
     ${sorted.length ? `<div class="grid">${sorted.map(p=>projectCard(p)).join('')}</div>`
       : (q ? emptyState('Tidak ditemukan','Tidak ada project dengan nama pemesan / No. HP / ID yang cocok dengan pencarian ini.')
@@ -3218,7 +3255,7 @@ function renderAdminView(){
 }
 function onSearchInput(val){ state.searchQuery = val; render(); }
 function clearSearch(){ state.searchQuery = ''; render(); }
-function setAdminView(v){ state.adminView = v; state.stage='all'; render(); }
+function setAdminView(v){ state.adminView = v; state.stage='all'; state.prod='all'; render(); }
 
 function renderRekapKomisi(){
   const map = {};
@@ -3543,6 +3580,46 @@ async function confirmMyName(role){
   render();
 }
 
+/* ===================== KLASIFIKASI JENIS PRODUK OTOMATIS (Alur Kerja) =====================
+   Setiap project otomatis diberi label jenis produk (Kaos, Jersey, Polo, dst.) dari KATA KUNCI di item nota
+   yang tertaut (nomor nota, atau nota atas nama sama dalam ±45 hari) + brief/daftar desain/ukuran project.
+   Satu project boleh punya lebih dari satu label. Daftar kategori mengikuti Klasifikasi Produk di Harga Reseller. */
+let wfTagMap = {};
+const WF_CLS_SYN = { Kaos:['kaos','t-shirt','tshirt','t shirt'], Polo:['polo'], Jersey:['jersey','jersi'], Hoodie:['hoodie','hodie'], Jaket:['jaket','jacket'], Kemeja:['kemeja'],
+  Celana:['celana'], Seragam:['seragam','pdh','pdl'], Topi:['topi'], Tas:['totebag','tote bag','tas'], Sweater:['sweater','sweatshirt'], Rompi:['rompi'] };
+const WF_CLS_WEAK = { Kaos:['lengan panjang','lengan pendek','oblong','cotton combed','combed','30s','24s','20s'] };   // dipakai hanya jika tidak ada kata kunci utama
+function wfClsCats(){ return plCatMaster().filter(c=>c!=='Lainnya'); }
+function wfKwRe(kw){ const e = kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); return new RegExp('(^|[^a-z0-9])'+e+(kw.length<=5?'([^a-z0-9]|$)':''),'i'); }
+function wfNorm(n){ return String(n||'').toLowerCase().replace(/\(reseller\)/g,' ').replace(/[^a-z0-9]+/g,' ').trim(); }
+function wfBuildTags(){
+  const invs = (typeof invoicesCache!=='undefined' && invoicesCache) ? invoicesCache : [];
+  const idx = {}, byNo = {};
+  invs.forEach(i=>{ byNo[String(i.invNo)] = i; const k = wfNorm(i.custName); if(k) (idx[k] = idx[k]||[]).push(i); });
+  const cats = wfClsCats().map(c=>({ c:c,
+    strong:((WF_CLS_SYN[c]||[]).concat([c.toLowerCase()])).filter((v,i,a)=>a.indexOf(v)===i).map(wfKwRe),
+    weak:(WF_CLS_WEAK[c]||[]).map(wfKwRe) }));
+  const map = {};
+  (projectsCache||[]).forEach(p=>{
+    let txt = [p.briefDesain, p.listDesain, p.pedomanDesain].concat((p.ukuran||[]).map(u=>u.ukuran)).join(' \n ');
+    let mine = [];
+    if(p.invNo && byNo[String(p.invNo)]) mine.push(byNo[String(p.invNo)]);
+    else (idx[wfNorm(p.namaKlien)]||[]).forEach(i=>{ const d = Date.parse(i.invDate||i.createdAt)||0; if(Math.abs(d-(p.createdAt||0)) <= 45*864e5) mine.push(i); });
+    mine.forEach(i=>{ txt += ' \n ' + (i.items||[]).map(it=>it.desc).join(' \n '); });
+    txt = txt.toLowerCase();
+    let tags = cats.filter(k=>k.strong.some(r=>r.test(txt))).map(k=>k.c);
+    if(!tags.length) tags = cats.filter(k=>k.weak.some(r=>r.test(txt))).map(k=>k.c);
+    map[p.id] = tags.length ? tags : ['Lainnya'];
+  });
+  wfTagMap = map;
+}
+function wfTagsHtml(p){
+  return (wfTagMap[p.id]||[]).filter(t=>t!=='Lainnya').map(t=>'<span class="wf-ptag" data-prod="'+escapeHtml(t)+'" onclick="event.stopPropagation();setProd(this.dataset.prod)">'+plCatIcon(t)+' '+escapeHtml(t)+'</span>').join('');
+}
+function prodPill(key,label,count){
+  return `<button class="stage-pill ${(state.prod||'all')===key?'active':''}" data-prod="${escapeHtml(key)}" onclick="setProd(this.dataset.prod)">${label} <span class="count">${count}</span></button>`;
+}
+function setProd(k){ state.prod = (state.prod===k && k!=='all') ? 'all' : k; render(); }
+
 function pill(key,label,count){
   return `<button class="stage-pill ${state.stage===key?'active':''}" onclick="setStage('${key}')">${label} <span class="count">${count}</span></button>`;
 }
@@ -3581,7 +3658,7 @@ function projectCard(p){
         <span class="badge ${p.status}">${STATUS_LABEL[p.status]}</span>
       </div>
       <h3>${escapeHtml(p.namaKlien)}</h3>
-      ${p.invNo ? `<div style="margin:2px 0 6px;">${wfPayBadge(p)}</div>` : ''}
+      ${(p.invNo || wfTagsHtml(p)) ? `<div style="margin:2px 0 6px;">${wfTagsHtml(p)}${p.invNo ? wfPayBadge(p) : ''}</div>` : ''}
       <div class="tag-meta">${escapeHtml(p.via)} · ${escapeHtml(p.noHp||'')} · masuk ${fmtDate(p.createdAt)} · ${qty} pcs</div>
       <div class="wf-steps" title="Tahap ${n} dari 5">${steps}</div>
       <div class="assign-row">
@@ -4402,7 +4479,13 @@ function initWorkflow(){
   render();
   subscribeRealtime();
   subscribeKomisiClaimsRealtime();
-  initKeuangan();   // data nota realtime untuk badge DP/Lunas di kartu project
+  initKeuangan();   // data nota realtime untuk badge DP/Lunas di kartu project & klasifikasi produk
+  try{
+    db.collection('resellerSettings').doc('config').onSnapshot(doc=>{
+      if(doc.exists) plConfig = Object.assign({ pengumuman:'', wa:'', updatedAt:0 }, plConfig, doc.data());
+      if(currentMode==='workflow') render();
+    }, ()=>{});
+  }catch(e){ console.warn(e); }
 }
 
 
@@ -4774,6 +4857,7 @@ function kgIncomeEntries(all){
 
 function renderKeuangan(){
   if(!document.getElementById('kgSummary')) return;
+  try{ rsRenderInbox(); rsUpdateBadges(); }catch(e){ console.warn('reseller inbox', e); }
   const all = combinedTransactions();
   const entries = kgIncomeEntries(all);
 
@@ -4833,7 +4917,7 @@ function renderKeuangan(){
       <div class="kg-row" onclick="${t.type==='invoice' ? `openInvoiceDetail('${t.id}')` : `openManualDetail('${t.id}')`}">
         <div>
           <div class="who">${escapeHtml(t.custName)} ${t.type==='invoice' ? '· #'+t.id : ''}</div>
-          <div class="meta">${formatDateID(t.date)} ${badge}</div>
+          <div class="meta">${formatDateID(t.date)} ${badge}${rsRowFlag(t)}</div>
         </div>
         <div class="amt">${formatRupiah(t.amount)}${sub}</div>
       </div>`;
@@ -7158,10 +7242,10 @@ function openInvoiceDetail(invNo){
   `).join('');
 
   const payRows = (inv.payments||[]).length
-    ? inv.payments.map(p=>`
+    ? inv.payments.map((p,i)=>`
         <div class="kg-pay-row">
           <span>${formatDateID((p.at||'').slice(0,10))} — ${formatRupiah(p.amount)}</span>
-          <span class="p-note">${escapeHtml(p.note||'')}${p.proofUrl ? ` <a class="kgs-paylink" href="${escapeHtml(p.proofUrl)}" target="_blank" rel="noopener">📎 bukti</a>` : ''}</span>
+          <span class="p-note">${escapeHtml(p.note||'')}${p.proofUrl ? ` <a class="kgs-paylink" href="${escapeHtml(p.proofUrl)}" target="_blank" rel="noopener">📎 bukti</a>` : ''}${rsPayTag(inv, p, i)}</span>
         </div>`).join('')
     : `<div class="kg-pay-row"><span class="p-note">Belum ada pembayaran tercatat.</span></div>`;
 
@@ -11439,7 +11523,86 @@ function plIsRecent(ts){ return ts && (Date.now()-ts) < PL_NEW_DAYS*86400000; }
 function plDateTime(ts){ return ts ? new Date(ts).toLocaleString('id-ID',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '-'; }
 function plDayLabel(ts){ return new Date(ts).toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'}); }
 function plTime(ts){ return new Date(ts).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}); }
-function plCats(list){ return [...new Set(list.map(p=>p.kategori||'Lainnya'))].sort((a,b)=>a.localeCompare(b,'id')); }
+/* ---- Klasifikasi produk: daftar kategori master (resellerSettings/config.cats), urutan bisa diatur owner ---- */
+const PL_DEF_CATS = ['Kaos','Polo','Jersey','Hoodie','Jaket','Kemeja','Celana','Seragam','Topi','Tas','Aksesoris','Lainnya'];
+function plCatMaster(){ return (Array.isArray(plConfig.cats) && plConfig.cats.length) ? plConfig.cats.slice() : PL_DEF_CATS.slice(); }
+function plCatAll(){ const m = plCatMaster(); plProducts.forEach(p=>{ const c = p.kategori||'Lainnya'; if(m.indexOf(c)<0) m.push(c); }); return m; }
+function plCatSort(a,b){ const m = plCatMaster(), ia = m.indexOf(a), ib = m.indexOf(b); return (ia<0?999:ia)-(ib<0?999:ib) || String(a).localeCompare(String(b),'id'); }
+function plCats(list){ return [...new Set(list.map(p=>p.kategori||'Lainnya'))].sort(plCatSort); }
+function plCatCanon(n){ n = String(n||'').trim().replace(/\s+/g,' ').slice(0,30); const f = plCatAll().find(x=>x.toLowerCase()===n.toLowerCase()); return f || n; }
+function plCatIcon(n){ return ''; }   // ikon dimatikan: tampilan polos
+function plCatLabel(c, list){ return c==='Semua' ? 'Semua ('+list.length+')' : plCatIcon(c)+' '+escapeHtml(c)+' ('+list.filter(p=>(p.kategori||'Lainnya')===c).length+')'; }
+async function plCatSave(arr){ try{ await db.collection('resellerSettings').doc('config').set({ cats:arr }, { merge:true }); }catch(e){ alert('Gagal menyimpan kategori: '+e.message); } }
+function plCatEnsure(names){
+  const a = plCatAll(), low = a.map(x=>x.toLowerCase()); let ch = false;
+  names.forEach(n=>{ n = String(n||'').trim(); if(n && low.indexOf(n.toLowerCase())<0){ a.push(n); low.push(n.toLowerCase()); ch = true; } });
+  if(ch) plCatSave(a);
+}
+function plCatMove(i,d){ const a = plCatAll(), j = i+d; if(j<0||j>=a.length) return; const t = a[i]; a[i] = a[j]; a[j] = t; plCatSave(a); }
+function plCatAdd(){
+  const n = (prompt('Nama kategori baru (mis. Kemeja, Jersey Futsal):')||'').trim().replace(/\s+/g,' ').slice(0,30); if(!n) return;
+  const a = plCatAll(); if(a.some(x=>x.toLowerCase()===n.toLowerCase())){ alert('Kategori itu sudah ada.'); return; }
+  a.push(n); plCatSave(a);
+}
+async function plCatRename(i){
+  const a = plCatAll(), old = a[i];
+  const n = (prompt('Ubah nama kategori "'+old+'" menjadi:', old)||'').trim().replace(/\s+/g,' ').slice(0,30); if(!n || n===old) return;
+  if(a.some((x,k)=>k!==i && x.toLowerCase()===n.toLowerCase())){ alert('Nama itu sudah dipakai kategori lain. Hapus kategori ini agar produknya pindah ke "Lainnya", lalu atur ulang.'); return; }
+  const prods = plProducts.filter(p=>(p.kategori||'Lainnya')===old);
+  try{
+    for(let k=0;k<prods.length;k+=400){ const b = db.batch(); prods.slice(k,k+400).forEach(p=>b.update(db.collection('resellerProducts').doc(p.id), { kategori:n, updatedAt:Date.now() })); await b.commit(); }
+    a[i] = n; await plCatSave(a);
+  }catch(e){ alert('Gagal mengubah nama: '+e.message); }
+}
+async function plCatDelete(i){
+  const a = plCatAll(), c = a[i], prods = plProducts.filter(p=>(p.kategori||'Lainnya')===c);
+  if(!confirm(prods.length ? 'Hapus kategori "'+c+'"? '+prods.length+' produknya akan dipindah ke "Lainnya".' : 'Hapus kategori "'+c+'"?')) return;
+  try{
+    for(let k=0;k<prods.length;k+=400){ const b = db.batch(); prods.slice(k,k+400).forEach(p=>b.update(db.collection('resellerProducts').doc(p.id), { kategori:'Lainnya', updatedAt:Date.now() })); await b.commit(); }
+    a.splice(i,1); if(a.indexOf('Lainnya')<0) a.push('Lainnya'); await plCatSave(a);
+  }catch(e){ alert('Gagal menghapus: '+e.message); }
+}
+function plCatManagerHtml(){
+  const all = plCatAll(), cnt = {}; plProducts.forEach(p=>{ const c = p.kategori||'Lainnya'; cnt[c] = (cnt[c]||0)+1; });
+  let h = '<div class="pl-card"><h3>Klasifikasi Produk</h3><div class="pl-meta">Kelompokkan produk (Kaos, Jersey, Polo, dll.). Urutan di sini dipakai di halaman reseller &amp; form pesanan.</div>';
+  all.forEach((c,i)=>{
+    const lock = (c==='Lainnya');
+    h += '<div class="plk-it"><span class="plk-n">'+plCatIcon(c)+' <b>'+escapeHtml(c)+'</b><small>'+(cnt[c]||0)+' produk</small></span><span class="plk-a">'+
+      '<button class="pl-btn ghost sm" '+(i?'':'disabled')+' onclick="plCatMove('+i+',-1)" aria-label="Naik">↑</button><button class="pl-btn ghost sm" '+(i<all.length-1?'':'disabled')+' onclick="plCatMove('+i+',1)" aria-label="Turun">↓</button>'+
+      '<button class="pl-btn ghost sm" '+(lock?'disabled':'')+' onclick="plCatRename('+i+')" aria-label="Ubah nama">✎</button><button class="pl-btn danger sm" '+(lock?'disabled':'')+' onclick="plCatDelete('+i+')" aria-label="Hapus">✕</button></span></div>';
+  });
+  return h+'<div class="pl-row pla-act" style="gap:8px;margin-top:12px;"><button class="pl-btn sm" onclick="plCatAdd()">+ Tambah Kategori</button><button class="pl-btn ghost sm" '+(plAi.busy?'disabled':'')+' onclick="plCatAutoAi()">Klasifikasi Otomatis (AI)</button></div></div>';
+}
+async function plCatAutoAi(){
+  if(plAi.busy) return;
+  if(!plProducts.length){ alert('Belum ada produk untuk diklasifikasikan.'); return; }
+  plAi.busy = true; plAi.err = ''; plAi.ops = null; plAi.info = ''; renderPriceList();
+  try{
+    const cur = plProducts.slice(0,400).map(p=>[p.id,p.nama,p.kategori||''].join('|')).join('\n');
+    const prompt = `Klasifikasikan produk konveksi/apparel berikut ke dalam kategori. Balas HANYA JSON: {"ringkasan":"1 kalimat","ops":[{"id":"id produk","kategori":"kategori"}]}.
+KATEGORI TERSEDIA: ${plCatAll().join(', ')}.
+Pilih yang paling sesuai dari daftar itu (kaos oblong -> Kaos, polo shirt -> Polo, jersey futsal/bola -> Jersey, dst.). Buat kategori baru singkat (1-2 kata) hanya bila benar-benar tidak ada yang cocok. Sertakan HANYA produk yang kategorinya perlu diubah/dirapikan, dan jangan mengubah hal lain (harga, nama, dll.).
+PRODUK (id|nama|kategori saat ini):
+${cur}`;
+    const res = await plAiCall([{text:prompt}]);
+    const b = plAiBuildOps(res);
+    plAi.ops = b.ops; plAi.note = ((res && res.ringkasan) ? String(res.ringkasan).slice(0,200) : 'Klasifikasi ulang kategori produk');
+    if(!b.ops.length){ plAi.ops = null; plAi.info = '<b>✓ Semua produk sudah terklasifikasi dengan baik.</b>'; }
+    plState.ownerTab = 'ai';
+  }catch(e){ alert(e.message); }
+  plAi.busy = false; renderPriceList();
+}
+function plCatSelectHtml(cur){
+  const all = plCatAll(); if(cur && all.indexOf(cur)<0) all.push(cur);
+  return '<select class="pl-inp" id="plfKatSel" onchange="plKatChange(this.value)">'+all.map(c=>'<option value="'+escapeHtml(c)+'" '+(c===cur?'selected':'')+'>'+plCatIcon(c)+' '+escapeHtml(c)+'</option>').join('')+'<option value="__new">+ Kategori baru…</option></select>'+
+    '<input class="pl-inp" id="plfKat" placeholder="Nama kategori baru (mis. Kemeja)" style="display:none;margin-top:6px;">';
+}
+function plKatChange(v){ const i = document.getElementById('plfKat'); if(i){ i.style.display = v==='__new' ? 'block' : 'none'; if(v==='__new') i.focus(); } }
+function plKatValue(){
+  const sel = document.getElementById('plfKatSel'); if(!sel) return 'Lainnya';
+  if(sel.value==='__new') return plCatCanon(document.getElementById('plfKat').value) || 'Lainnya';
+  return sel.value;
+}
 function plLastUpdate(){
   let t = plConfig.updatedAt||0;
   plProducts.forEach(p=>{ t = Math.max(t, p.changedAt||p.updatedAt||0); });
@@ -11534,7 +11697,7 @@ function plOrdInit(){
     if(plState.tab==='pesanan') redraw();
   }, e=>console.warn('invoices reseller', e));
 }
-function plOrdProducts(){ return plProducts.filter(p=>p.aktif!==false && Number(p.harga)>0).sort((a,b)=>(a.nama||'').localeCompare(b.nama||'','id')); }
+function plOrdProducts(){ return plProducts.filter(p=>p.aktif!==false && Number(p.harga)>0).sort((a,b)=>plCatSort(a.kategori||'Lainnya', b.kategori||'Lainnya') || (a.nama||'').localeCompare(b.nama||'','id')); }
 function plOrdLines(){
   return plOrdProducts().map(p=>{
     const qty = Number(plOrd.cart[p.id])||0, modal = Number(p.harga)||0, jual = Number(plOrd.jual[p.id])||modal;
@@ -11546,7 +11709,7 @@ function plOrdRecalc(){
   plOrdProducts().forEach(p=>{
     const el = document.getElementById('plos-'+p.id); if(!el) return;
     const q = Number(plOrd.cart[p.id])||0, m = Number(p.harga)||0, j = Number(plOrd.jual[p.id])||m, mo = Number(p.minOrder)||1;
-    el.innerHTML = q>0 ? 'Tagihan ke admin <b>'+plRp(m*q)+'</b> · Penjualan Anda '+plRp(j*q)+' · Untung <b>'+plRp((j-m)*q)+'</b>'+(q<mo?' <span style="color:var(--pl-rust);">⚠ min. order '+mo+' '+escapeHtml(p.satuan||'pcs')+'</span>':'') : '';
+    el.innerHTML = q>0 ? 'Tagihan ke admin <b>'+plRp(m*q)+'</b> · Penjualan Anda '+plRp(j*q)+' · Untung <b>'+plRp((j-m)*q)+'</b>'+(q<mo?' <span style="color:var(--pl-rust);">min. order '+mo+' '+escapeHtml(p.satuan||'pcs')+'</span>':'') : '';
   });
   const L = plOrdLines(), tm = L.reduce((a,l)=>a+l.qty*l.hargaModal,0), tj = L.reduce((a,l)=>a+l.qty*l.hargaJual,0);
   const sm = document.getElementById('plOrdSum');
@@ -11560,7 +11723,9 @@ function plOrdFormHtml(){
     '<div><label class="pl-l">No. WhatsApp</label><input class="pl-inp" inputmode="tel" placeholder="0812xxxxxxxx" value="'+escapeHtml(plOrd.wa)+'" oninput="plOrd.wa=this.value"></div></div></div>';
   h += '<div class="pl-card"><h3>Pilih Produk</h3><div class="pl-meta">Harga reseller ditetapkan Owner. Isi <b>harga jual Anda</b> ke pelanggan untuk melihat estimasi untung — nota ke admin tetap memakai harga reseller.</div>';
   if(!act.length) h += '<div class="pl-empty">Belum ada produk berharga yang aktif.</div>';
+  let lastC = null;
   act.forEach(p=>{
+    const pc = p.kategori||'Lainnya'; if(pc!==lastC){ lastC = pc; h += '<div class="pl-cat" style="margin:16px 0 2px;"><h2 style="font-size:19px;">'+plCatIcon(pc)+' '+escapeHtml(pc)+'</h2><div class="ln"></div></div>'; }
     const u = escapeHtml(p.satuan||'pcs');
     h += '<div class="plo-row"><div class="plo-nm"><b>'+escapeHtml(p.nama)+'</b><small>'+plRp(p.harga)+' / '+u+((Number(p.minOrder)||1)>1?' · min. order '+p.minOrder+' '+u:'')+'</small></div>'+
       '<div class="plo-f"><label>Jumlah ('+u+')</label><input class="pl-inp" type="number" min="0" inputmode="numeric" value="'+(plOrd.cart[p.id]||'')+'" oninput="plOrdSet(\''+p.id+'\',\'qty\',this.value)"></div>'+
@@ -11577,7 +11742,7 @@ function plOrdFormHtml(){
 function plOrdWaText(o){
   return '*PESANAN RESELLER BARU — Nota #'+o.invNo+'*\nReseller: '+o.resellerName+' ('+o.resellerWa+')\n\n'+
     o.items.map(i=>'• '+i.nama+': '+i.qty+' '+i.satuan+' × '+plRp(i.hargaModal)+' = '+plRp(i.qty*i.hargaModal)).join('\n')+
-    '\n\nTotal tagihan: *'+plRp(o.totalModal)+'*'+(o.catatan?'\nCatatan: '+o.catatan:'')+'\n\nSaya akan transfer dan upload bukti di aplikasi. Mohon diproses 🙏';
+    '\n\nTotal tagihan: *'+plRp(o.totalModal)+'*'+(o.catatan?'\nCatatan: '+o.catatan:'')+'\n\nSaya akan transfer dan upload bukti di aplikasi. Mohon diproses';
 }
 function plOrdWaUrl(o){ const a = plOrdWa(plConfig.wa); return a ? 'https://wa.me/'+a+'?text='+encodeURIComponent(plOrdWaText(o)) : ''; }
 async function plOrdSubmit(){
@@ -11636,7 +11801,7 @@ function plOrdListHtml(){
       '<div class="pl-meta" style="margin-bottom:8px;">'+plDateTime(o.createdAt)+'</div>'+
       o.items.map(i=>'<div style="font-size:13.5px;">• '+escapeHtml(i.nama)+' — '+i.qty+' '+escapeHtml(i.satuan)+' × '+plRp(i.hargaModal)+' <span style="color:var(--pl-muted);">(jual Anda '+plRp(i.hargaJual)+')</span></div>').join('')+
       '<div style="margin-top:8px;font-size:13.5px;line-height:1.7;">Tagihan: <b>'+plRp(inv.total)+'</b> · Sudah dibayar: <b>'+plRp(dib)+'</b> · Sisa: <b>'+plRp(sisa)+'</b><br>Estimasi untung Anda: <b>'+plRp((o.totalJual||0)-(o.totalModal||0))+'</b></div>';
-    (inv.payments||[]).forEach(p=>{ h += '<div class="plo-pay">'+plDateTime(Date.parse(p.at)||0)+' · '+plRp(p.amount)+(p.proofUrl?' · <a href="'+escapeHtml(p.proofUrl)+'" target="_blank" rel="noopener">lihat bukti</a>':'')+'</div>'; });
+    (inv.payments||[]).forEach(p=>{ h += '<div class="plo-pay">'+plDateTime(Date.parse(p.at)||0)+' · '+plRp(p.amount)+(p.proofUrl?' · <a href="'+escapeHtml(p.proofUrl)+'" target="_blank" rel="noopener">lihat bukti</a>':'')+(p.source==='reseller'?(p.verified?' · <b style="color:var(--pl-green);">✓ terverifikasi admin</b>':' · <span style="color:var(--pl-amber);">menunggu verifikasi admin</span>'):'')+'</div>'; });
     if(sisa<=0) h += '<div class="pl-banner" style="margin:10px 0 0;background:#E4F3EA;border-color:#9CCDAF;"><b style="color:#1f6b3f;">LUNAS ✓</b>Pembayaran nota ini sudah penuh. Terima kasih.</div>';
     else {
       if(dib>0) h += '<div class="pl-banner" style="margin:10px 0 0;"><b>BELUM LUNAS</b>Sudah masuk '+plRp(dib)+' dari '+plRp(inv.total)+'. Sisa yang harus dibayar: <b>'+plRp(sisa)+'</b>. Silakan transfer sisanya lalu upload bukti transfer berikutnya.</div>';
@@ -11734,7 +11899,7 @@ const plAi = { text:'', files:[], busy:false, err:'', ops:null, info:'', note:''
 const plCol = { id:null, nama:'', ket:'', aktif:true, files:[], urls:[], lines:'', busy:false, aiBusy:false, err:'' };
 
 async function plAiCall(parts){
-  if(!scanConfig.geminiApiKey) throw new Error('API key Gemini belum diisi. Isi lewat tombol ⚙ di Asisten AI Workspace (atau scanConfig.geminiApiKey di file).');
+  if(!scanConfig.geminiApiKey) throw new Error('API key Gemini belum diisi. Isi lewat tombol pengaturan (roda gigi) di Asisten AI Workspace (atau scanConfig.geminiApiKey di file).');
   const url = 'https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(scanConfig.geminiModel)+':generateContent?key='+encodeURIComponent(scanConfig.geminiApiKey);
   const ctrl = new AbortController(), to = setTimeout(()=>ctrl.abort(), 90000);
   let resp;
@@ -11768,13 +11933,13 @@ function plAiChip(t){ plAi.text = t; const el = document.getElementById('plAiTex
 function plAiHtml(){
   const chips = ['Naikkan harga semua kaos Rp5.000','Tambah produk Polo Dewasa harga 55rb, min order 12 lusin','Nonaktifkan semua produk hoodie','Turunkan harga jersey 10%'];
   let h = '';
-  if(!scanConfig.geminiApiKey) h += '<div class="pl-banner" style="background:#fde8e4;border-color:#e5a59a;"><b style="color:#9a3a22;">API KEY GEMINI BELUM DIISI</b>Isi lewat tombol ⚙ di Asisten AI Workspace atau <code>scanConfig.geminiApiKey</code> di file, agar fitur AI di sini aktif.</div>';
+  if(!scanConfig.geminiApiKey) h += '<div class="pl-banner" style="background:#fde8e4;border-color:#e5a59a;"><b style="color:#9a3a22;">API KEY GEMINI BELUM DIISI</b>Isi lewat tombol pengaturan (roda gigi) di Asisten AI Workspace atau <code>scanConfig.geminiApiKey</code> di file, agar fitur AI di sini aktif.</div>';
   h += '<div class="pl-card"><h3>Import Sekaligus &amp; Perintah AI</h3><div class="pl-meta">Lampirkan <b>Excel / CSV / PDF / foto daftar harga</b> (bisa banyak sekaligus) dan/atau tulis perintah. AI mencocokkan dengan produk yang sudah ada: yang baru ditambah, yang sudah ada diperbarui harganya. Hasilnya tampil sebagai pratinjau dulu — belum tersimpan sebelum Anda menekan <b>Terapkan</b>.</div>'+
     '<label class="pl-l">Perintah / tempel daftar harga (opsional jika ada lampiran)</label>'+
     '<textarea class="pl-inp" id="plAiText" rows="5" placeholder="mis. Tambah kaos cotton combed 30s harga 60rb min order 12 lusin; polo 75rb. Atau: naikkan semua harga kaos 5rb." oninput="plAi.text=this.value">'+escapeHtml(plAi.text)+'</textarea>'+
     '<div class="pl-chips" style="margin-top:8px;">'+chips.map(c=>'<button class="pl-chip" onclick="plAiChip(this.textContent)">'+escapeHtml(c)+'</button>').join('')+'</div>'+
     '<div style="margin:10px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">'+plAi.files.map((f,i)=>'<span class="pla-file">'+escapeHtml(f.name.length>28?f.name.slice(0,25)+'…':f.name)+'<button onclick="plAiDrop('+i+')" aria-label="Hapus">×</button></span>').join('')+'</div>'+
-    '<div class="pl-row pla-act" style="gap:8px;"><label class="pl-btn ghost" style="cursor:pointer;display:inline-block;text-align:center;">📎 Lampirkan File / Foto<input type="file" multiple accept="image/*,.pdf,.xlsx,.xls,.csv,.txt" style="display:none;" onchange="plAiPick(this)"></label>'+
+    '<div class="pl-row pla-act" style="gap:8px;"><label class="pl-btn ghost" style="cursor:pointer;display:inline-block;text-align:center;">Lampirkan File / Foto<input type="file" multiple accept="image/*,.pdf,.xlsx,.xls,.csv,.txt" style="display:none;" onchange="plAiPick(this)"></label>'+
     '<button class="pl-btn" '+(plAi.busy?'disabled':'')+' onclick="plAiRun()">'+(plAi.busy?'AI sedang bekerja…':'Proses dengan AI')+'</button></div>'+
     (plAi.err?'<div style="color:var(--pl-rust);font-size:13px;margin-top:10px;">'+escapeHtml(plAi.err)+'</div>':'')+'</div>';
   if(plAi.info) h += '<div class="pl-banner" style="background:#E4F3EA;border-color:#9CCDAF;">'+plAi.info+'</div>';
@@ -11789,6 +11954,7 @@ function plAiBuildOps(res){
   list.forEach(o=>{
     if(!o || typeof o!=='object') return;
     const nama = String(o.nama||'').trim();
+    if(o.kategori) o.kategori = plCatCanon(o.kategori);
     let prev = (o.id && byId[o.id]) || (nama && byName[plAiNorm(nama)]) || null;
     if(prev && used[prev.id]){ drop++; return; }
     let harga = (o.harga!==undefined && o.harga!==null && o.harga!=='') ? Math.round(Number(o.harga)) : null;
@@ -11831,6 +11997,7 @@ ATURAN:
 - "nonaktifkan/sembunyikan" => aktif:false. "aktifkan/tampilkan" => aktif:true. JANGAN pernah menghapus produk.
 - Dari lampiran: ambil SEMUA produk & harga yang benar-benar tertulis. Jangan mengarang produk/harga/kategori yang tidak ada di sumber; angka buram => lewati produk itu. Kategori singkat (Kaos, Polo, Jersey, Hoodie, dst.).
 - Abaikan harga jual ke konsumen jika sumber memuat beberapa jenis harga; ambil harga reseller/grosir. Bila ragu tulis catatan di "ringkasan".
+KATEGORI TERSEDIA: ${plCatAll().join(', ')} — klasifikasikan SETIAP produk ke kategori yang paling sesuai (kaos, polo, jersey, hoodie, dst.); buat kategori baru singkat hanya bila benar-benar tidak ada yang cocok.
 PRODUK SAAT INI (id|kategori|nama|harga|satuan|minOrder|aktif):
 ${cur||'(belum ada produk)'}
 PERINTAH ADMIN: ${text||'(tidak ada — ekstrak semua produk & harga dari lampiran: tambahkan yang baru, perbarui yang sudah ada)'}`;
@@ -11850,7 +12017,7 @@ function plAiEditHarga(i, v){ const o = plAi.ops[i]; const n = Math.round(Number
 function plAiPreviewHtml(){
   const ops = plAi.ops, n = ops.filter(o=>o.on).length;
   const nb = ops.filter(o=>o.type==='tambah').length, nu = ops.length-nb;
-  let h = '<div class="pl-card"><h3>Pratinjau Perubahan ('+ops.length+')</h3>'+(plAi.note?'<div class="pl-meta">🤖 '+escapeHtml(plAi.note)+'</div>':'')+
+  let h = '<div class="pl-card"><h3>Pratinjau Perubahan ('+ops.length+')</h3>'+(plAi.note?'<div class="pl-meta">'+escapeHtml(plAi.note)+'</div>':'')+
     '<div class="pl-meta">'+nb+' produk baru · '+nu+' diperbarui. Centang yang ingin diterapkan, harga bisa dikoreksi langsung.</div>'+
     '<div class="pl-row" style="gap:8px;margin-bottom:10px;"><button class="pl-btn ghost sm" onclick="plAiAll(true)">Pilih semua</button><button class="pl-btn ghost sm" onclick="plAiAll(false)">Kosongkan</button></div>';
   ops.forEach((o,i)=>{
@@ -11892,6 +12059,7 @@ async function plAiApply(){
       }
       await batch.commit();
     }
+    plCatEnsure(sel.map(o=>o.type==='tambah' ? o.rec.kategori : o.ch.kategori).filter(Boolean));
     plAi.info = '<b>✓ Tersimpan:</b> '+nb+' produk baru, '+nu+' diperbarui. Perubahan harga otomatis tercatat di Riwayat &amp; Update Terbaru reseller.';
     plAi.ops = null; plAi.files = []; plAi.text = '';
   }catch(e){ console.error(e); plAi.err = 'Gagal menyimpan: '+e.message; }
@@ -11931,10 +12099,10 @@ function plColRender(){
   root.innerHTML = '<div class="pl-modal-bg" onclick="if(event.target===this)plCloseModal()"><div class="pl-modal"><h3>'+(plCol.id?'Edit':'Tambah')+' Katalog Warna</h3>'+
     '<label class="pl-l">Judul katalog</label><input class="pl-inp" value="'+escapeHtml(plCol.nama)+'" placeholder="mis. Warna Cotton Combed 30s" oninput="plCol.nama=this.value">'+
     '<label class="pl-l">Keterangan (opsional)</label><input class="pl-inp" value="'+escapeHtml(plCol.ket)+'" oninput="plCol.ket=this.value">'+
-    '<label class="pl-l">Gambar katalog warna (boleh banyak)</label><label class="pl-btn ghost" style="cursor:pointer;display:block;text-align:center;">📷 Pilih / Foto Gambar<input type="file" multiple accept="image/*" style="display:none;" onchange="plColPick(this)"></label>'+
+    '<label class="pl-l">Gambar katalog warna (boleh banyak)</label><label class="pl-btn ghost" style="cursor:pointer;display:block;text-align:center;">Pilih / Foto Gambar<input type="file" multiple accept="image/*" style="display:none;" onchange="plColPick(this)"></label>'+
     '<div class="plc-imgs" style="margin-top:8px;">'+plCol.urls.map((u,i)=>'<span style="position:relative;flex:none;"><img src="'+escapeHtml(u)+'" style="height:90px;"><button class="pla-file" style="position:absolute;top:2px;right:2px;padding:0 8px;" onclick="plCol.urls.splice('+i+',1);plColRender()">×</button></span>').join('')+
       plCol.files.map((f,i)=>'<span style="position:relative;flex:none;"><img src="'+plColPrev(f)+'" style="height:90px;"><button class="pla-file" style="position:absolute;top:2px;right:2px;padding:0 8px;" onclick="plCol.files.splice('+i+',1);plColRender()">×</button></span>').join('')+'</div>'+
-    '<div class="pl-row" style="margin-top:10px;"><button class="pl-btn sm" '+((plCol.aiBusy||!plCol.files.length)?'disabled':'')+' onclick="plColAi()">'+(plCol.aiBusy?'AI membaca warna…':'🤖 Baca Warna dari Gambar (AI)')+'</button></div>'+
+    '<div class="pl-row" style="margin-top:10px;"><button class="pl-btn sm" '+((plCol.aiBusy||!plCol.files.length)?'disabled':'')+' onclick="plColAi()">'+(plCol.aiBusy?'AI membaca warna…':'Baca Warna dari Gambar (AI)')+'</button></div>'+
     '<label class="pl-l" style="margin-top:10px;">Daftar warna — satu per baris: <code>Nama | #HEX</code></label><textarea class="pl-inp" id="plColLines" rows="8" placeholder="Navy | #1F2A44&#10;Maroon | #6B1F2A" oninput="plCol.lines=this.value">'+escapeHtml(plCol.lines)+'</textarea>'+
     '<label style="display:flex;gap:8px;align-items:center;font-size:13px;margin-top:10px;"><input type="checkbox" '+(plCol.aktif?'checked':'')+' onchange="plCol.aktif=this.checked"> Tampilkan ke reseller</label>'+
     (plCol.err?'<div style="color:var(--pl-rust);font-size:13px;margin-top:8px;">'+escapeHtml(plCol.err)+'</div>':'')+
@@ -11984,6 +12152,140 @@ async function plColSave(){
   }catch(e){ console.error(e); plCol.err = 'Gagal menyimpan: '+e.message; plCol.busy = false; plColRender(); }
 }
 
+/* ===================== SINKRONISASI RESELLER <-> NOTA <-> KEUANGAN <-> ALUR KERJA =====================
+   Satu pesanan reseller = 1 resellerOrders + 1 nota (invoices) + 1 project. Uang yang masuk disimpan
+   sebagai payments di nota yang sama, sehingga otomatis terhitung di Keuangan (per tanggal bayar), badge
+   DP/Lunas di Alur Kerja, dan status di halaman reseller. Bagian ini menjaga agar tidak ada yang terlewat:
+   kotak masuk + badge notifikasi, verifikasi pembayaran, dan rekonsiliasi otomatis. */
+function rsToast(msg){
+  const t = document.createElement('div'); t.className = 'rs-toast'; t.textContent = msg; document.body.appendChild(t);
+  setTimeout(()=>{ t.remove(); }, 5200);
+}
+function rsWho(){ return (authSession && authSession.nama) || 'admin'; }
+function rsInvs(){ return (typeof invoicesCache!=='undefined' ? invoicesCache : []).filter(i=>i.source==='reseller'); }
+function rsPending(){
+  const pays = [], orders = [];
+  rsInvs().forEach(inv=>{
+    if(!inv.rsAck) orders.push(inv);
+    (inv.payments||[]).forEach((p,i)=>{ if(p.source==='reseller' && !p.verified) pays.push({ inv:inv, i:i, p:p }); });
+  });
+  return { pays:pays, orders:orders };
+}
+function rsWaUrl(inv, text){ const w = plOrdWa(inv.custPhone); return w ? 'https://wa.me/'+w+'?text='+encodeURIComponent(text) : ''; }
+function rsRowFlag(t){
+  if(t.type!=='invoice' || !t.raw || t.raw.source!=='reseller') return '';
+  const un = (t.raw.payments||[]).some(p=>p.source==='reseller' && !p.verified) || !t.raw.rsAck;
+  return ' <span class="kg-badge manual">RESELLER</span>'+(un ? ' <span class="kg-badge belum_bayar">PERLU CEK</span>' : '');
+}
+function rsPayTag(inv, p, i){
+  if(p.source!=='reseller') return '';
+  if(p.verified) return ' <span class="kg-badge lunas">✓ TERVERIFIKASI</span>';
+  return ' <span class="kg-badge dp">DARI RESELLER · BELUM DIVERIFIKASI</span> <button class="btn" style="font-size:12px;padding:3px 10px;" onclick="rsVerifyPayment(\''+inv.invNo+'\','+i+')">Verifikasi</button>';
+}
+let rsPrevCount = -1;
+function rsUpdateBadges(){
+  const pd = rsPending(), n = pd.pays.length + pd.orders.length;
+  ['gn-btn-keuangan','gn-btn-workflow'].forEach(id=>{ const b = document.getElementById(id); if(b){ if(n>0) b.setAttribute('data-rs', n>99?'99+':String(n)); else b.removeAttribute('data-rs'); } });
+  if(rsPrevCount>=0 && n>rsPrevCount) rsToast('Ada pesanan / pembayaran reseller baru ('+n+' menunggu)');
+  rsPrevCount = n;
+}
+function rsRenderInbox(){
+  const el = document.getElementById('kgResellerInbox'); if(!el) return;
+  if(!rsInvs().length){ el.innerHTML = ''; return; }
+  const pd = rsPending(), n = pd.pays.length + pd.orders.length;
+  let h = '<div class="rs-in"><div class="rs-hd"><b>Masuk dari Reseller</b><span>'+(n ? pd.orders.length+' pesanan baru · '+pd.pays.length+' pembayaran perlu verifikasi' : 'Semua pesanan & pembayaran reseller sudah ditangani ✓')+'</span><button class="btn" onclick="rsReconcile(true)">Cek Sinkronisasi</button></div>';
+  pd.orders.forEach(inv=>{
+    const wa = rsWaUrl(inv, 'Halo '+String(inv.custName||'').replace(' (Reseller)','')+', pesanan Nota #'+inv.invNo+' sudah kami terima. Total tagihan '+formatRupiah(inv.total)+'. Silakan transfer lalu upload bukti transfer di aplikasi ya');
+    h += '<div class="rs-it"><div><b>Pesanan baru #'+inv.invNo+'</b> · '+escapeHtml(inv.custName||'-')+'<small>'+(inv.items||[]).map(x=>escapeHtml(x.desc)+' ×'+x.qty).join(', ')+' · Total '+formatRupiah(inv.total)+'</small></div><div class="rs-ac"><button class="btn gold" onclick="rsAckOrder(\''+inv.invNo+'\')">Terima Pesanan</button>'+(wa?'<a class="btn" href="'+wa+'" target="_blank" rel="noopener">WA</a>':'')+'<button class="btn" onclick="openInvoiceDetail(\''+inv.invNo+'\')">Buka Nota</button></div></div>';
+  });
+  pd.pays.forEach(x=>{
+    const sc = x.p.scan || {}, sisa = Math.max(0,(Number(x.inv.total)||0)-(Number(x.inv.totalDibayar)||0));
+    const info = sc.engine==='manual' ? 'tanpa pembacaan otomatis' : ('terbaca '+(sc.engine==='ai'?'AI':'OCR')+(sc.readAmount?' '+formatRupiah(sc.readAmount):' (nominal tidak terbaca)'));
+    const wa = rsWaUrl(x.inv, 'Pembayaran '+formatRupiah(x.p.amount)+' untuk Nota #'+x.inv.invNo+' sudah kami terima & terverifikasi. '+(sisa>0?'Sisa tagihan '+formatRupiah(sisa)+'.':'Nota LUNAS.')+' Terima kasih');
+    h += '<div class="rs-it"><div><b>Nota #'+x.inv.invNo+'</b> · '+escapeHtml(x.inv.custName||'-')+' · <b>'+formatRupiah(x.p.amount)+'</b><small>'+formatDateID((x.p.at||'').slice(0,10))+' · '+info+(sc.edited?' · <span class="rs-warn">nominal diubah reseller</span>':'')+' · Sisa nota '+formatRupiah(sisa)+(x.p.proofUrl?' · <a href="'+escapeHtml(x.p.proofUrl)+'" target="_blank" rel="noopener">lihat bukti</a>':'')+'</small></div>'+
+      '<div class="rs-ac"><button class="btn gold" onclick="rsVerifyPayment(\''+x.inv.invNo+'\','+x.i+')">Verifikasi</button>'+(wa?'<a class="btn" href="'+wa+'" target="_blank" rel="noopener">WA</a>':'')+'<button class="btn" style="color:var(--rust);" onclick="rsRejectPayment(\''+x.inv.invNo+'\','+x.i+')">Tolak</button></div></div>';
+  });
+  el.innerHTML = h+'</div>';
+}
+async function rsAckOrder(no){
+  const inv = rsInvs().find(i=>String(i.invNo)===String(no)); if(!inv) return;
+  try{
+    const b = db.batch(), patch = { rsAck:true, rsAckAt:new Date().toISOString(), rsAckBy:rsWho() };
+    b.update(db.collection('invoices').doc(String(no)), patch);
+    if(inv.resellerOrderId) b.set(db.collection('resellerOrders').doc(inv.resellerOrderId), { rsAck:true, status:'diterima' }, { merge:true });
+    await b.commit();
+  }catch(e){ alert('Gagal: '+e.message); }
+}
+async function rsVerifyPayment(no, idx){
+  try{
+    await db.runTransaction(async tx=>{
+      const ref = db.collection('invoices').doc(String(no)), sn = await tx.get(ref);
+      const pays = (sn.data().payments||[]).slice(); if(!pays[idx]) throw new Error('Pembayaran tidak ditemukan');
+      pays[idx] = Object.assign({}, pays[idx], { verified:true, verifiedBy:rsWho(), verifiedAt:new Date().toISOString() });
+      tx.update(ref, { payments:pays });
+    });
+    const root = document.getElementById('kgModalRoot'); if(root && root.innerHTML.trim()){ setTimeout(()=>{ try{ openInvoiceDetail(String(no)); }catch(e){} }, 400); }
+    rsToast('✓ Pembayaran terverifikasi');
+  }catch(e){ alert('Gagal verifikasi: '+e.message); }
+}
+async function rsRejectPayment(no, idx){
+  if(!confirm('Tolak pembayaran ini? Nominalnya dikeluarkan dari nota dan Keuangan (riwayatnya tetap disimpan).')) return;
+  try{
+    await db.runTransaction(async tx=>{
+      const ref = db.collection('invoices').doc(String(no)), sn = await tx.get(ref), d = sn.data();
+      const pays = (d.payments||[]).slice(); if(!pays[idx]) throw new Error('Pembayaran tidak ditemukan');
+      const gone = pays.splice(idx,1)[0];
+      const rej = (d.rejectedPayments||[]).concat([Object.assign({}, gone, { rejectedBy:rsWho(), rejectedAt:new Date().toISOString() })]);
+      tx.update(ref, { payments:pays, totalDibayar:pays.reduce((a,x)=>a+(Number(x.amount)||0),0), rejectedPayments:rej });
+    });
+    rsToast('Pembayaran ditolak & dikeluarkan dari nota');
+  }catch(e){ alert('Gagal menolak: '+e.message); }
+}
+function rsBuildInvoice(o){
+  const iso = new Date(o.createdAt||Date.now()).toISOString();
+  return { invNo:o.invNo, custName:o.resellerName+' (Reseller)', custPhone:o.resellerWa, invDate:iso.slice(0,10), dueDate:'',
+    items:o.items.map(l=>({desc:l.nama+' ('+l.satuan+')', price:l.hargaModal, qty:l.qty})), subtotal:o.totalModal, total:o.totalModal,
+    notes:'Pesanan reseller (dipulihkan otomatis). '+(o.catatan||''), totalDibayar:0, payments:[],
+    createdBy:o.resellerName, createdAt:iso, source:'reseller', resellerKey:o.resellerKey, resellerOrderId:o.id, hargaJualReseller:o.totalJual||0 };
+}
+function rsBuildProject(o){
+  return { id:o.projectId, namaKlien:o.resellerName+' (Reseller)', noHp:o.resellerWa, via:'Reseller',
+    briefDesain:'Pesanan reseller #'+o.invNo+': '+o.items.map(l=>l.nama+' '+l.qty+' '+l.satuan).join(', ')+(o.catatan?' — '+o.catatan:''),
+    ukuran:o.items.map(l=>({ukuran:l.nama+' ('+l.qty+' '+l.satuan+')', qty:l.qty*(l.satuan==='lusin'?12:1)})), referensi:[],
+    namaDesainer:'', namaProduksi:'', komisiPerPcs:0, status:'baru', createdAt:o.createdAt||Date.now(),
+    desainMulai:null, pedomanDesain:'', pedomanGambar:[], listDesain:'', deadline:'', produksiMulai:null, selesaiAt:null,
+    invNo:o.invNo, resellerOrderId:o.id, resellerKey:o.resellerKey };
+}
+let rsRecBusy = false;
+async function rsReconcile(manual){
+  if(rsRecBusy || !CONFIG_READY) return;
+  if(!manual && !invoicesCache.length) return;
+  rsRecBusy = true;
+  try{
+    const res = await Promise.all([ db.collection('resellerOrders').get(), db.collection('projects').where('via','==','Reseller').get() ]);
+    const projIds = new Set(res[1].docs.map(d=>d.id));
+    let nInv = 0, nProj = 0, nFix = 0;
+    for(const d of res[0].docs){
+      const o = d.data(); if(o.rsAck || !o.items || !o.invNo) continue;   // yang sudah diterima admin tidak dipulihkan (bisa jadi sengaja dihapus)
+      if(!invoicesCache.some(i=>String(i.invNo)===String(o.invNo))){
+        const ref = db.collection('invoices').doc(String(o.invNo)), sn = await ref.get();
+        if(!sn.exists){ await ref.set(rsBuildInvoice(o)); nInv++; }
+      }
+      if(o.projectId && !projIds.has(o.projectId)){
+        const ref = db.collection('projects').doc(o.projectId), sn = await ref.get();
+        if(!sn.exists){ await ref.set(rsBuildProject(o)); nProj++; }
+      }
+    }
+    for(const inv of rsInvs()){
+      const sum = (inv.payments||[]).reduce((a,x)=>a+(Number(x.amount)||0),0);
+      if(Number(inv.totalDibayar||0)!==sum){ await db.collection('invoices').doc(String(inv.invNo)).update({ totalDibayar:sum }); nFix++; }
+    }
+    if(nInv||nProj||nFix) rsToast('Sinkronisasi: '+nInv+' nota & '+nProj+' project dipulihkan, '+nFix+' total bayar dibetulkan');
+    else if(manual) rsToast('✓ Semua pesanan reseller sudah sinkron dengan nota, keuangan & alur kerja');
+  }catch(e){ console.warn('rsReconcile', e); if(manual) rsToast('Sinkronisasi gagal: '+e.message); }
+  rsRecBusy = false;
+}
+
 /* ---------------- TAMPILAN RESELLER (LIHAT SAJA) ---------------- */
 function plBadge(type){
   const L = { naik:'HARGA NAIK', turun:'HARGA TURUN', baru:'BARU', ubah:'DIUBAH', hapus:'DIHAPUS' };
@@ -11993,7 +12295,7 @@ function plResellerHtml(){
   const active = plProducts.filter(p=>p.aktif!==false);
   const last = plLastUpdate();
   let h = '';
-  if(plConfig.pengumuman && plConfig.pengumuman.trim()) h += '<div class="pl-banner"><b>📢 PENGUMUMAN</b>'+escapeHtml(plConfig.pengumuman)+'</div>';
+  if(plConfig.pengumuman && plConfig.pengumuman.trim()) h += '<div class="pl-banner"><b>PENGUMUMAN</b>'+escapeHtml(plConfig.pengumuman)+'</div>';
   h += '<div class="pl-meta">'+(last?'Terakhir diperbarui: <b>'+plDateTime(last)+'</b> · ':'')+active.length+' produk. Pesan langsung lewat tab <b>+ Buat Pesanan</b>.</div>';
   h += '<div class="pl-tabs"><button class="'+(plState.tab==='harga'?'active':'')+'" onclick="plSetTab(\'harga\')">Daftar Harga</button>'+
        '<button class="'+(plState.tab==='warna'?'active':'')+'" onclick="plSetTab(\'warna\')">Katalog Warna</button>'+
@@ -12016,13 +12318,13 @@ function plListHtml(active){
   });
   let h = '<div class="pl-tools"><input class="pl-search" id="plSearchInp" placeholder="Cari produk (mis. kaos, polo, hoodie)…" value="'+escapeHtml(plState.q)+'" oninput="plSearch(this.value)">'+
           '<button class="pl-chip '+(plState.onlyNew?'active':'')+'" onclick="plToggleNew()">Baru berubah ('+PL_NEW_DAYS+' hari)</button></div>';
-  h += '<div class="pl-chips">'+cats.map(c=>'<button class="pl-chip '+(plState.cat===c?'active':'')+'" onclick="plSetCat(\''+escapeHtml(c).replace(/'/g,"\\'")+'\')">'+escapeHtml(c)+'</button>').join('')+'</div>';
+  h += '<div class="pl-chips">'+cats.map(c=>'<button class="pl-chip '+(plState.cat===c?'active':'')+'" onclick="plSetCat(\''+escapeHtml(c).replace(/'/g,"\\'")+'\')">'+plCatLabel(c, active)+'</button>').join('')+'</div>';
   if(!active.length) return h+'<div class="pl-empty">Daftar harga belum tersedia. Silakan cek lagi nanti.</div>';
   if(!list.length) return h+'<div class="pl-empty">Tidak ada produk yang cocok dengan pencarian/filter.</div>';
   const byCat = {};
   list.forEach(p=>{ (byCat[p.kategori||'Lainnya'] = byCat[p.kategori||'Lainnya'] || []).push(p); });
-  Object.keys(byCat).sort((a,b)=>a.localeCompare(b,'id')).forEach(c=>{
-    h += '<div class="pl-cat"><h2>'+escapeHtml(c)+'</h2><div class="ln"></div></div><div class="pl-grid">';
+  Object.keys(byCat).sort(plCatSort).forEach(c=>{
+    h += '<div class="pl-cat"><h2>'+plCatIcon(c)+' '+escapeHtml(c)+' <small style="font-size:.6em;opacity:.6;">('+byCat[c].length+')</small></h2><div class="ln"></div></div><div class="pl-grid">';
     byCat[c].sort((a,b)=>(a.nama||'').localeCompare(b.nama||'','id')).forEach(p=>{
       const recent = plIsRecent(p.changedAt) && p.lastType;
       h += '<div class="pl-item"><div class="nm">'+escapeHtml(p.nama)+(recent?plBadge(p.lastType):'')+'</div>'+
@@ -12095,9 +12397,10 @@ function plOwnerHtml(){
 function plOwnerManageHtml(){
   const q = plState.ownerQ.trim().toLowerCase();
   const list = plProducts.filter(p=>!q || ((p.nama||'')+' '+(p.kategori||'')).toLowerCase().includes(q))
-    .sort((a,b)=>(a.kategori||'').localeCompare(b.kategori||'','id') || (a.nama||'').localeCompare(b.nama||'','id'));
+    .sort((a,b)=>plCatSort(a.kategori||'Lainnya', b.kategori||'Lainnya') || (a.nama||'').localeCompare(b.nama||'','id'));
   let h = '<div class="pl-tools"><input class="pl-search" id="plOwnerSearchInp" placeholder="Cari produk…" value="'+escapeHtml(plState.ownerQ)+'" oninput="plOwnerSearch(this.value)">'+
           '<button class="pl-btn" onclick="plOpenModal(null)">+ Tambah Produk</button></div>';
+  h += plCatManagerHtml();
   if(!plProducts.length){
     return h+'<div class="pl-empty">Belum ada produk.<br>Tambah manual, atau isi contoh produk (kaos, polo, jersey, dll.) yang tersimpan <b>nonaktif</b> sehingga belum terlihat reseller sampai Anda mengisi harganya dan mengaktifkannya.<br><br><button class="pl-btn ghost" onclick="plSeed()">Isi Contoh Produk</button></div>';
   }
@@ -12177,7 +12480,7 @@ function plOpenModal(id){
   root.innerHTML = '<div class="pl-modal-bg" onclick="if(event.target===this)plCloseModal()"><div class="pl-modal">'+
     '<h3>'+(p?'Edit Produk':'Tambah Produk')+'</h3>'+
     '<label class="pl-l">Nama produk</label><input class="pl-inp" id="plfNama" placeholder="mis. Kaos Cotton Combed 30s" value="'+escapeHtml(p?p.nama:'')+'">'+
-    '<label class="pl-l">Kategori</label><input class="pl-inp" id="plfKat" list="plCatList" placeholder="mis. Kaos" value="'+escapeHtml(p?(p.kategori||''):'')+'"><datalist id="plCatList">'+cats.map(c=>'<option value="'+escapeHtml(c)+'">').join('')+'</datalist>'+
+    '<label class="pl-l">Kategori</label>'+plCatSelectHtml(p?(p.kategori||'Lainnya'):'')+
     '<label class="pl-l">Keterangan (bahan, varian, sablon, dll.)</label><textarea class="pl-inp" id="plfKet" rows="2">'+escapeHtml(p?(p.keterangan||''):'')+'</textarea>'+
     '<div class="pl-2c"><div><label class="pl-l">Harga reseller (Rp)</label><input class="pl-inp" id="plfHarga" type="number" min="0" value="'+(p?(Number(p.harga)||0):'')+'"></div>'+
     '<div><label class="pl-l">Satuan</label><select class="pl-inp" id="plfSat">'+PL_UNITS.map(u=>'<option '+((p?p.satuan:'pcs')===u?'selected':'')+'>'+u+'</option>').join('')+'</select></div></div>'+
@@ -12197,13 +12500,13 @@ async function plSubmitModal(){
   const prev = plState.modalId ? plProducts.find(x=>x.id===plState.modalId) : null;
   const rec = Object.assign({}, prev||{}, {
     id: prev ? prev.id : db.collection('resellerProducts').doc().id,
-    nama:nama, kategori:document.getElementById('plfKat').value.trim()||'Lainnya',
+    nama:nama, kategori:plKatValue(),
     keterangan:document.getElementById('plfKet').value.trim(), harga:harga,
     satuan:document.getElementById('plfSat').value, minOrder:Math.max(1,parseInt(document.getElementById('plfMin').value)||1),
     aktif:document.getElementById('plfAktif').checked, createdAt: prev?prev.createdAt:Date.now()
   });
   const btn = document.getElementById('plfSave'); btn.disabled = true;
-  try{ await plSaveProduct(rec, prev); plCloseModal(); }
+  try{ await plSaveProduct(rec, prev); plCatEnsure([rec.kategori]); plCloseModal(); }
   catch(e){ err.textContent = 'Gagal menyimpan: '+(e.message||e); btn.disabled = false; }
 }
 async function plSeed(){
@@ -12234,9 +12537,9 @@ function plBroadcastText(days){
   const arr = Object.values(last);
   if(!arr.length) return '';
   const lines = arr.map(l=>{
-    if(l.type==='baru') return '🆕 '+l.nama+' — '+plRp(l.newPrice);
-    if(l.type==='ubah') return '✏️ '+l.nama+' — '+plRp(l.newPrice)+' (info produk diperbarui)';
-    return (l.type==='naik'?'🔺 ':'🔻 ')+l.nama+': '+plRp(l.oldPrice)+' → '+plRp(l.newPrice);
+    if(l.type==='baru') return 'BARU: '+l.nama+' — '+plRp(l.newPrice);
+    if(l.type==='ubah') return 'UBAH: '+l.nama+' — '+plRp(l.newPrice)+' (info produk diperbarui)';
+    return (l.type==='naik'?'NAIK: ':'TURUN: ')+l.nama+': '+plRp(l.oldPrice)+' → '+plRp(l.newPrice);
   });
   return '*UPDATE HARGA RESELLER — TENX APPAREL*\n'+new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})+'\n\n'+lines.join('\n')+
     (plConfig.pengumuman?'\n\n'+plConfig.pengumuman:'')+'\n\nDaftar harga lengkap dapat dilihat di aplikasi TENX.';
@@ -12406,7 +12709,7 @@ function authApply(){
   document.body.classList.toggle('tx-locked', !authSession);
   document.body.classList.toggle('tx-reseller', authIsReseller());
   const u = document.getElementById('gnUser');
-  if(u) u.textContent = authSession ? ('👤 '+(authSession.nama||'')+' · '+(AUTH_ROLE_LABEL[authSession.role]||'')) : '';
+  if(u) u.textContent = authSession ? (''+(authSession.nama||'')+' · '+(AUTH_ROLE_LABEL[authSession.role]||'')) : '';
   const lo = document.getElementById('gn-btn-logout');
   if(lo) lo.style.display = authSession ? '' : 'none';
 }
@@ -12424,6 +12727,7 @@ function authEnter(){
   authApply();
   try{ authWatch(); }catch(e){ console.warn('authWatch', e); }
   showMode(authIsReseller() ? 'pricelist' : 'landing');
+  if(!authIsReseller()){ try{ initKeuangan(); }catch(e){ console.warn(e); } setTimeout(()=>rsReconcile(false), 8000); }
 }
 async function authLoginToken(){
   const err = document.getElementById('authErr');
@@ -12859,7 +13163,7 @@ function plAksesHtml(){
   h += (t.err?'<div class="pl-err">'+escapeHtml(t.err)+'</div>':'')+(t.msg?'<div class="pl-ok">'+escapeHtml(t.msg)+'</div>':'')+
     '<button class="pl-btn" style="width:100%;margin-top:14px;" onclick="'+(t.bulkOpen?'plTokBulk()':'plTokCreate()')+'">'+(t.bulkOpen?'Buat Semua Kode':'Buat Kode Akses')+'</button></div>';
 
-  if(pending>0 && !online) h += '<div class="pl-banner"><b>⚠ '+pending+' KODE DICABUT BELUM TERPASANG</b>Firebase belum aktif, jadi kode yang dicabut baru ditolak di perangkat ini. Unduh file aplikasi terbaru lalu upload menggantikan file lama.<div style="margin-top:10px;"><button class="pl-btn" onclick="plTokDownloadApp()">Unduh index.html terbaru</button></div></div>';
+  if(pending>0 && !online) h += '<div class="pl-banner"><b>'+pending+' KODE DICABUT BELUM TERPASANG</b>Firebase belum aktif, jadi kode yang dicabut baru ditolak di perangkat ini. Unduh file aplikasi terbaru lalu upload menggantikan file lama.<div style="margin-top:10px;"><button class="pl-btn" onclick="plTokDownloadApp()">Unduh index.html terbaru</button></div></div>';
 
   h += '<div class="pl-meta"><b>'+total+'</b> kode · <b>'+(total-revoked)+'</b> aktif · <b>'+revoked+'</b> dinonaktifkan. '+(online?'Daftar tersimpan di server dan sama di semua perangkat Owner/Admin.':'Daftar tersimpan di perangkat Owner ini, jadi rutin <b>Backup</b>.')+'</div>';
   h += '<div class="pl-tools"><input class="pl-search" id="plTokSearch" placeholder="Cari nama, no. WA, atau kode…" value="'+escapeHtml(t.q||'')+'" oninput="plTokSearch(this.value)"><button class="pl-btn ghost" onclick="plTokExport()">Ekspor CSV</button><button class="pl-btn ghost" onclick="plTokBackup()">Backup</button><label class="pl-btn ghost" style="display:inline-block;text-align:center;cursor:pointer;">Pulihkan<input type="file" accept=".json,application/json" style="display:none;" onchange="plTokRestore(this)"></label></div>';
