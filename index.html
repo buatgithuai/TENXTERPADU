@@ -168,6 +168,7 @@ window.tenxEnsureChart = function(){
     font-family:'Bebas Neue';font-size:11.5px;letter-spacing:.06em;
     padding:4px 10px;border-radius:999px;color:white;transform:rotate(-2deg); display:inline-block;
   }
+#workflowApp .badge.menunggu_pembayaran{background:#8a6d3b;}
 #workflowApp .badge.baru{background:var(--amber);}
 #workflowApp .badge.diproses_desainer{background:var(--denim);}
 #workflowApp .badge.desain_selesai{background:var(--purple);}
@@ -282,6 +283,7 @@ window.tenxEnsureChart = function(){
 #workflowApp .tag-card{background:#fff;border:1.5px solid var(--line);border-left:5px solid var(--line);border-radius:12px;padding:16px 18px 14px 18px;}
 #workflowApp .tag-card::before{content:none;display:none;}
 #workflowApp .tag-card:hover{transform:none;box-shadow:0 4px 14px rgba(33,29,26,0.09);border-color:var(--denim-light);}
+#workflowApp .tag-card.st-menunggu_pembayaran{border-left-color:#8a6d3b;}
 #workflowApp .tag-card.st-baru{border-left-color:var(--amber);}
 #workflowApp .tag-card.st-diproses_desainer{border-left-color:var(--denim);}
 #workflowApp .tag-card.st-desain_selesai{border-left-color:var(--purple);}
@@ -2428,6 +2430,7 @@ button,a,select,label,input[type=checkbox],input[type=radio],[onclick]{touch-act
 
   <main>
     <div id="kgResellerInbox"></div>
+    <div id="kgWfSync"></div>
     <div class="kg-summary" id="kgSummary"></div>
     <div class="kg-note"><b>Cara hitung:</b> Pemasukan hanya menghitung uang yang <b>sudah benar-benar masuk</b> (DP, pelunasan, atau bayar full langsung) dan transaksi manual. Nota yang <b>belum ada pembayaran sama sekali</b> tidak dihitung, dan nota <b>DP</b> hanya dihitung sebesar DP yang sudah dibayar, sisanya masuk saat dilunasi.</div>
 
@@ -3330,6 +3333,8 @@ function subscribeInvoicesRealtime(){
   db.collection('invoices').orderBy('createdAt', 'desc')
     .onSnapshot(snapshot => {
       invoicesCache = snapshot.docs.map(d => d.data());
+      wfsInvLoaded = true;
+      try{ wfsAutoSoon(); }catch(e){}
       renderKeuangan();
       if(currentMode==='workflow'){ try{ render(); }catch(e){} }
     }, err => console.error('Realtime invoices error', err));
@@ -3350,6 +3355,7 @@ function initKeuangan(){
   invoicesInited = true;
   renderKeuangan();
   subscribeInvoicesRealtime();
+  try{ wfsEnsureProjects(); }catch(e){ console.warn('wfsEnsureProjects', e); }
 }
 
 function genId(){
@@ -3385,6 +3391,7 @@ let state = {
 };
 
 const STATUS_LABEL = {
+  menunggu_pembayaran: 'Menunggu Pembayaran',
   baru: 'Baru / Belum Dikerjakan',
   diproses_desainer: 'Diproses Desainer',
   desain_selesai: 'Desain Selesai',
@@ -3507,6 +3514,7 @@ function renderAdminView(){
   const all = projectsCache;
   const counts = {
     all: all.length,
+    menunggu_pembayaran: all.filter(p=>p.status==='menunggu_pembayaran').length,
     baru: all.filter(p=>p.status==='baru').length,
     diproses_desainer: all.filter(p=>p.status==='diproses_desainer').length,
     desain_selesai: all.filter(p=>p.status==='desain_selesai').length,
@@ -3559,6 +3567,7 @@ function renderAdminView(){
   return sub + stats + searchBox + `
     <div class="stage-nav">
       ${pill('all','Semua',counts.all)}
+      ${pill('menunggu_pembayaran','Menunggu Pembayaran',counts.menunggu_pembayaran)}
       ${pill('baru','Baru',counts.baru)}
       ${pill('diproses_desainer','Diproses Desainer',counts.diproses_desainer)}
       ${pill('desain_selesai','Desain Selesai',counts.desain_selesai)}
@@ -4290,7 +4299,9 @@ function openDetailModal(id){
     <div class="kv"><b>Referensi</b><div>${refHtml}</div></div>
   `;
 
-  if(p.status === 'baru'){
+  if(p.status === 'menunggu_pembayaran'){
+    body += `<div class="note-box">Project ini menunggu pembayaran (DP) dari client. Setelah DP tercatat di Keuangan, statusnya otomatis pindah ke <b>Baru</b>.</div>`;
+  } else if(p.status === 'baru'){
     body += `<div class="note-box">Project ini belum mulai dikerjakan Desainer.</div>`;
     if(state.role==='desainer' && sameName(p.namaDesainer)){
       body += `<div class="modal-actions"><button class="btn block" onclick="startDesain('${p.id}')">Mulai Desain</button></div>`;
@@ -4341,7 +4352,7 @@ function openDetailModal(id){
   if(state.role==='admin'){
     body += `
       <div class="modal-actions">
-        <button class="btn gold block" onclick="openNotaFromProject('${p.id}')">Buat Nota untuk Client Ini</button>
+        <button class="btn gold block" onclick="openNotaFromProject('${p.id}')">${p.invNo ? 'Lihat Nota #'+escapeHtml(String(p.invNo)) : 'Buat Nota untuk Client Ini'}</button>
       </div>
     `;
   }
@@ -4757,16 +4768,28 @@ function renderFileThumb(item, size, removeFn, removeIdx){
 }
 
 /* ===================== JEMBATAN KE GENERATOR NOTA ===================== */
+let notaSourceProjectId = '';
 function openNotaFromProject(id){
   const p = projectsCache.find(x=>x.id===id);
   if(!p) return;
 
+  /* Project ini sudah punya nota -> buka nota itu, jangan bikin nota dobel / input ulang */
+  const exist = p.invNo ? (invoicesCache||[]).find(i=>String(i.invNo)===String(p.invNo)) : null;
+  if(exist){
+    closeModal(); showMode('keuangan');
+    setTimeout(()=>{ try{ openInvoiceDetail(String(exist.invNo)); }catch(e){ console.warn(e); } }, 350);
+    return;
+  }
+  notaSourceProjectId = p.id;
+
+  const tag = ((typeof wfTagMap!=='undefined' && wfTagMap[p.id]) || []).filter(t=>t!=='Lainnya')[0] || 'Kaos';
   const sizeItems = (p.ukuran||[]).filter(u=>u.ukuran && (parseInt(u.qty)||0) > 0);
   notaItems = sizeItems.length
-    ? sizeItems.map(u=>({ desc:`KAOS UKURAN ${String(u.ukuran).toUpperCase()}`, price:0, qty:parseInt(u.qty)||0 }))
+    ? sizeItems.map(u=>({ desc:`${String(tag).toUpperCase()} UKURAN ${String(u.ukuran).toUpperCase()}`, price:0, qty:parseInt(u.qty)||0 }))
     : [{ desc:(p.briefDesain||'PESANAN').toUpperCase().slice(0,40), price:0, qty: totalQty(p)||1 }];
 
   const custEl = document.getElementById('custName'); if(custEl) custEl.value = p.namaKlien || '';
+  const phEl = document.getElementById('custPhone'); if(phEl) phEl.value = p.noHp || '';
   const invEl = document.getElementById('invNo'); if(invEl) invEl.value = ''; // nomor baru diberikan otomatis saat disimpan
   const dateEl = document.getElementById('invDate'); if(dateEl) dateEl.value = new Date().toISOString().slice(0,10);
   const dueEl = document.getElementById('dueDate');
@@ -4783,7 +4806,7 @@ function openNotaFromProject(id){
   const banner = document.getElementById('notaSourceBanner');
   if(banner){
     banner.style.display = 'block';
-    banner.textContent = `Data ditarik otomatis dari Project ${p.id} — ${p.namaKlien}. Harga satuan belum terisi, silakan lengkapi sebelum diunduh.`;
+    banner.textContent = `Data ditarik otomatis dari Project ${p.id} — ${p.namaKlien} (nama, No. HP, ukuran & qty, deadline, brief). Harga satuan belum terisi, silakan lengkapi sebelum diunduh. Nota akan otomatis tertaut ke project ini.`;
   }
 
   closeModal();
@@ -4967,7 +4990,17 @@ async function ensureNotaSaved(){
       createdBy: state.myName || '-',
       createdAt: new Date().toISOString()
     };
-    await saveInvoiceRecord(record);
+    const srcPid = notaSourceProjectId;
+    if(srcPid) record.projectId = srcPid;
+    const okSave = await saveInvoiceRecord(record);
+    if(okSave && srcPid){
+      try{
+        await db.collection('projects').doc(srcPid).update({ invNo: String(invNo) });
+        const pr = projectsCache.find(x=>x.id===srcPid); if(pr) pr.invNo = String(invNo);
+        notaSourceProjectId = '';
+        if(currentMode==='workflow'){ try{ render(); }catch(e){} }
+      }catch(e){ console.warn('Gagal menautkan nota ke project (akan dirapikan oleh Cek Sinkronisasi)', e); }
+    }
     renderNota();
     return invNo;
   } finally {
@@ -4991,6 +5024,7 @@ function startNewNota(){
   document.getElementById('dpAmount').value = '';
   document.getElementById('notes').value = '';
   notaItems = [{ desc:"", price:0, qty:1 }];
+  notaSourceProjectId = '';
   const banner = document.getElementById('notaSourceBanner');
   if(banner) banner.style.display = 'none';
   renderItemsForm();
@@ -5178,6 +5212,7 @@ function kgIncomeEntries(all){
 function renderKeuangan(){
   if(!document.getElementById('kgSummary')) return;
   try{ rsRenderInbox(); rsUpdateBadges(); }catch(e){ console.warn('reseller inbox', e); }
+  try{ wfsRenderInbox(); }catch(e){ console.warn('sinkron alur kerja', e); }
   const all = combinedTransactions();
   const entries = kgIncomeEntries(all);
 
@@ -7577,6 +7612,8 @@ function openInvoiceDetail(invNo){
         <h3>Invoice #${escapeHtml(inv.invNo)}</h3>
         <div class="kg-modal-sub">${escapeHtml(inv.custName)} ${inv.custPhone ? '· '+escapeHtml(inv.custPhone):''} · <span class="kg-badge ${status}">${statusLabel}</span></div>
 
+        ${wfsDetailHtml(inv)}
+
         <table class="kg-items-table">
           <thead><tr><th>Item</th><th>Harga</th><th>Qty</th><th>Subtotal</th></tr></thead>
           <tbody>${itemsRows}</tbody>
@@ -9455,6 +9492,17 @@ async function wspRunDelete(kind){
   alert('Berhasil menghapus '+del.length+' data prospek.');
 }
 
+/* Tanda pengenal prospek untuk deteksi duplikat (event + kontak WA/IG; kalau kontak kosong pakai nama PIC) */
+function wspDupSigs(p){
+  const ek=wspEventKey(p.namaEvent)||'-', ck=wspContactKeys(p), sig=[];
+  ck.forEach(k=>sig.push(ek+'|'+k));
+  if(!ck.length){
+    const pic=String(p.namaPic||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+    if(pic && pic!=='pic' && ek!=='-') sig.push(ek+'|pic:'+pic);
+  }
+  return sig;
+}
+
 async function wspSubmitExcelImport(){
   if(!wspPendingImportRows || !wspPendingImportRows.length){
     alert('Pilih file Excel yang valid terlebih dahulu.');
@@ -9494,6 +9542,26 @@ async function wspSubmitExcelImport(){
     updatedAt: new Date().toISOString()
   }));
 
+  // Lewati data yang sudah masuk: sama dengan prospek karyawan ini di database, atau dobel di dalam file
+  const seenSig = new Set();
+  wspProspectsFor(emp.id).forEach(x=>wspDupSigs(x).forEach(g=>seenSig.add(g)));
+  const allRows = recordsToSave.slice();
+  recordsToSave.length = 0;
+  let skippedDup = 0;
+  allRows.forEach(rec=>{
+    const sg = wspDupSigs(rec);
+    if(sg.length && sg.some(g=>seenSig.has(g))){ skippedDup++; return; }
+    sg.forEach(g=>seenSig.add(g));
+    recordsToSave.push(rec);
+  });
+  if(!recordsToSave.length){
+    wspPendingImportRows = [];
+    wspCloseModal();
+    renderAbsensi();
+    alert(`Tidak ada data baru. Semua ${skippedDup} baris sudah ada di database, jadi tidak dimasukkan lagi.`);
+    return;
+  }
+
   // Cek duplikat antar karyawan (event + PIC sama)
   let autoOtherCount = 0; const propagated = [];
   recordsToSave.forEach(rec=>{
@@ -9510,6 +9578,7 @@ async function wspSubmitExcelImport(){
     wspCloseModal();
     renderAbsensi();
     alert(`Berhasil mengimpor ${recordsToSave.length} data prospek PIC ke database!\nData tersimpan otomatis dan progres KPI harian Anda telah diperbarui.`
+      + (skippedDup ? `\n${skippedDup} baris dilewati karena sudah ada di database (duplikat).` : '')
       + (recordsToSave.filter(r=>r.igUsername).length ? `\n${recordsToSave.filter(r=>r.igUsername).length} prospek punya username Instagram (tombol DM IG aktif).` : '')
       + (autoOtherCount ? `\n${autoOtherCount} prospek sudah dihubungi karyawan lain, otomatis masuk "Sudah Dihubungi".` : '')
       + (propagated.length ? `\n${propagated.length} data milik karyawan lain otomatis dipindah ke "Sudah Dihubungi".` : ''));
@@ -12635,6 +12704,197 @@ async function rsReconcile(manual){
   rsRecBusy = false;
 }
 
+/* ===================== SINKRON ALUR KERJA <-> NOTA <-> KEUANGAN (SEMUA SUMBER, BUKAN HANYA RESELLER) =====================
+   Project di Alur Kerja = sumber data klien (nama, No. HP, ukuran & qty, deadline, brief). Nota/Keuangan memakai data itu,
+   bukan input ulang. Tautan project <-> nota disimpan dua arah (project.invNo & invoice.projectId), jadi badge DP/Lunas
+   di Alur Kerja dan info klien di detail nota selalu sama. Hanya MENGISI field yang kosong & menautkan; tidak menimpa input. */
+var wfsInvLoaded = false, wfsProjLoaded = false, wfsProjSub = false, wfsBusy = false, wfsRetried = false;
+function wfsEnsureProjects(){
+  if(wfsProjSub || !CONFIG_READY) return;
+  wfsProjSub = true;
+  db.collection('projects').orderBy('createdAt','desc').onSnapshot(snap=>{
+    projectsCache = snap.docs.map(d=>d.data());
+    wfsProjLoaded = true;
+    try{ wfsAutoSoon(); }catch(e){}
+    try{ renderKeuangan(); }catch(e){}
+  }, err=>console.warn('wfs projects', err));
+}
+function wfsState(){
+  const invs = invoicesCache||[], prjs = projectsCache||[];
+  const invByNo = {}, prjById = {};
+  invs.forEach(i=>{ invByNo[String(i.invNo)] = i; });
+  prjs.forEach(p=>{ prjById[p.id] = p; });
+  const pairs = [], usedInv = new Set(), usedPrj = new Set();
+  const add = (p,i)=>{ if(usedPrj.has(p.id) || usedInv.has(String(i.invNo))) return; pairs.push({p:p, inv:i}); usedPrj.add(p.id); usedInv.add(String(i.invNo)); };
+  prjs.forEach(p=>{ if(p.invNo && invByNo[String(p.invNo)]) add(p, invByNo[String(p.invNo)]); });
+  invs.forEach(i=>{ if(i.projectId && prjById[i.projectId]) add(prjById[i.projectId], i); });
+  /* pencocokan otomatis hanya bila TIDAK ambigu: nama sama, jarak tanggal <= 45 hari, 1 project <-> 1 nota */
+  const freeP = prjs.filter(p=>!usedPrj.has(p.id)), freeI = invs.filter(i=>!usedInv.has(String(i.invNo)));
+  const near = (p,i)=>{ const k = wfNorm(p.namaKlien); if(!k || k!==wfNorm(i.custName)) return false; const d = Date.parse(i.invDate||i.createdAt)||0; return Math.abs(d-(p.createdAt||0)) <= 45*864e5; };
+  const auto = [];
+  freeP.forEach(p=>{ const c = freeI.filter(i=>near(p,i)); if(c.length===1 && freeP.filter(q=>near(q,c[0])).length===1) auto.push({p:p, inv:c[0]}); });
+  auto.forEach(x=>{ pairs.push(x); usedPrj.add(x.p.id); usedInv.add(String(x.inv.invNo)); });
+  return { pairs:pairs, noInv:prjs.filter(p=>!usedPrj.has(p.id)), noPrj:invs.filter(i=>!usedInv.has(String(i.invNo))) };
+}
+function wfsProjForInv(inv){
+  const prjs = projectsCache||[];
+  return prjs.find(p=>p.invNo && String(p.invNo)===String(inv.invNo)) || (inv.projectId ? prjs.find(p=>p.id===inv.projectId) : null) || null;
+}
+async function wfsReconcile(manual){
+  if(wfsBusy || !CONFIG_READY) return;
+  if(!wfsInvLoaded || !wfsProjLoaded){
+    if(manual) rsToast('Data masih dimuat, coba lagi sebentar lagi');
+    else if(!wfsRetried){ wfsRetried = true; setTimeout(()=>wfsReconcile(false), 8000); }
+    return;
+  }
+  wfsBusy = true;
+  try{
+    const S = wfsState(), invUpd = {}, prjUpd = {};
+    const U = (m,k,o)=>{ m[k] = Object.assign(m[k]||{}, o); };
+    let nLink = 0, nPhone = 0, nFix = 0;
+    S.pairs.forEach(x=>{
+      const p = x.p, inv = x.inv, no = String(inv.invNo);
+      if(String(p.invNo||'')!==no || inv.projectId!==p.id){ nLink++; }
+      if(String(p.invNo||'')!==no) U(prjUpd, p.id, { invNo:no });
+      if(inv.projectId!==p.id) U(invUpd, no, { projectId:p.id });
+      if(!String(inv.custPhone||'').trim() && String(p.noHp||'').trim()){ U(invUpd, no, { custPhone:p.noHp }); nPhone++; }
+      if(!String(p.noHp||'').trim() && String(inv.custPhone||'').trim()){ U(prjUpd, p.id, { noHp:inv.custPhone }); nPhone++; }
+    });
+    (invoicesCache||[]).forEach(inv=>{
+      const pays = inv.payments||[]; if(!pays.length) return;
+      const sum = pays.reduce((a,y)=>a+(Number(y.amount)||0),0);
+      if(Number(inv.totalDibayar||0)!==sum){ U(invUpd, String(inv.invNo), { totalDibayar:sum }); nFix++; }
+    });
+    const ops = [];
+    Object.keys(prjUpd).forEach(id=>ops.push([db.collection('projects').doc(id), prjUpd[id]]));
+    Object.keys(invUpd).forEach(no=>ops.push([db.collection('invoices').doc(no), invUpd[no]]));
+    for(let k=0;k<ops.length;k+=400){ const b = db.batch(); ops.slice(k,k+400).forEach(o=>b.update(o[0], o[1])); await b.commit(); }
+    if(ops.length) rsToast('Sinkronisasi: '+nLink+' project↔nota ditautkan, '+nPhone+' No. HP dilengkapi, '+nFix+' total bayar dibetulkan');
+    else if(manual) rsToast('✓ Alur Kerja, nota & Keuangan sudah sinkron');
+  }catch(e){ console.warn('wfsReconcile', e); if(manual) rsToast('Sinkronisasi gagal: '+e.message); }
+  wfsBusy = false;
+}
+/* Total yang sudah dibayar pada nota (ambil yang terbesar antara field total & jumlah riwayat bayar) */
+function wfsPaid(inv){
+  const sum = (inv.payments||[]).reduce((a,y)=>a+(Number(y.amount)||0),0);
+  return Math.max(Number(inv.totalDibayar||0), sum);
+}
+/* Otomatis: (1) nota di Keuangan yang BELUM punya project dibuatkan project di Alur Kerja
+   (belum DP -> "Menunggu Pembayaran", sudah DP -> "Baru"); (2) project "Menunggu Pembayaran" yang notanya sudah DP -> "Baru".
+   Nota yang sudah tertaut / sudah punya project TIDAK dibuat lagi. Id project dibuat tetap dari nomor nota
+   + dicek di dalam transaksi, jadi kalau dijalankan di beberapa perangkat sekaligus tetap tidak dobel. */
+var wfsAutoBusy = false, wfsAutoTimer = null;
+function wfsAutoSoon(){ clearTimeout(wfsAutoTimer); wfsAutoTimer = setTimeout(wfsAutoSync, 1500); }
+async function wfsAutoSync(){
+  if(wfsAutoBusy || !CONFIG_READY || !wfsInvLoaded || !wfsProjLoaded) return;
+  if(typeof authIsReseller==='function' && authIsReseller()) return;
+  wfsAutoBusy = true;
+  try{
+    const S = wfsState(), cutoff = Date.now()-60*864e5;
+    let nNew = 0, nMove = 0;
+    // (2) sudah DP -> pindah dari Menunggu Pembayaran ke Baru
+    for(const x of S.pairs){
+      if(x.p.status==='menunggu_pembayaran' && wfsPaid(x.inv)>0){
+        const ref = db.collection('projects').doc(x.p.id);
+        const moved = await db.runTransaction(async tx=>{
+          const d = await tx.get(ref);
+          if(!d.exists || d.data().status!=='menunggu_pembayaran') return false;
+          tx.update(ref, { status:'baru' }); return true;
+        });
+        if(moved) nMove++;
+      }
+    }
+    // (1) nota tanpa project -> buat project (hanya yang belum tertaut & tidak ambigu)
+    const prjs = projectsCache||[];
+    const ambiguous = i => prjs.some(p=>{
+      if(p.invNo) return false;                                   // project itu sudah punya nota lain
+      const k = wfNorm(p.namaKlien); if(!k || k!==wfNorm(i.custName)) return false;
+      const d = Date.parse(i.invDate||i.createdAt)||0; return Math.abs(d-(p.createdAt||0)) <= 45*864e5;
+    });
+    for(const inv of S.noPrj){
+      if(inv.source==='reseller' || String(inv.custName||'').indexOf('(Reseller)')>=0) continue;
+      if((Date.parse(inv.invDate||inv.createdAt)||0) < cutoff) continue;
+      if(inv.projectId) continue;                                 // sudah pernah dibuatkan / ditautkan
+      if(ambiguous(inv)) continue;                                // mungkin sudah ada project manual -> biar dicek manual
+      const no = String(inv.invNo), items = inv.items||[], pid = 'INV-'+no;
+      const dp = wfsPaid(inv) > 0;
+      const proj = { id:pid, namaKlien:inv.custName||'(tanpa nama)', noHp:inv.custPhone||'', via:'Lainnya',
+        briefDesain:(inv.notes && String(inv.notes).trim()) ? inv.notes : ('Pesanan Nota #'+no+': '+items.map(l=>l.desc+' ×'+l.qty).join(', ')),
+        ukuran:items.map(l=>({ ukuran:String(l.desc||''), qty:Number(l.qty)||0 })), referensi:[],
+        namaDesainer:'', namaProduksi:'', komisiPerPcs:0, status: dp ? 'baru' : 'menunggu_pembayaran', createdAt:Date.now(),
+        desainMulai:null, pedomanDesain:'', pedomanGambar:[], listDesain:'', deadline:inv.dueDate||'', produksiMulai:null, selesaiAt:null,
+        invNo:no, autoDariNota:true };
+      const pref = db.collection('projects').doc(pid), iref = db.collection('invoices').doc(no);
+      const made = await db.runTransaction(async tx=>{
+        const [pd, idoc] = await Promise.all([tx.get(pref), tx.get(iref)]);
+        if(pd.exists) { if(idoc.exists && !idoc.data().projectId) tx.update(iref, { projectId:pid }); return false; }
+        if(!idoc.exists || idoc.data().projectId) return false;
+        tx.set(pref, proj); tx.update(iref, { projectId:pid }); return true;
+      });
+      if(made) nNew++;
+    }
+    if(nNew||nMove) rsToast('Alur Kerja diperbarui otomatis: '+nNew+' project baru dari nota, '+nMove+' pindah ke "Baru" (sudah DP)');
+  }catch(e){ console.warn('wfsAutoSync', e); }
+  wfsAutoBusy = false;
+}
+function wfsOpenProject(id){
+  try{ closeKgModal(); }catch(e){}
+  showMode('workflow');
+  setTimeout(()=>{ try{ openDetailModal(id); }catch(e){ console.warn(e); } }, 450);
+}
+async function wfsProjectFromInvoice(no){
+  const inv = (invoicesCache||[]).find(i=>String(i.invNo)===String(no)); if(!inv) return;
+  if(wfsProjForInv(inv) || inv.projectId){ rsToast('Nota ini sudah punya project'); return; }
+  if(!confirm('Buat project di Alur Kerja dari Nota #'+inv.invNo+'?\n\nNama, No. HP, item & qty diambil dari nota sehingga tidak perlu diinput ulang.\nStatus awal: '+(wfsPaid(inv)>0?'Baru (sudah DP)':'Menunggu Pembayaran')+'.')) return;
+  try{
+    const nomor = String(inv.invNo), id = 'INV-'+nomor, items = inv.items||[], dp = wfsPaid(inv) > 0;
+    const proj = { id:id, namaKlien:inv.custName||'(tanpa nama)', noHp:inv.custPhone||'', via:'Lainnya',
+      briefDesain:(inv.notes && String(inv.notes).trim()) ? inv.notes : ('Pesanan Nota #'+inv.invNo+': '+items.map(l=>l.desc+' ×'+l.qty).join(', ')),
+      ukuran:items.map(l=>({ ukuran:String(l.desc||''), qty:Number(l.qty)||0 })), referensi:[],
+      namaDesainer:'', namaProduksi:'', komisiPerPcs:0, status: dp ? 'baru' : 'menunggu_pembayaran', createdAt:Date.now(),
+      desainMulai:null, pedomanDesain:'', pedomanGambar:[], listDesain:'', deadline:inv.dueDate||'', produksiMulai:null, selesaiAt:null,
+      invNo:nomor };
+    const pref = db.collection('projects').doc(id), iref = db.collection('invoices').doc(nomor);
+    const made = await db.runTransaction(async tx=>{
+      const pd = await tx.get(pref); if(pd.exists){ tx.update(iref, { projectId:id }); return false; }
+      tx.set(pref, proj); tx.update(iref, { projectId:id }); return true;
+    });
+    rsToast(made ? '✓ Project dibuat di Alur Kerja dari Nota #'+inv.invNo : 'Project untuk nota ini sudah ada, hanya ditautkan');
+  }catch(e){ alert('Gagal membuat project: '+e.message); }
+}
+function wfsRenderInbox(){
+  const el = document.getElementById('kgWfSync'); if(!el) return;
+  if(!wfsInvLoaded || !wfsProjLoaded){ el.innerHTML = ''; return; }
+  const S = wfsState(), cutoff = Date.now()-60*864e5;
+  const noInv = S.noInv.filter(p=>p.status!=='selesai' && p.via!=='Reseller');
+  const noPrj = S.noPrj.filter(i=>i.source!=='reseller' && (Date.parse(i.invDate||i.createdAt)||0) >= cutoff);
+  const n = noInv.length + noPrj.length;
+  let h = '<div class="rs-in" style="border-color:var(--navy);"><div class="rs-hd"><b>Sinkron Alur Kerja ↔ Keuangan</b><span>'+
+    (n ? noInv.length+' project belum punya nota · '+noPrj.length+' nota belum punya project' : 'Semua project aktif & nota sudah saling tertaut ✓')+
+    '</span><button class="btn" onclick="wfsReconcile(true)">Cek Sinkronisasi</button></div>';
+  noInv.slice(0,8).forEach(p=>{
+    h += '<div class="rs-it"><div><b>Project '+escapeHtml(p.id)+'</b> · '+escapeHtml(p.namaKlien||'-')+'<small>'+totalQty(p)+' pcs · '+escapeHtml(p.via||'-')+(p.deadline?' · deadline '+escapeHtml(formatDateID(p.deadline)):'')+' · belum ada nota</small></div>'+
+      '<div class="rs-ac"><button class="btn gold" onclick="openNotaFromProject(\''+escapeHtml(p.id)+'\')">Buat Nota dari Project</button></div></div>';
+  });
+  noPrj.slice(0,8).forEach(i=>{
+    h += '<div class="rs-it"><div><b>Nota #'+escapeHtml(String(i.invNo))+'</b> · '+escapeHtml(i.custName||'-')+'<small>'+(i.items||[]).map(x=>escapeHtml(x.desc)+' ×'+x.qty).join(', ')+' · belum ada project di Alur Kerja</small></div>'+
+      '<div class="rs-ac"><button class="btn gold" onclick="wfsProjectFromInvoice(\''+escapeHtml(String(i.invNo))+'\')">Buat Project dari Nota</button><button class="btn" onclick="openInvoiceDetail(\''+escapeHtml(String(i.invNo))+'\')">Buka Nota</button></div></div>';
+  });
+  if(noInv.length>8 || noPrj.length>8) h += '<div class="rs-it"><small>Menampilkan 8 teratas per daftar; selesaikan dulu lalu daftar berikutnya muncul.</small></div>';
+  el.innerHTML = h+'</div>';
+}
+function wfsDetailHtml(inv){
+  const p = wfsProjForInv(inv);
+  if(!p) return '<div class="kg-note" style="margin:0 0 14px;">Nota ini belum tertaut ke project di Alur Kerja. <button class="btn small" style="margin-left:6px;" onclick="closeKgModal();wfsProjectFromInvoice(\''+escapeHtml(String(inv.invNo))+'\')">Buat Project dari Nota</button></div>';
+  const qty = totalQty(p), kom = (Number(p.komisiPerPcs)||0)*qty;
+  const uk = (p.ukuran||[]).filter(u=>u.ukuran).map(u=>escapeHtml(u.ukuran)+' ×'+(parseInt(u.qty)||0)).join(', ');
+  return '<div class="kg-note" style="margin:0 0 14px;text-align:left;"><b>Dari Alur Kerja</b> · '+escapeHtml(p.id)+' · <span class="kg-badge manual">'+escapeHtml(String(p.status||'baru').replace(/_/g,' ').toUpperCase())+'</span><br>'+
+    escapeHtml(p.namaKlien||'-')+(p.noHp?' · '+escapeHtml(p.noHp):'')+' · via '+escapeHtml(p.via||'-')+' · '+qty+' pcs'+(p.deadline?' · deadline '+escapeHtml(formatDateID(p.deadline)):'')+'<br>'+
+    (uk?'Ukuran: '+uk+'<br>':'')+
+    (p.namaDesainer||p.namaProduksi?'Desainer: '+escapeHtml(p.namaDesainer||'-')+' · Produksi: '+escapeHtml(p.namaProduksi||'-')+(kom?' · Komisi produksi '+formatRupiah(kom)+' ('+formatRupiah(p.komisiPerPcs)+'/pcs)':'')+'<br>':'')+
+    '<button class="btn small" style="margin-top:6px;" onclick="wfsOpenProject(\''+escapeHtml(p.id)+'\')">Buka di Alur Kerja</button></div>';
+}
+
 /* ---------------- TAMPILAN RESELLER (LIHAT SAJA) ---------------- */
 function plBadge(type){
   const L = { naik:'HARGA NAIK', turun:'HARGA TURUN', baru:'BARU', ubah:'DIUBAH', hapus:'DIHAPUS' };
@@ -13076,7 +13336,7 @@ function authEnter(){
   authApply();
   try{ authWatch(); }catch(e){ console.warn('authWatch', e); }
   showMode(authIsReseller() ? 'pricelist' : 'landing');
-  if(!authIsReseller()){ try{ initKeuangan(); }catch(e){ console.warn(e); } setTimeout(()=>rsReconcile(false), 8000); }
+  if(!authIsReseller()){ try{ initKeuangan(); }catch(e){ console.warn(e); } setTimeout(()=>{ rsReconcile(false); wfsReconcile(false); }, 8000); }
 }
 async function authLoginToken(){
   const err = document.getElementById('authErr');
