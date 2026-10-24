@@ -2033,7 +2033,7 @@ body.tx-locked > *:not(#authGate){display:none !important;}
 #globalNav .gn-links button#gn-btn-logout{background:transparent;}
 /* RESELLER: hanya halaman Harga Reseller */
 body.tx-reseller #landingScreen,body.tx-reseller #workflowApp,body.tx-reseller #notaApp,body.tx-reseller #keuanganApp,
-body.tx-reseller #financeApp,body.tx-reseller #absensiApp,body.tx-reseller #sopShell,
+body.tx-reseller #financeApp,body.tx-reseller #workorderApp,body.tx-reseller #absensiApp,body.tx-reseller #sopShell,
 body.tx-reseller .wfc-fab,body.tx-reseller .kgchat-fab,body.tx-reseller .wai-fab,
 body.tx-reseller #wfChat,body.tx-reseller #kgChat,body.tx-reseller #waiPanel{display:none !important;}
 body.tx-reseller #globalNav .gn-links button:not(#gn-btn-pricelist):not(#gn-btn-logout){display:none;}
@@ -2144,6 +2144,7 @@ button,a,select,label,input[type=checkbox],input[type=radio],[onclick]{touch-act
     <button id="gn-btn-landing" class="active" onclick="goHome()">Menu Utama</button>
     <button id="gn-btn-workflow" onclick="showMode('workflow')">Alur Kerja</button>
     <button id="gn-btn-nota" onclick="showMode('nota')">Generator Nota</button>
+    <button id="gn-btn-workorder" onclick="showMode('workorder')">Work Order</button>
     <button id="gn-btn-keuangan" onclick="showMode('keuangan')">Keuangan</button>
     <button id="gn-btn-finance" onclick="showMode('finance')">FINANCE</button>
     <button id="gn-btn-absensi" onclick="showMode('absensi')">Workspace</button>
@@ -2203,6 +2204,12 @@ button,a,select,label,input[type=checkbox],input[type=radio],[onclick]{touch-act
       <h2>Harga Reseller</h2>
       <p>Price list internal TENX Apparel (kaos, polo, jersey, dll.) untuk reseller. Reseller cukup melihat harga &amp; update terbaru; hanya Owner yang bisa mengubah harga lewat dashboard.</p>
       <span class="ls-cta">Lihat Harga &rarr;</span>
+    </button>
+    <button class="ls-card ls-card-workorder" onclick="showMode('workorder')">
+      <div class="ls-icon">08</div>
+      <h2>Work Order Otomatis</h2>
+      <p>Upload mockup, gambar depan &amp; belakang, lalu tempel daftar nama + ukuran + lengan dari customer. Rekap size dihitung otomatis dan hasilnya jadi PDF: halaman 1 work order, halaman 2 daftar nama.</p>
+      <span class="ls-cta">Buat Work Order &rarr;</span>
     </button>
   </div>
   <div class="ls-hint">Tips: dari halaman detail sebuah project di Alur Kerja, Admin bisa klik "Buat Nota untuk Client Ini" — nama client, ukuran, dan qty akan otomatis terisi di Generator Nota.</div>
@@ -2620,6 +2627,306 @@ button,a,select,label,input[type=checkbox],input[type=radio],[onclick]{touch-act
   </div>
   <main id="sopApp"><div class="sop-empty">Memuat SOP&hellip;</div></main>
 </div>
+
+<style>
+#landingScreen .ls-card-workorder .ls-cta{color:#9be3d0;}
+#workorderApp{background:#eef1f8;min-height:100vh;font-family:'Segoe UI',Arial,sans-serif;color:#1a1a1a;}
+#workorderApp *{box-sizing:border-box;}
+#workorderApp .wo-head{background:#152452;color:#fff;padding:16px 24px;border-bottom:3px solid #f5c518;}
+#workorderApp .wo-head h1{margin:0;font:28px 'Bebas Neue',sans-serif;letter-spacing:.04em;}
+#workorderApp .wo-head .sub{font-size:12px;color:#c6d0ec;}
+#workorderApp .wo-lay{display:grid;grid-template-columns:400px 1fr;gap:18px;padding:18px;align-items:start;}
+@media(max-width:960px){#workorderApp .wo-lay{grid-template-columns:1fr;}}
+#workorderApp .wo-card{background:#fff;border:1px solid #e3e6ee;border-radius:12px;padding:14px;margin-bottom:14px;}
+#workorderApp .wo-card h2{margin:0 0 10px;font:19px 'Bebas Neue',sans-serif;letter-spacing:.04em;color:#152452;}
+#workorderApp label{display:block;font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;margin:8px 0 3px;}
+#workorderApp label.chk{display:flex;gap:8px;align-items:center;text-transform:none;font-size:12.5px;color:#1a1a1a;}
+#workorderApp input,#workorderApp select,#workorderApp textarea{width:100%;border:1.5px solid #d5d9e4;border-radius:8px;padding:8px 10px;font:13px inherit;font-family:inherit;background:#fff;}
+#workorderApp input[type=checkbox]{width:auto;}
+#workorderApp input.bad{border-color:#b3441f;background:#fdeee9;}
+#workorderApp .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+#workorderApp .hint{font-size:12px;color:#33507a;margin-top:6px;}
+#workorderApp button{font-family:inherit;cursor:pointer;}
+#workorderApp .wo-z{border:1.5px dashed #b9c3dc;border-radius:10px;padding:10px;margin-bottom:8px;background:#f6f8fe;}
+#workorderApp .wo-z .t{font-size:12px;font-weight:700;margin-bottom:6px;}
+#workorderApp .wo-z .th{height:90px;background:center/contain no-repeat #fff;border:1px solid #e3e6ee;border-radius:6px;}
+#workorderApp .wo-z .a{display:flex;gap:6px;margin-top:6px;}
+#workorderApp .wo-z button,#workorderApp .pk,#workorderApp .sm{border:1.5px solid #d5d9e4;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;}
+#workorderApp .pk{width:100%;padding:12px;}
+#workorderApp .wo-man{display:grid;grid-template-columns:50px 1fr 1fr;gap:5px;align-items:center;margin-top:8px;}
+#workorderApp .wo-man .b{font-weight:700;font-size:12px;}
+#workorderApp .wo-lt{width:100%;border-collapse:collapse;margin-top:8px;}
+#workorderApp .wo-lt th{font-size:11px;text-align:left;color:#6b7280;}
+#workorderApp .wo-lt td{padding:2px;}
+#workorderApp .wo-lt td:last-child{width:30px;}
+#workorderApp .wo-lt input,#workorderApp .wo-lt select{padding:5px 6px;font-size:12px;}
+#workorderApp .wo-bar{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+#workorderApp .wo-main{background:#152452;color:#fff;border:none;border-radius:9px;padding:10px 18px;font-weight:700;font-size:13px;}
+#workorderApp .wo-main:disabled{opacity:.6;}
+#workorderApp .wo-out{background:#fff;border:1.5px solid #d5d9e4;border-radius:9px;padding:10px 16px;font-weight:600;font-size:13px;}
+#woStage{position:relative;width:100%;overflow:hidden;background:#fff;border:1px solid #d5d9e4;}
+#woStage .wo-wrap{position:absolute;left:0;top:0;width:1123px;transform-origin:0 0;background:#dfe4f0;}
+#woStage .wo-sheet{background:#fff;}#woStage .wo-sheet+.wo-sheet{margin-top:24px;}
+.wo-sheet.np-page{height:794px;padding:28px 32px;}
+.wo-sheet .np-h{display:flex;justify-content:space-between;align-items:center;border:1px solid #000;margin-bottom:14px;height:36px;font-family:'Bebas Neue','Arial Narrow',sans-serif;font-size:20px;}
+.wo-sheet .np-t{display:flex;align-items:center;height:100%;}
+.wo-sheet .np-t span{background:#70AD47;height:100%;display:flex;align-items:center;padding:0 12px;margin-right:12px;border-right:1px solid #000;}
+.wo-sheet .np-s{padding:0 12px;}
+.wo-sheet .np-c{display:grid;gap:16px;align-items:start;}
+.wo-sheet .np-tb{width:100%;table-layout:fixed;border-collapse:collapse;font-family:Arial,sans-serif;}
+.wo-sheet .np-tb th{background:#8EA2C4;border:1px solid #6f7f9c;height:24px;font-size:.9em;}
+.wo-sheet .np-tb th:nth-child(1){width:10%;}.wo-sheet .np-tb th:nth-child(3){width:18%;}.wo-sheet .np-tb th:nth-child(4){width:26%;}
+.wo-sheet .np-tb td{border:1px solid #8a8a8a;padding:0 6px;white-space:nowrap;overflow:hidden;}
+.wo-sheet .np-tb td.c{text-align:center;}
+.wo-sheet .np-tb td.bad{background:#fdeee9;color:#b3441f;}
+.wo-sheet .np-lg{display:flex;flex-wrap:wrap;gap:6px 22px;border:1px solid #000;background:#FFF2CC;padding:6px 10px;margin-bottom:12px;font-size:12px;font-family:Arial,sans-serif;}
+#workorderApp .wo-rl{display:grid;grid-template-columns:1.1fr 84px 1fr 30px;gap:5px;margin-bottom:5px;}
+#workorderApp .wo-rl.h span{font-size:10.5px;font-weight:700;color:#6b7280;}
+#workorderApp .wo-rl input,#workorderApp .wo-rl select{padding:6px 7px;font-size:12px;}
+.wo-sheet .np-tb tr.gh td{background:#D9E1F2;font-weight:700;text-align:left;border-color:#6f7f9c;}
+.wo-sheet{width:1123px;background:#fff;padding:0;color:#000;font-family:Arial,sans-serif;}
+.wo-sheet,.wo-sheet *{box-sizing:border-box;}
+.wo-sheet .ws-top{display:grid;grid-template-columns:48.5% 51.5%;border:1px solid #000;}
+.wo-sheet .ws-l{display:flex;flex-direction:column;border-right:1px solid #000;}
+.wo-sheet .ws-rt{display:flex;flex-direction:column;}
+.wo-sheet .ws-r{display:flex;height:24px;border-bottom:1px solid #000;align-items:center;font-family:'Bebas Neue','Arial Narrow',sans-serif;font-size:15px;letter-spacing:.02em;}
+.wo-sheet .ws-r .lab{width:130px;flex:none;height:100%;display:flex;align-items:center;padding:0 6px;border-right:1px solid #000;}
+.wo-sheet .ws-r .lab.g{background:#70AD47;}
+.wo-sheet .ws-r .lab.w{width:33.33%;}
+.wo-sheet .ws-r .val{flex:1;padding:0 8px;white-space:nowrap;overflow:hidden;}
+.wo-sheet .ws-r .val.c{text-align:center;font-family:Arial,sans-serif;font-weight:700;font-size:12px;}
+.wo-sheet .ws-r.red{background:#C00000;color:#fff;justify-content:center;font-size:14px;}
+.wo-sheet .ws-mk{flex:1;display:flex;flex-direction:column;}
+.wo-sheet .ws-mk .cap{text-align:center;font-size:11px;padding:2px;}
+.wo-sheet .ws-img{flex:1;min-height:220px;background:center/contain no-repeat;}
+.wo-sheet .ws-ph{display:flex;align-items:center;justify-content:center;color:#999;font-size:13px;border:1px dashed #bbb;margin:6px;}
+.wo-sheet .ws-two{flex:1;display:flex;}
+.wo-sheet .ws-two>div{flex:1;display:flex;flex-direction:column;}
+.wo-sheet b.cp{display:block;text-align:center;font-size:14px;padding:6px 0;}
+.wo-sheet .ws-g3{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid #000;}
+.wo-sheet .ws-g3>div{border-right:1px solid #000;padding:1px 5px;min-height:17px;font-size:11px;font-weight:700;}
+.wo-sheet .ws-g3>div:last-child{border-right:none;}
+.wo-sheet .ws-g3 .n{text-align:center;}
+.wo-sheet .ws-g3.h>div.c{text-align:center;}
+.wo-sheet .ws-bt{border-bottom:none;flex:1;}
+.wo-sheet .ws-pic{display:flex;flex-direction:column;}
+.wo-sheet .ws-pic .ws-img{min-height:250px;}
+.wo-sheet .ws-nm{width:100%;border-collapse:collapse;font-size:9px;}
+.wo-sheet .ws-nm th{background:#8EA2C4;border:1px solid #9aa6bd;font-weight:400;height:11px;}
+.wo-sheet .ws-nm td{border:1px solid #c4c4c4;padding:0 3px;height:11px;line-height:11px;white-space:nowrap;overflow:hidden;}
+.wo-sheet .ws-ct,.wo-sheet .ws-ck{font-family:'Bebas Neue','Arial Narrow',sans-serif;border:1px solid #000;border-top:none;}
+.wo-sheet .ws-ct{text-align:center;font-size:24px;line-height:30px;}
+.wo-sheet .ws-ck{display:grid;grid-template-columns:11% 25% 28% 36%;}
+.wo-sheet .ws-ck>div{border-right:1px solid #000;text-align:center;font-size:34px;line-height:40px;min-height:40px;}
+.wo-sheet .ws-ck>div:last-child{border-right:none;}
+.wo-sheet .ws-ck.b>div{min-height:80px;}
+</style>
+
+<div id="workorderApp" style="display:none;">
+  <div class="wo-head"><h1>WORK ORDER</h1><div class="sub">Generator Work Order Produksi &middot; TENX APPAREL</div></div>
+  <div class="wo-lay">
+    <div>
+      <div class="wo-card"><h2>Info Order</h2>
+        <label>Nama Work Order</label><input id="woTitle" placeholder="KAOS DIGITAL BISNIS UNAIC" oninput="woSet('title',this.value.toUpperCase())">
+        <div class="g2"><div><label>Tanggal Masuk</label><input id="woMasuk" type="date" oninput="woSet('masuk',this.value)"></div>
+        <div><label>Deadline</label><input id="woDead" type="date" oninput="woSet('deadline',this.value)"></div></div>
+        <div class="g2"><div><label>Status</label><select id="woStatus" onchange="woSet('status',this.value)"><option>DP/LUNAS</option><option>DP</option><option>LUNAS</option><option>BELUM BAYAR</option></select></div>
+        <div><label>Jumlah (kosongkan = otomatis)</label><input id="woOver" placeholder="mis. 31 PCS" oninput="woSet('over',this.value)"></div></div>
+      </div>
+      <div class="wo-card"><h2>Gambar</h2><div id="woZones"></div>
+        <div class="hint">Jika Mockup kosong, gambar Depan &amp; Belakang otomatis ditampilkan di kotak Mockup.</div>
+        <input type="file" id="woFile" accept="image/*" hidden onchange="woFile(this)">
+      </div>
+      <div class="wo-card"><h2>Ukuran</h2><div id="woUk"></div></div>
+      <div class="wo-card"><h2>Aturan Kategori</h2>
+        <div class="hint" style="margin:0 0 8px">Dipakai saat list tidak menyebut lengan: kata di list (mis. cowo) otomatis jadi lengan yang kamu tentukan. Keterangan seperti posisi logo hanya tampil di luar tabel nama. Kata kunci pisahkan dengan koma.</div>
+        <div id="woRules"></div>
+        <button class="sm" style="margin-top:6px" onclick="woAddRule()">+ Tambah Aturan</button>
+        <label>Jika tidak ada kata kategori &amp; lengan</label><select id="woDefLg"><option>Panjang</option><option>Pendek</option></select>
+      </div>
+      <div class="wo-card"><h2>Daftar Nama</h2>
+        <div id="woList"></div>
+        <button class="sm" style="margin-top:8px" onclick="woAddRow()">+ Tambah Baris</button> <button class="sm" style="margin-top:8px" onclick="woSort()">Urutkan per ukuran &amp; lengan</button>
+        <label>Tempel daftar (Excel / WhatsApp)</label>
+        <textarea id="woPaste" rows="4" placeholder="1.rangga XL +pendek&#10;2.okta XL + lengan panjang&#10;Najah, L, Panjang"></textarea>
+        <div class="hint">Tempel apa adanya dari chat customer. Dibaca otomatis: nomor di depan, ukuran dalam kurung (M), tanda +, salah ketik (lengn, pendekk), dan kata kategori (cowo/cewe) sesuai Aturan Kategori. Kalau lengan tidak disebut, lengan diambil dari aturan itu. Di halaman 2 PDF, nama otomatis dikelompokkan per ukuran lalu per lengan (Panjang dulu, baru Pendek), lengkap dengan jumlah tiap kelompok.</div><div class="hint" id="woImpMsg"></div>
+        <div class="wo-bar" style="margin-top:8px"><button class="sm" onclick="woImport(false)">Tambahkan ke daftar</button><button class="sm" onclick="woImport(true)">Ganti seluruh daftar</button></div>
+      </div>
+      <datalist id="woSz"><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option><option>XXXL</option><option>XXXXL</option><option>XXXXXL</option><option>2XL</option><option>3XL</option><option>4XL</option><option>5XL</option></datalist>
+    </div>
+    <div>
+      <div class="wo-bar"><button class="wo-main" onclick="woPdf(this)">Unduh PDF</button><button class="wo-out" onclick="woNew()">Work Order Baru</button></div>
+      <div id="woStage"><div id="woSheet" class="wo-wrap"></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+const SZ=['XS','S','M','L','XL','XXL','XXXL','XXXXL','XXXXXL'];
+const MON=['JANUARI','FEBRUARI','MARET','APRIL','MEI','JUNI','JULI','AGUSTUS','SEPTEMBER','OKTOBER','NOVEMBER','DESEMBER'];
+const today=()=>new Date().toISOString().slice(0,10);
+const D={title:'',masuk:today(),deadline:'',status:'DP/LUNAS',over:'',mockup:'',depan:'',belakang:'',auto:true,rows:[],man:{}};
+const R=[{kw:'cowo, cowok, pria, laki-laki, laki',lg:'Pendek',note:'Logo di depan'},{kw:'cewe, cewek, wanita, perempuan',lg:'Panjang',note:'Logo di kiri'}];
+const lab=r=>(r.kw.split(',')[0]||'').trim().toUpperCase();
+let pick='',inited=false;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nSz=s=>{s=String(s||'').toUpperCase().replace(/\s/g,'');const m=s.match(/^(\d)XL$/);if(m)s='X'.repeat(+m[1])+'L';return SZ.includes(s)?s:'';};
+function lev(a,b){const m=a.length,n=b.length,d=[];for(let i=0;i<=m;i++)d[i]=[i];for(let j=1;j<=n;j++)d[0][j]=j;
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[m][n];}
+const isLw=t=>{t=t.toLowerCase().replace(/[^a-z]/g,'');return t.length>=4&&lev(t,'lengan')<=(t.length>6?2:1);};
+const nLg=s=>{s=String(s||'').toLowerCase().replace(/[^a-z]/g,'').replace(/lengan/g,'');
+  if(/^(pendek|pdk|pd|short)$/.test(s))return'Pendek';if(/^(panjang|pjg|pj|p|long)$/.test(s))return'Panjang';
+  if(s.length<4)return'';const a=lev(s,'panjang'),b=lev(s,'pendek');
+  if(Math.min(a,b)>(s.length>6?2:1)||a===b)return'';return a<b?'Panjang':'Pendek';};
+const fd=v=>{const m=/^(\d{4})-(\d\d)-(\d\d)$/.exec(v||'');return m?(+m[3])+' '+MON[+m[2]-1]+' '+m[1]:'';};
+
+function counts(){const c={};SZ.forEach(s=>c[s]={p:0,d:0});
+  if(D.auto&&D.rows.length)D.rows.forEach(r=>{const s=nSz(r.u);if(s)c[s][nLg(r.l)==='Pendek'?'d':'p']++;});
+  else SZ.forEach(s=>{const m=D.man[s]||{};c[s].p=+m.p||0;c[s].d=+m.d||0;});
+  return c;}
+
+const tc=n=>(/[a-z]/.test(n)?n:n.toLowerCase()).replace(/(^|\s)([a-z])/g,(m,x,y)=>x+y.toUpperCase());
+function parse(t,dl){const cl=z=>z.replace(/^[.:]+|[.:]+$/g,''),q=z=>z.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const kws=[];R.forEach((r,ri)=>r.kw.split(',').map(z=>z.trim().toLowerCase()).filter(Boolean).forEach(z=>kws.push({z,ri})));
+  const BI=['cewe','cewek','cowo','cowok','pria','wanita','perempuan','laki-laki','lakilaki','laki'];
+  const words=[...new Set(kws.map(k=>k.z).concat(BI))].sort((a,b)=>b.length-a.length);
+  const RE=new RegExp('(^|[^a-z0-9])('+words.map(q).join('|')+')(?![a-z0-9])','ig');
+  return t.split(/\r?\n/).map(x=>x.replace(/^\s*\d+\s*[.)\-:]\s*/,'').trim()).filter(Boolean).map(x=>{
+    let ri=-1,u='',l='';
+    x=x.replace(RE,(m,pre,w)=>{const k=kws.find(o=>o.z===w.toLowerCase());if(k&&ri<0)ri=k.ri;return pre+' ';}).replace(/[\t,;|+]/g,' ');
+    x=x.replace(/\(([^)]*)\)/g,(m,a)=>{const z=nSz(a);if(z&&!u){u=z;return' ';}return' '+a+' ';});
+    const k=x.split(/\s+/).filter(z=>/[A-Za-z0-9]/.test(z));
+    for(let i=0;i<k.length;i++){const w=cl(k[i]),v=nLg(w);
+      const ab=/^(p|pj|pjg|pd|pdk)$/i.test(w)&&i>0&&(nSz(cl(k[i-1]))||isLw(k[i-1]));
+      if(v&&(w.length>3||ab)){l=v;let c=1;if(i>0&&isLw(k[i-1])){i--;c=2;}k.splice(i,c);i--;}}
+    if(!u){for(let i=k.length-1;i>0;i--){const z=nSz(cl(k[i]));if(z){u=z;k.splice(i,1);break;}}}
+    if(!l&&ri>=0)l=R[ri].lg;
+    return {n:tc(k.join(' ').replace(/^[\s\-:,;]+|[\s\-:,;]+$/g,'')),u,l:l||dl||'Panjang',g:!l,c:ri>=0?lab(R[ri]):''};
+  }).filter(r=>!(/^nama\b/i.test(r.n)&&!nSz(r.u))&&(r.n||r.u));}
+
+function sheet(){
+  const c=counts();let tot=0;SZ.forEach(s=>tot+=c[s].p+c[s].d);
+  const jum=D.over.trim()||(tot+' PCS');
+  const img=(u,ph)=>u?`<div class="ws-img" style="background-image:url('${u}')"></div>`:`<div class="ws-img ws-ph wo-noexp">${ph||''}</div>`;
+  const mock=D.mockup?img(D.mockup):(D.depan||D.belakang)?`<div class="ws-two"><div>${img(D.depan)}<b class="cp">Depan</b></div><div>${img(D.belakang)}<b class="cp">Belakang</b></div></div>`:img('','Upload gambar mockup');
+  const rows=SZ.map(s=>`<div class="ws-g3"><div>${s}</div><div class="n">${c[s].p||''}</div><div class="n">${c[s].d||''}</div></div>`).join('')+notes();
+  return `<div class="wo-sheet"><div class="ws-top"><div class="ws-l">
+<div class="ws-r"><div class="lab g">WORK ORDER</div><div class="val">${esc(D.title)}</div></div>
+<div class="ws-r"><div class="lab">TANGGAL MASUK</div><div class="val">${fd(D.masuk)}</div></div>
+<div class="ws-r"><div class="lab">DEADLINE</div><div class="val">${fd(D.deadline)}</div></div>
+<div class="ws-mk"><div class="cap">MOCKUP</div>${mock}</div></div>
+<div class="ws-rt">
+<div class="ws-r"><div class="lab w">JUMLAH</div><div class="val c">${esc(jum)}</div></div>
+<div class="ws-r"><div class="lab w">STATUS</div><div class="val c">${esc(D.status)}</div></div>
+<div class="ws-r red">DETAIL UKURAN</div>
+<div class="ws-g3 h"><div>SIZE</div><div>PANJANG</div><div>PENDEK</div></div>${rows}
+<div class="ws-g3 h" style="grid-template-columns:1fr 1fr"><div class="c">DEPAN</div><div class="c">BELAKANG</div></div>
+<div class="ws-g3 ws-bt" style="grid-template-columns:1fr 1fr"><div class="ws-pic">${img(D.depan,'Depan')}<b class="cp">Depan</b></div><div class="ws-pic">${img(D.belakang,'Belakang')}<b class="cp">Belakang</b></div></div>
+</div></div>
+<div class="ws-ct">CHEKLIST PROGRES</div>
+<div class="ws-ck"><div>DESAIN</div><div>PRODUKSI</div><div>QC</div><div>SHIPMENT</div></div>
+<div class="ws-ck b"><div></div><div></div><div></div><div></div></div></div>`;
+}
+
+function jumlah(){const c=counts();let t=0;SZ.forEach(s=>t+=c[s].p+c[s].d);return D.over.trim()||(t+' PCS');}
+function grouped(){const g={};
+  D.rows.forEach(r=>{const z=nSz(r.u),l=nLg(r.l)==='Pendek'?'Pendek':'Panjang',c=(r.c||'').trim().toUpperCase();
+    const k=z?SZ.indexOf(z)*2+(l==='Pendek'?1:0):999,id=k+'|'+c;
+    (g[id]=g[id]||{k,c,t:z?z+' · '+l.toUpperCase()+(c?' · '+c:''):'UKURAN TIDAK DIKENALI',r:[]}).r.push(r);});
+  return Object.values(g).sort((a,b)=>a.k-b.k||a.c.localeCompare(b.c));}
+function legend(){const used=new Set(D.rows.map(r=>(r.c||'').trim().toUpperCase()).filter(Boolean));
+  return R.filter(r=>lab(r)&&used.has(lab(r))).map(r=>({l:lab(r),t:'LENGAN '+r.lg.toUpperCase()+(r.note.trim()?' · '+r.note.trim().toUpperCase():'')}));}
+function notes(){const lg=legend(),n=Math.max(2,lg.length);let h='';
+  for(let i=0;i<n;i++)h+=lg[i]?`<div class="ws-g3" style="grid-template-columns:1fr"><div style="font-size:10px">${esc(lg[i].l+' = '+lg[i].t)}</div></div>`:'<div class="ws-g3"><div></div><div></div><div></div></div>';
+  return h;}
+function namesPages(){
+  if(!D.rows.length)return'';
+  const lg=legend(),lh=lg.length?`<div class="np-lg">${lg.map(x=>`<span><b>${esc(x.l)}</b> = ${esc(x.t)}</span>`).join('')}</div>`:'';
+  const items=[];let no=0;
+  grouped().forEach(G=>{items.push({h:G.t+' ('+G.r.length+' pcs)',t:G.t});G.r.forEach(r=>items.push({r,no:++no,t:G.t}));});
+  const pgs=[];let i=0;
+  while(i<items.length){let e=Math.min(i+75,items.length);if(e<items.length&&items[e-1].h)e--;pgs.push(items.slice(i,e));i=e;}
+  return pgs.map((pg,pi)=>{
+    const cols=Math.min(3,Math.ceil(pg.length/25)),per=Math.ceil(pg.length/cols),ca=[];let j=0;
+    for(let c=0;c<cols;c++){let e=c===cols-1?pg.length:Math.min(j+per,pg.length);if(c<cols-1&&e<pg.length&&pg[e-1].h)e--;
+      const part=pg.slice(j,e);if(part.length&&!part[0].h)part.unshift({h:part[0].t+' (lanjutan)'});ca.push(part);j=e;}
+    const mx=Math.max(...ca.map(x=>x.length)),rh=Math.min(30,Math.floor(600/(mx+1))),fs=Math.max(8,Math.round(rh*.5));
+    const tb=ca.map(part=>`<table class="np-tb" style="font-size:${fs}px"><tr><th>NO</th><th>NAMA</th><th>UKURAN</th><th>LENGAN</th></tr>${part.map(x=>x.h?`<tr class="gh" style="height:${rh}px"><td colspan="4">${esc(x.h)}</td></tr>`:`<tr style="height:${rh}px"><td class="c">${x.no}</td><td>${esc(x.r.n)}</td><td class="c${nSz(x.r.u)?'':' bad'}">${esc(x.r.u)}</td><td class="c">${esc(x.r.l)}</td></tr>`).join('')}</table>`).join('');
+    return `<div class="wo-sheet np-page"><div class="np-h"><div class="np-t"><span>WORK ORDER</span>${esc(D.title)}</div><div class="np-s">DAFTAR NAMA &middot; ${esc(jumlah())}${pgs.length>1?' &middot; HAL '+(pi+1)+'/'+pgs.length:''}</div></div>${lh}<div class="np-c" style="grid-template-columns:repeat(${cols},1fr)">${tb}</div></div>`;
+  }).join('');
+}
+
+function scale(){const st=$('woStage'),sh=$('woSheet');if(!st||!sh||!st.clientWidth)return;
+  const k=Math.min(1,st.clientWidth/1123);sh.style.transform='scale('+k+')';st.style.height=Math.ceil(sh.offsetHeight*k)+'px';}
+function draw(){$('woSheet').innerHTML=sheet()+namesPages();scale();}
+
+function zones(){$('woZones').innerHTML=[['mockup','Mockup (gambar gabungan)'],['depan','Depan'],['belakang','Belakang']].map(([k,t])=>
+  `<div class="wo-z" ondragover="event.preventDefault()" ondrop="woDrop(event,'${k}')"><div class="t">${t}</div>`+
+  (D[k]?`<div class="th" style="background-image:url('${D[k]}')"></div><div class="a"><button onclick="woPick('${k}')">Ganti</button><button onclick="woDel('${k}')">Hapus</button></div>`
+       :`<button class="pk" onclick="woPick('${k}')">+ Pilih / seret gambar</button>`)+`</div>`).join('');}
+
+function uk(){const c=counts();const auto=D.auto&&D.rows.length;let t=0;SZ.forEach(s=>t+=c[s].p+c[s].d);
+  const bad=D.rows.filter(r=>!nSz(r.u)).length;
+  $('woUk').innerHTML=`<label class="chk"><input type="checkbox" ${D.auto?'checked':''} onchange="woAuto(this.checked)"> Hitung otomatis dari daftar nama</label>`+
+  (auto?`<div class="hint">Total otomatis: <b>${t} pcs</b>${bad?` &middot; <span style="color:#b3441f">${bad} baris ukurannya tidak dikenali (tidak dihitung)</span>`:''}</div>`
+  :`<div class="wo-man">${SZ.map(s=>`<div class="b">${s}</div><input type="number" min="0" placeholder="Panjang" value="${(D.man[s]||{}).p||''}" oninput="woMan('${s}','p',this.value)"><input type="number" min="0" placeholder="Pendek" value="${(D.man[s]||{}).d||''}" oninput="woMan('${s}','d',this.value)">`).join('')}</div>`);}
+
+function list(){$('woList').innerHTML=D.rows.length?`<table class="wo-lt"><tr><th>Nama</th><th>Ukuran</th><th>Lengan</th><th>Kat.</th><th></th></tr>${D.rows.map((r,i)=>
+  `<tr><td><input value="${esc(r.n)}" oninput="woRow(${i},'n',this.value)"></td><td><input list="woSz" class="${nSz(r.u)?'':'bad'}" value="${esc(r.u)}" oninput="woRow(${i},'u',this.value,this)"></td><td><select onchange="woRow(${i},'l',this.value)"><option${r.l==='Panjang'?' selected':''}>Panjang</option><option${r.l==='Pendek'?' selected':''}>Pendek</option></select></td><td><input style="width:64px" value="${esc(r.c||'')}" oninput="woRow(${i},'c',this.value)"></td><td><button class="sm" onclick="woDelRow(${i})">&#10005;</button></td></tr>`).join('')}</table>`
+  :'<div class="hint">Belum ada nama. Tambah baris atau tempel daftar di bawah.</div>';uk();}
+
+function rules(){$('woRules').innerHTML='<div class="wo-rl h"><span>Kata di list</span><span>Lengan</span><span>Keterangan (di luar tabel)</span><span></span></div>'+R.map((r,i)=>
+  `<div class="wo-rl"><input value="${esc(r.kw)}" placeholder="cowo, cowok" oninput="woRule(${i},'kw',this.value)"><select onchange="woRule(${i},'lg',this.value)"><option${r.lg==='Panjang'?' selected':''}>Panjang</option><option${r.lg==='Pendek'?' selected':''}>Pendek</option></select><input value="${esc(r.note)}" placeholder="mis. Logo di depan" oninput="woRule(${i},'note',this.value)"><button class="sm" onclick="woDelRule(${i})">&#10005;</button></div>`).join('');}
+function fill(){$('woTitle').value=D.title;$('woMasuk').value=D.masuk;$('woDead').value=D.deadline;$('woStatus').value=D.status;$('woOver').value=D.over;rules();zones();list();draw();}
+
+function resize(f){return new Promise((ok,no)=>{const fr=new FileReader();fr.onerror=no;fr.onload=()=>{const im=new Image();im.onerror=no;im.onload=()=>{
+  const k=Math.min(1,1600/Math.max(im.width,im.height)),w=Math.round(im.width*k),h=Math.round(im.height*k);
+  const cv=document.createElement('canvas');cv.width=w;cv.height=h;const x=cv.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(im,0,0,w,h);
+  ok(cv.toDataURL('image/jpeg',0.88));};im.src=fr.result;};fr.readAsDataURL(f);});}
+async function setImg(k,f){try{D[k]=await resize(f);zones();draw();}catch(e){alert('Gambar tidak bisa dibaca.');}}
+
+window.woSet=(k,v)=>{D[k]=v;draw();};
+window.woPick=k=>{pick=k;$('woFile').click();};
+window.woFile=el=>{const f=el.files[0];el.value='';if(f)setImg(pick,f);};
+window.woDrop=(e,k)=>{e.preventDefault();const f=e.dataTransfer.files[0];if(f&&/^image/.test(f.type))setImg(k,f);};
+window.woDel=k=>{D[k]='';zones();draw();};
+window.woAuto=v=>{D.auto=v;uk();draw();};
+window.woMan=(s,k,v)=>{(D.man[s]=D.man[s]||{})[k]=v;draw();};
+window.woRow=(i,k,v,el)=>{D.rows[i][k]=(k==='u'||k==='c')?v.toUpperCase():v;if(el)el.classList.toggle('bad',!nSz(v));uk();draw();};
+window.woSort=()=>{const key=r=>{const z=nSz(r.u);return z?SZ.indexOf(z)*2+(nLg(r.l)==='Pendek'?1:0):999;};
+  D.rows=D.rows.map((r,i)=>({r,i})).sort((a,b)=>key(a.r)-key(b.r)||(a.r.c||'').localeCompare(b.r.c||'')||a.i-b.i).map(x=>x.r);list();draw();};
+window.woRule=(i,k,v)=>{R[i][k]=v;draw();};
+window.woAddRule=()=>{R.push({kw:'',lg:'Panjang',note:''});rules();};
+window.woDelRule=i=>{R.splice(i,1);rules();draw();};
+window.woAddRow=()=>{D.rows.push({n:'',u:'',l:'Panjang'});list();draw();};
+window.woDelRow=i=>{D.rows.splice(i,1);list();draw();};
+window.woImport=rep=>{const r=parse($('woPaste').value,$('woDefLg').value);if(!r.length){alert('Tidak ada baris yang terbaca.');return;}
+  const g=r.filter(x=>x.g).length,kc=r.filter(x=>x.c).length;r.forEach(x=>delete x.g);
+  D.rows=rep?r:D.rows.concat(r);$('woPaste').value='';list();draw();
+  $('woImpMsg').textContent=r.length+' baris terbaca otomatis'+(kc?' · '+kc+' baris dikenali kategorinya':'')+(g?' · '+g+' baris tanpa keterangan lengan dianggap '+$('woDefLg').value+', cek di daftar':'')+'.';};
+window.woNew=()=>{if(!confirm('Kosongkan semua isian work order?'))return;
+  Object.assign(D,{title:'',masuk:today(),deadline:'',status:'DP/LUNAS',over:'',mockup:'',depan:'',belakang:'',auto:true,rows:[],man:{}});fill();};
+window.woPdf=async btn=>{const o=btn.textContent;btn.disabled=true;btn.textContent='Memproses…';
+  const host=document.createElement('div');host.style.cssText='position:fixed;left:-12000px;top:0;width:1123px;background:#fff';
+  const cl=$('woSheet').cloneNode(true);cl.style.cssText='position:static;transform:none;width:1123px';
+  cl.querySelectorAll('.wo-noexp').forEach(e=>e.remove());host.appendChild(cl);document.body.appendChild(host);
+  try{if(document.fonts&&document.fonts.ready)await document.fonts.ready;
+    const pdf=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+    const pages=cl.querySelectorAll('.wo-sheet');
+    for(let i=0;i<pages.length;i++){
+      const cv=await html2canvas(pages[i],{scale:2,backgroundColor:'#fff',logging:false});
+      if(i)pdf.addPage('a4','landscape');
+      const m=6,k=Math.min((297-2*m)/cv.width,(210-2*m)/cv.height),w=cv.width*k,h=cv.height*k;
+      pdf.addImage(cv.toDataURL('image/jpeg',0.93),'JPEG',(297-w)/2,m,w,h);}
+    pdf.save('WORKORDER_'+(D.title||'TENX').replace(/[^\w]+/g,'_')+'.pdf');
+  }catch(e){console.error(e);alert('Gagal membuat PDF: '+e.message);}
+  finally{host.remove();btn.disabled=false;btn.textContent=o;}};
+window.initWorkOrder=()=>{if(!inited){inited=true;fill();}setTimeout(scale,30);};
+window.addEventListener('resize',scale);
+})();
+</script>
 
 <div id="priceShell" style="display:none;">
   <div class="pl-header">
@@ -10365,6 +10672,7 @@ function showMode(mode){
   document.getElementById('absensiApp').style.display = (mode==='absensi') ? 'block' : 'none';
   document.getElementById('sopShell').style.display = (mode==='sop') ? 'block' : 'none';
   document.getElementById('priceShell').style.display = (mode==='pricelist') ? 'block' : 'none';
+  document.getElementById('workorderApp').style.display = (mode==='workorder') ? 'block' : 'none';
 
   document.querySelectorAll('#globalNav .gn-links button').forEach(b=>b.classList.remove('active'));
   const activeBtn = document.getElementById('gn-btn-'+mode);
@@ -10396,6 +10704,9 @@ function showMode(mode){
   }
   if(mode==='pricelist'){
     initPriceList();
+  }
+  if(mode==='workorder'){
+    initWorkOrder();
   }
 }
 
