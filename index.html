@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -1946,6 +1946,19 @@ body{overflow-x:hidden;}
 #priceShell .plo-sum{background:var(--pl-ink);color:var(--pl-bg);border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:13.5px;line-height:1.7;}
 #priceShell .plo-sum b{font-family:'Bebas Neue';font-size:20px;letter-spacing:.04em;}
 #priceShell .plo-st{display:inline-block;color:#fff;font-family:'Bebas Neue';letter-spacing:.06em;font-size:13px;padding:2px 10px;border-radius:999px;margin-left:6px;}
+#priceShell .plo-prog{background:var(--pl-bg);border:1px solid var(--pl-line);border-radius:10px;padding:12px 14px;margin:4px 0 12px;}
+#priceShell .plo-prog-t{font-family:'Bebas Neue';letter-spacing:.06em;font-size:16px;display:flex;justify-content:space-between;margin-bottom:6px;}
+#priceShell .plo-prog-t span{color:var(--pl-denim);}
+#priceShell .plo-bar{height:8px;background:var(--pl-line);border-radius:999px;overflow:hidden;margin-bottom:10px;}
+#priceShell .plo-bar i{display:block;height:100%;background:var(--pl-green);border-radius:999px;transition:width .4s;}
+#priceShell .plo-steps{display:flex;flex-direction:column;gap:6px;}
+#priceShell .plo-step{display:flex;gap:10px;align-items:center;font-size:13.5px;color:var(--pl-muted);}
+#priceShell .plo-step b{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--pl-line);display:flex;align-items:center;justify-content:center;font-size:12px;flex:none;background:var(--pl-white);}
+#priceShell .plo-step.done{color:var(--pl-ink);}
+#priceShell .plo-step.done b{background:var(--pl-green);border-color:var(--pl-green);color:#fff;}
+#priceShell .plo-step.cur{color:var(--pl-ink);font-weight:700;}
+#priceShell .plo-step.cur b{background:var(--pl-amber);border-color:var(--pl-amber);color:#fff;}
+#priceShell .plo-step em{font-style:normal;font-weight:400;color:var(--pl-amber);font-size:12.5px;}
 #priceShell .plo-pay{font-size:12.5px;padding:4px 0;border-top:1px dashed var(--pl-line);}
 @media(max-width:640px){#priceShell .plo-row{grid-template-columns:1fr 1fr;}#priceShell .plo-nm{grid-column:1/-1;}}
 #priceShell .pl-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
@@ -11673,7 +11686,7 @@ function renderPriceList(){
    - project di koleksi 'projects' (masuk alur kerja, via "Reseller")
    - pesan WhatsApp ke admin
    Bukti transfer -> masuk ke payments nota yang sama (sama seperti DP biasa) -> status DP/Lunas otomatis. */
-const plOrd = { cart:{}, jual:{}, nama:'', wa:'', note:'', busy:false, err:'', done:null, orders:[], invs:{}, inited:'', payFor:null, payAmt:'', payBusy:false, payErr:'', payFile:null, payPrev:'', payScan:null, payReading:false, paySisa:0, notice:'' };
+const plOrd = { cart:{}, jual:{}, nama:'', wa:'', note:'', busy:false, err:'', done:null, orders:[], invs:{}, projs:{}, inited:'', payFor:null, payAmt:'', payBusy:false, payErr:'', payFile:null, payPrev:'', payScan:null, payReading:false, paySisa:0, notice:'' };
 function plOrdWa(v){
   let d = String(v||'').replace(/\D/g,'');
   if(d.startsWith('0')) d = '62'+d.slice(1);
@@ -11696,6 +11709,30 @@ function plOrdInit(){
     plOrd.invs = {}; sn.docs.forEach(d=>{ const x=d.data(); plOrd.invs[String(x.invNo)] = x; });
     if(plState.tab==='pesanan') redraw();
   }, e=>console.warn('invoices reseller', e));
+  /* progres alur kerja: hanya project milik reseller ini (filter resellerKey); yang disimpan hanya field aman */
+  db.collection('projects').where('resellerKey','==',key).onSnapshot(sn=>{
+    plOrd.projs = {}; sn.docs.forEach(d=>{ const x=d.data(); plOrd.projs[d.id] = { id:d.id, status:x.status, deadline:x.deadline||'', selesaiAt:x.selesaiAt||null }; });
+    if(plState.tab==='pesanan') redraw();
+  }, e=>console.warn('projects reseller', e));
+}
+/* tracker progres alur kerja (lihat saja) */
+function plOrdProgressHtml(o){
+  const pr = plOrd.projs[o.projectId];
+  const names = ['Pesanan diterima','Desain dikerjakan','Desain selesai','Proses produksi','Pesanan selesai'];
+  if(!pr || !pr.status) return '<div class="plo-prog"><div class="plo-prog-t">Progres Pengerjaan</div><div class="pl-meta">Menunggu diproses admin.</div></div>';
+  const done = { baru:1, diproses_desainer:1, desain_selesai:3, diproses_produksi:3, selesai:5 }[pr.status] || 1;
+  const cur  = { diproses_desainer:2, diproses_produksi:4 }[pr.status] || 0;
+  const pct  = Math.round(({ baru:1, diproses_desainer:2, desain_selesai:3, diproses_produksi:4, selesai:5 }[pr.status]||1)/5*100);
+  let h = '<div class="plo-prog"><div class="plo-prog-t">Progres Pengerjaan <span>'+pct+'%</span></div>'+
+    '<div class="plo-bar"><i style="width:'+pct+'%"></i></div><div class="plo-steps">';
+  names.forEach((n,i)=>{
+    const k=i+1, cls = k<=done ? 'done' : (k===cur ? 'cur' : '');
+    h += '<div class="plo-step '+cls+'"><b>'+(k<=done?'✓':k)+'</b><span>'+n+(k===cur?' <em>(sedang berjalan)</em>':'')+'</span></div>';
+  });
+  h += '</div>';
+  if(pr.status==='selesai') h += '<div class="pl-meta" style="margin-top:6px;">Pesanan selesai'+(pr.selesaiAt?' pada '+plDateTime(pr.selesaiAt):'')+'. Silakan hubungi admin untuk pengambilan/pengiriman.</div>';
+  else if(pr.deadline) h += '<div class="pl-meta" style="margin-top:6px;">Target selesai: <b>'+fmtDate(pr.deadline)+'</b></div>';
+  return h+'</div>';
 }
 function plOrdProducts(){ return plProducts.filter(p=>p.aktif!==false && Number(p.harga)>0).sort((a,b)=>plCatSort(a.kategori||'Lainnya', b.kategori||'Lainnya') || (a.nama||'').localeCompare(b.nama||'','id')); }
 function plOrdLines(){
@@ -11799,6 +11836,7 @@ function plOrdListHtml(){
     const st = invoiceStatus(inv), dib = Number(inv.totalDibayar||0), sisa = Math.max(0,(Number(inv.total)||0)-dib), s = ST[st];
     let h = '<div class="pl-card"><h3>Nota #'+o.invNo+'<span class="plo-st" style="background:'+s[1]+'">'+s[0]+'</span></h3>'+
       '<div class="pl-meta" style="margin-bottom:8px;">'+plDateTime(o.createdAt)+'</div>'+
+      plOrdProgressHtml(o)+
       o.items.map(i=>'<div style="font-size:13.5px;">• '+escapeHtml(i.nama)+' — '+i.qty+' '+escapeHtml(i.satuan)+' × '+plRp(i.hargaModal)+' <span style="color:var(--pl-muted);">(jual Anda '+plRp(i.hargaJual)+')</span></div>').join('')+
       '<div style="margin-top:8px;font-size:13.5px;line-height:1.7;">Tagihan: <b>'+plRp(inv.total)+'</b> · Sudah dibayar: <b>'+plRp(dib)+'</b> · Sisa: <b>'+plRp(sisa)+'</b><br>Estimasi untung Anda: <b>'+plRp((o.totalJual||0)-(o.totalModal||0))+'</b></div>';
     (inv.payments||[]).forEach(p=>{ h += '<div class="plo-pay">'+plDateTime(Date.parse(p.at)||0)+' · '+plRp(p.amount)+(p.proofUrl?' · <a href="'+escapeHtml(p.proofUrl)+'" target="_blank" rel="noopener">lihat bukti</a>':'')+(p.source==='reseller'?(p.verified?' · <b style="color:var(--pl-green);">✓ terverifikasi admin</b>':' · <span style="color:var(--pl-amber);">menunggu verifikasi admin</span>'):'')+'</div>'; });
