@@ -14072,5 +14072,70 @@ function plAksesHtml(){
 authInit();
 
 </script>
+
+<script>
+/* ===== Tombol Asisten AI bisa digeser (tahan lalu seret; posisi diingat per perangkat) ===== */
+(function(){
+  var IDS=['wfcFab','kgChatFab','waiFab'], M=6, THRESH=6, justDragged=false;
+  function key(id){ return 'tenx_fab_pos_'+id; }
+  function load(id){ try{ return JSON.parse(localStorage.getItem(key(id))||'null'); }catch(e){ return null; } }
+  function save(id,v){ try{ localStorage.setItem(key(id),JSON.stringify(v)); }catch(e){} }
+  function vw(){ return document.documentElement.clientWidth || window.innerWidth; }
+  function vh(){ return window.innerHeight; }
+  function setXY(el,x,y){
+    el.style.setProperty('left',x+'px','important'); el.style.setProperty('top',y+'px','important');
+    el.style.setProperty('right','auto','important'); el.style.setProperty('bottom','auto','important');
+  }
+  function clamp(el,x,y){
+    var w=el.offsetWidth||130, h=el.offsetHeight||44;
+    return [Math.min(Math.max(M,x),Math.max(M,vw()-w-M)), Math.min(Math.max(M,y),Math.max(M,vh()-h-M))];
+  }
+  function applySaved(el){
+    var p=load(el.id); if(!p) return;
+    var w=el.offsetWidth||130, h=el.offsetHeight||44;
+    var c=clamp(el, M+p.fx*Math.max(0,vw()-w-2*M), M+p.fy*Math.max(0,vh()-h-2*M));
+    setXY(el,c[0],c[1]);
+  }
+  function init(el){
+    if(!el || el.dataset.drag) return; el.dataset.drag='1';
+    el.style.touchAction='none'; el.style.userSelect='none'; el.style.webkitUserSelect='none'; el.style.cursor='grab';
+    el.title = (el.title ? el.title+' · ' : '') + 'Tahan & geser untuk memindahkan';
+    var sx=0, sy=0, ox=0, oy=0, moved=false, pid=null;
+    el.addEventListener('pointerdown',function(e){
+      if(e.button!==undefined && e.button!==0) return;
+      var r=el.getBoundingClientRect(); sx=e.clientX; sy=e.clientY; ox=r.left; oy=r.top; moved=false; pid=e.pointerId;
+      try{ el.setPointerCapture(pid); }catch(_){}
+    });
+    el.addEventListener('pointermove',function(e){
+      if(pid===null || e.pointerId!==pid) return;
+      var dx=e.clientX-sx, dy=e.clientY-sy;
+      if(!moved && Math.abs(dx)<THRESH && Math.abs(dy)<THRESH) return;
+      moved=true; el.style.cursor='grabbing';
+      var c=clamp(el, ox+dx, oy+dy); setXY(el,c[0],c[1]); e.preventDefault();
+    });
+    function end(e){
+      if(pid===null || (e && e.pointerId!==pid)) return;
+      try{ el.releasePointerCapture(pid); }catch(_){}
+      pid=null; el.style.cursor='grab';
+      if(moved){
+        justDragged=true; setTimeout(function(){ justDragged=false; },350);
+        var r=el.getBoundingClientRect(), w=el.offsetWidth, h=el.offsetHeight;
+        save(el.id,{ fx:(r.left-M)/Math.max(1,vw()-w-2*M), fy:(r.top-M)/Math.max(1,vh()-h-2*M) });
+      }
+    }
+    el.addEventListener('pointerup',end); el.addEventListener('pointercancel',end);
+    applySaved(el);
+    if(window.ResizeObserver){ new ResizeObserver(function(){ applySaved(el); }).observe(el); }
+  }
+  /* geser tidak boleh dianggap klik (jangan buka panel chat) */
+  document.addEventListener('click',function(e){
+    if(justDragged && e.target.closest && e.target.closest('#wfcFab,#kgChatFab,#waiFab')){ e.stopPropagation(); e.preventDefault(); }
+  },true);
+  function boot(){ IDS.forEach(function(id){ init(document.getElementById(id)); }); }
+  window.addEventListener('resize',function(){ IDS.forEach(function(id){ var el=document.getElementById(id); if(el) applySaved(el); }); });
+  window.addEventListener('orientationchange',function(){ setTimeout(function(){ IDS.forEach(function(id){ var el=document.getElementById(id); if(el) applySaved(el); }); },250); });
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
+})();
+</script>
 </body>
 </html>
