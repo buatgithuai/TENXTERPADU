@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#0e1a3d">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -298,6 +298,30 @@ window.tenxEnsureChart = function(){
 #workflowApp .stage-pill.active .count{background:rgba(255,255,255,0.28);color:#fff;}
 #workflowApp .search-box::before{content:"🔍";position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;opacity:.55;pointer-events:none;}
 #workflowApp .search-box input{padding-left:34px;}
+
+/* ===== DEADLINE (prioritas koordinator produksi) ===== */
+#workflowApp .wf-dl{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0 6px;padding:7px 10px;border-radius:9px;border:1.5px solid var(--line);background:#fff;font-size:12.5px;}
+#workflowApp .wf-dl .wf-dl-tag{font-family:'Bebas Neue',sans-serif;letter-spacing:.05em;font-size:15px;line-height:1;padding:3px 9px;border-radius:6px;color:#fff;background:#888;white-space:nowrap;}
+#workflowApp .wf-dl .wf-dl-date{font-weight:600;}
+#workflowApp .wf-dl .wf-dl-sub{color:var(--ink-soft);font-size:11.5px;}
+#workflowApp .wf-dl .wf-dl-edit{margin-left:auto;background:#fff;border:1.5px solid var(--line);border-radius:7px;padding:3px 9px;font-size:11.5px;font-weight:600;cursor:pointer;color:var(--ink);}
+#workflowApp .wf-dl .wf-dl-edit:hover{border-color:var(--denim);color:var(--denim);}
+#workflowApp .wf-dl.late{border-color:var(--rust);background:#FFF1EA;} #workflowApp .wf-dl.late .wf-dl-tag{background:#B0452A;}
+#workflowApp .wf-dl.urgent{border-color:#E08A5B;background:#FFF5EC;} #workflowApp .wf-dl.urgent .wf-dl-tag{background:#D9622B;}
+#workflowApp .wf-dl.soon{border-color:#E6C16A;background:#FFFAEA;} #workflowApp .wf-dl.soon .wf-dl-tag{background:#C98A12;}
+#workflowApp .wf-dl.ok{border-color:#BFD8C6;background:#F4FAF5;} #workflowApp .wf-dl.ok .wf-dl-tag{background:#2f7d4f;}
+#workflowApp .wf-dl.none{border-style:dashed;background:#FAF7F0;} #workflowApp .wf-dl.none .wf-dl-tag{background:#8a8070;}
+#workflowApp .wf-dl.done{background:#F4FAF5;border-color:#BFD8C6;} #workflowApp .wf-dl.done .wf-dl-tag{background:#2f7d4f;}
+#workflowApp .tag-card.dl-urgent{border-color:#E08A5B;}
+#workflowApp .wf-prio{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 14px;}
+#workflowApp .wf-prio .stage-nav{margin:0;}
+#workflowApp .wf-prio select{width:auto;min-width:190px;padding:6px 10px;font-size:12.5px;}
+#workflowApp .wf-prio-lbl{font-family:'Bebas Neue',sans-serif;letter-spacing:.08em;font-size:13px;color:var(--ink-soft);}
+#workflowApp .wf-stat.warn .val{color:#D9622B;} #workflowApp .wf-stat.warn{border-color:#E08A5B;background:#FFF5EC;}
+#workflowApp .wf-dlq{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 2px;}
+#workflowApp .wf-dlq button{background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:4px 11px;font-size:12px;cursor:pointer;}
+#workflowApp .wf-dlq button:hover{border-color:var(--denim);}
+#workflowApp .wf-dlhist{font-size:12px;color:var(--ink-soft);line-height:1.6;margin-top:6px;}
 #workflowApp .wf-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:14px;}
 #workflowApp .wf-stat{background:var(--white);border:1.5px solid var(--line);border-radius:10px;padding:12px 16px;}
 #workflowApp .wf-stat .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);}
@@ -2076,6 +2100,105 @@ button,a,select,label,input[type=checkbox],input[type=radio],[onclick]{touch-act
   #priceShell .plo-row{grid-template-columns:1fr;}
   #priceShell .pl-header h1{font-size:20px;}
   #priceShell .pl-tabs button{padding:8px 10px;font-size:13px;}
+
+/* ===================== LAPISAN MOBILE (HP) — berlaku untuk semua halaman ===================== */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+img,video,canvas{max-width:100%;}
+/* target sentuh nyaman (>=40px) di layar sentuh */
+@media(pointer:coarse){
+  .btn,.stage-pill,#workflowApp .subnav button,#workflowApp .role-switch button,#workflowApp .wf-go,#workflowApp .wf-wa,#workflowApp .wf-sorry,
+  #workflowApp .wf-dl-edit,#workflowApp .wf-dlq button,#globalNav .gn-links button,#priceShell .pl-btn,#financeApp .kg-tabs button{min-height:40px;}
+  #workflowApp .modal .close{width:44px;height:44px;top:8px;right:8px;display:flex;align-items:center;justify-content:center;}
+}
+@media(max-width:768px){
+  body{overflow-x:clip;}
+  input[type=date],input[type=month],input[type=time]{width:100%;min-width:0;min-height:44px;}
+  select{min-height:44px;}
+
+  /* --- ALUR KERJA --- */
+  #workflowApp header.top{padding:10px 12px;gap:8px;}
+  #workflowApp header.top h1{font-size:20px;}
+  #workflowApp header.top .brand{gap:9px;}
+  #workflowApp .role-switch{width:100%;justify-content:stretch;flex-wrap:nowrap;}
+  #workflowApp .role-switch button{flex:1;padding:9px 6px;font-size:12.5px;}
+  #workflowApp .subnav{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-left:-12px;margin-right:-12px;padding:0 12px 4px;}
+  #workflowApp .subnav::-webkit-scrollbar,#workflowApp .stage-nav::-webkit-scrollbar{display:none;}
+  #workflowApp .subnav button{flex:none;white-space:nowrap;}
+  #workflowApp .stage-nav{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-left:-12px;margin-right:-12px;padding:0 12px 6px;margin-bottom:14px;}
+  #workflowApp .stage-nav .stage-pill{flex:none;white-space:nowrap;}
+  #workflowApp .wf-stats{grid-template-columns:repeat(2,1fr);gap:8px;}
+  #workflowApp .wf-stat{padding:9px 12px;}
+  #workflowApp .wf-stat .val{font-size:24px;}
+  #workflowApp .wf-auto{font-size:12px;line-height:1.4;}
+  #workflowApp .search-box input{min-height:44px;}
+  /* prioritas deadline */
+  #workflowApp .wf-prio{flex-direction:column;align-items:stretch;gap:6px;}
+  #workflowApp .wf-prio select{width:100%;min-width:0;font-size:16px;}
+  /* kartu project */
+  #workflowApp .tag-card{padding:14px 14px 12px 14px;}
+  #workflowApp .tag-card h3{font-size:19px;}
+  #workflowApp .wf-dl{padding:8px 10px;gap:6px 8px;}
+  #workflowApp .wf-dl .wf-dl-tag{font-size:16px;}
+  #workflowApp .wf-dl .wf-dl-edit{margin-left:0;flex:1 1 100%;min-height:40px;font-size:13px;}
+  #workflowApp .wf-act{gap:8px;}
+  #workflowApp .wf-act .wf-go{flex:1 1 100%;order:-1;}
+  #workflowApp .wf-act .wf-wa,#workflowApp .wf-act .wf-sorry{flex:1 1 calc(50% - 4px);text-align:center;}
+  /* modal jadi bottom-sheet, aman dari notch & keyboard */
+  #workflowApp .overlay{padding:0;align-items:flex-end;}
+  #workflowApp .modal{max-height:calc(100dvh - 12px);max-height:calc(100vh - 12px);padding:18px 14px calc(18px + env(safe-area-inset-bottom,0px));border-radius:16px 16px 0 0;width:100%;}
+  @supports (height:100dvh){#workflowApp .modal{max-height:calc(100dvh - 12px);}}
+  #workflowApp .modal h2{font-size:22px;padding-right:40px;}
+  #workflowApp .modal-actions{gap:8px;}
+  #workflowApp .modal-actions .btn{flex:1 1 140px;min-height:44px;}
+  #workflowApp .modal-actions .btn.block{flex:1 1 100%;}
+  #workflowApp .ukuran-row{gap:6px;}
+  #workflowApp .fab{left:12px;right:auto;bottom:calc(14px + env(safe-area-inset-bottom,0px));padding:13px 18px;font-size:15px;}
+  #workflowApp main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px));}
+  #workflowApp table.rekap{font-size:12.5px;white-space:nowrap;}
+  #workflowApp table.rekap th,#workflowApp table.rekap td{padding:8px 8px;}
+  #wfToast{width:calc(100vw - 24px);max-width:none;bottom:calc(82px + env(safe-area-inset-bottom,0px));}
+
+  /* --- PANEL CHAT / ASISTEN AI: layar penuh di HP --- */
+  #wfChat,#financeApp .kgchat,#absensiApp .wai-panel{
+    left:0 !important;right:0 !important;bottom:0 !important;width:100% !important;max-width:100% !important;
+    height:calc(100dvh - env(safe-area-inset-top,0px) - 10px) !important;border-radius:16px 16px 0 0 !important;
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  .wfc-fab,.kgchat-fab,.wai-fab{bottom:calc(14px + env(safe-area-inset-bottom,0px)) !important;}
+
+  /* --- KEUANGAN / FINANCE / ABSENSI / SOP / HARGA: tabel & toolbar --- */
+  #keuanganApp .kg-toolbar,#financeApp .kg-toolbar{flex-wrap:wrap;gap:8px;}
+  #keuanganApp .kg-toolbar .kg-search,#financeApp .kg-toolbar .kg-search{flex:1 1 100%;min-width:0;}
+  #financeApp .kg-tabs,#keuanganApp .kg-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  #financeApp .kg-tabs button,#keuanganApp .kg-tabs button{flex:none;white-space:nowrap;}
+  #priceShell .pl-search{max-width:100%;min-width:0;flex:1 1 100%;}
+  #priceShell .pl-tabs{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  #priceShell .pl-tabs button{flex:none;white-space:nowrap;}
+  #priceShell .pl-price-inp{width:100%;min-width:90px;}
+  .rs-hd{flex-wrap:wrap;} .rs-hd .btn{flex:1 1 100%;min-height:42px;}
+
+  /* --- NOTA & SPK (Work Order): panel form di atas, pratinjau mengikuti lebar layar --- */
+  #notaApp .totals-col{width:100%;}
+  #notaApp .preview-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  #workorderApp .wo-lay{gap:12px;}
+  #workorderApp input,#workorderApp select,#workorderApp textarea{min-height:44px;}
+
+  /* --- BERANDA --- */
+  #landingScreen{padding-left:14px;padding-right:14px;}
+  #landingScreen .ls-cards{gap:14px;}
+  #landingScreen .ls-card{width:100%;max-width:100%;}
+}
+@media(max-width:380px){
+  #workflowApp .wf-stats{grid-template-columns:1fr 1fr;}
+  #workflowApp .wf-stat .lbl{font-size:10px;}
+  #workflowApp .wf-act .wf-wa,#workflowApp .wf-act .wf-sorry{flex:1 1 100%;}
+  #globalNav .gn-brand small{display:none;}
+}
+/* HP posisi landscape: modal tidak menutupi layar penuh */
+@media(max-height:480px) and (orientation:landscape){
+  #workflowApp .modal{max-height:100vh;border-radius:0;}
+  #workflowApp header.top{position:static;}
+}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important;}}
 
@@ -3381,6 +3504,8 @@ function subscribeRealtime(){
 /* ===================== STATE ===================== */
 let state = {
   role: 'admin',
+  dlf: 'all',
+  sort: 'deadline',
   adminView: 'projects',
   stage: 'all',
   prod: 'all',
@@ -3542,7 +3667,29 @@ function renderAdminView(){
       (p.noHp||'').toLowerCase().includes(q)
     );
   }
-  const sorted = [...filtered].sort((a,b)=> b.createdAt - a.createdAt);
+  const dlBase = filtered.length;
+  const dlCnt = { late:0, soon:0, week:0, none:0 };
+  filtered.forEach(p=>{ ['late','soon','week','none'].forEach(k=>{ if(wfDlMatch(p,k)) dlCnt[k]++; }); });
+  if(state.dlf && state.dlf!=='all') filtered = filtered.filter(p=>wfDlMatch(p,state.dlf));
+  const sortMode = state.sort || 'deadline';
+  const sorted = [...filtered].sort(sortMode==='deadline' ? wfDlSortCmp : (a,b)=> b.createdAt - a.createdAt);
+  const dlf = state.dlf || 'all';
+  const dlPill = (k,label,n)=>`<button class="stage-pill ${dlf===k?'active':''}" onclick="setDlFilter('${k}')">${label} <span class="count">${n}</span></button>`;
+  const prioRow = `
+    <div class="wf-prio">
+      <span class="wf-prio-lbl">Prioritas Deadline</span>
+      <div class="stage-nav">
+        ${dlPill('all','Semua',dlBase)}
+        ${dlPill('late','Telat',dlCnt.late)}
+        ${dlPill('soon','Mepet ≤3 hari',dlCnt.soon)}
+        ${dlPill('week','≤7 hari',dlCnt.week)}
+        ${dlPill('none','Belum ada deadline',dlCnt.none)}
+      </div>
+      <select onchange="setSortMode(this.value)" title="Urutan daftar">
+        <option value="deadline" ${sortMode==='deadline'?'selected':''}>Urut: Deadline terdekat</option>
+        <option value="masuk" ${sortMode==='masuk'?'selected':''}>Urut: Terbaru masuk</option>
+      </select>
+    </div>`;
 
   const searchBox = `
     <div class="search-box">
@@ -3554,12 +3701,16 @@ function renderAdminView(){
   `;
 
   const lateN = all.filter(wfIsLateActive).length;
+  const mepetN = all.filter(p=>wfDlMatch(p,'soon')).length;
+  const noDlN = all.filter(p=>wfDlMatch(p,'none')).length;
   const stats = `
     <div class="wf-stats">
       <div class="wf-stat"><div class="lbl">Project Aktif</div><div class="val">${all.length - counts.selesai}</div></div>
       <div class="wf-stat"><div class="lbl">Sedang Didesain</div><div class="val">${counts.diproses_desainer}</div></div>
       <div class="wf-stat"><div class="lbl">Sedang Produksi</div><div class="val">${counts.diproses_produksi}</div></div>
       <div class="wf-stat ${lateN?'late':''}"><div class="lbl">Telat Deadline</div><div class="val">${lateN}</div></div>
+      <div class="wf-stat ${mepetN?'warn':''}"><div class="lbl">Mepet (≤3 hari)</div><div class="val">${mepetN}</div></div>
+      <div class="wf-stat"><div class="lbl">Belum Ada Deadline</div><div class="val">${noDlN}</div></div>
       <div class="wf-stat ok"><div class="lbl">Selesai</div><div class="val">${counts.selesai}</div></div>
     </div>
     <label class="wf-auto"><input type="checkbox" ${wfAutoWa()?'checked':''} onchange="wfSetAutoWa(this.checked)"> Otomatis buka WA client saat progres diubah (ada tombol Urungkan)</label>`;
@@ -3575,10 +3726,11 @@ function renderAdminView(){
       ${pill('selesai','Selesai',counts.selesai)}
     </div>
     ${prodRow}
+    ${prioRow}
     <div class="section-title"><h2>Daftar Project</h2><div class="line"></div></div>
     ${sorted.length ? `<div class="grid">${sorted.map(p=>projectCard(p)).join('')}</div>`
       : (q ? emptyState('Tidak ditemukan','Tidak ada project dengan nama pemesan / No. HP / ID yang cocok dengan pencarian ini.')
-           : emptyState('Belum ada project di tahap ini','Klik tombol "+ Project Baru" untuk mulai mencatat pesanan client.'))}
+           : (dlf!=='all' ? emptyState('Tidak ada project di filter ini','Ubah filter Prioritas Deadline ke "Semua" untuk melihat seluruh project.') : emptyState('Belum ada project di tahap ini','Klik tombol "+ Project Baru" untuk mulai mencatat pesanan client.')))}
     <button class="btn fab" onclick="openNewProjectModal()">+ PROJECT BARU</button>
   `;
 }
@@ -3981,7 +4133,7 @@ function projectCard(p){
   const wa = `<button class="wf-wa" title="Kirim progres terbaru ke WA client" onclick="event.stopPropagation();wfSendNow('${p.id}')">WA Client</button>`;
   const sorry = late ? `<button class="wf-sorry" onclick="event.stopPropagation();wfApologyModal('${p.id}')">Minta Maaf</button>` : '';
   return `
-    <div class="tag-card st-${p.status}${late?' late':''}" onclick="openDetailModal('${p.id}')">
+    <div class="tag-card st-${p.status}${late?' late':''}${wfDlInfo(p).cls==='urgent'?' dl-urgent':''}" onclick="openDetailModal('${p.id}')">
       <div class="tag-top">
         <span class="tag-id mono">${p.id}</span>
         <span class="badge ${p.status}">${STATUS_LABEL[p.status]}</span>
@@ -3989,6 +4141,7 @@ function projectCard(p){
       <h3>${escapeHtml(p.namaKlien)}</h3>
       ${(p.invNo || wfTagsHtml(p)) ? `<div style="margin:2px 0 6px;">${wfTagsHtml(p)}${p.invNo ? wfPayBadge(p) : ''}</div>` : ''}
       <div class="tag-meta">${escapeHtml(p.via)} · ${escapeHtml(p.noHp||'')} · masuk ${fmtDate(p.createdAt)} · ${qty} pcs</div>
+      ${wfDlStrip(p)}
       <div class="wf-steps" title="Tahap ${n} dari 5">${steps}</div>
       <div class="assign-row">
         <span class="assign-chip">Desainer: <b>${escapeHtml(p.namaDesainer||'-')}</b></span>
@@ -3998,7 +4151,6 @@ function projectCard(p){
       ${p.komisiPerPcs ? `<div class="komisi-tag">Komisi: ${rupiah(p.komisiPerPcs)}/pcs → total ${rupiah(totalKomisi(p))}</div>` : ''}
       <div class="tag-foot">
         <div class="thumbs">${refImgs.map(src=>renderFileThumb(src,34)).join('')}${(p.referensi||[]).length>4?`<span class="mono" style="font-size:11px;color:var(--ink-soft);align-self:center;">+${p.referensi.length-4}</span>`:''}</div>
-        ${p.deadline ? `<span class="mono" style="font-size:11.5px;color:var(--rust);">DL ${fmtDate(p.deadline)}${late?` · <b>TELAT ${wfLateDays(p)} HARI</b>`:''}</span>` : ''}
       </div>
       <div class="wf-act">${go}${wa}${sorry}</div>
     </div>
@@ -4073,6 +4225,9 @@ function openNewProjectModal(){
     <label>Komisi Produksi per Pcs (Rp)</label>
     <input type="number" min="0" id="f_komisi" placeholder="cth. 3000">
     <div class="filehint">Total komisi akan dihitung otomatis: Komisi per Pcs × Total Pcs, dan tampil ke bagian Produksi yang ditugaskan.</div>
+    <label>Deadline dari Customer (opsional)</label>
+    <input type="date" id="f_dlproj">
+    <div class="filehint">Bisa dikosongkan dulu lalu diatur/diubah kapan saja dari kartu project.</div>
 
     <div class="modal-actions">
       <button class="btn block" onclick="submitNewProject()">Simpan Project</button>
@@ -4145,6 +4300,8 @@ async function submitNewProject(){
     desainMulai:null, pedomanDesain:'', pedomanGambar:[], listDesain:'', deadline:'',
     produksiMulai:null, selesaiAt:null
   };
+  const dlNew = (document.getElementById('f_dlproj')||{}).value || '';
+  if(dlNew) wfApplyDeadline(project, dlNew, 'Deadline awal dari customer');
   const ok = await saveProject(project);
   if(!ok) return;
   closeModal();
@@ -4215,6 +4372,9 @@ function openEditProjectModal(id){
     <label>Komisi Produksi per Pcs (Rp)</label>
     <input type="number" min="0" id="f_komisi" value="${p.komisiPerPcs||0}" placeholder="cth. 3000">
     <div class="filehint">Total komisi akan dihitung otomatis: Komisi per Pcs × Total Pcs, dan tampil ke bagian Produksi yang ditugaskan.</div>
+    <label>Deadline</label>
+    <input type="date" id="f_dlproj" value="${p.deadline||''}">
+    <div class="filehint">Ubah bila customer mengubah jadwal. Perubahan tercatat di riwayat deadline project.</div>
 
     <div class="modal-actions">
       <button class="btn ghost" style="flex:1;" onclick="openDetailModal('${p.id}')">Batal</button>
@@ -4252,6 +4412,7 @@ async function submitEditProject(id){
   p.namaDesainer = namaDesainer;
   p.namaProduksi = namaProduksi;
   p.komisiPerPcs = komisiPerPcs;
+  wfApplyDeadline(p, (document.getElementById('f_dlproj')||{}).value || '', 'Diubah lewat Edit Project');
 
   const ok = await saveProject(p);
   if(!ok) return;
@@ -4292,6 +4453,7 @@ function openDetailModal(id){
     <div class="kv"><b>No. HP</b><span>${p.noHp}</span></div>
     <div class="kv"><b>Via</b><span>${escapeHtml(p.via)}</span></div>
     <div class="kv"><b>Masuk</b><span>${fmtDate(p.createdAt)}</span></div>
+    <div class="kv"><b>Deadline</b><div style="flex:1;">${wfDlStrip(p).replace('margin:8px 0 6px','margin:0')}${wfDlHistHtml(p)}</div></div>
     <div class="kv"><b>Desainer</b><span>${escapeHtml(p.namaDesainer||'-')}</span></div>
     <div class="kv"><b>Produksi</b><span>${escapeHtml(p.namaProduksi||'-')}</span></div>
     <div class="kv"><b>Brief</b><span>${escapeHtml(p.briefDesain)}</span></div>
@@ -4314,7 +4476,6 @@ function openDetailModal(id){
       <div class="kv"><b>Mulai Desain</b><span>${fmtDate(p.desainMulai)}</span></div>
       <div class="kv"><b>Pedoman</b><span>${p.pedomanDesain ? escapeHtml(p.pedomanDesain) : '<i style="color:var(--ink-soft);">Belum diisi</i>'}</span></div>
       <div class="kv"><b>List Desain</b><span>${p.listDesain ? escapeHtml(p.listDesain) : '<i style="color:var(--ink-soft);">Belum diisi</i>'}</span></div>
-      <div class="kv"><b>Deadline</b><span>${p.deadline ? fmtDate(p.deadline) : '<i style="color:var(--ink-soft);">Belum diisi</i>'}</span></div>
       ${pedomanImgsHtml ? `<div class="kv"><b>Gambar Pedoman</b><div>${pedomanImgsHtml}</div></div>` : ''}
     `;
     if(state.role==='desainer' && p.status==='diproses_desainer' && sameName(p.namaDesainer)){
@@ -4542,6 +4703,121 @@ function wfLateDays(p){
   return diff > 0 ? diff : 0;
 }
 function wfIsLateActive(p){ return !!p && p.status!=='selesai' && wfLateDays(p) > 0; }
+
+/* ---- DEADLINE: sisa hari, tingkat urgensi, tampilan & pengurutan ---- */
+/* sisa hari sampai deadline (negatif = sudah lewat); null bila deadline belum diatur */
+function wfDaysLeft(p){
+  if(!p || !p.deadline) return null;
+  return Math.round((wfDayStart(p.deadline) - wfDayStart(Date.now())) / 86400000);
+}
+/* urgensi: done | none | late | urgent (0-2 hari) | soon (3-7 hari) | ok (>7 hari) */
+function wfDlInfo(p){
+  if(p.status==='selesai'){
+    const lt = wfLateDays(p);
+    return { cls:'done', tag: lt>0 ? 'SELESAI · TELAT '+lt+' HARI' : 'SELESAI', sub:'', lvl:9 };
+  }
+  const d = wfDaysLeft(p);
+  if(d===null) return { cls:'none', tag:'BELUM ADA DEADLINE', sub:'atur dulu supaya masuk prioritas', lvl:5 };
+  if(d<0)  return { cls:'late',   tag:'TELAT '+(-d)+' HARI', sub:'segera ditangani', lvl:0 };
+  if(d===0) return { cls:'urgent', tag:'HARI INI', sub:'deadline hari ini', lvl:1 };
+  if(d===1) return { cls:'urgent', tag:'BESOK', sub:'H-1', lvl:1 };
+  if(d<=2)  return { cls:'urgent', tag:'H-'+d, sub:'mepet', lvl:1 };
+  if(d<=7)  return { cls:'soon',   tag:'H-'+d, sub:'segera dijadwalkan', lvl:2 };
+  return { cls:'ok', tag:'H-'+d, sub:'masih santai', lvl:3 };
+}
+function wfDlStrip(p){
+  const i = wfDlInfo(p);
+  const canEdit = (typeof state!=='undefined' && state.role==='admin');
+  return '<div class="wf-dl '+i.cls+'" title="Deadline project">'+
+    '<span class="wf-dl-tag">'+i.tag+'</span>'+
+    (p.deadline ? '<span class="wf-dl-date">'+fmtDate(p.deadline)+'</span>' : '')+
+    (i.sub && p.status!=='selesai' ? '<span class="wf-dl-sub">'+i.sub+'</span>' : '')+
+    (canEdit ? '<button class="wf-dl-edit" onclick="event.stopPropagation();openDeadlineModal(\''+p.id+'\')">✎ '+(p.deadline?'Ubah':'Atur')+' Deadline</button>' : '')+
+  '</div>';
+}
+/* kunci urut "deadline terdekat": telat -> hari ini -> terdekat ... -> belum ada deadline -> selesai */
+function wfDlSortCmp(a,b){
+  const ra = a.status==='selesai' ? 2 : (a.deadline ? 0 : 1), rb = b.status==='selesai' ? 2 : (b.deadline ? 0 : 1);
+  if(ra!==rb) return ra-rb;
+  if(ra===0){ const da = wfDayStart(a.deadline)-wfDayStart(b.deadline); if(da) return da; }
+  if(ra===2) return (b.selesaiAt||b.createdAt||0)-(a.selesaiAt||a.createdAt||0);
+  return (a.createdAt||0)-(b.createdAt||0);
+}
+function wfDlMatch(p,k){
+  if(!k || k==='all') return true;
+  if(p.status==='selesai') return false;
+  const d = wfDaysLeft(p);
+  if(k==='none') return d===null;
+  if(d===null) return false;
+  if(k==='late') return d<0;
+  if(k==='soon') return d>=0 && d<=3;
+  if(k==='week') return d>=0 && d<=7;
+  return true;
+}
+function setDlFilter(k){ state.dlf = (state.dlf===k && k!=='all') ? 'all' : k; render(); }
+function setSortMode(v){ state.sort = v; render(); }
+
+/* ---- Ubah / atur deadline (Admin/Koordinator) ---- */
+function wfApplyDeadline(p, val, why){
+  const old = p.deadline || '';
+  val = val || '';
+  if(old === val) return false;
+  p.deadline = val;
+  p.deadlineLog = (p.deadlineLog||[]).concat([{ from:old, to:val, at:Date.now(), why:(why||'').trim() }]).slice(-20);
+  return true;
+}
+function wfDlHistHtml(p){
+  const L = (p.deadlineLog||[]).slice(-3).reverse();
+  if(!L.length) return '';
+  return '<div class="wf-dlhist"><b>Riwayat perubahan deadline</b><br>'+L.map(x=>
+    fmtDate(x.at)+': '+(x.from?fmtDate(x.from):'belum ada')+' → <b>'+(x.to?fmtDate(x.to):'dihapus')+'</b>'+(x.why?' · '+escapeHtml(x.why):'')).join('<br>')+'</div>';
+}
+function openDeadlineModal(id){
+  const p = projectsCache.find(x=>x.id===id); if(!p) return;
+  if(state.role!=='admin'){ alert('Deadline hanya bisa diubah oleh Admin / Koordinator Produksi.'); return; }
+  const i = wfDlInfo(p);
+  renderModal(`
+    <button class="close" onclick="closeModal()">×</button>
+    <h2>${p.deadline?'Ubah':'Atur'} Deadline</h2>
+    <div class="modal-sub mono">${p.id} · ${escapeHtml(p.namaKlien||'')} · ${totalQty(p)} pcs</div>
+    <div class="wf-dl ${i.cls}" style="margin-top:0;"><span class="wf-dl-tag">${i.tag}</span>${p.deadline?'<span class="wf-dl-date">'+fmtDate(p.deadline)+'</span>':''}</div>
+    <label>Deadline ${p.deadline?'baru':''}</label>
+    <input type="date" id="f_dlnew" value="${p.deadline||''}">
+    <div class="wf-dlq">
+      <button type="button" onclick="wfDlQuick(3)">+3 hari</button>
+      <button type="button" onclick="wfDlQuick(7)">+7 hari</button>
+      <button type="button" onclick="wfDlQuick(14)">+14 hari</button>
+      <button type="button" onclick="wfDlQuick(30)">+30 hari</button>
+    </div>
+    <div class="filehint">Tombol cepat dihitung dari hari ini. Deadline diatur manual — tidak mengikuti masa habis nota.</div>
+    <label>Alasan perubahan (opsional)</label>
+    <input type="text" id="f_dlwhy" placeholder="cth. Customer minta dimajukan / diundur">
+    ${wfDlHistHtml(p)}
+    <div class="modal-actions">
+      <button class="btn ghost" style="flex:1;" onclick="closeModal()">Batal</button>
+      ${p.deadline ? `<button class="btn rust" style="flex:1;" onclick="wfSaveDeadline('${p.id}',true)">Hapus Deadline</button>` : ''}
+      <button class="btn" style="flex:1;" onclick="wfSaveDeadline('${p.id}')">Simpan</button>
+    </div>
+  `);
+}
+function wfDlQuick(n){
+  const d = new Date(); d.setDate(d.getDate()+n);
+  const v = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  const el = document.getElementById('f_dlnew'); if(el) el.value = v;
+}
+async function wfSaveDeadline(id, clear){
+  const p = projectsCache.find(x=>x.id===id); if(!p) return;
+  const val = clear ? '' : document.getElementById('f_dlnew').value;
+  const why = (document.getElementById('f_dlwhy')||{}).value || '';
+  if(!clear && !val){ alert('Pilih tanggal deadline dulu, atau klik "Hapus Deadline".'); return; }
+  if(clear && !confirm('Hapus deadline project ini?')) return;
+  const snap = { deadline:p.deadline, deadlineLog:p.deadlineLog };
+  if(!wfApplyDeadline(p, val, why)){ closeModal(); return; }
+  const ok = await saveProject(p);
+  if(!ok){ Object.assign(p, snap); return; }
+  closeModal();
+  await refresh();
+}
 
 /* ---- Pesan WhatsApp (pakai format WA: *tebal*, emoji, baris pendek) ---- */
 function wfSapaan(){
@@ -12707,7 +12983,9 @@ async function rsReconcile(manual){
 /* ===================== SINKRON ALUR KERJA <-> NOTA <-> KEUANGAN (SEMUA SUMBER, BUKAN HANYA RESELLER) =====================
    Project di Alur Kerja = sumber data klien (nama, No. HP, ukuran & qty, deadline, brief). Nota/Keuangan memakai data itu,
    bukan input ulang. Tautan project <-> nota disimpan dua arah (project.invNo & invoice.projectId), jadi badge DP/Lunas
-   di Alur Kerja dan info klien di detail nota selalu sama. Hanya MENGISI field yang kosong & menautkan; tidak menimpa input. */
+   di Alur Kerja dan info klien di detail nota selalu sama. Hanya MENGISI field yang kosong & menautkan; tidak menimpa input.
+   DEADLINE TIDAK diambil dari Due Date/masa habis nota: project hasil sinkron dari nota maupun reseller selalu mulai tanpa deadline,
+   lalu diatur sendiri oleh Admin/Koordinator Produksi (tombol "Atur Deadline"). */
 var wfsInvLoaded = false, wfsProjLoaded = false, wfsProjSub = false, wfsBusy = false, wfsRetried = false;
 function wfsEnsureProjects(){
   if(wfsProjSub || !CONFIG_READY) return;
@@ -12822,7 +13100,7 @@ async function wfsAutoSync(){
         briefDesain:(inv.notes && String(inv.notes).trim()) ? inv.notes : ('Pesanan Nota #'+no+': '+items.map(l=>l.desc+' ×'+l.qty).join(', ')),
         ukuran:items.map(l=>({ ukuran:String(l.desc||''), qty:Number(l.qty)||0 })), referensi:[],
         namaDesainer:'', namaProduksi:'', komisiPerPcs:0, status: dp ? 'baru' : 'menunggu_pembayaran', createdAt:Date.now(),
-        desainMulai:null, pedomanDesain:'', pedomanGambar:[], listDesain:'', deadline:inv.dueDate||'', produksiMulai:null, selesaiAt:null,
+        desainMulai:null, pedomanDesain:'', pedomanGambar:[], listDesain:'', deadline:'', produksiMulai:null, selesaiAt:null,
         invNo:no, autoDariNota:true };
       const pref = db.collection('projects').doc(pid), iref = db.collection('invoices').doc(no);
       const made = await db.runTransaction(async tx=>{
@@ -12852,7 +13130,7 @@ async function wfsProjectFromInvoice(no){
       briefDesain:(inv.notes && String(inv.notes).trim()) ? inv.notes : ('Pesanan Nota #'+inv.invNo+': '+items.map(l=>l.desc+' ×'+l.qty).join(', ')),
       ukuran:items.map(l=>({ ukuran:String(l.desc||''), qty:Number(l.qty)||0 })), referensi:[],
       namaDesainer:'', namaProduksi:'', komisiPerPcs:0, status: dp ? 'baru' : 'menunggu_pembayaran', createdAt:Date.now(),
-      desainMulai:null, pedomanDesain:'', pedomanGambar:[], listDesain:'', deadline:inv.dueDate||'', produksiMulai:null, selesaiAt:null,
+      desainMulai:null, pedomanDesain:'', pedomanGambar:[], listDesain:'', deadline:'', produksiMulai:null, selesaiAt:null,
       invNo:nomor };
     const pref = db.collection('projects').doc(id), iref = db.collection('invoices').doc(nomor);
     const made = await db.runTransaction(async tx=>{
