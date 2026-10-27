@@ -318,6 +318,8 @@ window.tenxEnsureChart = function(){
 #workflowApp .wf-prio select{width:auto;min-width:190px;padding:6px 10px;font-size:12.5px;}
 #workflowApp .wf-prio-lbl{font-family:'Bebas Neue',sans-serif;letter-spacing:.08em;font-size:13px;color:var(--ink-soft);}
 #workflowApp .wf-stat.warn .val{color:#D9622B;} #workflowApp .wf-stat.warn{border-color:#E08A5B;background:#FFF5EC;}
+#workflowApp .wf-dl .wf-dl-why{flex:1 1 100%;font-size:12px;line-height:1.4;color:#7a3a1c;}
+#workflowApp .wf-dl .wf-dl-why.kosong{color:#B0452A;font-weight:600;}
 #workflowApp .wf-dlq{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 2px;}
 #workflowApp .wf-dlq button{background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:4px 11px;font-size:12px;cursor:pointer;}
 #workflowApp .wf-dlq button:hover{border-color:var(--denim);}
@@ -2273,6 +2275,7 @@ img,video,canvas{max-width:100%;}
     <button id="gn-btn-keuangan" onclick="showMode('keuangan')">Keuangan</button>
     <button id="gn-btn-finance" onclick="showMode('finance')">FINANCE</button>
     <button id="gn-btn-absensi" onclick="showMode('absensi')">Workspace</button>
+    <button id="gn-btn-logistik" onclick="openLogistik()">Logistik</button>
     <button id="gn-btn-sop" onclick="showMode('sop')">SOP</button>
     <button id="gn-btn-pricelist" onclick="showMode('pricelist')">Harga Reseller</button>
     <span class="gn-user" id="gnUser"></span>
@@ -2317,6 +2320,12 @@ img,video,canvas{max-width:100%;}
       <h2>Workspace — Absensi</h2>
       <p>Karyawan absen masuk pakai kamera (Senin–Sabtu, Minggu libur) sesuai jam yang ditentukan. Owner bisa lihat rekap absensi per bulan, kelola data karyawan, dan pantau progress harian tim Marketing (kontak &amp; event) lengkap bukti uploadnya.</p>
       <span class="ls-cta">Buka Workspace →</span>
+    </button>
+    <button class="ls-card ls-card-workflow" onclick="openLogistik()">
+      <div class="ls-icon">08</div>
+      <h2>Logistik</h2>
+      <p>Pantau paket keluar ke customer dengan mengunggah no. resi, dan paket kaos / bahan yang sedang menuju workshop lengkap dengan estimasi tiba. Termasuk absensi masuk dan KPI tim Logistik &amp; Produksi.</p>
+      <span class="ls-cta">Buka Logistik →</span>
     </button>
     <button class="ls-card ls-card-sop" onclick="showMode('sop')">
       <div class="ls-icon">06</div>
@@ -3494,6 +3503,7 @@ function subscribeRealtime(){
       projectsCache = snapshot.docs.map(d => d.data());
       state.loading = false;
       render();
+      try{ if(typeof wprRefresh==='function') wprRefresh(); }catch(e){}
     }, err => {
       console.error('Realtime error', err);
       state.loading = false;
@@ -4018,7 +4028,7 @@ function renderPersonView(role){
     const proses = mine.filter(p=>p.status==='diproses_produksi').sort((a,b)=>a.createdAt-b.createdAt);
     const selesai = mine.filter(p=>p.status==='selesai').sort((a,b)=>b.createdAt-a.createdAt);
     const komisiFinal = selesai.reduce((s,p)=>s+totalKomisi(p),0);
-    return whoBar + `
+    return whoBar + prodAbsCardHtml() + `
       <div class="komisi-box">
         <div class="lbl">Total Komisi Terkumpul (Project Selesai)</div>
         <div class="big">${rupiah(komisiFinal)}</div>
@@ -4454,6 +4464,7 @@ function openDetailModal(id){
     <div class="kv"><b>Via</b><span>${escapeHtml(p.via)}</span></div>
     <div class="kv"><b>Masuk</b><span>${fmtDate(p.createdAt)}</span></div>
     <div class="kv"><b>Deadline</b><div style="flex:1;">${wfDlStrip(p).replace('margin:8px 0 6px','margin:0')}${wfDlHistHtml(p)}</div></div>
+    ${typeof logiProjectLine==='function' ? logiProjectLine(p) : ''}
     <div class="kv"><b>Desainer</b><span>${escapeHtml(p.namaDesainer||'-')}</span></div>
     <div class="kv"><b>Produksi</b><span>${escapeHtml(p.namaProduksi||'-')}</span></div>
     <div class="kv"><b>Brief</b><span>${escapeHtml(p.briefDesain)}</span></div>
@@ -4728,11 +4739,15 @@ function wfDlInfo(p){
 function wfDlStrip(p){
   const i = wfDlInfo(p);
   const canEdit = (typeof state!=='undefined' && state.role==='admin');
+  const isLate = wfLateDays(p) > 0;
+  const lr = p.lateReason;
   return '<div class="wf-dl '+i.cls+'" title="Deadline project">'+
     '<span class="wf-dl-tag">'+i.tag+'</span>'+
     (p.deadline ? '<span class="wf-dl-date">'+fmtDate(p.deadline)+'</span>' : '')+
     (i.sub && p.status!=='selesai' ? '<span class="wf-dl-sub">'+i.sub+'</span>' : '')+
+    (isLate ? '<span class="wf-dl-why '+(lr?'':'kosong')+'">'+(lr ? 'Alasan telat: <b>'+escapeHtml(wprKatLabel(lr.kat))+'</b>'+(lr.alasan?' — '+escapeHtml(lr.alasan):'') : 'Alasan telat belum diisi')+'</span>' : '')+
     (canEdit ? '<button class="wf-dl-edit" onclick="event.stopPropagation();openDeadlineModal(\''+p.id+'\')">✎ '+(p.deadline?'Ubah':'Atur')+' Deadline</button>' : '')+
+    (canEdit && isLate ? '<button class="wf-dl-edit" onclick="event.stopPropagation();wprOpenReason(\''+p.id+'\')">📝 '+(lr?'Ubah':'Isi')+' Alasan Telat</button>' : '')+
   '</div>';
 }
 /* kunci urut "deadline terdekat": telat -> hari ini -> terdekat ... -> belum ada deadline -> selesai */
@@ -7955,7 +7970,7 @@ let wspEmployeesCache = [];
 let wspAttendanceCache = [];
 let wspMarketingCache = [];
 let wspProspectsCache = [];
-let wspSettings = { kontakTarget: 10, eventTarget: 10, jamMulai: '07:00', jamSelesai: '17:00', batasAman: 70, batasBonus: 100 };
+let wspSettings = { kontakTarget: 10, eventTarget: 10, logTarget: 3, prodTarget: 50, jamMulai: '07:00', jamSelesai: '17:00', batasAman: 70, batasBonus: 100 };
 let wspInited = false;
 let wspStream = null;
 let wspCapturedDataUrl = null;
@@ -8654,7 +8669,7 @@ function initAbsensi(){
   if(wspInited) return;
   wspInited = true;
   try{ wspState.myEmployeeId = localStorage.getItem('tenx_wsp_employee_id') || ''; }catch(e){}
-  try{ wspState.role = localStorage.getItem('tenx_wsp_role') || 'karyawan'; }catch(e){}
+  try{ wspState.role = localStorage.getItem('tenx_wsp_role') || (authIsKoordinator() ? 'laporan' : 'karyawan'); }catch(e){}
   try{ wspState.ownerEmail = localStorage.getItem('tenx_wsp_owner_email') || ''; }catch(e){}
   try{
     const localP = localStorage.getItem('tenx_wsp_prospects_cache');
@@ -8716,6 +8731,8 @@ function renderAbsensiRoleSwitch(){
     <button class="${wspState.role==='karyawan'?'active':''}" onclick="wspSetRole('karyawan')">KARYAWAN</button>
     <button class="${wspState.role==='papan'?'active':''}" onclick="wspSetRole('papan')">PAPAN EVALUASI</button>
     <button class="${wspState.role==='owner'?'active':''}" onclick="wspSetRole('owner')">OWNER / ADMIN</button>
+    <button class="${wspState.role==='logistik'?'active':''}" onclick="wspSetRole('logistik')">LOGISTIK</button>
+    ${wspCanProdReport() ? `<button class="${wspState.role==='laporan'?'active':''}" onclick="wspSetRole('laporan')">LAPORAN PRODUKSI</button>` : ''}
   `;
 }
 function renderAbsensi(){
@@ -8723,6 +8740,7 @@ function renderAbsensi(){
 }
 function renderAbsensiCore(){
   renderAbsensiRoleSwitch();
+  try{ const h1 = document.querySelector('#absensiApp h1'); if(h1) h1.textContent = wspState.role==='logistik' ? 'WORKSPACE — LOGISTIK' : 'WORKSPACE — ABSENSI'; }catch(e){}
   const app = document.getElementById('abApp');
   if(!app) return;
   if(!CONFIG_READY){
@@ -8737,6 +8755,10 @@ function renderAbsensiCore(){
     app.innerHTML = renderKaryawanView();
   } else if(wspState.role==='papan'){
     app.innerHTML = renderPapanEvaluasi();
+  } else if(wspState.role==='logistik'){
+    app.innerHTML = renderLogistik();
+  } else if(wspState.role==='laporan'){
+    app.innerHTML = wspCanProdReport() ? renderProdReport() : '<div class="ab-card"><h2>Laporan Produksi</h2><div class="ab-empty">Halaman ini khusus Owner dan Koordinator Produksi.</div></div>';
   } else {
     app.innerHTML = wspIsOwnerAuthed() ? renderOwnerView() : renderOwnerLogin();
   }
@@ -8748,7 +8770,7 @@ function renderKaryawanView(){
   const emp = wspGetEmployee(wspState.myEmployeeId);
 
   if(!emp){
-    const options = activeEmployees.map(e=>`<option value="${e.id}">${escapeHtml(e.name)}${e.division==='marketing' ? ' (Marketing)' : ''}</option>`).join('');
+    const options = activeEmployees.map(e=>`<option value="${e.id}">${escapeHtml(e.name)}${e.division && e.division!=='umum' ? ' ('+wspDivLabel(e.division)+')' : ''}</option>`).join('');
     return `
       <div class="ab-card">
         <h2>Siapa Anda?</h2>
@@ -8998,7 +9020,7 @@ function renderKaryawanView(){
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
         <div>
           <h2>Halo, ${escapeHtml(emp.name)}</h2>
-          <div style="font-size:12.5px;color:var(--ab-muted);">${wspDayName(today)}, ${formatDateID(today)} ${emp.division==='marketing' ? '· <span class="ab-badge marketing" style="transform:none;">MARKETING</span>' : ''}</div>
+          <div style="font-size:12.5px;color:var(--ab-muted);">${wspDayName(today)}, ${formatDateID(today)} ${emp.division && emp.division!=='umum' ? '· '+wspDivBadge(emp,false) : ''}</div>
         </div>
         <button class="btn ghost small" onclick="wspChangeIdentity()">Ganti Karyawan</button>
       </div>
@@ -9976,6 +9998,7 @@ function renderOwnerView(){
       <button class="${wspState.ownerTab==='marketing'?'active':''}" onclick="wspSetOwnerTab('marketing')">Kinerja Marketing</button>
       <button class="${wspState.ownerTab==='kpiboard'?'active':''}" onclick="wspSetOwnerTab('kpiboard')">KPI Karyawan</button>
       <button class="${wspState.ownerTab==='kpi'?'active':''}" onclick="wspSetOwnerTab('kpi')">Pengaturan KPI &amp; Jam</button>
+      <button onclick="wspSetRole('laporan')">Laporan Produksi</button>
       <button onclick="showMode('sop')">SOP</button>
     </div>
     ${wspState.ownerTab==='rekap' ? renderOwnerRekap() : ''}
@@ -10000,7 +10023,7 @@ function renderOwnerRekap(){
       const count = monthAttendance.filter(a=>a.employeeId===e.id).length;
       const pct = workingDays ? Math.round((count/workingDays)*100) : 0;
       return `<tr onclick="wspOpenRekapDetail('${e.id}')">
-        <td>${escapeHtml(e.name)}<br><span class="ab-badge ${e.division==='marketing'?'marketing':'umum'}" style="transform:none;font-size:10px;">${e.division==='marketing'?'MARKETING':'UMUM'}</span></td>
+        <td>${escapeHtml(e.name)}<br>${wspDivBadge(e,true)}</td>
         <td>${count} / ${workingDays} hari</td>
         <td>${pct}%</td>
       </tr>`;
@@ -10059,7 +10082,7 @@ function renderOwnerKaryawan(){
     <div class="ab-employee-row">
       <div>
         <div class="nm">${escapeHtml(e.name)} ${e.active===false ? '<span style="color:var(--ab-rust);font-size:11px;">(nonaktif)</span>' : ''}</div>
-        <div class="meta"><span class="ab-badge ${e.division==='marketing'?'marketing':'umum'}" style="transform:none;">${e.division==='marketing'?'MARKETING':'UMUM'}</span></div>
+        <div class="meta">${wspDivBadge(e,false)}</div>
       </div>
       <div style="display:flex;gap:8px;">
         <button class="btn ghost small" onclick="wspEditEmployee('${e.id}')">Edit</button>
@@ -10092,6 +10115,8 @@ function wspEditEmployee(id){
         <select id="wspEmpDivision">
           <option value="umum" ${(!emp || emp.division==='umum')?'selected':''}>Umum</option>
           <option value="marketing" ${emp && emp.division==='marketing'?'selected':''}>Marketing</option>
+          <option value="logistik" ${emp && emp.division==='logistik'?'selected':''}>Logistik</option>
+          <option value="produksi" ${emp && emp.division==='produksi'?'selected':''}>Produksi</option>
         </select>
         <label>Status</label>
         <select id="wspEmpActive">
@@ -10340,6 +10365,12 @@ function wspKpiRows(month){
       scorePct = Math.round((pctK+pctE)/2);
       detail = `Kontak ${mt.kontak}/${targetKontak} · Event ${mt.event}/${targetEvent} · ${mt.lapor}/${workingDays} hari lapor`;
       metricLabel = 'Progress Marketing';
+    } else if(e.division === 'logistik'){
+      const r = logiKpi(e, month, workingDays, monthAttendance);
+      scorePct = r.score; detail = r.detail; metricLabel = r.label;
+    } else if(e.division === 'produksi'){
+      const r = prodKpi(e, month, workingDays, monthAttendance);
+      scorePct = r.score; detail = r.detail; metricLabel = r.label;
     } else {
       const count = monthAttendance.filter(a=>a.employeeId===e.id).length;
       scorePct = workingDays ? Math.round((count/workingDays)*100) : 0;
@@ -10382,7 +10413,7 @@ function renderPapanEvaluasi(){
     <div class="tl-card tl-${r.level}">
       <div class="tl-dot"></div>
       <div class="tl-main">
-        <div><span class="tl-name">${escapeHtml(r.emp.name)}</span><span class="tl-div">${r.emp.division==='marketing'?'Marketing':'Umum'}</span></div>
+        <div><span class="tl-name">${escapeHtml(r.emp.name)}</span><span class="tl-div">${wspDivLabel(r.emp.division)}</span></div>
         <div class="tl-detail">${r.metricLabel} · ${r.detail}</div>
         <div class="tl-bar"><div style="width:${Math.min(r.scorePct,100)}%"></div></div>
       </div>
@@ -10432,7 +10463,7 @@ function renderOwnerKpiBoard(){
 
   const tableRows = rows.map(r=>`
     <tr onclick="wspOpenKpiDetail('${r.emp.id}')">
-      <td>${escapeHtml(r.emp.name)}<br><span class="ab-badge ${r.emp.division==='marketing'?'marketing':'umum'}" style="transform:none;font-size:10px;">${r.emp.division==='marketing'?'MARKETING':'UMUM'}</span></td>
+      <td>${escapeHtml(r.emp.name)}<br>${wspDivBadge(r.emp,true)}</td>
       <td>${r.metricLabel}<div style="font-size:11.5px;color:var(--ab-muted);margin-top:2px;">${r.detail}</div></td>
       <td style="min-width:120px;">
         ${Math.min(r.scorePct,100)}%${r.scorePct>100?' ':''}
@@ -10466,7 +10497,10 @@ function wspChangeKpiMonth(v){ wspState.kpiMonth = v; renderAbsensi(); }
 function wspOpenKpiDetail(employeeId){
   const emp = wspGetEmployee(employeeId);
   if(!emp) return;
-  if(emp.division === 'marketing'){
+  if(emp.division === 'logistik' || emp.division === 'produksi'){
+    logiState.month = wspState.kpiMonth || logiState.month;
+    logiOpenKpiDetail(employeeId);
+  } else if(emp.division === 'marketing'){
     wspState.marketingMonth = wspState.kpiMonth;
     wspOpenMarketingDetail(employeeId);
   } else {
@@ -10488,6 +10522,16 @@ function renderOwnerKpi(){
         <div>
           <label>Target Event / Hari (Marketing)</label>
           <input type="number" id="wspCfgEvent" min="0" value="${Number(wspSettings.eventTarget)||10}">
+        </div>
+      </div>
+      <div class="ab-row2">
+        <div>
+          <label>Target Paket Diproses / Hari (Logistik)</label>
+          <input type="number" id="wspCfgLog" min="0" value="${Number(wspSettings.logTarget)||3}">
+        </div>
+        <div>
+          <label>Target Pcs Selesai / Hari (Produksi)</label>
+          <input type="number" id="wspCfgProd" min="0" value="${Number(wspSettings.prodTarget)||50}">
         </div>
       </div>
       <div class="ab-row2">
@@ -10520,6 +10564,8 @@ async function wspSaveKpiForm(){
   const cfg = {
     kontakTarget: Number(document.getElementById('wspCfgKontak').value) || 10,
     eventTarget: Number(document.getElementById('wspCfgEvent').value) || 10,
+    logTarget: Number(document.getElementById('wspCfgLog').value) || 3,
+    prodTarget: Number(document.getElementById('wspCfgProd').value) || 50,
     jamMulai: document.getElementById('wspCfgJamMulai').value || '07:00',
     jamSelesai: document.getElementById('wspCfgJamSelesai').value || '17:00',
     batasAman: Number(document.getElementById('wspCfgAman').value) || 70,
@@ -13550,6 +13596,38 @@ function authRegSave(arr){
   catch(e){ alert('Penyimpanan di perangkat ini penuh atau ditolak browser, daftar kode tidak tersimpan.'); return false; }
 }
 let plTokens = authRegLoad();
+/* Kode akses khusus: dikenali otomatis lewat kode (tanda tangan tetap sah), nama & jabatan ditetapkan di sini.
+   TNX-KEZ9F-MAQ2P-M3B9X = Qoyyum, Koordinator Produksi (akses Karyawan + Laporan Produksi di Workspace).
+   Kode ini juga otomatis muncul di daftar Akses Login milik Owner. Cabut/hapus tetap bisa lewat daftar itu. */
+const AUTH_PRESET = {
+  'KEZ9FMA': { nama:'Qoyyum', jabatan:'koordinator', kode:'TNX-KEZ9F-MAQ2P-M3B9X' }
+};
+(function(){
+  try{
+    let ch = false;
+    Object.keys(AUTH_PRESET).forEach(id=>{
+      if(!plTokens.some(t=>t && t.id===id)){
+        const a = AUTH_PRESET[id];
+        plTokens.push({ id:id, kode:a.kode, nama:a.nama, wa:'', role:'karyawan', jabatan:a.jabatan, createdAt:Date.now(), revoked:false });
+        ch = true;
+      }
+    });
+    if(ch) authRegSave(plTokens);
+  }catch(e){ console.warn('seed kode akses', e); }
+})();
+function authJabatan(){
+  if(!authSession || authSession.role==='owner') return '';
+  const p = authParse(authSession.code); if(!p) return '';
+  if(AUTH_PRESET[p.body]) return AUTH_PRESET[p.body].jabatan;
+  const reg = plTokens.find(t=>t && t.id===p.body);
+  return (reg && reg.jabatan) || authSession.jabatan || '';
+}
+function authIsKoordinator(){ return authJabatan()==='koordinator'; }
+function authRoleLabel(){
+  if(!authSession) return '';
+  if(authIsKoordinator()) return 'Koordinator Produksi';
+  return AUTH_ROLE_LABEL[authSession.role] || '';
+}
 function authIsRevoked(body){
   return AUTH_REVOKED.indexOf(body) >= 0 || plTokens.some(t=>t.id===body && (t.revoked || t.deleted));
 }
@@ -13596,7 +13674,7 @@ function authApply(){
   document.body.classList.toggle('tx-locked', !authSession);
   document.body.classList.toggle('tx-reseller', authIsReseller());
   const u = document.getElementById('gnUser');
-  if(u) u.textContent = authSession ? (''+(authSession.nama||'')+' · '+(AUTH_ROLE_LABEL[authSession.role]||'')) : '';
+  if(u) u.textContent = authSession ? (''+(authSession.nama||'')+' · '+authRoleLabel()) : '';
   const lo = document.getElementById('gn-btn-logout');
   if(lo) lo.style.display = authSession ? '' : 'none';
 }
@@ -13613,6 +13691,7 @@ function authToggleOwner(){
 function authEnter(){
   authApply();
   try{ authWatch(); }catch(e){ console.warn('authWatch', e); }
+  try{ if(!authIsReseller()) logiSubscribe(); }catch(e){ console.warn('logiSubscribe', e); }
   showMode(authIsReseller() ? 'pricelist' : 'landing');
   if(!authIsReseller()){ try{ initKeuangan(); }catch(e){ console.warn(e); } setTimeout(()=>{ rsReconcile(false); wfsReconcile(false); }, 8000); }
 }
@@ -13638,7 +13717,9 @@ async function authLoginToken(){
   }
   if(btn){ btn.disabled = false; btn.textContent = 'Masuk'; }
   if(reg && (reg.revoked || reg.deleted)){ err.textContent = 'Kode akses ini sudah dicabut oleh admin.'; return; }
-  authSession = { role:p.role, nama: reg ? reg.nama : (AUTH_ROLE_LABEL[p.role]+' '+p.body.slice(1,5)), code:p.canon, wa: reg ? (reg.wa||'') : '' };
+  const pre = AUTH_PRESET[p.body];
+  authSession = { role:p.role, nama: pre ? pre.nama : (reg ? reg.nama : (AUTH_ROLE_LABEL[p.role]+' '+p.body.slice(1,5))), code:p.canon, wa: reg ? (reg.wa||'') : '',
+                  jabatan: pre ? pre.jabatan : ((reg && reg.jabatan) || '') };
   authSave();
   try{ localStorage.removeItem('tenx_wsp_owner_email'); }catch(e){}
   wspState.ownerEmail = '';
@@ -13772,7 +13853,7 @@ function authCheckSelf(){
   const p = authParse(authSession.code); if(!p) return;
   if(authIsRevoked(p.body)){ authKick('Akses Anda sudah dicabut oleh admin. Hubungi admin untuk kode baru.'); return; }
   const reg = plTokens.find(t=>t.id===p.body);
-  if(reg && reg.nama && reg.nama !== authSession.nama){ authSession.nama = reg.nama; authSave(); authApply(); }
+  if(reg && reg.nama && reg.nama !== authSession.nama && !AUTH_PRESET[p.body]){ authSession.nama = reg.nama; authSave(); authApply(); }
 }
 function authWatch(){
   if(typeof CONFIG_READY==='undefined' || !CONFIG_READY || !db || !authSession) return;
@@ -14136,6 +14217,1181 @@ authInit();
   window.addEventListener('orientationchange',function(){ setTimeout(function(){ IDS.forEach(function(id){ var el=document.getElementById(id); if(el) applySaved(el); }); },250); });
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
 })();
+</script>
+
+<style>
+/* ===== LAPORAN PRODUKSI (Workspace) ===== */
+#absensiApp .wpr-head{display:flex;gap:10px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;}
+#absensiApp .wpr-head h2{margin:0;}
+#absensiApp .wpr-ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+#absensiApp .wpr-ctl select{width:auto;min-width:170px;}
+#absensiApp .wpr-sub{font-size:12.5px;color:var(--ab-muted);margin-top:2px;}
+#absensiApp .wpr-banner{border-radius:12px;padding:14px 16px;margin:12px 0;display:flex;gap:12px;align-items:center;border:1.5px solid var(--ab-line,#ddd);background:#fff;}
+#absensiApp .wpr-banner .ico{font-size:30px;line-height:1;}
+#absensiApp .wpr-banner .ttl{font-family:'Bebas Neue',sans-serif;letter-spacing:.04em;font-size:22px;line-height:1.1;}
+#absensiApp .wpr-banner .dsc{font-size:13px;color:#4a4339;margin-top:2px;}
+#absensiApp .wpr-banner.up{background:#F1FAF4;border-color:#9CCFAE;} #absensiApp .wpr-banner.up .ttl{color:#1f7a45;}
+#absensiApp .wpr-banner.down{background:#FFF3EE;border-color:#E7A88E;} #absensiApp .wpr-banner.down .ttl{color:#B0452A;}
+#absensiApp .wpr-banner.flat{background:#F6F3EC;}
+#absensiApp .wpr-sent{background:#EEF4FB;border:1.5px solid #B8CDE6;border-radius:12px;padding:10px 14px;margin:12px 0;font-size:13px;}
+#absensiApp .wpr-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0;}
+#absensiApp .wpr-kpi{background:#fff;border:1.5px solid var(--ab-line,#ddd);border-radius:12px;padding:12px 14px;}
+#absensiApp .wpr-kpi .lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ab-muted);font-weight:700;}
+#absensiApp .wpr-kpi .val{font-family:'Bebas Neue',sans-serif;font-size:32px;line-height:1.05;margin-top:2px;}
+#absensiApp .wpr-kpi .sm{font-size:12px;color:var(--ab-muted);margin-top:2px;}
+#absensiApp .wpr-kpi.bad{border-color:#E7A88E;background:#FFF8F4;} #absensiApp .wpr-kpi.bad .val{color:#B0452A;}
+#absensiApp .wpr-d{display:inline-block;font-size:11.5px;font-weight:700;padding:1px 7px;border-radius:999px;margin-left:4px;vertical-align:middle;}
+#absensiApp .wpr-d.good{background:#E3F4EA;color:#1f7a45;} #absensiApp .wpr-d.bad{background:#FDE7DF;color:#B0452A;} #absensiApp .wpr-d.flat{background:#EEE9DD;color:#6b6252;}
+#absensiApp .wpr-card{background:#fff;border:1.5px solid var(--ab-line,#ddd);border-radius:14px;padding:14px 16px;margin:12px 0;}
+#absensiApp .wpr-card h3{margin:0 0 2px;font-family:'Bebas Neue',sans-serif;letter-spacing:.05em;font-size:20px;}
+#absensiApp .wpr-card .hint{font-size:12px;color:var(--ab-muted);margin-bottom:8px;}
+#absensiApp .wpr-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;margin:4px 0 6px;}
+#absensiApp .wpr-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px;}
+#absensiApp .wpr-chart{width:100%;height:auto;display:block;}
+#absensiApp .wpr-chart text{font-family:inherit;}
+#absensiApp .wpr-hb{display:grid;grid-template-columns:minmax(120px,38%) 1fr 34px;gap:6px 10px;align-items:center;font-size:12.5px;margin:6px 0;}
+#absensiApp .wpr-hb .bar{height:14px;background:#EEE9DD;border-radius:7px;overflow:hidden;} #absensiApp .wpr-hb .bar span{display:block;height:100%;background:#D9622B;border-radius:7px;}
+#absensiApp .wpr-hb .bar.nil span{background:#9a9384;}
+#absensiApp .wpr-late{border:1.5px solid #E7C3B5;border-radius:12px;padding:11px 13px;margin:9px 0;background:#FFFAF7;}
+#absensiApp .wpr-late.done{border-color:#E8E1D0;background:#fff;}
+#absensiApp .wpr-late .top{display:flex;gap:8px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;}
+#absensiApp .wpr-late .nm{font-weight:700;} #absensiApp .wpr-late .mt{font-size:12px;color:var(--ab-muted);margin-top:2px;}
+#absensiApp .wpr-late .tg{font-family:'Bebas Neue',sans-serif;letter-spacing:.04em;font-size:15px;background:#B0452A;color:#fff;border-radius:6px;padding:2px 9px;white-space:nowrap;}
+#absensiApp .wpr-late .tg.ok{background:#8a8070;}
+#absensiApp .wpr-late .why{margin-top:7px;font-size:13px;line-height:1.45;}
+#absensiApp .wpr-late .why.kosong{color:#B0452A;font-weight:600;}
+#absensiApp .wpr-ai h4{margin:12px 0 4px;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--ab-muted);}
+#absensiApp .wpr-ai ul{margin:4px 0 4px 18px;padding:0;} #absensiApp .wpr-ai li{margin:3px 0;line-height:1.5;font-size:13.5px;}
+#absensiApp .wpr-ai .src{font-size:11.5px;color:var(--ab-muted);margin-top:10px;}
+#absensiApp .wpr-acts{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;}
+#absensiApp .wpr-acts .btn{flex:1 1 150px;}
+#absensiApp .wpr-warn{background:#FFF7E0;border:1.5px solid #E6C16A;border-radius:10px;padding:9px 12px;font-size:13px;margin:8px 0;}
+/* modal alasan telat (dipakai dari Alur Kerja & Workspace) */
+.wpr-ov{position:fixed;inset:0;z-index:6000;background:rgba(20,16,12,.62);display:flex;align-items:center;justify-content:center;padding:12px;}
+.wpr-md{background:#fff;color:#1b1814;border-radius:14px;max-width:480px;width:100%;max-height:calc(100dvh - 24px);overflow:auto;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));font-family:'Segoe UI',Arial,sans-serif;box-shadow:0 18px 60px rgba(0,0,0,.35);}
+.wpr-md h3{margin:0 0 2px;font-size:20px;} .wpr-md .sb{font-size:12.5px;color:#6b6252;margin-bottom:10px;}
+.wpr-md label{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#6b6252;margin:12px 0 4px;}
+.wpr-md select,.wpr-md textarea{width:100%;box-sizing:border-box;border:1.5px solid #d9d2c3;border-radius:9px;padding:10px 11px;font:inherit;font-size:16px;background:#fff;}
+.wpr-md textarea{min-height:90px;resize:vertical;}
+.wpr-md .acts{display:flex;gap:8px;margin-top:14px;} .wpr-md .acts button{flex:1;min-height:44px;border-radius:9px;border:1.5px solid #d9d2c3;background:#fff;font:inherit;font-weight:700;cursor:pointer;}
+.wpr-md .acts button.pri{background:#1f3a5f;border-color:#1f3a5f;color:#fff;}
+.wpr-md .err{color:#B0452A;font-size:12.5px;margin-top:8px;}
+@media(max-width:640px){
+  .wpr-ov{align-items:flex-end;padding:0;} .wpr-md{border-radius:16px 16px 0 0;max-width:none;}
+  #absensiApp .wpr-ctl,#absensiApp .wpr-ctl select{width:100%;} #absensiApp .wpr-banner .ttl{font-size:19px;}
+  #absensiApp .wpr-hb{grid-template-columns:1fr 34px;} #absensiApp .wpr-hb .nm{grid-column:1 / -1;}
+  #absensiApp .wpr-hb .bar{grid-column:1;}
+}
+@media print{
+  body.wpr-print *{visibility:hidden !important;}
+  body.wpr-print #wprReport,body.wpr-print #wprReport *{visibility:visible !important;}
+  body.wpr-print #wprReport{position:absolute;left:0;top:0;width:100%;padding:0 10px;}
+  body.wpr-print #wprReport .no-print{display:none !important;}
+}
+</style>
+<script>
+/* =====================================================================
+   LAPORAN PRODUKSI — Workspace (Owner & Koordinator Produksi)
+   Data SINKRON OTOMATIS dari Alur Kerja (projectsCache, realtime). Isi: project masuk, selesai, telat,
+   alasan telat (diisi koordinator), tren produksi naik/turun, analisis AI penyebab, dan kirim ke Owner.
+   ===================================================================== */
+const WPR_KAT = [
+  ['customer_ubah','Perubahan / revisi dari customer'],
+  ['approval','Menunggu approval / konfirmasi customer'],
+  ['pembayaran','Menunggu pembayaran / pelunasan'],
+  ['bahan','Bahan / material telat atau kosong'],
+  ['antrian','Antrian produksi penuh / kapasitas kurang'],
+  ['mesin','Mesin / alat bermasalah'],
+  ['sdm','Kekurangan tenaga / karyawan berhalangan'],
+  ['desain','Proses desain / pedoman lambat'],
+  ['reject','Reject / produksi ulang'],
+  ['deadline_singkat','Deadline terlalu singkat dari awal'],
+  ['lainnya','Lainnya']
+];
+const WPR_BLN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const WPR_BLN_S = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+function wprKatLabel(k){ const r = WPR_KAT.find(x=>x[0]===k); return r ? r[1] : (k || '-'); }
+const wprState = { month: '', docs: {}, sub: null, subMonth: '', busy: false, aiErr: '' };
+
+function wspCanProdReport(){
+  try{ return (typeof authIsOwner==='function' && authIsOwner()) || (typeof authIsKoordinator==='function' && authIsKoordinator()) || (typeof wspIsOwnerAuthed==='function' && wspIsOwnerAuthed()); }
+  catch(e){ return false; }
+}
+function wprMonthKey(v){
+  if(!v) return '';
+  if(typeof v==='string' && /^\d{4}-\d{2}/.test(v)) return v.slice(0,7);
+  const d = new Date(v); if(isNaN(d)) return '';
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+}
+function wprMonths(sel, n){
+  const a = sel.split('-').map(Number), out = [];
+  for(let i=n-1;i>=0;i--){ const d = new Date(a[0], a[1]-1-i, 1); out.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')); }
+  return out;
+}
+function wprMonthName(k, short){ const a = String(k).split('-'); const m = (+a[1]||1)-1; return short ? WPR_BLN_S[m] : WPR_BLN[m]+' '+a[0]; }
+function wprNowMonth(){ return wprMonthKey(Date.now()); }
+function wprWho(){ return (typeof authSession!=='undefined' && authSession && authSession.nama) || 'Owner'; }
+
+/* ---------- Statistik dari Alur Kerja ---------- */
+function wprStats(sel){
+  const P = (typeof projectsCache!=='undefined' && Array.isArray(projectsCache)) ? projectsCache : [];
+  const months = wprMonths(sel, 6), M = {};
+  months.forEach(k=>{ M[k] = { masuk:0, masukPcs:0, selesai:0, selesaiPcs:0, tepat:0, telatSelesai:0, telat:0, tanpaDl:0 }; });
+  const nowMk = wprNowMonth(), lateList = [];
+  P.forEach(p=>{
+    const q = Number(totalQty(p)) || 0;
+    const cm = wprMonthKey(p.createdAt); if(M[cm]){ M[cm].masuk++; M[cm].masukPcs += q; }
+    if(p.status==='selesai' && p.selesaiAt){
+      const sm = wprMonthKey(p.selesaiAt);
+      if(M[sm]){
+        M[sm].selesai++; M[sm].selesaiPcs += q;
+        if(!p.deadline) M[sm].tanpaDl++; else if(wfLateDays(p) > 0) M[sm].telatSelesai++; else M[sm].tepat++;
+      }
+    }
+    if(p.deadline && wfLateDays(p) > 0){
+      const dm = wprMonthKey(p.deadline); if(M[dm]) M[dm].telat++;
+      if(dm===sel || (sel===nowMk && p.status!=='selesai')) lateList.push(p);
+    }
+  });
+  lateList.sort((a,b)=>wfLateDays(b)-wfLateDays(a));
+  const prevKey = months[months.length-2], cur = M[sel], prev = M[prevKey];
+  const pct = (a,b)=> b>0 ? Math.round((a-b)/b*1000)/10 : null;
+  const nDl = cur.selesai - cur.tanpaDl;
+  const aktif = P.filter(p=>p.status!=='selesai');
+  return {
+    sel:sel, months:months, M:M, cur:cur, prev:prev, prevKey:prevKey, lateList:lateList,
+    dPcs: pct(cur.selesaiPcs, prev.selesaiPcs), dSel: pct(cur.selesai, prev.selesai), dMasuk: pct(cur.masuk, prev.masuk),
+    tepatPct: nDl>0 ? Math.round(cur.tepat/nDl*100) : null,
+    aktifTelat: aktif.filter(p=>wfIsLateActive(p)).length, aktifTotal: aktif.length,
+    tanpaAlasan: lateList.filter(p=>!p.lateReason).length,
+    totalProject: P.length
+  };
+}
+function wprDir(d){ if(d===null || d===undefined) return 'na'; if(d>=1) return 'up'; if(d<=-1) return 'down'; return 'flat'; }
+function wprDelta(d, inv){
+  if(d===null || d===undefined) return '';
+  const dir = wprDir(d); if(dir==='flat') return '<span class="wpr-d flat">≈ stabil</span>';
+  const good = inv ? dir==='down' : dir==='up';
+  return '<span class="wpr-d '+(good?'good':'bad')+'">'+(dir==='up'?'▲ ':'▼ ')+Math.abs(d)+'%</span>';
+}
+function wprNice(v){ if(v<=4) return 4; const p = Math.pow(10, Math.floor(Math.log10(v))); const n = v/p; const m = n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10; return Math.ceil(m*p/4)*4; }
+
+/* ---------- Grafik (SVG, tanpa library) ---------- */
+function wprBars(months, series){
+  const W=640,H=250,pl=34,pr=8,pt=14,pb=34, iw=W-pl-pr, ih=H-pt-pb;
+  const mx = wprNice(Math.max(1, ...series.flatMap(s=>s.vals))), gw = iw/months.length;
+  const bw = Math.min(24, gw*0.78/series.length);
+  let g = '';
+  for(let i=0;i<=4;i++){
+    const y = pt+ih-ih*i/4;
+    g += '<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+y+'" y2="'+y+'" stroke="#E8E1D0" stroke-width="1"/><text x="'+(pl-5)+'" y="'+(y+3.5)+'" font-size="10" fill="#8a8070" text-anchor="end">'+Math.round(mx*i/4)+'</text>';
+  }
+  months.forEach((m,mi)=>{
+    const x0 = pl+gw*mi+(gw-bw*series.length)/2;
+    series.forEach((s,si)=>{
+      const v = s.vals[mi], h = ih*v/mx, x = x0+bw*si, y = pt+ih-h;
+      g += '<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+(bw-2).toFixed(1)+'" height="'+Math.max(0,h).toFixed(1)+'" rx="3" fill="'+s.color+'"/>';
+      if(v>0) g += '<text x="'+(x+(bw-2)/2).toFixed(1)+'" y="'+(y-3).toFixed(1)+'" font-size="9.5" fill="#4a4339" text-anchor="middle" font-weight="600">'+v+'</text>';
+    });
+    g += '<text x="'+(pl+gw*mi+gw/2).toFixed(1)+'" y="'+(H-12)+'" font-size="11" fill="#4a4339" text-anchor="middle">'+wprMonthName(m,true)+'</text>';
+  });
+  return '<svg class="wpr-chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Grafik batang per bulan">'+g+'</svg>';
+}
+function wprLine(months, vals, color){
+  const W=640,H=230,pl=40,pr=18,pt=22,pb=34, iw=W-pl-pr, ih=H-pt-pb;
+  const mx = wprNice(Math.max(1, ...vals)), step = months.length>1 ? iw/(months.length-1) : 0;
+  const px = i=>pl+step*i, py = v=>pt+ih-ih*v/mx;
+  let g = '';
+  for(let i=0;i<=4;i++){
+    const y = pt+ih-ih*i/4;
+    g += '<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+y+'" y2="'+y+'" stroke="#E8E1D0" stroke-width="1"/><text x="'+(pl-6)+'" y="'+(y+3.5)+'" font-size="10" fill="#8a8070" text-anchor="end">'+Math.round(mx*i/4)+'</text>';
+  }
+  const pts = vals.map((v,i)=>px(i).toFixed(1)+','+py(v).toFixed(1)).join(' ');
+  g += '<polygon points="'+px(0).toFixed(1)+','+(pt+ih)+' '+pts+' '+px(vals.length-1).toFixed(1)+','+(pt+ih)+'" fill="'+color+'" opacity=".10"/>';
+  g += '<polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>';
+  vals.forEach((v,i)=>{
+    const last = i===vals.length-1;
+    g += '<circle cx="'+px(i).toFixed(1)+'" cy="'+py(v).toFixed(1)+'" r="'+(last?5.5:4)+'" fill="'+(last?color:'#fff')+'" stroke="'+color+'" stroke-width="2.2"/>';
+    g += '<text x="'+px(i).toFixed(1)+'" y="'+(py(v)-10).toFixed(1)+'" font-size="10.5" fill="#2b261f" text-anchor="middle" font-weight="700">'+v+'</text>';
+    g += '<text x="'+px(i).toFixed(1)+'" y="'+(H-12)+'" font-size="11" fill="#4a4339" text-anchor="middle">'+wprMonthName(months[i],true)+'</text>';
+  });
+  return '<svg class="wpr-chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Grafik garis produksi per bulan">'+g+'</svg>';
+}
+
+/* ---------- Data laporan tersimpan (Firestore prodReports) ---------- */
+function wprEnsureSub(month){
+  if(typeof CONFIG_READY==='undefined' || !CONFIG_READY || typeof db==='undefined' || !db) return;
+  if(wprState.subMonth === month) return;
+  try{ if(wprState.sub) wprState.sub(); }catch(e){}
+  wprState.subMonth = month;
+  try{
+    wprState.sub = db.collection('prodReports').doc(month).onSnapshot(doc=>{
+      wprState.docs[month] = doc.exists ? doc.data() : null;
+      if(wspState.role==='laporan' && typeof currentMode!=='undefined' && currentMode==='absensi' && !wprState.busy) renderAbsensi();
+    }, e=>console.warn('prodReports', e));
+  }catch(e){ console.warn(e); }
+}
+async function wprSaveDoc(month, patch){
+  const d = Object.assign({}, wprState.docs[month] || {}, patch, { month:month });
+  wprState.docs[month] = d;
+  try{
+    if(typeof CONFIG_READY!=='undefined' && CONFIG_READY && db) await db.collection('prodReports').doc(month).set(d, { merge:true });
+    return true;
+  }catch(e){ alert('Gagal menyimpan laporan ke server: '+(e.message||e)); return false; }
+}
+function wprRefresh(){
+  try{ if(typeof wspState!=='undefined' && wspState.role==='laporan' && typeof currentMode!=='undefined' && currentMode==='absensi' && !wprState.busy && !document.getElementById('wprModal')) renderAbsensi(); }catch(e){}
+}
+
+/* ---------- Analisis ---------- */
+function wprFacts(st){
+  const lateRows = st.lateList.map(p=>({
+    id:p.id, klien:p.namaKlien||'', via:p.via||'', pcs:Number(totalQty(p))||0, deadline:p.deadline||'',
+    selesai: (p.status==='selesai' && p.selesaiAt) ? new Date(p.selesaiAt).toISOString().slice(0,10) : null,
+    status:p.status, telatHari:wfLateDays(p),
+    kategori_alasan: p.lateReason ? wprKatLabel(p.lateReason.kat) : null,
+    alasan_koordinator: p.lateReason ? (p.lateReason.alasan||'') : null,
+    desainer:p.namaDesainer||'', produksi:p.namaProduksi||'',
+    riwayat_deadline:(p.deadlineLog||[]).slice(-3).map(x=>({dari:x.from||null, ke:x.to||null, alasan:x.why||''}))
+  }));
+  return {
+    bulan_laporan: wprMonthName(st.sel), bulan_pembanding: wprMonthName(st.prevKey),
+    bulan_ini: st.cur, bulan_lalu: st.prev,
+    perubahan_persen: { pcs_selesai: st.dPcs, project_selesai: st.dSel, project_masuk: st.dMasuk },
+    tepat_waktu_persen: st.tepatPct, project_aktif_telat_sekarang: st.aktifTelat, project_aktif_total: st.aktifTotal,
+    tren_6_bulan: st.months.map(k=>Object.assign({ bulan:k }, st.M[k])),
+    project_telat: lateRows
+  };
+}
+async function wprAiCall(facts){
+  const prompt =
+`Kamu adalah analis operasional produksi untuk usaha konveksi/apparel di Indonesia. Di bawah ini DATA (JSON) dari sistem Alur Kerja: project masuk, selesai, telat, tren 6 bulan, dan alasan keterlambatan yang ditulis koordinator produksi.
+Tugasmu untuk laporan ke Owner (bahasa Indonesia, ringkas, praktis):
+(a) jelaskan apakah produksi bulan ini NAIK atau TURUN dibanding bulan pembanding dan kemungkinan sebabnya berdasarkan data,
+(b) identifikasi PENYEBAB UTAMA keterlambatan dengan mengelompokkan alasan koordinator dan pola yang terlihat (mis. deadline berkali-kali diubah customer, satu orang/bagian menumpuk, bahan, antrian),
+(c) sebut risiko ke depan dan saran tindakan konkret,
+(d) sebut data apa yang masih kurang (mis. alasan telat belum diisi).
+ATURAN:
+- Pakai HANYA angka dan fakta dari DATA. Jangan mengarang penyebab, nama, atau angka. Bila alasan belum diisi, katakan penyebabnya belum bisa dipastikan.
+- Telat = project melewati deadline (aktif: belum selesai; selesai: selesai setelah deadline). Deadline diatur manual oleh koordinator, bukan dari masa habis nota.
+- Balas HANYA JSON valid tanpa markdown dengan format:
+{"ringkasan":"2-3 kalimat","tren_produksi":"1-2 kalimat naik/turun dan alasannya","penyebab_utama":[{"penyebab":"...","jumlah_project":0,"penjelasan":"1-2 kalimat berdasarkan data"}],"pola_dan_risiko":["..."],"saran_tindakan":["..."],"perlu_dilengkapi":["..."]}
+- Maksimal 4 poin per daftar.
+
+DATA:
+`+JSON.stringify(facts);
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(scanConfig.geminiModel)+':generateContent?key='+encodeURIComponent(scanConfig.geminiApiKey);
+  const ctrl = new AbortController(); const to = setTimeout(()=>ctrl.abort(), 60000);
+  let resp;
+  try{
+    resp = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, signal:ctrl.signal,
+      body: JSON.stringify({ contents:[{parts:[{text:prompt}]}], generationConfig:{ temperature:0.3, responseMimeType:'application/json' } }) });
+  } finally { clearTimeout(to); }
+  if(!resp.ok){
+    let msg = 'AI error '+resp.status;
+    try{ const j = await resp.json(); if(j && j.error && j.error.message) msg += ': '+j.error.message.slice(0,140); }catch(e){}
+    throw new Error(msg);
+  }
+  const j = await resp.json();
+  const txt = ((j && j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts) || []).map(p=>p.text||'').join('').replace(/```json|```/g,'').trim();
+  let parsed; try{ parsed = JSON.parse(txt); }catch(e){ throw new Error('Jawaban AI tidak bisa dibaca'); }
+  if(Array.isArray(parsed)) parsed = parsed[0] || {};
+  return parsed;
+}
+/* Cadangan tanpa AI (API key belum diisi / AI gagal): ringkasan otomatis dari data */
+function wprRuleAnalysis(st){
+  const c = st.cur, cnt = {}, ex = {};
+  st.lateList.forEach(p=>{ const k = p.lateReason ? p.lateReason.kat : '_kosong'; cnt[k] = (cnt[k]||0)+1; if(p.lateReason && p.lateReason.alasan && !ex[k]) ex[k] = p.lateReason.alasan; });
+  const rows = Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]);
+  const dir = wprDir(st.dPcs);
+  const SARAN = {
+    customer_ubah:'Minta customer mengunci desain & jadwal sebelum produksi; catat setiap perubahan lewat "Ubah Deadline" beserta alasannya.',
+    approval:'Tetapkan batas waktu approval dari customer; deadline mulai dihitung setelah approval.',
+    pembayaran:'Mulai produksi setelah DP terkonfirmasi, dan ingatkan pelunasan sebelum deadline.',
+    bahan:'Cek stok bahan saat project masuk, bukan saat produksi; siapkan supplier cadangan.',
+    antrian:'Atur kuota project per minggu dan jangan beri deadline sebelum jadwal produksi jelas.',
+    mesin:'Jadwalkan perawatan mesin rutin dan siapkan rencana cadangan.',
+    sdm:'Siapkan tenaga cadangan/lembur terencana di periode padat.',
+    desain:'Beri batas waktu proses desain & pedoman agar tidak menahan produksi.',
+    reject:'Lakukan QC di tengah proses supaya reject ketahuan lebih awal.',
+    deadline_singkat:'Standarkan estimasi waktu per jenis produk sebelum menyepakati deadline.',
+    lainnya:'Pelajari alasan tertulis dan tentukan kategori yang lebih spesifik.'
+  };
+  const peny = rows.filter(k=>k!=='_kosong').slice(0,4).map(k=>({ penyebab:wprKatLabel(k), jumlah_project:cnt[k], penjelasan: ex[k] ? 'Contoh catatan koordinator: '+ex[k] : 'Dicatat koordinator sebagai penyebab keterlambatan.' }));
+  return {
+    ringkasan: wprMonthName(st.sel)+': '+c.masuk+' project masuk, '+c.selesai+' selesai ('+c.selesaiPcs+' pcs), '+st.lateList.length+' project telat'+(st.tepatPct!==null?', tepat waktu '+st.tepatPct+'%':'')+'. Saat ini ada '+st.aktifTelat+' project aktif yang melewati deadline.',
+    tren_produksi: st.dPcs===null ? 'Belum ada data bulan pembanding untuk menilai naik/turun.' : 'Produksi (pcs selesai) '+(dir==='up'?'NAIK ':dir==='down'?'TURUN ':'stabil ')+(dir==='flat'?'':Math.abs(st.dPcs)+'% ')+'dibanding '+wprMonthName(st.prevKey)+' ('+st.prev.selesaiPcs+' → '+c.selesaiPcs+' pcs).',
+    penyebab_utama: peny,
+    pola_dan_risiko: st.aktifTelat>0 ? [st.aktifTelat+' project aktif sedang melewati deadline dan berisiko menambah keterlambatan bulan depan.'] : [],
+    saran_tindakan: rows.filter(k=>k!=='_kosong').slice(0,3).map(k=>SARAN[k]||SARAN.lainnya),
+    perlu_dilengkapi: cnt._kosong ? [cnt._kosong+' project telat belum ada alasan dari koordinator, jadi penyebabnya belum bisa dipastikan.'] : []
+  };
+}
+async function wprRunAnalysis(){
+  const st = wprStats(wprState.month || wprNowMonth());
+  if(wprState.busy) return; wprState.busy = true; wprState.aiErr = ''; renderAbsensi();
+  let a, src = 'ai';
+  try{
+    if(!scanConfig.geminiApiKey) throw new Error('API key Gemini belum diisi');
+    a = await wprAiCall(wprFacts(st));
+  }catch(e){
+    wprState.aiErr = 'AI tidak bisa dipakai ('+(e.message||e)+'). Ditampilkan analisis otomatis dari data.';
+    a = wprRuleAnalysis(st); src = 'otomatis';
+  }
+  wprState.busy = false;
+  await wprSaveDoc(st.sel, { analysis:a, analysisSrc:src, analysisAt:Date.now(), analysisBy:wprWho(),
+    snap:{ masuk:st.cur.masuk, selesai:st.cur.selesai, selesaiPcs:st.cur.selesaiPcs, telat:st.lateList.length, tepatPct:st.tepatPct, dPcs:st.dPcs } });
+  renderAbsensi();
+}
+function wprAnalysisHtml(d){
+  if(!d || !d.analysis) return '<div class="hint" style="margin:6px 0;">Belum ada analisis. Isi alasan telat pada project di atas, lalu tekan <b>Analisis AI</b> supaya penyebab keterlambatan dirangkum untuk Owner.</div>';
+  const a = d.analysis, li = arr=> Array.isArray(arr)&&arr.length ? '<ul>'+arr.map(x=>'<li>'+escapeHtml(String(x))+'</li>').join('')+'</ul>' : '';
+  const pen = Array.isArray(a.penyebab_utama)&&a.penyebab_utama.length ? '<ul>'+a.penyebab_utama.map(x=> typeof x==='string' ? '<li>'+escapeHtml(x)+'</li>' :
+    '<li><b>'+escapeHtml(String(x.penyebab||''))+'</b>'+(x.jumlah_project?' ('+escapeHtml(String(x.jumlah_project))+' project)':'')+(x.penjelasan?' — '+escapeHtml(String(x.penjelasan)):'')+'</li>').join('')+'</ul>' : '';
+  return (a.ringkasan?'<div>'+escapeHtml(String(a.ringkasan))+'</div>':'')+
+    (a.tren_produksi?'<h4>Tren produksi</h4><div>'+escapeHtml(String(a.tren_produksi))+'</div>':'')+
+    (pen?'<h4>Penyebab utama keterlambatan</h4>'+pen:'')+
+    (a.pola_dan_risiko&&a.pola_dan_risiko.length?'<h4>Pola &amp; risiko</h4>'+li(a.pola_dan_risiko):'')+
+    (a.saran_tindakan&&a.saran_tindakan.length?'<h4>Saran tindakan</h4>'+li(a.saran_tindakan):'')+
+    (a.perlu_dilengkapi&&a.perlu_dilengkapi.length?'<h4>Perlu dilengkapi</h4>'+li(a.perlu_dilengkapi):'')+
+    '<div class="src">'+(d.analysisSrc==='ai'?'🤖 Analisis AI':'⚙ Analisis otomatis (tanpa AI)')+' · oleh '+escapeHtml(d.analysisBy||'-')+' · '+new Date(d.analysisAt||Date.now()).toLocaleString('id-ID')+'. Ditulis dari data Alur Kerja; tetap cek angka sebelum mengambil keputusan.</div>';
+}
+
+/* ---------- Laporan teks (salin / WhatsApp) ---------- */
+function wprText(st, d){
+  const c = st.cur, a = d && d.analysis;
+  const dir = wprDir(st.dPcs);
+  let t = '*LAPORAN PRODUKSI — '+wprMonthName(st.sel).toUpperCase()+'*\nTENX APPAREL\n\n';
+  t += '• Project masuk: '+c.masuk+' ('+c.masukPcs+' pcs)\n• Project selesai: '+c.selesai+' ('+c.selesaiPcs+' pcs)\n';
+  t += '• Produksi vs '+wprMonthName(st.prevKey)+': '+(st.dPcs===null?'belum ada pembanding':(dir==='up'?'NAIK ':dir==='down'?'TURUN ':'stabil ')+(dir==='flat'?'':Math.abs(st.dPcs)+'%')+' ('+st.prev.selesaiPcs+' → '+c.selesaiPcs+' pcs)')+'\n';
+  t += '• Tepat waktu: '+(st.tepatPct===null?'-':st.tepatPct+'%')+'\n• Project telat: '+st.lateList.length+' (aktif telat sekarang: '+st.aktifTelat+')\n';
+  if(st.lateList.length){
+    t += '\n*Project telat & alasan*\n';
+    st.lateList.slice(0,12).forEach(p=>{ t += '- '+(p.namaKlien||p.id)+' ('+p.id+'): telat '+wfLateDays(p)+' hari — '+(p.lateReason ? wprKatLabel(p.lateReason.kat)+(p.lateReason.alasan?' ('+p.lateReason.alasan+')':'') : 'alasan belum diisi')+'\n'; });
+  }
+  if(a){
+    t += '\n*Analisis*\n'+(a.ringkasan||'')+'\n';
+    if(a.tren_produksi) t += a.tren_produksi+'\n';
+    if(Array.isArray(a.penyebab_utama) && a.penyebab_utama.length){ t += '\nPenyebab utama:\n'; a.penyebab_utama.forEach(x=>{ t += '- '+(typeof x==='string'?x:(x.penyebab||'')+(x.penjelasan?': '+x.penjelasan:''))+'\n'; }); }
+    if(Array.isArray(a.saran_tindakan) && a.saran_tindakan.length){ t += '\nSaran:\n'; a.saran_tindakan.forEach(x=>{ t += '- '+x+'\n'; }); }
+  }
+  t += '\nDilaporkan oleh: '+wprWho();
+  return t;
+}
+function wprCopy(){
+  const st = wprStats(wprState.month || wprNowMonth()), txt = wprText(st, wprState.docs[st.sel]);
+  const done = ()=>alert('Laporan tersalin. Tinggal ditempel ke WhatsApp/pesan.');
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done).catch(()=>prompt('Salin laporan:', txt));
+  else prompt('Salin laporan:', txt);
+}
+function wprWa(){
+  const st = wprStats(wprState.month || wprNowMonth());
+  window.open('https://wa.me/?text='+encodeURIComponent(wprText(st, wprState.docs[st.sel])), '_blank');
+}
+function wprPrint(){
+  document.body.classList.add('wpr-print');
+  const off = ()=>{ document.body.classList.remove('wpr-print'); window.removeEventListener('afterprint', off); };
+  window.addEventListener('afterprint', off); setTimeout(off, 60000);
+  window.print();
+}
+async function wprSend(){
+  const st = wprStats(wprState.month || wprNowMonth()), d = wprState.docs[st.sel];
+  if(st.tanpaAlasan>0 && !confirm(st.tanpaAlasan+' project telat belum ada alasannya, jadi penyebab belum lengkap untuk Owner.\nTetap kirim laporan ke Owner?')) return;
+  if(!d || !d.analysis){ if(!confirm('Analisis AI belum dibuat. Kirim laporan tanpa analisis?')) return; }
+  const ok = await wprSaveDoc(st.sel, { sentAt:Date.now(), sentBy:wprWho(),
+    snap:{ masuk:st.cur.masuk, selesai:st.cur.selesai, selesaiPcs:st.cur.selesaiPcs, telat:st.lateList.length, tepatPct:st.tepatPct, dPcs:st.dPcs } });
+  if(ok){ alert('Laporan '+wprMonthName(st.sel)+' sudah dikirim ke Owner. Owner bisa membukanya di Workspace → Laporan Produksi.'); renderAbsensi(); }
+}
+function wprSetMonth(v){ wprState.month = v; renderAbsensi(); }
+
+/* ---------- Tampilan ---------- */
+function renderProdReport(){
+  if(!wprState.month) wprState.month = wprNowMonth();
+  const st = wprStats(wprState.month), c = st.cur, p = st.prev;
+  wprEnsureSub(st.sel);
+  const d = wprState.docs[st.sel];
+  const dirP = wprDir(st.dPcs);
+  const opts = wprMonths(wprNowMonth(), 12).reverse().map(k=>'<option value="'+k+'" '+(k===st.sel?'selected':'')+'>'+wprMonthName(k)+'</option>').join('');
+  let h = '<div id="wprReport">';
+  h += '<div class="ab-card"><div class="wpr-head"><div><h2>Laporan Produksi</h2><div class="wpr-sub">Sinkron otomatis dari Alur Kerja · '+st.totalProject+' project tercatat · dilihat oleh '+escapeHtml(wprWho())+'</div></div>'+
+    '<div class="wpr-ctl no-print"><select onchange="wprSetMonth(this.value)">'+opts+'</select></div></div>';
+
+  if(d && d.sentAt) h += '<div class="wpr-sent">📨 Laporan bulan ini <b>sudah dikirim ke Owner</b> oleh <b>'+escapeHtml(d.sentBy||'-')+'</b> pada '+new Date(d.sentAt).toLocaleString('id-ID')+'.</div>';
+
+  // banner naik/turun
+  let ttl, dsc, cls, ico;
+  if(st.dPcs===null){ cls='flat'; ico='📊'; ttl='BELUM ADA PEMBANDING'; dsc='Belum ada produksi selesai di '+wprMonthName(st.prevKey)+', jadi naik/turun belum bisa dihitung. Bulan ini: '+c.selesaiPcs+' pcs selesai.'; }
+  else if(dirP==='up'){ cls='up'; ico='📈'; ttl='PRODUKSI NAIK '+Math.abs(st.dPcs)+'%'; dsc=wprMonthName(st.sel)+': '+c.selesaiPcs+' pcs selesai vs '+p.selesaiPcs+' pcs di '+wprMonthName(st.prevKey)+'.'; }
+  else if(dirP==='down'){ cls='down'; ico='📉'; ttl='PRODUKSI TURUN '+Math.abs(st.dPcs)+'%'; dsc=wprMonthName(st.sel)+': '+c.selesaiPcs+' pcs selesai vs '+p.selesaiPcs+' pcs di '+wprMonthName(st.prevKey)+'.'; }
+  else { cls='flat'; ico='➖'; ttl='PRODUKSI STABIL'; dsc=wprMonthName(st.sel)+': '+c.selesaiPcs+' pcs selesai, relatif sama dengan '+wprMonthName(st.prevKey)+' ('+p.selesaiPcs+' pcs).'; }
+  if(st.sel===wprNowMonth()) dsc += ' (Bulan berjalan — angka masih bertambah.)';
+  h += '<div class="wpr-banner '+cls+'"><div class="ico">'+ico+'</div><div><div class="ttl">'+ttl+'</div><div class="dsc">'+escapeHtml(dsc)+'</div></div></div>';
+
+  // KPI
+  h += '<div class="wpr-kpis">'+
+    '<div class="wpr-kpi"><div class="lbl">Project Masuk</div><div class="val">'+c.masuk+wprDelta(st.dMasuk,false)+'</div><div class="sm">'+c.masukPcs+' pcs</div></div>'+
+    '<div class="wpr-kpi"><div class="lbl">Project Selesai</div><div class="val">'+c.selesai+wprDelta(st.dSel,false)+'</div><div class="sm">'+c.selesaiPcs+' pcs'+wprDelta(st.dPcs,false)+'</div></div>'+
+    '<div class="wpr-kpi"><div class="lbl">Tepat Waktu</div><div class="val">'+(st.tepatPct===null?'-':st.tepatPct+'%')+'</div><div class="sm">'+c.tepat+' tepat · '+c.telatSelesai+' telat'+(c.tanpaDl?' · '+c.tanpaDl+' tanpa deadline':'')+'</div></div>'+
+    '<div class="wpr-kpi '+(st.lateList.length?'bad':'')+'"><div class="lbl">Project Telat</div><div class="val">'+st.lateList.length+'</div><div class="sm">'+st.aktifTelat+' masih aktif & lewat deadline</div></div>'+
+    '<div class="wpr-kpi '+(st.tanpaAlasan?'bad':'')+'"><div class="lbl">Alasan Terisi</div><div class="val">'+(st.lateList.length-st.tanpaAlasan)+'/'+st.lateList.length+'</div><div class="sm">'+(st.tanpaAlasan?st.tanpaAlasan+' belum diisi':'lengkap')+'</div></div>'+
+  '</div></div>';
+
+  // grafik 1
+  h += '<div class="wpr-card"><h3>Project Masuk, Selesai &amp; Telat</h3><div class="hint">6 bulan terakhir. Telat dihitung pada bulan deadline-nya.</div>'+
+    '<div class="wpr-legend"><span><i style="background:#2F5E8E"></i>Masuk</span><span><i style="background:#2f7d4f"></i>Selesai</span><span><i style="background:#D9622B"></i>Telat</span></div>'+
+    wprBars(st.months, [
+      { vals:st.months.map(k=>st.M[k].masuk), color:'#2F5E8E' },
+      { vals:st.months.map(k=>st.M[k].selesai), color:'#2f7d4f' },
+      { vals:st.months.map(k=>st.M[k].telat), color:'#D9622B' }
+    ])+'</div>';
+  // grafik 2
+  h += '<div class="wpr-card"><h3>Produksi Selesai per Bulan (pcs)</h3><div class="hint">Naik/turun produksi: jumlah pcs dari project yang ditandai selesai di bulan itu.</div>'+
+    wprLine(st.months, st.months.map(k=>st.M[k].selesaiPcs), dirP==='down'?'#B0452A':'#2f7d4f')+'</div>';
+  // grafik 3: penyebab
+  const cnt = {}; st.lateList.forEach(x=>{ const k = x.lateReason ? x.lateReason.kat : '_kosong'; cnt[k] = (cnt[k]||0)+1; });
+  const keys = Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]), mxc = Math.max(1, ...keys.map(k=>cnt[k]));
+  h += '<div class="wpr-card"><h3>Penyebab Keterlambatan</h3><div class="hint">Dari alasan yang diisi koordinator pada project yang telat.</div>'+
+    (keys.length ? keys.map(k=>'<div class="wpr-hb"><div class="nm">'+(k==='_kosong'?'Alasan belum diisi':escapeHtml(wprKatLabel(k)))+'</div><div class="bar '+(k==='_kosong'?'nil':'')+'"><span style="width:'+Math.round(cnt[k]/mxc*100)+'%"></span></div><b>'+cnt[k]+'</b></div>').join('') : '<div class="hint">Tidak ada project telat di periode ini 🎉</div>')+'</div>';
+
+  // daftar telat
+  h += '<div class="wpr-card"><h3>Project Telat ('+st.lateList.length+')</h3><div class="hint">Isi alasan setiap project yang melewati deadline supaya AI dan Owner tahu penyebabnya.</div>';
+  if(st.tanpaAlasan) h += '<div class="wpr-warn"><b>'+st.tanpaAlasan+' project</b> belum ada alasan telat.</div>';
+  if(!st.lateList.length) h += '<div class="hint">Belum ada project telat.</div>';
+  st.lateList.forEach(x=>{
+    const lr = x.lateReason, fin = x.status==='selesai';
+    h += '<div class="wpr-late '+(fin?'done':'')+'"><div class="top"><div><div class="nm">'+escapeHtml(x.namaKlien||x.id)+' <span style="font-weight:400;color:var(--ab-muted);">· '+escapeHtml(x.id)+'</span></div>'+
+      '<div class="mt">'+(Number(totalQty(x))||0)+' pcs · deadline '+fmtDate(x.deadline)+(fin?' · selesai '+fmtDate(x.selesaiAt):' · belum selesai')+(x.namaProduksi?' · produksi: '+escapeHtml(x.namaProduksi):'')+((x.deadlineLog||[]).length?' · deadline diubah '+(x.deadlineLog||[]).length+'×':'')+'</div></div>'+
+      '<span class="tg '+(fin?'ok':'')+'">TELAT '+wfLateDays(x)+' HARI</span></div>'+
+      '<div class="why '+(lr?'':'kosong')+'">'+(lr ? '<b>'+escapeHtml(wprKatLabel(lr.kat))+'</b>'+(lr.alasan?' — '+escapeHtml(lr.alasan):'')+'<div class="mt">oleh '+escapeHtml(lr.by||'-')+(lr.at?' · '+new Date(lr.at).toLocaleDateString('id-ID'):'')+'</div>' : 'Alasan belum diisi')+'</div>'+
+      '<div class="no-print" style="margin-top:8px;"><button class="btn small '+(lr?'ghost':'')+'" onclick="wprOpenReason(\''+x.id+'\')">📝 '+(lr?'Ubah':'Isi')+' Alasan</button></div></div>';
+  });
+  h += '</div>';
+
+  // analisis AI
+  h += '<div class="wpr-card wpr-ai"><h3>🤖 Analisis Penyebab (untuk Owner)</h3>'+
+    (wprState.aiErr?'<div class="wpr-warn">'+escapeHtml(wprState.aiErr)+'</div>':'')+
+    (wprState.busy?'<div class="hint">AI sedang menganalisis data Alur Kerja…</div>':wprAnalysisHtml(d))+
+    '<div class="wpr-acts no-print"><button class="btn" '+(wprState.busy?'disabled':'')+' onclick="wprRunAnalysis()">'+(d&&d.analysis?'Analisis Ulang':'Analisis AI')+'</button></div></div>';
+
+  // aksi laporan
+  h += '<div class="wpr-acts no-print"><button class="btn green" onclick="wprSend()">📨 Kirim ke Owner</button><button class="btn ghost" onclick="wprCopy()">Salin Laporan</button><button class="btn ghost" onclick="wprWa()">Bagikan WhatsApp</button><button class="btn ghost" onclick="wprPrint()">Cetak / PDF</button></div>';
+  h += '</div>';
+  return h;
+}
+
+/* ---------- Modal: isi alasan telat (dipakai di Alur Kerja & Workspace) ---------- */
+function wprOpenReason(id){
+  const p = (projectsCache||[]).find(x=>x.id===id); if(!p) return;
+  const cur = p.lateReason || {};
+  const old = document.getElementById('wprModal'); if(old) old.remove();
+  const ov = document.createElement('div'); ov.className = 'wpr-ov'; ov.id = 'wprModal';
+  ov.addEventListener('click', e=>{ if(e.target===ov) wprCloseReason(); });
+  ov.innerHTML =
+    '<div class="wpr-md" role="dialog" aria-modal="true">'+
+      '<h3>Alasan Telat</h3>'+
+      '<div class="sb">'+escapeHtml(p.namaKlien||'')+' · '+escapeHtml(p.id)+' · deadline '+fmtDate(p.deadline)+' · <b style="color:#B0452A;">telat '+wfLateDays(p)+' hari</b></div>'+
+      '<label>Penyebab utama</label>'+
+      '<select id="wprKat"><option value="">— pilih penyebab —</option>'+WPR_KAT.map(k=>'<option value="'+k[0]+'" '+(cur.kat===k[0]?'selected':'')+'>'+k[1]+'</option>').join('')+'</select>'+
+      '<label>Penjelasan (agar AI & Owner paham)</label>'+
+      '<textarea id="wprAlasan" placeholder="cth. Customer mengubah desain 2× setelah acc, bahan sablon datang terlambat 3 hari.">'+escapeHtml(cur.alasan||'')+'</textarea>'+
+      '<div class="err" id="wprErr"></div>'+
+      '<div class="acts"><button onclick="wprCloseReason()">Batal</button><button class="pri" onclick="wprSaveReason(\''+p.id+'\')">Simpan</button></div>'+
+    '</div>';
+  document.body.appendChild(ov);
+}
+function wprCloseReason(){ const m = document.getElementById('wprModal'); if(m) m.remove(); }
+async function wprSaveReason(id){
+  const p = (projectsCache||[]).find(x=>x.id===id); if(!p) return;
+  const kat = document.getElementById('wprKat').value, alasan = document.getElementById('wprAlasan').value.trim();
+  const err = document.getElementById('wprErr');
+  if(!kat){ err.textContent = 'Pilih penyebab utama dulu.'; return; }
+  if(kat==='lainnya' && !alasan){ err.textContent = 'Untuk "Lainnya", tuliskan penjelasannya.'; return; }
+  const old = p.lateReason;
+  p.lateReason = { kat:kat, alasan:alasan.slice(0,400), by:wprWho(), at:Date.now(), lateDays:wfLateDays(p) };
+  let ok = false;
+  try{ ok = await saveProject(p); }catch(e){ ok = false; }
+  if(!ok){ p.lateReason = old; err.textContent = 'Gagal menyimpan, coba lagi.'; return; }
+  wprCloseReason();
+  try{ if(typeof currentMode!=='undefined' && currentMode==='workflow') render(); }catch(e){}
+  try{ if(typeof currentMode!=='undefined' && currentMode==='absensi') renderAbsensi(); }catch(e){}
+}
+</script>
+
+<style>
+/* ===== LOGISTIK (Workspace) ===== */
+#absensiApp .ab-badge.logistik{background:#1f7a8c;} #absensiApp .ab-badge.produksi{background:#B0452A;}
+#absensiApp .lg-tabs{display:flex;gap:6px;overflow-x:auto;margin:0 0 12px;padding-bottom:4px;scrollbar-width:none;}
+#absensiApp .lg-tabs::-webkit-scrollbar{display:none;}
+#absensiApp .lg-tabs button{flex:none;white-space:nowrap;border:1.5px solid var(--ab-line,#ddd);background:#fff;border-radius:999px;padding:9px 15px;font-weight:700;font-size:13px;cursor:pointer;min-height:40px;color:#2b261f;}
+#absensiApp .lg-tabs button.active{background:var(--ab-denim,#2F5E8E);border-color:var(--ab-denim,#2F5E8E);color:#fff;}
+#absensiApp .lg-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:10px 0;}
+#absensiApp .lg-kpi{background:#fff;border:1.5px solid var(--ab-line,#ddd);border-radius:12px;padding:11px 13px;cursor:pointer;}
+#absensiApp .lg-kpi .lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ab-muted);font-weight:700;}
+#absensiApp .lg-kpi .val{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1.05;margin-top:2px;}
+#absensiApp .lg-kpi .sm{font-size:11.5px;color:var(--ab-muted);}
+#absensiApp .lg-kpi.bad{border-color:#E7A88E;background:#FFF8F4;} #absensiApp .lg-kpi.bad .val{color:#B0452A;}
+#absensiApp .lg-kpi.warn{border-color:#E6C16A;background:#FFFAEA;}
+#absensiApp .lg-sec{font-family:'Bebas Neue',sans-serif;letter-spacing:.06em;font-size:15px;color:var(--ab-muted);margin:16px 0 4px;}
+#absensiApp .lg-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0;}
+#absensiApp .lg-bar input[type=search],#absensiApp .lg-bar input[type=text]{flex:1 1 200px;min-width:0;}
+#absensiApp .lg-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:6px 0 10px;}
+#absensiApp .lg-chips button{flex:none;border:1.5px solid var(--ab-line,#ddd);background:#fff;border-radius:999px;padding:6px 13px;font-size:12.5px;cursor:pointer;min-height:36px;}
+#absensiApp .lg-chips button.active{background:#2b261f;color:#fff;border-color:#2b261f;}
+#absensiApp .lg-card{background:#fff;border:1.5px solid var(--ab-line,#ddd);border-radius:13px;padding:12px 14px;margin:9px 0;}
+#absensiApp .lg-card.bad{border-color:#E7A88E;background:#FFFAF7;} #absensiApp .lg-card.warn{border-color:#E6C16A;background:#FFFDF3;}
+#absensiApp .lg-top{display:flex;gap:8px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;}
+#absensiApp .lg-resi{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;font-size:15px;word-break:break-all;cursor:pointer;}
+#absensiApp .lg-nm{font-weight:700;margin-top:2px;} #absensiApp .lg-mt{font-size:12px;color:var(--ab-muted);margin-top:2px;line-height:1.5;}
+#absensiApp .lg-pill{font-family:'Bebas Neue',sans-serif;letter-spacing:.04em;font-size:14px;color:#fff;border-radius:6px;padding:2px 9px;white-space:nowrap;background:#8a8070;}
+#absensiApp .lg-pill.dikirim,#absensiApp .lg-pill.menuju{background:#2F5E8E;} #absensiApp .lg-pill.selesai,#absensiApp .lg-pill.tiba{background:#2f7d4f;}
+#absensiApp .lg-pill.bermasalah{background:#B0452A;} #absensiApp .lg-pill.dipesan{background:#C98A12;}
+#absensiApp .lg-flag{display:inline-block;margin-top:6px;font-size:12px;font-weight:700;padding:2px 9px;border-radius:6px;}
+#absensiApp .lg-flag.bad{background:#FDE7DF;color:#B0452A;} #absensiApp .lg-flag.warn{background:#FFF1CC;color:#8a5a00;} #absensiApp .lg-flag.ok{background:#E3F4EA;color:#1f7a45;}
+#absensiApp .lg-acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+#absensiApp .lg-acts .btn{flex:1 1 auto;min-height:40px;font-size:12.5px;padding:8px 12px;}
+#absensiApp .lg-thumb{width:46px;height:46px;border-radius:8px;object-fit:cover;border:1px solid #ddd;cursor:pointer;}
+#absensiApp .lg-att{width:100%;border-collapse:collapse;font-size:13px;display:block;overflow-x:auto;}
+#absensiApp .lg-att th,#absensiApp .lg-att td{padding:8px 9px;border-bottom:1px solid #EEE8DA;text-align:left;white-space:nowrap;}
+#absensiApp .lg-dot{display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;font-size:11px;margin-right:3px;background:#EEE9DD;color:#8a8070;}
+#absensiApp .lg-dot.y{background:#2f7d4f;color:#fff;} #absensiApp .lg-dot.n{background:#FDE7DF;color:#B0452A;}
+.wpr-md input[type=text],.wpr-md input[type=search],.wpr-md input[type=date],.wpr-md input[type=number],.wpr-md input[type=tel]{width:100%;box-sizing:border-box;border:1.5px solid #d9d2c3;border-radius:9px;padding:10px 11px;font:inherit;font-size:16px;background:#fff;min-height:44px;}
+.wpr-md input[type=file]{width:100%;font-size:14px;}
+.wpr-md .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;} @media(max-width:420px){.wpr-md .row2{grid-template-columns:1fr;}}
+.wpr-md .kv{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid #EEE8DA;font-size:13.5px;}
+</style>
+<script>
+/* =====================================================================
+   LOGISTIK — pantau paket KELUAR (ke customer, upload no. resi) dan paket MASUK (kaos / bahan menuju workshop),
+   + absensi masuk & KPI divisi Logistik dan Produksi. Data: koleksi Firestore "logistikPaket" (realtime).
+   ===================================================================== */
+const LOGI_KURIR = ['JNE','J&T Express','SiCepat','AnterAja','POS Indonesia','Ninja Xpress','Lion Parcel','SAP Express','ID Express','Wahana','TIKI','SPX (Shopee Express)','Gojek / Grab (instan)','Cargo / Travel','Diantar langsung','Lainnya'];
+const LOGI_JENIS = ['Kaos / baju polos','Bahan kain','Tinta / cat sablon','Benang / aksesoris','Label / packaging','Peralatan / sparepart','Lainnya'];
+const LOGI_SATUAN = ['pcs','lusin','roll','kg','meter','pack','dus','liter'];
+const LOGI_ST_KELUAR = [['dikirim','Dalam Pengiriman'],['selesai','Diterima Customer'],['bermasalah','Bermasalah / Retur']];
+const LOGI_ST_MASUK = [['dipesan','Dipesan'],['menuju','Menuju Workshop'],['tiba','Tiba di Workshop'],['bermasalah','Bermasalah']];
+const LOGI_SLOW_DAYS = 5;
+let logiCache = [], logiUnsub = null;
+try{ logiCache = JSON.parse(localStorage.getItem('tenx_logi_cache')||'[]'); if(!Array.isArray(logiCache)) logiCache = []; }catch(e){ logiCache = []; }
+const logiState = { tab:'ringkasan', q:'', f:'aktif', limit:30, month:'' };
+
+function logiStLabel(arah, st){ const r = (arah==='keluar' ? LOGI_ST_KELUAR : LOGI_ST_MASUK).find(x=>x[0]===st); return r ? r[1] : st; }
+function logiMk(v){ return (typeof wprMonthKey==='function') ? wprMonthKey(v) : String(v||'').slice(0,7); }
+function logiDays(aStr, bStr){ return Math.round((wfDayStart(bStr) - wfDayStart(aStr)) / 86400000); }
+function logiToday(){ return wspTodayStr(); }
+function logiFmt(v){ return v ? fmtDate(v) : '-'; }
+function logiRender(){
+  try{ if(typeof wspState!=='undefined' && wspState.role==='logistik' && typeof currentMode!=='undefined' && currentMode==='absensi' && !document.getElementById('wprModal')) renderAbsensi(); }catch(e){}
+}
+function logiSubscribe(){
+  if(logiUnsub || typeof CONFIG_READY==='undefined' || !CONFIG_READY || typeof db==='undefined' || !db) return;
+  try{
+    logiUnsub = db.collection('logistikPaket').orderBy('createdAt','desc').limit(1500).onSnapshot(sn=>{
+      logiCache = sn.docs.map(d=>d.data());
+      try{ localStorage.setItem('tenx_logi_cache', JSON.stringify(logiCache.slice(0,300))); }catch(e){}
+      logiRender();
+      try{ if(typeof wspState!=='undefined' && (wspState.role==='papan' || wspState.role==='owner') && currentMode==='absensi') renderAbsensi(); }catch(e){}
+    }, e=>console.warn('logistikPaket', e));
+  }catch(e){ console.warn(e); }
+}
+function logiUpsertLocal(rec){
+  const i = logiCache.findIndex(x=>x.id===rec.id);
+  if(i>=0) logiCache[i] = rec; else logiCache.unshift(rec);
+}
+async function logiSave(rec){
+  rec.updatedAt = Date.now(); logiUpsertLocal(rec);
+  try{
+    if(typeof CONFIG_READY!=='undefined' && CONFIG_READY && db) await db.collection('logistikPaket').doc(rec.id).set(rec);
+    return true;
+  }catch(e){ alert('Gagal menyimpan ke server: '+(e.message||e)); return false; }
+}
+function logiMe(){
+  let emp = (typeof wspGetEmployee==='function') ? wspGetEmployee(wspState.myEmployeeId) : null;
+  if(!emp && typeof authSession!=='undefined' && authSession && authSession.nama){
+    const n = authSession.nama.trim().toLowerCase();
+    emp = wspEmployeesCache.find(e=>e.active!==false && (e.name||'').trim().toLowerCase()===n) || null;
+  }
+  return { id: emp ? emp.id : '', nama: emp ? emp.name : ((typeof authSession!=='undefined' && authSession && authSession.nama) || 'Staf'), emp:emp };
+}
+function logiSetMe(id){
+  if(!id) return; wspState.myEmployeeId = id;
+  try{ localStorage.setItem('tenx_wsp_employee_id', id); }catch(e){}
+  renderAbsensi();
+}
+function logiCanDelete(x){
+  try{ if(authIsOwner() || authIsKoordinator()) return true; }catch(e){}
+  return !!x && x.createdById && x.createdById===logiMe().id;
+}
+
+/* ---------- Penanda perhatian ---------- */
+function logiFlag(x){
+  const t = logiToday();
+  if(x.status==='bermasalah') return { cls:'bad', text:'BERMASALAH' };
+  if(x.arah==='keluar'){
+    if(x.status==='dikirim' && x.tglKirim){ const d = logiDays(x.tglKirim, t); if(d>=LOGI_SLOW_DAYS) return { cls:'warn', text:'Sudah '+d+' hari di jalan' }; }
+    return null;
+  }
+  if(x.status==='tiba') return null;
+  if(x.eta){
+    const d = logiDays(t, x.eta);
+    if(d<0) return { cls:'bad', text:'TELAT TIBA '+(-d)+' HARI' };
+    if(d===0) return { cls:'warn', text:'Estimasi tiba HARI INI' };
+    if(d<=2) return { cls:'warn', text:'Estimasi tiba H-'+d };
+    return { cls:'ok', text:'ETA '+fmtDate(x.eta) };
+  }
+  return null;
+}
+function logiIsFinal(x){ return x.arah==='keluar' ? x.status==='selesai' : x.status==='tiba'; }
+function logiTrackUrl(resi){ return 'https://cekresi.com/?noresi='+encodeURIComponent(resi||''); }
+
+/* ---------- Daftar & filter ---------- */
+function logiList(arah){
+  const q = (logiState.q||'').trim().toLowerCase(), f = logiState.f;
+  return logiCache.filter(x=>x.arah===arah).filter(x=>{
+    if(f==='aktif' && (logiIsFinal(x) || x.status==='bermasalah')) return false;
+    if(f==='selesai' && !logiIsFinal(x)) return false;
+    if(f==='masalah' && x.status!=='bermasalah' && !(logiFlag(x) && logiFlag(x).cls!=='ok')) return false;
+    if(q){ const hay = [x.resi,x.pihak,x.kurir,x.projectNama,x.projectId,x.isi,x.jenis,x.noHp].join(' ').toLowerCase(); if(hay.indexOf(q)<0) return false; }
+    return true;
+  }).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+}
+function logiSetTab(t){ logiState.tab = t; logiState.q = ''; logiState.f = (t==='masuk'||t==='keluar') ? 'aktif' : logiState.f; logiState.limit = 30; renderAbsensi(); }
+function logiSetF(f){ logiState.f = f; logiState.limit = 30; renderAbsensi(); }
+function logiSearch(v){ logiState.q = v; logiState.limit = 30; clearTimeout(logiSearch._t); logiSearch._t = setTimeout(()=>{ renderAbsensi(); const el = document.getElementById('lgQ'); if(el){ el.focus(); try{ el.setSelectionRange(v.length, v.length); }catch(e){} } }, 250); }
+function logiMore(){ logiState.limit += 30; renderAbsensi(); }
+
+function logiCardHtml(x){
+  const keluar = x.arah==='keluar', fl = logiFlag(x);
+  const act = [];
+  const id = x.id;
+  if(keluar){
+    if(x.status==='dikirim'){
+      act.push('<button class="btn green" onclick="logiSetStatus(\''+id+'\',\'selesai\')">✔ Diterima Customer</button>');
+      act.push('<button class="btn ghost" onclick="logiSetStatus(\''+id+'\',\'bermasalah\')">⚠ Bermasalah</button>');
+    } else if(x.status==='bermasalah'){
+      act.push('<button class="btn" onclick="logiSetStatus(\''+id+'\',\'dikirim\')">↺ Kirim Ulang / Proses</button>');
+      act.push('<button class="btn green" onclick="logiSetStatus(\''+id+'\',\'selesai\')">✔ Diterima Customer</button>');
+    }
+    act.push('<button class="btn ghost" onclick="logiWaCustomer(\''+id+'\')">WA Customer</button>');
+  } else {
+    if(x.status==='dipesan') act.push('<button class="btn" onclick="logiSetStatus(\''+id+'\',\'menuju\')">🚚 Sudah Dikirim</button>');
+    if(x.status==='dipesan' || x.status==='menuju') act.push('<button class="btn green" onclick="logiSetStatus(\''+id+'\',\'tiba\')">✔ Tiba di Workshop</button>');
+    if(x.status!=='bermasalah' && x.status!=='tiba') act.push('<button class="btn ghost" onclick="logiSetStatus(\''+id+'\',\'bermasalah\')">⚠ Bermasalah</button>');
+    if(x.status==='bermasalah') act.push('<button class="btn" onclick="logiSetStatus(\''+id+'\',\'menuju\')">↺ Proses Lagi</button>');
+  }
+  if(x.resi && logiKurirCode(x.kurir)) act.push('<button class="btn ghost" onclick="logiTrackBtn(\''+id+'\')">↻ Perbarui Posisi</button>');
+  if(x.resi) act.push('<a class="btn ghost" style="text-decoration:none;text-align:center;" href="'+logiTrackUrl(x.resi)+'" target="_blank" rel="noopener">Lacak</a>');
+  act.push('<button class="btn ghost" onclick="logiOpenForm(\''+x.arah+'\',\''+id+'\')">Edit</button>');
+  if(logiCanDelete(x)) act.push('<button class="btn ghost" onclick="logiDelete(\''+id+'\')">Hapus</button>');
+  const detail = keluar
+    ? (x.kurir?escapeHtml(x.kurir)+' · ':'')+'kirim '+logiFmt(x.tglKirim)+(x.ongkir?' · ongkir Rp '+Number(x.ongkir).toLocaleString('id-ID'):'')
+    : escapeHtml(x.jenis||'Paket')+(x.qty?' · '+escapeHtml(String(x.qty))+' '+escapeHtml(x.satuan||''):'')+(x.kurir?' · '+escapeHtml(x.kurir):'')+(x.tglKirim?' · kirim '+logiFmt(x.tglKirim):'');
+  return '<div class="lg-card '+(fl && fl.cls!=='ok'?fl.cls:'')+'">'+
+    '<div class="lg-top"><div style="min-width:0;flex:1;">'+
+      (x.resi ? '<div class="lg-resi" title="Ketuk untuk menyalin" onclick="logiCopy(\''+escapeHtml(x.resi).replace(/\'/g,'')+'\')">'+escapeHtml(x.resi)+'</div>' : '<div class="lg-resi" style="color:#8a8070;">(belum ada resi)</div>')+
+      '<div class="lg-nm">'+escapeHtml(x.pihak||(keluar?'Customer':'Pengirim'))+(keluar?'':(x.isi?' — '+escapeHtml(x.isi):''))+'</div>'+
+    '</div><span class="lg-pill '+x.status+'">'+escapeHtml(logiStLabel(x.arah,x.status)).toUpperCase()+'</span></div>'+
+    '<div class="lg-mt">'+detail+(x.projectId?' · project <b>'+escapeHtml(x.projectId)+'</b>'+(x.projectNama?' ('+escapeHtml(x.projectNama)+')':''):'')+(x.eta&&!keluar?' · ETA '+logiFmt(x.eta):'')+'</div>'+
+    (x.catatan?'<div class="lg-mt">📝 '+escapeHtml(x.catatan)+'</div>':'')+
+    (fl?'<span class="lg-flag '+fl.cls+'">'+escapeHtml(fl.text)+'</span>':'')+logiTrkHtml(x)+
+    ((x.fotoUrl||x.diterimaOleh)?'<div class="lg-mt" style="display:flex;gap:8px;align-items:center;margin-top:8px;">'+(x.fotoUrl?'<img class="lg-thumb" loading="lazy" src="'+x.fotoUrl+'" onclick="wspLightbox(\''+x.fotoUrl+'\')" alt="Bukti resi">':'')+(x.diterimaOleh?'<span>'+(keluar?'Dikonfirmasi':'Diterima')+' oleh <b>'+escapeHtml(x.diterimaOleh)+'</b>, '+new Date(x.diterimaAt||Date.now()).toLocaleString('id-ID')+'</span>':'')+'</div>':'')+
+    '<div class="lg-mt">Dicatat '+escapeHtml(x.createdBy||'-')+' · '+new Date(x.createdAt||Date.now()).toLocaleString('id-ID')+'</div>'+
+    '<div class="lg-acts">'+act.join('')+'</div></div>';
+}
+function logiCopy(t){
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(()=>wspToast('Resi tersalin: '+t)).catch(()=>prompt('Salin resi:',t));
+  else prompt('Salin resi:', t);
+}
+
+/* ---------- Aksi status ---------- */
+async function logiSetStatus(id, st){
+  const x = logiCache.find(r=>r.id===id); if(!x) return;
+  if(st==='tiba' || st==='selesai'){
+    if(!confirm((st==='tiba'?'Konfirmasi paket ini sudah TIBA di workshop?':'Konfirmasi paket ini sudah DITERIMA customer?'))) return;
+  }
+  const me = logiMe(), now = Date.now();
+  const old = { status:x.status, diterimaAt:x.diterimaAt, diterimaOleh:x.diterimaOleh, diterimaOlehId:x.diterimaOlehId, riwayat:x.riwayat };
+  x.status = st;
+  x.riwayat = (x.riwayat||[]).concat([{ status:st, at:now, by:me.nama }]).slice(-30);
+  if(st==='tiba' || st==='selesai'){ x.diterimaAt = now; x.diterimaOleh = me.nama; x.diterimaOlehId = me.id; }
+  if(st==='menuju' && !x.tglKirim) x.tglKirim = logiToday();
+  const ok = await logiSave(x);
+  if(!ok){ Object.assign(x, old); return; }
+  renderAbsensi();
+}
+async function logiDelete(id){
+  const x = logiCache.find(r=>r.id===id); if(!x) return;
+  if(!confirm('Hapus data paket '+(x.resi||x.pihak||'')+' ini?')) return;
+  logiCache = logiCache.filter(r=>r.id!==id);
+  try{ if(typeof CONFIG_READY!=='undefined' && CONFIG_READY && db) await db.collection('logistikPaket').doc(id).delete(); }
+  catch(e){ alert('Gagal menghapus di server: '+(e.message||e)); }
+  renderAbsensi();
+}
+function logiWaCustomer(id){
+  const x = logiCache.find(r=>r.id===id); if(!x) return;
+  const num = (typeof wspPhoneForWhatsApp==='function') ? wspPhoneForWhatsApp(x.noHp||'') : '';
+  if(!num){ alert('Nomor HP customer belum diisi pada paket ini. Klik Edit lalu isi No. HP.'); return; }
+  const msg = 'Halo '+(x.pihak||'Kak')+', pesanan Anda dari TENX APPAREL sudah kami kirim 🚚\n\nEkspedisi: '+(x.kurir||'-')+'\nNo. Resi: '+(x.resi||'-')+'\nLacak paket: '+logiTrackUrl(x.resi)+'\n\nMohon dicek ya, dan kabari kami kalau paket sudah diterima. Terima kasih 🙏';
+  window.open('https://wa.me/'+num+'?text='+encodeURIComponent(msg), '_blank');
+}
+
+/* ---------- Form paket ---------- */
+function logiProjectOptions(sel){
+  const P = (typeof projectsCache!=='undefined' && Array.isArray(projectsCache)) ? projectsCache.slice(0,300) : [];
+  return '<option value="">— tanpa project / isi manual —</option>'+P.map(p=>'<option value="'+escapeHtml(p.id)+'" '+(sel===p.id?'selected':'')+'>'+escapeHtml(p.id)+' · '+escapeHtml(p.namaKlien||'')+'</option>').join('');
+}
+function logiPickProject(sel){
+  const p = (projectsCache||[]).find(x=>x.id===sel.value);
+  const pihak = document.getElementById('lgPihak'), hp = document.getElementById('lgHp');
+  if(p && pihak && !pihak.value) pihak.value = p.namaKlien || '';
+  if(p && hp && !hp.value) hp.value = p.noHp || '';
+}
+function logiOpenForm(arah, id){
+  const x = id ? logiCache.find(r=>r.id===id) : null; if(id && !x) return;
+  const keluar = arah==='keluar', v = x || logiPrefill || {}; logiPendFoto = (!x && v.fotoUrl) || ''; logiPrefill = null;
+  const old = document.getElementById('wprModal'); if(old) old.remove();
+  const ov = document.createElement('div'); ov.className='wpr-ov'; ov.id='wprModal';
+  ov.addEventListener('click', e=>{ if(e.target===ov) wprCloseReason(); });
+  const kurirOpt = LOGI_KURIR.map(k=>'<option '+(v.kurir===k?'selected':'')+'>'+k+'</option>').join('');
+  ov.innerHTML = '<div class="wpr-md" role="dialog" aria-modal="true"><h3>'+(x?'Edit':'Tambah')+' '+(keluar?'Paket Keluar (ke Customer)':'Paket Masuk (ke Workshop)')+'</h3>'+
+    '<div class="sb">'+(keluar?'Upload nomor resi pengiriman ke customer supaya bisa dipantau.':'Catat kaos / bahan yang sedang menuju workshop.')+'</div>'+
+    '<label>Untuk project (opsional)</label><select id="lgProj" onchange="logiPickProject(this)">'+logiProjectOptions(v.projectId||'')+'</select>'+
+    (keluar
+      ? '<div class="row2"><div><label>Nama penerima</label><input type="text" id="lgPihak" value="'+escapeHtml(v.pihak||'')+'" placeholder="Nama customer"></div><div><label>No. HP penerima</label><input type="tel" id="lgHp" inputmode="tel" value="'+escapeHtml(v.noHp||'')+'" placeholder="0812…"></div></div>'
+      : '<div class="row2"><div><label>Jenis paket</label><select id="lgJenis">'+LOGI_JENIS.map(j=>'<option '+(v.jenis===j?'selected':'')+'>'+j+'</option>').join('')+'</select></div><div><label>Pengirim / supplier</label><input type="text" id="lgPihak" value="'+escapeHtml(v.pihak||'')+'" placeholder="mis. Toko Kaos Bandung"></div></div>'+
+        '<label>Isi paket (detail)</label><input type="text" id="lgIsi" value="'+escapeHtml(v.isi||'')+'" placeholder="mis. Kaos cotton combed 30s hitam, S–XL">'+
+        '<div class="row2"><div><label>Jumlah</label><input type="number" id="lgQty" inputmode="decimal" min="0" value="'+escapeHtml(String(v.qty||''))+'"></div><div><label>Satuan</label><select id="lgSatuan">'+LOGI_SATUAN.map(s=>'<option '+((v.satuan||'pcs')===s?'selected':'')+'>'+s+'</option>').join('')+'</select></div></div>')+
+    '<div class="row2"><div><label>Ekspedisi</label><select id="lgKurir">'+kurirOpt+'</select></div><div><label>No. Resi'+(keluar?' *':' (bila sudah ada)')+'</label><input type="text" id="lgResi" autocapitalize="characters" autocomplete="off" value="'+escapeHtml(v.resi||'')+'" placeholder="Nomor resi"></div></div>'+
+    '<div class="row2"><div><label>Tanggal kirim</label><input type="date" id="lgTgl" value="'+escapeHtml(v.tglKirim||(keluar?logiToday():''))+'"></div>'+
+      (keluar ? '<div><label>Ongkir (Rp)</label><input type="number" id="lgOngkir" inputmode="numeric" min="0" value="'+escapeHtml(String(v.ongkir||''))+'"></div>'
+              : '<div><label>Estimasi tiba (ETA)</label><input type="date" id="lgEta" value="'+escapeHtml(v.eta||'')+'"></div>')+'</div>'+
+    (keluar ? '<label>Foto resi / bukti kirim (opsional)</label><input type="file" id="lgFoto" accept="image/*">'+(v.fotoUrl?'<div class="sb" style="margin-top:4px;">Sudah ada foto — pilih file baru untuk mengganti.</div>':'') : '')+
+    '<label>Catatan</label><textarea id="lgCatatan" placeholder="Catatan tambahan…">'+escapeHtml(v.catatan||'')+'</textarea>'+
+    '<div class="err" id="lgErr"></div>'+
+    '<div class="acts"><button onclick="wprCloseReason()">Batal</button><button class="pri" id="lgSaveBtn" onclick="logiSaveForm(\''+arah+'\',\''+(id||'')+'\')">Simpan</button></div></div>';
+  document.body.appendChild(ov);
+}
+async function logiSaveForm(arah, id){
+  const g = k=>{ const el = document.getElementById(k); return el ? el.value.trim() : ''; };
+  const err = document.getElementById('lgErr'), keluar = arah==='keluar';
+  const resi = g('lgResi').toUpperCase().replace(/\s+/g,'');
+  const pihak = g('lgPihak');
+  if(keluar && !resi){ err.textContent = 'No. resi wajib diisi untuk paket keluar.'; return; }
+  if(keluar && !pihak){ err.textContent = 'Nama penerima wajib diisi.'; return; }
+  if(!keluar && !g('lgIsi') && !pihak){ err.textContent = 'Isi detail paket atau nama pengirim/supplier.'; return; }
+  const dup = resi && logiCache.find(r=>r.resi===resi && r.id!==id);
+  if(dup && !confirm('No. resi '+resi+' sudah tercatat ('+(dup.pihak||'')+'). Tetap simpan?')) return;
+  const me = logiMe(), now = Date.now();
+  const old = id ? logiCache.find(r=>r.id===id) : null;
+  const pid = g('lgProj'), pr = pid ? (projectsCache||[]).find(p=>p.id===pid) : null;
+  const rec = Object.assign({}, old || { id:'LG-'+now.toString(36).toUpperCase()+Math.random().toString(36).slice(2,5).toUpperCase(), arah:arah, createdAt:now, createdBy:me.nama, createdById:me.id, riwayat:[] }, {
+    resi:resi, kurir:g('lgKurir'), pihak:pihak, noHp:g('lgHp'), projectId:pid, projectNama: pr ? (pr.namaKlien||'') : '',
+    tglKirim:g('lgTgl'), catatan:g('lgCatatan')
+  });
+  if(keluar){ rec.ongkir = Number(g('lgOngkir'))||0; if(!old){ rec.status = 'dikirim'; } }
+  else { rec.jenis = g('lgJenis'); rec.isi = g('lgIsi'); rec.qty = Number(g('lgQty'))||0; rec.satuan = g('lgSatuan'); rec.eta = g('lgEta'); if(!old){ rec.status = resi ? 'menuju' : 'dipesan'; } }
+  if(!old) rec.riwayat = [{ status:rec.status, at:now, by:me.nama }];
+  if(!old && logiPendFoto){ rec.fotoUrl = logiPendFoto; } logiPendFoto = '';
+  const file = keluar ? (document.getElementById('lgFoto')||{}).files && document.getElementById('lgFoto').files[0] : null;
+  const btn = document.getElementById('lgSaveBtn'); if(btn){ btn.disabled = true; btn.textContent = 'Menyimpan…'; }
+  if(file){
+    try{ const up = await uploadFilesToStorage([file], 'logistik-resi'); rec.fotoUrl = up[0].url; }
+    catch(e){ if(!confirm('Foto gagal diunggah ('+(e.message||e)+'). Simpan tanpa foto?')){ if(btn){ btn.disabled=false; btn.textContent='Simpan'; } return; } }
+  }
+  const ok = await logiSave(rec);
+  if(!ok){ if(btn){ btn.disabled=false; btn.textContent='Simpan'; } return; }
+  wprCloseReason(); renderAbsensi();
+  if(rec.resi && logiKurirCode(rec.kurir) && (!old || old.resi!==rec.resi || old.kurir!==rec.kurir)){ if(old) rec.trk = null; logiTrack(rec, true).then(()=>renderAbsensi()); }
+}
+
+/* ===================== FOTO RESI OTOMATIS + LACAK POSISI + ABSENSI PRODUKSI ===================== */
+const LOGI_CODE = {'JNE':'jne','J&T Express':'jnt','SiCepat':'sicepat','AnterAja':'anteraja','POS Indonesia':'pos','Ninja Xpress':'ninja','Lion Parcel':'lion','SAP Express':'sap','ID Express':'ide','Wahana':'wahana','TIKI':'tiki','SPX (Shopee Express)':'spx'};
+const LOGI_TRACK_EVERY_MIN = 180; // jeda minimal cek ulang per paket (hemat kuota API)
+let logiPrefill = null, logiPendFoto = '', logiAutoAt = 0, logiAutoBusy = false;
+function logiKurirCode(k){ return LOGI_CODE[k] || ''; }
+function logiKey(){ try{ return (wspSettings && wspSettings.binderbyteKey) || localStorage.getItem('tenx_binderbyte_key') || ''; }catch(e){ return ''; } }
+function logiCleanResi(s){ return String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,''); }
+
+/* ---------- baca foto resi: Gemini (bila ada key) -> OCR Tesseract ---------- */
+async function logiScanGemini(file){
+  const b64 = await kgFileToBase64(file);
+  const prompt = 'Baca FOTO resi/label pengiriman ekspedisi Indonesia ini. Balas HANYA JSON: {"resi":"nomor resi/AWB persis seperti tertulis (huruf besar, tanpa spasi)","kurir":"salah satu dari: '+LOGI_KURIR.join(' | ')+'","penerima":"nama penerima atau kosong","hp":"no HP penerima atau kosong","pengirim":"nama pengirim atau kosong"}. Salin nomor resi karakter demi karakter dari tulisan di bawah barcode, jangan menebak; jika tidak terbaca isi resi dengan "".';
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(scanConfig.geminiModel)+':generateContent?key='+encodeURIComponent(scanConfig.geminiApiKey);
+  const resp = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({contents:[{parts:[{text:prompt},{inline_data:{mime_type:'image/jpeg',data:b64}}]}], generationConfig:{temperature:0, responseMimeType:'application/json'}})});
+  if(!resp.ok) throw new Error('AI error '+resp.status);
+  const j = await resp.json(), txt = (j.candidates&&j.candidates[0]&&j.candidates[0].content.parts||[]).map(p=>p.text||'').join('').replace(/```json|```/g,'').trim();
+  let o = JSON.parse(txt); if(Array.isArray(o)) o = o[0]||{};
+  return {resi:o.resi, kurir:o.kurir, penerima:o.penerima, hp:o.hp, pengirim:o.pengirim};
+}
+function logiParseText(t){
+  const U = String(t||'').toUpperCase(), out = {};
+  const pats = [/^(JP|JX|JD|JO|JT|JB)\d{9,12}$/, /^(CSS|CGK|BDO|TLJ)\d{10,14}$/, /^SPXID\d{9,14}$/, /^NLID[A-Z0-9]{8,14}$/, /^P\d{13}$/, /^IDE\w{8,14}$/, /^\d{0,2}LP\d{10,14}$/, /^\d{16}$/, /^00\d{10}$/, /^\d{12,15}$/];
+  let best = null, bi = 99;
+  (U.replace(/[^A-Z0-9\s]/g,' ').match(/[A-Z0-9]{8,24}/g)||[]).forEach(tok=>{
+    const m = tok.match(/^(JP|JX|JD|JO|JT|JB|CSS|CGK|BDO|TLJ|SPXID|NLID[A-Z]{0,2}|IDE|LP|P)?([0-9OILSBZ]{9,16})$/);
+    if(m) tok = (m[1]||'') + m[2].replace(/O/g,'0').replace(/[IL]/g,'1').replace(/S/g,'5').replace(/B/g,'8').replace(/Z/g,'2');
+    let i = pats.findIndex(p=>p.test(tok));
+    if(i<0 && tok.length>=10 && (tok.match(/\d/g)||[]).length>=8) i = 50;
+    if(i>=0 && i<bi){ bi = i; best = tok; }
+  });
+  out.resi = best || '';
+  const hp = U.match(/(?:\+?62|0)8[0-9\s-]{8,13}/); if(hp) out.hp = hp[0].replace(/[\s-]/g,'');
+  const pn = U.match(/(?:PENERIMA|KEPADA|TO)\s*[:\-]?\s*([A-Z][A-Z .']{2,38})/); if(pn) out.penerima = pn[1].trim().replace(/\b\w/g,c=>c).toLowerCase().replace(/(^|\s)\w/g,c=>c.toUpperCase());
+  return out;
+}
+async function logiScanOcr(file){
+  await kgLoadTesseract(); const c = await kgOcrPrep(file);
+  const r = await Tesseract.recognize(c, 'eng'), text = r.data.text || '';
+  return Object.assign(logiParseText(text), {raw:text});
+}
+function logiGuessKurir(resi, raw, given){
+  if(given && given!=='Lainnya' && LOGI_KURIR.indexOf(given)>=0) return given;
+  const r = resi||'', U = String(raw||'').toUpperCase();
+  if(/^(JP|JX|JD|JO|JT|JB)\d/.test(r)) return 'J&T Express';
+  if(/^(CSS|CGK|BDO|TLJ)\d/.test(r) || /^\d{16}$/.test(r)) return 'JNE';
+  if(/^SPXID/.test(r)) return 'SPX (Shopee Express)';
+  if(/^NLID/.test(r)) return 'Ninja Xpress';
+  if(/^P\d{13}$/.test(r)) return 'POS Indonesia';
+  if(/^IDE/.test(r)) return 'ID Express';
+  if(/LP\d{10}/.test(r)) return 'Lion Parcel';
+  const g = [['J&T','J&T Express'],['JNT','J&T Express'],['JNE','JNE'],['SICEPAT','SiCepat'],['ANTERAJA','AnterAja'],['NINJA','Ninja Xpress'],['LION','Lion Parcel'],['POS INDO','POS Indonesia'],['SAP','SAP Express'],['ID EXPRESS','ID Express'],['SPX','SPX (Shopee Express)'],['SHOPEE','SPX (Shopee Express)'],['WAHANA','Wahana'],['TIKI','TIKI']];
+  for(const k of g) if(U.indexOf(k[0])>=0) return k[1];
+  return /^00\d{10}$/.test(r) ? 'SiCepat' : 'Lainnya';
+}
+async function logiReadResi(file){
+  let info = null;
+  if(scanConfig.geminiApiKey){ try{ info = await logiScanGemini(file); }catch(e){ console.warn('Gemini resi', e); } }
+  if(!info || logiCleanResi(info.resi).length<8){ try{ const o = await logiScanOcr(file); if(o && o.resi) info = o; }catch(e){ console.warn('OCR resi', e); } }
+  if(!info) return {};
+  info.resi = logiCleanResi(info.resi); if(info.resi.length<8) info.resi = '';
+  info.kurir = logiGuessKurir(info.resi, info.raw, info.kurir);
+  return info;
+}
+
+/* ---------- alur: pilih foto -> baca -> catat -> lacak ---------- */
+function logiScanPick(arah){
+  const inp = document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.multiple = true;
+  inp.style.cssText = 'position:fixed;left:-9999px;opacity:0;'; document.body.appendChild(inp);
+  inp.onchange = ()=>{ const fs = Array.from(inp.files||[]); inp.remove(); if(fs.length) logiScanRun(fs, arah); };
+  inp.click();
+}
+async function logiScanRun(files, arah){
+  const rows = files.map(()=>({st:'proses', msg:'Membaca foto…'}));
+  const draw = ()=>{
+    const old = document.getElementById('wprModal'); if(old) old.remove();
+    const ov = document.createElement('div'); ov.className='wpr-ov'; ov.id='wprModal';
+    ov.innerHTML = '<div class="wpr-md"><h3>Foto Resi Otomatis</h3><div class="sb">'+(rows.some(r=>r.st==='proses')?'Sedang membaca & mencatat…':'Selesai.')+'</div>'+rows.map((r,i)=>
+      '<div class="kv"><span>'+({proses:'⏳',ok:'✅',dup:'⚠️',gagal:'❌'}[r.st])+' '+escapeHtml(r.msg)+'</span>'+(r.st==='gagal'?'<button class="btn small" onclick="logiScanManual('+i+')">Isi manual</button>':(r.id?'<button class="btn small ghost" onclick="wprCloseReason();logiOpenForm(\''+arah+'\',\''+r.id+'\')">Edit</button>':''))+'</div>').join('')+
+      '<div class="acts"><button class="pri" onclick="wprCloseReason();renderAbsensi()">Tutup</button></div></div>';
+    document.body.appendChild(ov);
+  };
+  logiScanRows = rows; logiScanRows.arah = arah; draw();
+  for(let i=0;i<files.length;i++){
+    const row = rows[i];
+    try{
+      const f = await compressImage(files[i], 1600, 0.85);
+      const up = uploadFilesToStorage([f], 'logistik-resi').then(u=>u[0].url).catch(()=>'');
+      const info = await logiReadResi(f); row.fotoUrl = await up;
+      if(!info.resi){ row.st='gagal'; row.msg='Resi tidak terbaca — isi manual (foto tersimpan)'; row.prefill = {fotoUrl:row.fotoUrl, kurir:info.kurir||'', pihak:info.penerima||'', noHp:info.hp||''}; draw(); continue; }
+      const dup = logiCache.find(r=>r.resi===info.resi);
+      if(dup){ row.st='dup'; row.msg=info.resi+' sudah tercatat ('+(dup.pihak||'-')+')'; row.id = dup.id; draw(); continue; }
+      const me = logiMe(), now = Date.now(), keluar = arah==='keluar';
+      const rec = {id:'LG-'+now.toString(36).toUpperCase()+Math.random().toString(36).slice(2,5).toUpperCase(), arah:arah, createdAt:now, createdBy:me.nama, createdById:me.id, resi:info.resi, kurir:info.kurir, pihak:info.penerima||(keluar?'Customer (lengkapi nama)':(info.pengirim||'')), noHp:info.hp||'', projectId:'', projectNama:'', tglKirim:logiToday(), catatan:'Dicatat otomatis dari foto resi', fotoUrl:row.fotoUrl||'', autoFoto:true};
+      if(keluar){ rec.ongkir = 0; rec.status = 'dikirim'; } else { rec.jenis='Lainnya'; rec.isi=''; rec.qty=0; rec.satuan='pcs'; rec.eta=''; rec.status='menuju'; }
+      rec.riwayat = [{status:rec.status, at:now, by:me.nama}];
+      if(!(await logiSave(rec))){ row.st='gagal'; row.msg='Gagal menyimpan ke server'; draw(); continue; }
+      row.id = rec.id; row.st='ok'; row.msg = rec.kurir+' · '+rec.resi+' tercatat'; draw();
+      if(logiKey() && logiKurirCode(rec.kurir)){ row.msg += ' · melacak…'; draw(); await logiTrack(rec, true); row.msg = rec.kurir+' · '+rec.resi+(rec.trk && rec.trk.status ? ' · '+rec.trk.status : (rec.trk && rec.trk.error ? ' · '+rec.trk.error : '')); draw(); }
+    }catch(e){ row.st='gagal'; row.msg='Gagal: '+(e.message||e); draw(); }
+  }
+}
+let logiScanRows = [];
+function logiScanManual(i){ const r = logiScanRows[i]; if(!r) return; wprCloseReason(); logiPrefill = r.prefill || {}; logiOpenForm(logiScanRows.arah || 'keluar'); }
+
+/* ---------- lacak posisi (BinderByte) ---------- */
+async function logiTrack(x, quiet){
+  const key = logiKey(), code = logiKurirCode(x.kurir);
+  if(!x.resi || !code) return false;
+  if(!key){ if(!quiet) alert('Isi API key pelacakan dulu lewat tombol ⚙ Pelacakan.'); return false; }
+  const t = {checkedAt:Date.now()};
+  try{
+    const resp = await fetch('https://api.binderbyte.com/v1/track?api_key='+encodeURIComponent(key)+'&courier='+code+'&awb='+encodeURIComponent(x.resi));
+    const r = await resp.json();
+    if(r && r.status===200 && r.data){
+      const s = r.data.summary||{}, d = r.data.detail||{};
+      const h = (r.data.history||[]).slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,25);
+      t.status = String(s.status||'').toUpperCase(); t.hist = h; t.last = h[0]||null; t.receiver = d.receiver||'';
+      const delivered = /DELIVERED|TERKIRIM|DITERIMA|RECEIVED/.test(t.status), problem = /RETURN|RETUR|UNDELIVER|FAIL|GAGAL|CANCEL|LOST|HILANG/.test(t.status);
+      const now = Date.now(); let ch = false;
+      if(delivered && !logiIsFinal(x)){ x.status = x.arah==='keluar' ? 'selesai' : 'tiba'; x.diterimaAt = now; x.diterimaOleh = 'Otomatis (kurir)'; ch = true; }
+      else if(problem && x.status!=='bermasalah' && !logiIsFinal(x)){ x.status = 'bermasalah'; ch = true; }
+      if(ch) x.riwayat = (x.riwayat||[]).concat([{status:x.status, at:now, by:'Pelacakan otomatis'}]).slice(-30);
+      if(t.receiver && /^Customer \(lengkapi/.test(x.pihak||'')) x.pihak = t.receiver;
+    } else t.error = (r && r.message) || 'Resi tidak ditemukan — cek nomor/ekspedisi';
+  }catch(e){ t.error = 'Layanan pelacakan tidak terjangkau'; }
+  x.trk = Object.assign({}, x.trk && !t.error ? {} : (x.trk||{}), t);
+  return logiSave(x);
+}
+function logiTrackBtn(id){ const x = logiCache.find(r=>r.id===id); if(!x) return; wspToast('Memperbarui posisi…'); logiTrack(x).then(()=>renderAbsensi()); }
+function logiTrkHtml(x){
+  if(!x.resi || !logiKurirCode(x.kurir)) return '';
+  const t = x.trk;
+  if(!t) return '<div class="lg-mt">📍 Belum dilacak'+(logiKey()?'':' — isi API key di ⚙ Pelacakan')+'</div>';
+  if(!t.last) return '<div class="lg-mt" style="color:#B0452A;">📍 '+escapeHtml(t.error||'Belum ada data pelacakan')+'</div>';
+  const l = t.last;
+  return '<div class="lg-mt" style="margin-top:6px;">📍 <b>'+escapeHtml(t.status||'-')+'</b> — '+escapeHtml(l.desc||'')+(l.location?' · '+escapeHtml(l.location):'')+'<br>'+escapeHtml(l.date||'')+' · dicek '+new Date(t.checkedAt).toLocaleString('id-ID')+'</div>'+
+    ((t.hist||[]).length>1 ? '<details class="lg-mt"><summary>Riwayat perjalanan ('+t.hist.length+')</summary>'+t.hist.map(e=>'<div>• '+escapeHtml(e.date||'')+' — '+escapeHtml(e.desc||'')+'</div>').join('')+'</details>' : '');
+}
+async function logiAutoTrack(){
+  if(logiAutoBusy || Date.now()-logiAutoAt<60000 || !logiKey()) return;
+  logiAutoAt = Date.now(); logiAutoBusy = true;
+  try{
+    const due = logiCache.filter(x=>x.resi && logiKurirCode(x.kurir) && !logiIsFinal(x) && x.status!=='bermasalah' && (!x.trk || Date.now()-(x.trk.checkedAt||0) > LOGI_TRACK_EVERY_MIN*60000)).slice(0,15);
+    for(const x of due){ await logiTrack(x, true); await new Promise(r=>setTimeout(r,600)); }
+  } finally { logiAutoBusy = false; }
+}
+setInterval(()=>{ try{ if(currentMode==='absensi' && wspState.role==='logistik'){ logiAutoAt = 0; logiAutoTrack(); } }catch(e){} }, 600000);
+
+/* ---------- pengaturan pelacakan ---------- */
+function logiSettings(){
+  const old = document.getElementById('wprModal'); if(old) old.remove();
+  const ov = document.createElement('div'); ov.className='wpr-ov'; ov.id='wprModal';
+  ov.innerHTML = '<div class="wpr-md"><h3>⚙ Pelacakan & Baca Foto</h3><div class="sb">Pelacakan posisi paket memakai layanan <b>BinderByte</b> (daftar di binderbyte.com, ambil API key). Pembacaan foto memakai AI Gemini bila key terisi, jika tidak memakai OCR bawaan (kurang akurat).</div>'+
+    '<label>API key BinderByte</label><input type="text" id="lgBbKey" value="'+escapeHtml(logiKey())+'" autocomplete="off">'+
+    '<label>API key Gemini (perangkat ini)</label><input type="text" id="lgGmKey" value="'+escapeHtml(scanConfig.geminiApiKey||'')+'" autocomplete="off">'+
+    '<div class="acts"><button onclick="wprCloseReason()">Batal</button><button class="pri" onclick="logiSettingsSave()">Simpan</button></div></div>';
+  document.body.appendChild(ov);
+}
+async function logiSettingsSave(){
+  const bb = document.getElementById('lgBbKey').value.trim(), gm = document.getElementById('lgGmKey').value.trim();
+  try{ localStorage.setItem('tenx_binderbyte_key', bb); if(gm) localStorage.setItem('tenx_gemini_key', gm); else localStorage.removeItem('tenx_gemini_key'); }catch(e){}
+  scanConfig.geminiApiKey = gm || SCAN_FILE_KEY;
+  let shared = false;
+  try{ if(authIsOwner() || authIsKoordinator() || wspIsOwnerAuthed()){ wspSettings.binderbyteKey = bb; shared = await wspSaveSettings({binderbyteKey:bb}); } }catch(e){}
+  wprCloseReason(); logiAutoAt = 0; wspToast(shared ? 'Tersimpan — key pelacakan dipakai semua perangkat' : 'Tersimpan di perangkat ini'); renderAbsensi();
+}
+
+/* ---------- ABSENSI di halaman PRODUKSI (Alur Kerja) ---------- */
+let prodAbsPhoto = null;
+(function(){ const s = document.createElement('style'); s.textContent = '#workflowApp .pa-card{background:var(--white);border:1.5px solid var(--line);border-left:6px solid var(--rust);border-radius:12px;padding:14px 16px;margin:16px 0;}#workflowApp .pa-card h3{margin:0 0 6px;font-size:20px;}#workflowApp .pa-s{font-size:13px;color:var(--ink-soft);margin:4px 0 8px;}#workflowApp .pa-dot{display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;font-size:11px;margin-right:3px;background:#EEE9DD;color:#8a8070;}#workflowApp .pa-dot.y{background:#2f7d4f;color:#fff;}#workflowApp .pa-dot.n{background:#FDE7DF;color:#B0452A;}'; document.head.appendChild(s); })();
+function prodAbsEmp(){
+  const nm = ((typeof state!=='undefined' && state.myName)||'').trim().toLowerCase();
+  const m = nm ? wspEmployeesCache.find(x=>x.active!==false && (x.name||'').trim().toLowerCase()===nm) : null;
+  if(m) return m;
+  const e = wspState.myEmployeeId ? wspGetEmployee(wspState.myEmployeeId) : null;
+  return e && e.active!==false ? e : null;
+}
+function prodAbsInner(){
+  try{ if(!wspInited) initAbsensi(); }catch(e){}
+  const emp = prodAbsEmp();
+  if(!emp){
+    const opts = wspEmployeesCache.filter(e=>e.active!==false).sort((a,b)=>(b.division==='produksi')-(a.division==='produksi')).map(e=>'<option value="'+e.id+'">'+escapeHtml(e.name)+'</option>').join('');
+    return '<h3>ABSENSI PRODUKSI</h3>'+(opts ? '<div class="pa-s">Pilih nama Anda untuk bisa absen masuk.</div><select id="paSel">'+opts+'</select><button class="btn" style="margin-top:8px;" onclick="prodAbsSetMe()">Ini Saya</button>' : '<div class="pa-s">Data karyawan belum ada/ belum termuat. Minta Owner menambahkan nama Anda di Workspace → Owner → Kelola Karyawan.</div>');
+  }
+  const today = wspTodayStr(), att = wspAttendanceFor(emp.id, today), sun = wspIsSunday(today), mk = wspCurrentMonthStr(), wd = wspWorkingDaysInMonth(mk);
+  const cnt = wspAttendanceCache.filter(r=>r.employeeId===emp.id && r.date && r.date.startsWith(mk)).length;
+  const dots = [-6,-5,-4,-3,-2,-1,0].map(o=>{ const d = logiDateStr(o), r = wspAttendanceFor(emp.id, d), s = wspIsSunday(d); return '<span class="pa-dot '+(r?'y':(s?'':'n'))+'" title="'+d+'">'+(r?'✓':(s?'L':'–'))+'</span>'; }).join('');
+  let st;
+  if(att) st = '<b style="color:#2f7d4f;">✔ SUDAH ABSEN '+escapeHtml(att.time)+'</b>';
+  else if(sun) st = '<b>HARI MINGGU — LIBUR</b>';
+  else if(!wspWithinAttendanceWindow()) st = '<span style="color:#B0452A;">Di luar jam absen ('+escapeHtml(wspSettings.jamMulai)+'–'+escapeHtml(wspSettings.jamSelesai)+'), sekarang '+wspNowTimeStr()+'</span>';
+  else st = '<b style="color:#B0452A;">BELUM ABSEN</b><br><button class="btn" style="margin-top:8px;" onclick="prodAbsPick()">📷 Absen Masuk (Foto)</button>';
+  return '<h3>ABSENSI — '+escapeHtml(emp.name)+'</h3><div class="pa-s">'+wspDayName(today)+', '+formatDateID(today)+'</div><div>'+st+'</div>'+
+    '<div class="pa-s" style="margin-top:10px;">Bulan ini: <b>'+cnt+'/'+wd+'</b> hari ('+(wd?Math.round(cnt/wd*100):0)+'%) &nbsp; '+dots+'</div>';
+}
+function prodAbsCardHtml(){ return '<div class="pa-card" id="prodAbsCard">'+prodAbsInner()+'</div>'; }
+function prodAbsSetMe(){ const v = document.getElementById('paSel').value; if(!v) return; wspState.myEmployeeId = v; try{ localStorage.setItem('tenx_wsp_employee_id', v); }catch(e){} prodAbsRefresh(); }
+function prodAbsRefresh(){
+  const el = document.getElementById('prodAbsCard');
+  if(el && typeof currentMode!=='undefined' && currentMode==='workflow' && !document.getElementById('wprModal') && !(document.activeElement && document.activeElement.id==='paSel')) el.innerHTML = prodAbsInner();
+}
+(function(){ const o = renderAbsensi; renderAbsensi = function(){ o.apply(this, arguments); try{ prodAbsRefresh(); }catch(e){} }; })();
+function prodAbsPick(){
+  const emp = prodAbsEmp(); if(!emp) return;
+  if(!wspIsMobileLike()){ wspState.myEmployeeId = emp.id; try{ localStorage.setItem('tenx_wsp_employee_id', emp.id); }catch(e){} showMode('absensi'); wspSetRole('karyawan'); wspOpenCamera(); return; }
+  const inp = document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.setAttribute('capture','user');
+  inp.style.cssText = 'position:fixed;left:-9999px;opacity:0;'; document.body.appendChild(inp);
+  inp.onchange = async ()=>{ const f = inp.files && inp.files[0]; inp.remove(); if(!f) return;
+    try{ prodAbsPhoto = await wspCompressImageFile(f, 900, 0.82); }catch(e){ alert('Gagal memproses foto: '+e.message); return; }
+    const old = document.getElementById('wprModal'); if(old) old.remove();
+    const ov = document.createElement('div'); ov.className='wpr-ov'; ov.id='wprModal';
+    ov.innerHTML = '<div class="wpr-md"><h3>Absen Masuk</h3><img src="'+prodAbsPhoto+'" style="width:100%;border-radius:10px;max-height:50vh;object-fit:cover;"><div class="acts"><button onclick="wprCloseReason()">Batal</button><button onclick="wprCloseReason();prodAbsPick()">Foto Ulang</button><button class="pri" id="paSend" onclick="prodAbsSend()">Kirim Absen</button></div></div>';
+    document.body.appendChild(ov); };
+  inp.click();
+}
+async function prodAbsSend(){
+  const emp = prodAbsEmp(); if(!emp || !prodAbsPhoto) return;
+  const b = document.getElementById('paSend'); if(b){ b.disabled = true; b.textContent = 'Mengirim…'; }
+  try{
+    const up = await uploadFilesToStorage([wspDataUrlToFile(prodAbsPhoto, 'absen_'+emp.id+'_'+Date.now()+'.jpg')], 'absensi'), today = wspTodayStr();
+    const ok = await wspSaveAttendance({id:emp.id+'_'+today, employeeId:emp.id, employeeName:emp.name, division:emp.division||'umum', date:today, time:wspNowTimeStr(), photoUrl:up[0].url, createdAt:new Date().toISOString()});
+    if(ok){ prodAbsPhoto = null; wprCloseReason(); prodAbsRefresh(); } else if(b){ b.disabled = false; b.textContent = 'Kirim Absen'; }
+  }catch(e){ alert('Gagal mengirim absen: '+(e.message||e)); if(b){ b.disabled = false; b.textContent = 'Kirim Absen'; } }
+}
+
+/* ---------- Tampilan utama ---------- */
+function renderLogistik(){
+  try{ logiSubscribe(); }catch(e){}
+  try{ logiAutoTrack(); }catch(e){}
+  if(!logiState.month) logiState.month = wspCurrentMonthStr();
+  const me = logiMe(), t = logiState.tab;
+  const tabs = [['ringkasan','Ringkasan'],['keluar','Paket Keluar'],['masuk','Paket Masuk'],['absensi','Absensi'],['kpi','KPI']];
+  let h = '<div class="ab-card"><h2>Logistik</h2><div class="sub" style="font-size:13px;color:var(--ab-muted);margin-bottom:10px;">Pantau paket ke customer &amp; kiriman bahan ke workshop, plus absensi dan KPI tim Logistik &amp; Produksi.'+(me.emp?' · Anda: <b>'+escapeHtml(me.nama)+'</b>':'')+'</div>'+
+    '<div class="lg-tabs">'+tabs.map(x=>'<button class="'+(t===x[0]?'active':'')+'" onclick="logiSetTab(\''+x[0]+'\')">'+x[1]+'</button>').join('')+'</div>';
+  if(!me.emp && wspEmployeesCache.length){
+    h += '<div class="wpr-warn" style="background:#FFF7E0;border:1.5px solid #E6C16A;border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:10px;"><b>Pilih nama Anda</b> supaya catatan paket, absensi, dan KPI tercatat atas nama Anda:<div style="display:flex;gap:8px;margin-top:6px;"><select id="lgMeSel" style="flex:1;">'+wspEmployeesCache.filter(e=>e.active!==false).map(e=>'<option value="'+e.id+'">'+escapeHtml(e.name)+'</option>').join('')+'</select><button class="btn" onclick="logiSetMe(document.getElementById(\'lgMeSel\').value)">Ini Saya</button></div></div>';
+  }
+  if(t==='ringkasan') h += logiRingkasan();
+  else if(t==='keluar' || t==='masuk') h += logiListView(t);
+  else if(t==='absensi') h += logiAbsensiView();
+  else h += logiKpiView();
+  return h + '</div>';
+}
+function logiRingkasan(){
+  const mk = logiState.month, K = logiCache.filter(x=>x.arah==='keluar'), M = logiCache.filter(x=>x.arah==='masuk');
+  const kJalan = K.filter(x=>x.status==='dikirim'), kMasalah = K.filter(x=>x.status==='bermasalah');
+  const kSelesaiBln = K.filter(x=>x.status==='selesai' && logiMk(x.diterimaAt)===mk);
+  const mJalan = M.filter(x=>x.status==='dipesan'||x.status==='menuju'), mTelat = M.filter(x=>{ const f = logiFlag(x); return f && f.cls==='bad' && x.status!=='bermasalah'; });
+  const mTibaBln = M.filter(x=>x.status==='tiba' && logiMk(x.diterimaAt)===mk);
+  const perhatian = logiCache.filter(x=>{ const f = logiFlag(x); return f && f.cls!=='ok' && !logiIsFinal(x); }).sort((a,b)=>(logiFlag(a).cls==='bad'?0:1)-(logiFlag(b).cls==='bad'?0:1)).slice(0,8);
+  let h = '<div class="lg-acts" style="margin:0 0 6px;"><button class="btn amber" onclick="logiScanPick(\'keluar\')">📷 Foto Resi (Otomatis)</button><button class="btn" onclick="logiOpenForm(\'keluar\')">＋ Resi Manual</button><button class="btn ghost" onclick="logiSettings()">⚙ Pelacakan</button><button class="btn green" onclick="logiOpenForm(\'masuk\')">＋ Paket Masuk Workshop</button></div>'+
+    '<div class="lg-sec">PAKET KELUAR (KE CUSTOMER)</div><div class="lg-kpis">'+
+    '<div class="lg-kpi" onclick="logiSetTab(\'keluar\')"><div class="lbl">Dalam Pengiriman</div><div class="val">'+kJalan.length+'</div><div class="sm">belum diterima customer</div></div>'+
+    '<div class="lg-kpi" onclick="logiSetTab(\'keluar\')"><div class="lbl">Diterima Bulan Ini</div><div class="val">'+kSelesaiBln.length+'</div><div class="sm">paket sampai</div></div>'+
+    '<div class="lg-kpi '+(kMasalah.length?'bad':'')+'" onclick="logiState.f=\'masalah\';logiSetTab(\'keluar\');logiState.f=\'masalah\';renderAbsensi();"><div class="lbl">Bermasalah / Retur</div><div class="val">'+kMasalah.length+'</div><div class="sm">perlu ditindak</div></div></div>'+
+    '<div class="lg-sec">PAKET MASUK (MENUJU WORKSHOP)</div><div class="lg-kpis">'+
+    '<div class="lg-kpi" onclick="logiSetTab(\'masuk\')"><div class="lbl">Sedang Menuju</div><div class="val">'+mJalan.length+'</div><div class="sm">kaos / bahan belum tiba</div></div>'+
+    '<div class="lg-kpi '+(mTelat.length?'bad':'')+'" onclick="logiSetTab(\'masuk\')"><div class="lbl">Telat Tiba</div><div class="val">'+mTelat.length+'</div><div class="sm">lewat ETA</div></div>'+
+    '<div class="lg-kpi" onclick="logiSetTab(\'masuk\')"><div class="lbl">Tiba Bulan Ini</div><div class="val">'+mTibaBln.length+'</div><div class="sm">sudah diterima</div></div></div>';
+  h += '<div class="lg-sec">PERLU PERHATIAN</div>';
+  h += perhatian.length ? perhatian.map(logiCardHtml).join('') : '<div class="hint" style="font-size:13px;color:var(--ab-muted);">Tidak ada paket bermasalah atau telat. 🎉</div>';
+  return h;
+}
+function logiListView(arah){
+  const keluar = arah==='keluar', all = logiList(arah), shown = all.slice(0, logiState.limit);
+  const chips = [['aktif','Sedang Berjalan'],['masalah','Perlu Perhatian'],['selesai',keluar?'Sudah Diterima':'Sudah Tiba'],['semua','Semua']];
+  let h = '<div class="lg-bar"><input type="search" id="lgQ" placeholder="Cari resi, nama, project…" value="'+escapeHtml(logiState.q)+'" oninput="logiSearch(this.value)"><button class="btn amber" onclick="logiScanPick(\''+arah+'\')">📷 Foto Resi</button><button class="btn" onclick="logiOpenForm(\''+arah+'\')">＋ '+(keluar?'Resi Keluar':'Paket Masuk')+'</button></div>'+
+    '<div class="lg-chips">'+chips.map(c=>'<button class="'+(logiState.f===c[0]?'active':'')+'" onclick="logiSetF(\''+c[0]+'\')">'+c[1]+'</button>').join('')+'</div>';
+  if(!all.length) return h + '<div class="hint" style="font-size:13px;color:var(--ab-muted);padding:14px 0;">'+(logiCache.some(x=>x.arah===arah)?'Tidak ada data di filter ini.':(keluar?'Belum ada resi paket keluar. Tekan “＋ Resi Keluar” untuk mengunggah nomor resi.':'Belum ada paket masuk. Tekan “＋ Paket Masuk” untuk mencatat kaos / bahan yang sedang menuju workshop.'))+'</div>';
+  h += shown.map(logiCardHtml).join('');
+  if(all.length > shown.length) h += '<button class="btn ghost block" onclick="logiMore()">Tampilkan lebih banyak ('+(all.length-shown.length)+')</button>';
+  return h;
+}
+
+/* ---------- Absensi Logistik & Produksi ---------- */
+function logiDateStr(offset){ const d = new Date(); d.setDate(d.getDate()+offset); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function logiTeam(){ return wspEmployeesCache.filter(e=>e.active!==false && (e.division==='logistik' || e.division==='produksi')); }
+function logiAbsensiView(){
+  const me = logiMe(), today = logiToday(), team = logiTeam(), mk = logiState.month, wd = wspWorkingDaysInMonth(mk);
+  let h = '';
+  if(me.emp){
+    const att = wspAttendanceFor(me.emp.id, today), sun = wspIsSunday(today), win = wspWithinAttendanceWindow();
+    h += '<div class="lg-card"><div class="lg-top"><div><div class="lg-nm">Absen Masuk — '+escapeHtml(me.emp.name)+'</div><div class="lg-mt">'+wspDayName(today)+', '+formatDateID(today)+'</div></div>'+
+      (att ? '<span class="lg-pill selesai">SUDAH ABSEN '+escapeHtml(att.time)+'</span>' : sun ? '<span class="lg-pill">LIBUR</span>' : '<span class="lg-pill dipesan">BELUM ABSEN</span>')+'</div>'+
+      (!att && !sun ? (win ? '<div class="lg-acts"><button class="btn green" onclick="wspOpenCamera()">📷 Absen Masuk (Kamera)</button></div>' : '<div class="lg-mt">Di luar jam absen ('+escapeHtml(wspSettings.jamMulai)+'–'+escapeHtml(wspSettings.jamSelesai)+'). Sekarang pukul '+wspNowTimeStr()+'.</div>') : '')+'</div>';
+  } else {
+    h += '<div class="hint" style="font-size:13px;color:var(--ab-muted);">Pilih nama Anda di atas untuk bisa absen masuk.</div>';
+  }
+  h += '<div class="lg-sec">KEHADIRAN TIM LOGISTIK &amp; PRODUKSI</div><div class="lg-bar"><input type="month" value="'+mk+'" onchange="logiState.month=this.value||wspCurrentMonthStr();renderAbsensi();" style="max-width:200px;"><span class="lg-mt">'+wspMonthLabel(mk)+' · '+wd+' hari kerja</span></div>';
+  if(!team.length) return h + '<div class="hint" style="font-size:13px;color:var(--ab-muted);">Belum ada karyawan berdivisi <b>Logistik</b> atau <b>Produksi</b>. Owner bisa mengaturnya di tab OWNER / ADMIN → Kelola Karyawan → Edit → Divisi.</div>';
+  const days = [-6,-5,-4,-3,-2,-1,0].map(o=>logiDateStr(o));
+  h += '<table class="lg-att"><thead><tr><th>Nama</th><th>Hari ini</th><th>Bulan ini</th><th>7 hari terakhir</th></tr></thead><tbody>'+team.map(e=>{
+    const a = wspAttendanceFor(e.id, today), cnt = wspAttendanceCache.filter(r=>r.employeeId===e.id && r.date && r.date.startsWith(mk)).length;
+    const pct = wd ? Math.round(cnt/wd*100) : 0;
+    const dots = days.map(d=>{ const r = wspAttendanceFor(e.id, d), sun = wspIsSunday(d); return '<span class="lg-dot '+(r?'y':(sun?'':'n'))+'" title="'+d+'">'+(r?'✓':(sun?'L':'–'))+'</span>'; }).join('');
+    return '<tr><td><b>'+escapeHtml(e.name)+'</b><br><span class="ab-badge '+e.division+'" style="transform:none;font-size:10px;">'+wspDivLabel(e.division).toUpperCase()+'</span></td>'+
+      '<td>'+(a ? '<b style="color:#2f7d4f;">Hadir '+escapeHtml(a.time)+'</b>' : (wspIsSunday(today)?'Libur':'<span style="color:#B0452A;">Belum</span>'))+'</td>'+
+      '<td>'+cnt+'/'+wd+' ('+pct+'%)</td><td>'+dots+'</td></tr>';
+  }).join('')+'</tbody></table>';
+  return h;
+}
+
+/* ---------- KPI Logistik & Produksi ---------- */
+function logiEmpMonth(empId, month){
+  let keluar = 0, masukInput = 0, recv = 0;
+  logiCache.forEach(x=>{
+    if(x.createdById===empId && logiMk(x.createdAt)===month){ if(x.arah==='keluar') keluar++; else masukInput++; }
+    if(x.arah==='masuk' && x.status==='tiba' && x.diterimaOlehId===empId && logiMk(x.diterimaAt)===month) recv++;
+  });
+  return { keluar:keluar, masukInput:masukInput, recv:recv, total:keluar+masukInput+recv };
+}
+function prodEmpMonth(emp, month){
+  const nm = (emp.name||'').trim().toLowerCase(), P = (typeof projectsCache!=='undefined' && Array.isArray(projectsCache)) ? projectsCache : [];
+  let pcs = 0, selesai = 0, tepat = 0, denom = 0;
+  P.forEach(p=>{
+    if(p.status!=='selesai' || !p.selesaiAt || logiMk(p.selesaiAt)!==month) return;
+    if((p.namaProduksi||'').trim().toLowerCase()!==nm) return;
+    selesai++; pcs += Number(totalQty(p))||0;
+    if(p.deadline){ denom++; if(wfLateDays(p)===0) tepat++; }
+  });
+  return { pcs:pcs, selesai:selesai, tepat:tepat, denom:denom };
+}
+function logiKpi(e, month, wd, monthAtt){
+  const tgt = Number(wspSettings.logTarget)||3, m = logiEmpMonth(e.id, month);
+  const targetTotal = wd*tgt, pctOut = targetTotal ? m.total/targetTotal*100 : 0;
+  const hadir = monthAtt.filter(a=>a.employeeId===e.id).length, pctH = wd ? Math.min(100, hadir/wd*100) : 0;
+  return { score:Math.round((pctOut+pctH)/2), label:'Kinerja Logistik',
+    detail:'Paket diproses '+m.total+'/'+targetTotal+' ('+m.keluar+' resi keluar · '+m.masukInput+' paket masuk dicatat · '+m.recv+' diterima) · Hadir '+hadir+'/'+wd+' hari' };
+}
+function prodKpi(e, month, wd, monthAtt){
+  const tgt = Number(wspSettings.prodTarget)||50, m = prodEmpMonth(e, month);
+  const targetPcs = wd*tgt, pctPcs = targetPcs ? m.pcs/targetPcs*100 : 0;
+  const hadir = monthAtt.filter(a=>a.employeeId===e.id).length, pctH = wd ? Math.min(100, hadir/wd*100) : 0;
+  const parts = [pctPcs]; if(m.denom>0) parts.push(m.tepat/m.denom*100); parts.push(pctH);
+  return { score:Math.round(parts.reduce((s,v)=>s+v,0)/parts.length), label:'Kinerja Produksi',
+    detail:'Selesai '+m.pcs+'/'+targetPcs+' pcs ('+m.selesai+' project) · Tepat waktu '+(m.denom?m.tepat+'/'+m.denom:'-')+' · Hadir '+hadir+'/'+wd+' hari' };
+}
+function logiKpiView(){
+  const mk = logiState.month, rows = wspKpiRows(mk).filter(r=>r.emp.division==='logistik' || r.emp.division==='produksi'), L = wspTrafficLimits();
+  let h = '<div class="lg-bar"><input type="month" value="'+mk+'" onchange="logiState.month=this.value||wspCurrentMonthStr();renderAbsensi();" style="max-width:200px;"><span class="lg-mt">KPI '+wspMonthLabel(mk)+' · terhitung otomatis</span></div>';
+  if(!rows.length) return h + '<div class="hint" style="font-size:13px;color:var(--ab-muted);">Belum ada karyawan berdivisi Logistik atau Produksi. Atur divisi lewat OWNER / ADMIN → Kelola Karyawan.</div>';
+  h += '<div class="tl-legend" style="margin-bottom:8px;"><span class="l-merah"><i></i>Merah: &lt; '+L.aman+'%</span> <span class="l-kuning"><i></i>Kuning: '+L.aman+'–'+(L.bonus>L.aman?L.bonus-1:L.bonus)+'%</span> <span class="l-hijau"><i></i>Hijau: ≥ '+L.bonus+'%</span></div>';
+  h += rows.map(r=>{
+    const tx = WSP_TL_TEXT[r.level];
+    return '<div class="tl-card tl-'+r.level+'" onclick="wspOpenKpiDetail(\''+r.emp.id+'\')" style="cursor:pointer;"><div class="tl-dot"></div><div class="tl-main"><div><span class="tl-name">'+escapeHtml(r.emp.name)+'</span><span class="tl-div">'+wspDivLabel(r.emp.division)+'</span></div><div class="tl-detail">'+r.metricLabel+' · '+r.detail+'</div><div class="tl-bar"><div style="width:'+Math.min(r.scorePct,100)+'%"></div></div></div><div class="tl-score"><b>'+r.scorePct+'%</b><span>'+tx.t+'</span></div></div>';
+  }).join('');
+  h += '<div class="ab-note" style="margin-top:10px;"><b>Cara hitung.</b> Logistik = rata-rata (paket diproses ÷ target '+(Number(wspSettings.logTarget)||3)+' paket/hari kerja) dan kehadiran. Produksi = rata-rata (pcs selesai ÷ target '+(Number(wspSettings.prodTarget)||50)+' pcs/hari kerja), ketepatan deadline, dan kehadiran. “Paket diproses” = resi keluar &amp; paket masuk yang dicatat + paket masuk yang dikonfirmasi tiba. Pcs produksi diambil dari Alur Kerja, jadi nama karyawan harus sama dengan nama Produksi di project. Target diatur Owner di tab Pengaturan KPI &amp; Jam.</div>';
+  return h;
+}
+function logiOpenKpiDetail(empId){
+  const emp = wspGetEmployee(empId); if(!emp) return;
+  const mk = logiState.month || wspCurrentMonthStr();
+  const wd = wspWorkingDaysInMonth(mk), monthAtt = wspAttendanceCache.filter(a=>a.date && a.date.startsWith(mk));
+  const logi = emp.division==='logistik', r = logi ? logiKpi(emp, mk, wd, monthAtt) : prodKpi(emp, mk, wd, monthAtt);
+  let body = '<div class="kv"><span>Skor KPI</span><b>'+r.score+'%</b></div><div class="kv" style="display:block;">'+escapeHtml(r.detail)+'</div>';
+  if(logi){
+    const rows = logiCache.filter(x=>(x.createdById===empId && logiMk(x.createdAt)===mk) || (x.arah==='masuk' && x.diterimaOlehId===empId && logiMk(x.diterimaAt)===mk)).slice(0,15);
+    body += '<label>Aktivitas bulan ini</label>'+(rows.length ? rows.map(x=>'<div class="kv"><span>'+(x.arah==='keluar'?'Keluar':'Masuk')+' · '+escapeHtml(x.resi||x.pihak||'-')+'</span><b>'+escapeHtml(logiStLabel(x.arah,x.status))+'</b></div>').join('') : '<div class="sb">Belum ada aktivitas tercatat.</div>');
+  } else {
+    const nm = (emp.name||'').trim().toLowerCase();
+    const ps = (projectsCache||[]).filter(p=>p.status==='selesai' && p.selesaiAt && logiMk(p.selesaiAt)===mk && (p.namaProduksi||'').trim().toLowerCase()===nm).slice(0,15);
+    body += '<label>Project selesai bulan ini</label>'+(ps.length ? ps.map(p=>'<div class="kv"><span>'+escapeHtml(p.namaKlien||p.id)+' · '+(Number(totalQty(p))||0)+' pcs</span><b>'+(p.deadline?(wfLateDays(p)>0?'Telat '+wfLateDays(p)+' hr':'Tepat waktu'):'Tanpa deadline')+'</b></div>').join('') : '<div class="sb">Belum ada project selesai atas nama ini. Pastikan nama Produksi di Alur Kerja sama dengan nama karyawan.</div>');
+  }
+  const old = document.getElementById('wprModal'); if(old) old.remove();
+  const ov = document.createElement('div'); ov.className='wpr-ov'; ov.id='wprModal';
+  ov.addEventListener('click', e=>{ if(e.target===ov) wprCloseReason(); });
+  ov.innerHTML = '<div class="wpr-md"><h3>'+escapeHtml(emp.name)+'</h3><div class="sb">'+r.label+' · '+wspMonthLabel(mk)+'</div>'+body+'<div class="acts"><button onclick="wprCloseReason()">Tutup</button></div></div>';
+  document.body.appendChild(ov);
+}
+
+/* ---------- Divisi (label) & tautan dari Alur Kerja ---------- */
+function wspDivLabel(d){ return d==='marketing' ? 'Marketing' : d==='logistik' ? 'Logistik' : d==='produksi' ? 'Produksi' : 'Umum'; }
+function wspDivBadge(e, small){
+  const d = (e && e.division) || 'umum';
+  return '<span class="ab-badge '+(['marketing','logistik','produksi'].indexOf(d)>=0?d:'umum')+'" style="transform:none;'+(small?'font-size:10px;':'')+'">'+wspDivLabel(d).toUpperCase()+'</span>';
+}
+function logiProjectLine(p){
+  const L = (typeof logiCache!=='undefined' ? logiCache : []).filter(x=>x.projectId===p.id);
+  if(!L.length) return '';
+  return '<div class="kv"><b>Logistik</b><div style="flex:1;font-size:13px;line-height:1.6;">'+L.slice(0,6).map(x=>(x.arah==='keluar'?'📦 ':'🚚 ')+escapeHtml(x.arah==='keluar' ? ((x.kurir||'')+' '+(x.resi||'')) : ((x.jenis||'Bahan')+(x.isi?' — '+x.isi:'')))+' · <b>'+escapeHtml(logiStLabel(x.arah,x.status))+'</b>'+(x.arah==='masuk'&&x.status!=='tiba'&&x.eta?' (ETA '+fmtDate(x.eta)+')':'')).join('<br>')+'</div></div>';
+}
+function openLogistik(){
+  showMode('absensi');
+  wspState.role = 'logistik';
+  try{ localStorage.setItem('tenx_wsp_role','logistik'); }catch(e){}
+  renderAbsensi();
+  document.querySelectorAll('#globalNav .gn-links button').forEach(b=>b.classList.remove('active'));
+  const b = document.getElementById('gn-btn-logistik'); if(b) b.classList.add('active');
+}
 </script>
 </body>
 </html>
