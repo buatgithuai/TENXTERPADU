@@ -2222,6 +2222,36 @@ img,video,canvas{max-width:100%;}
 #workflowApp .wf-ptag{display:inline-block;font-size:11px;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:1px 9px;margin:0 4px 3px 0;background:var(--white);color:var(--ink);cursor:pointer;}
 @media(max-width:640px){#workflowApp .wf-prod{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;}#workflowApp .wf-prod .stage-pill{flex:none;}}
 </style>
+<style id="wf-modal-fix">
+/* FIX: popup detail project (Alur Kerja) — tidak lagi tertimpa heading/nav, tombol tutup besar & selalu terlihat */
+#workflowApp .overlay{z-index:1000;padding-top:calc(24px + env(safe-area-inset-top,0px));}
+#workflowApp .lightbox-overlay{z-index:1100;}
+#workflowApp .lightbox-close{z-index:1101;}
+#workflowApp .modal{overscroll-behavior:contain;}
+/* tombol silang: sticky (ikut turun saat scroll), bulat, 44px */
+#workflowApp .modal > .close:first-child,
+#workflowApp .modal .close{
+  position:sticky !important;top:8px !important;right:auto !important;left:auto !important;
+  display:flex !important;align-items:center;justify-content:center;
+  width:44px !important;height:44px !important;
+  margin:-10px -6px -34px auto !important;padding:0 !important;
+  border-radius:50% !important;border:1.5px solid var(--line) !important;
+  background:var(--white,#fff) !important;color:var(--ink,#211D1A) !important;
+  font-size:30px !important;line-height:1 !important;
+  box-shadow:0 2px 8px rgba(0,0,0,.25);
+  z-index:20;cursor:pointer;
+}
+#workflowApp .modal h2{padding-right:52px;}
+@media(max-width:768px){
+  /* bottom-sheet diturunkan: sisakan jarak di atas agar tidak menabrak heading/status bar */
+  #workflowApp .overlay{padding:0 !important;align-items:flex-end;}
+  #workflowApp .modal{
+    max-height:calc(100vh - 64px - env(safe-area-inset-top,0px)) !important;
+    max-height:calc(100dvh - 64px - env(safe-area-inset-top,0px)) !important;
+    overflow-y:auto;
+  }
+}
+</style>
 </head>
 <body class="tx-locked">
 <div id="authGate">
@@ -15395,3 +15425,5 @@ function openLogistik(){
 </script>
 </body>
 </html>
+
+  
