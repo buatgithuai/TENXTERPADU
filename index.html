@@ -2307,6 +2307,13 @@ body.tx-track #trackApp{display:block !important;}
 #trackApp .tv-banner{border-radius:12px;padding:12px 14px;font-size:13.5px;line-height:1.55;margin-bottom:14px;}
 #trackApp .tv-banner.pay{background:#fbf0dc;border:1.5px solid #C98A2C;color:#6b4710;}
 #trackApp .tv-banner.ok{background:#dcebe1;border:1.5px solid #4C7A5E;color:#2d5340;}
+#trackApp .tv-pay{border-top:1px dashed #DAD3C3;}
+#trackApp .tv-pay-r{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:10px 0;border-bottom:1px dashed #DAD3C3;font-size:14px;color:#5B5449;}
+#trackApp .tv-pay-r b{font-family:'JetBrains Mono',monospace;font-size:15px;color:#211D1A;white-space:nowrap;}
+#trackApp .tv-pay-r b.g{color:#4C7A5E;} #trackApp .tv-pay-r b.r{color:#B0452A;}
+#trackApp .tv-pay-r.tot{border-bottom:none;font-weight:700;color:#211D1A;} #trackApp .tv-pay-r.tot b{font-size:17px;}
+#trackApp .tv-pay-n{font-size:12px;color:#8b8374;margin-top:8px;line-height:1.5;}
+#trackApp .tv-paytag{font-family:'Work Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:.04em;border-radius:99px;padding:2px 10px;} #trackApp .tv-paytag.ok{background:#4C7A5E;color:#fff;}
 #trackApp .tv-banner.late{background:#f8e4df;border:1.5px solid #B0452A;color:#7a2d1a;}
 #trackApp .tv-banner.note{background:#FFFCF6;border:1.5px solid #6B87AC;color:#233858;}
 #trackApp .tv-msg{text-align:center;padding:50px 16px;color:#5B5449;line-height:1.6;}
@@ -3567,6 +3574,7 @@ function subscribeInvoicesRealtime(){
       invoicesCache = snapshot.docs.map(d => d.data());
       wfsInvLoaded = true;
       try{ wfsAutoSoon(); }catch(e){}
+      try{ trkSyncSoon(); }catch(e){}
       renderKeuangan();
       if(currentMode==='workflow'){ try{ render(); }catch(e){} }
     }, err => console.error('Realtime invoices error', err));
@@ -3602,6 +3610,7 @@ function subscribeRealtime(){
     .onSnapshot(snapshot => {
       projectsCache = snapshot.docs.map(d => d.data());
       state.loading = false;
+      try{ trkSyncSoon(); }catch(e){}
       render();
       try{ if(typeof wprRefresh==='function') wprRefresh(); }catch(e){}
     }, err => {
@@ -14532,18 +14541,58 @@ function trkPrepare(p){
   if(log.length>60) log.splice(0, log.length-60);
   if(p.lacakNote==null) p.lacakNote = '';
 }
+/* Ringkasan pembayaran untuk customer, dihitung dari nota di Keuangan (invoices).
+   undefined = data nota belum termuat (jangan timpa); null = tidak ada nota / project reseller (sembunyikan). */
+function trkNotaOf(p){
+  if(typeof wfsInvLoaded==='undefined' || !wfsInvLoaded) return undefined;
+  if(p.via==='Reseller') return null;   // harga reseller tidak untuk dilihat customer akhir
+  const invs = (invoicesCache||[]).filter(i=> (p.invNo && String(i.invNo)===String(p.invNo)) || i.projectId===p.id);
+  if(!invs.length) return null;
+  const total = invs.reduce((a,i)=>a+Number(i.total||0),0);
+  const dibayar = invs.reduce((a,i)=>a+Number(i.totalDibayar||0),0);
+  const sisa = Math.max(total-dibayar,0);
+  return { no: invs.map(i=>String(i.invNo)).join(', '), total:total, dibayar:dibayar, sisa:sisa,
+           status: sisa<=0 ? 'lunas' : (dibayar>0 ? 'dp' : 'belum_bayar') };
+}
+function trkNotaSig(n){ return n ? [n.no,n.total,n.dibayar].join('|') : (n===null ? 'none' : ''); }
+let trkSyncTimer = null, trkSyncBusy = false;
+function trkSyncSoon(){ clearTimeout(trkSyncTimer); trkSyncTimer = setTimeout(trkSyncNota, 1500); }
+/* Tiap nota/pembayaran berubah di Keuangan, salin ringkasannya ke link customer (hanya yang berubah) */
+async function trkSyncNota(){
+  if(trkSyncBusy || !CONFIG_READY) return;
+  try{ if(document.body.classList.contains('tx-reseller') || document.body.classList.contains('tx-track') || state.role!=='admin') return; }catch(e){ return; }
+  if(typeof wfsInvLoaded==='undefined' || !wfsInvLoaded || !(projectsCache||[]).length) return;
+  trkSyncBusy = true;
+  try{
+    for(const p of projectsCache){
+      if(!p.lacakToken) continue;
+      const n = trkNotaOf(p);
+      if(n===undefined) continue;
+      const sig = trkNotaSig(n);
+      if((p.lacakNotaSig||'') === sig) continue;
+      try{
+        await db.collection('trackLinks').doc(p.lacakToken).set({ nota:n, updatedAt:Date.now() }, { merge:true });
+        await db.collection('projects').doc(p.id).update({ lacakNotaSig:sig });
+        p.lacakNotaSig = sig;
+      }catch(e){ console.warn('trkSyncNota', p.id, e); }
+    }
+  }finally{ trkSyncBusy = false; }
+}
 function trkPublicDoc(p){
-  return {
+  const _nota = trkNotaOf(p);
+  const _doc = {
     token:p.lacakToken, nama:p.namaKlien||'', no:p.id, qty:totalQty(p),
     status:p.status||'baru', deadline:p.deadline||'', selesaiAt:p.selesaiAt||null,
     log:(p.lacakLog||[]).map(x=>({ s:x.s, at:x.at||0 })),
     note:p.lacakNote||'', aktif:!p.lacakOff, createdAt:p.createdAt||0, updatedAt:Date.now(),
     lateReason: p.lateReason ? { kat:(typeof wprKatLabel==='function' ? wprKatLabel(p.lateReason.kat) : (p.lateReason.kat||'')), alasan:p.lateReason.alasan||'', at:p.lateReason.at||0 } : null
   };
+  if(_nota!==undefined){ _doc.nota = _nota; p.lacakNotaSig = trkNotaSig(_nota); }   // undefined = nota belum termuat, biarkan data lama
+  return _doc;
 }
 function trkPush(p){
   if(!CONFIG_READY || !p.lacakToken) return Promise.resolve(false);
-  return db.collection('trackLinks').doc(p.lacakToken).set(trkPublicDoc(p))
+  return db.collection('trackLinks').doc(p.lacakToken).set(trkPublicDoc(p), { merge:true })
     .then(()=>true).catch(e=>{ console.error('trackLinks set (cek Firestore Rules koleksi "trackLinks")', e); return false; });
 }
 /* simpan token + salin ke koleksi publik untuk project yang sudah ada (tanpa menimpa field lain) */
@@ -14705,13 +14754,24 @@ function trkViewHtml(x){
       lateBanner = '<div class="tv-banner late"><b>'+(st==='selesai' ? 'Pesanan selesai lewat dari target ('+lateN+' hari).' : 'Pesanan melewati target selesai ('+lateN+' hari).')+'</b> Mohon maaf atas ketidaknyamanannya.'+why+'</div>';
     }
   }
+  /* rincian pembayaran (dari nota Keuangan) */
+  let payCard = '';
+  const nt = x.nota;
+  if(nt && Number(nt.total) > 0){
+    const lunas = Number(nt.sisa) <= 0;
+    payCard = '<div class="tv-card"><div class="tv-pct"><span>Rincian Pembayaran</span>'+(lunas?'<span class="tv-paytag ok">LUNAS</span>':'')+'</div>'+
+      '<div class="tv-pay"><div class="tv-pay-r"><span>Total Tagihan</span><b>'+escapeHtml(rupiah(nt.total))+'</b></div>'+
+      '<div class="tv-pay-r"><span>Sudah Dibayar (DP)</span><b class="g">'+escapeHtml(rupiah(nt.dibayar||0))+'</b></div>'+
+      '<div class="tv-pay-r tot"><span>'+(lunas?'Kekurangan':'Kekurangan Pembayaran')+'</span><b class="'+(lunas?'g':'r')+'">'+escapeHtml(rupiah(nt.sisa||0))+'</b></div></div>'+
+      '<div class="tv-pay-n">No. Nota: <b>#'+escapeHtml(nt.no||'-')+'</b>'+(lunas?'':' · Silakan hubungi admin untuk pelunasan.')+'</div></div>';
+  }
   const note = x.note ? '<div class="tv-banner note"><b>Catatan dari tim:</b><br>'+escapeHtml(x.note)+'</div>' : '';
   const target = (st!=='selesai' && x.deadline) ? '<br>Target selesai: <b>'+escapeHtml(fmtDate(x.deadline))+'</b>' : '';
   return trkShell(
     '<div class="tv-card"><div class="tv-hi">Halo, '+escapeHtml(x.nama||'Pelanggan')+'</div>'+
       '<div class="tv-meta">No. Pesanan: <b>'+escapeHtml(x.no||'-')+'</b><br>Jumlah: <b>'+(x.qty||0)+' pcs</b>'+
       (x.createdAt?'<br>Tanggal masuk: <b>'+escapeHtml(fmtDate(x.createdAt))+'</b>':'')+target+'</div></div>'+
-    banner + lateBanner + note +
+    banner + lateBanner + note + payCard +
     '<div class="tv-card"><div class="tv-pct"><span>Progres Pengerjaan</span><span>'+pct+'%</span></div>'+
       '<div class="tv-bar '+(st==='selesai'?'ok':'')+'"><i style="width:'+pct+'%"></i></div>'+
       '<div class="tv-steps">'+steps+'</div></div>'+
