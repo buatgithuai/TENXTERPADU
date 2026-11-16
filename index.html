@@ -2251,9 +2251,76 @@ img,video,canvas{max-width:100%;}
     overflow-y:auto;
   }
 }
+
+/* ===== LINK CUSTOMER (admin) + HALAMAN LACAK PESANAN (publik) ===== */
+#trackApp{display:none;}
+body.tx-track > *:not(#trackApp){display:none !important;}
+body.tx-track #trackApp{display:block !important;}
+#workflowApp .trk-top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
+#workflowApp .trk-top .search-box{margin:0;flex:1;min-width:220px;}
+#workflowApp .trk-info{background:var(--white);border:1.5px dashed var(--line);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.55;color:var(--ink-soft);margin-bottom:14px;}
+#workflowApp .trk-list{display:flex;flex-direction:column;gap:10px;}
+#workflowApp .trk-row{background:var(--white);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:minmax(190px,1.1fr) minmax(240px,2fr);gap:12px 18px;align-items:center;}
+#workflowApp .trk-row.off{opacity:.65;}
+#workflowApp .trk-nm{font-weight:700;font-size:15px;}
+#workflowApp .trk-id{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-soft);margin-top:2px;}
+#workflowApp .trk-st{display:inline-block;margin-top:6px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--canvas-2);color:var(--denim-deep);}
+#workflowApp .trk-st.done{background:#dcebe1;color:var(--green);}
+#workflowApp .trk-bar{height:5px;background:var(--canvas-2);border-radius:99px;margin-top:8px;overflow:hidden;}
+#workflowApp .trk-bar i{display:block;height:100%;background:var(--denim);}
+#workflowApp .trk-url{width:100%;border:1.5px solid var(--line);border-radius:8px;padding:9px 11px;font-family:'JetBrains Mono',monospace;font-size:11.5px;background:var(--canvas);color:var(--ink);}
+#workflowApp .trk-act{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+#workflowApp .trk-act .btn{padding:7px 12px;font-size:12.5px;}
+#workflowApp .trk-note{font-size:12px;color:var(--ink-soft);margin-top:6px;}
+@media(max-width:760px){#workflowApp .trk-row{grid-template-columns:1fr;}}
+
+#trackApp *{box-sizing:border-box;}
+#trackApp{min-height:100vh;min-height:100dvh;background:#F6F3EC;background-image:radial-gradient(circle at 1px 1px,rgba(33,29,26,.05) 1px,transparent 0);background-size:22px 22px;color:#211D1A;font-family:'Work Sans',sans-serif;-webkit-font-smoothing:antialiased;}
+#trackApp .tv-head{background:#211D1A;color:#F6F3EC;padding:16px 20px;border-bottom:4px solid #33507A;display:flex;align-items:center;gap:12px;padding-top:calc(16px + env(safe-area-inset-top,0px));}
+#trackApp .tv-mark{width:38px;height:38px;border-radius:50%;background:#33507A;border:2px dashed #EFEADE;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:18px;}
+#trackApp .tv-head b{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.04em;line-height:1;display:block;}
+#trackApp .tv-head small{font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:#6B87AC;}
+#trackApp .tv-wrap{max-width:560px;margin:0 auto;padding:22px 16px calc(50px + env(safe-area-inset-bottom,0px));}
+#trackApp .tv-card{background:#FFFCF6;border:1.5px solid #DAD3C3;border-radius:14px;padding:18px;margin-bottom:14px;}
+#trackApp .tv-hi{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.03em;margin:0 0 2px;line-height:1.1;}
+#trackApp .tv-meta{font-size:13px;color:#5B5449;line-height:1.6;}
+#trackApp .tv-meta b{color:#211D1A;}
+#trackApp .tv-pct{display:flex;justify-content:space-between;align-items:baseline;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.04em;margin-bottom:8px;}
+#trackApp .tv-bar{height:10px;background:#EFEADE;border-radius:99px;overflow:hidden;}
+#trackApp .tv-bar i{display:block;height:100%;background:linear-gradient(90deg,#33507A,#6B87AC);border-radius:99px;transition:width .5s;}
+#trackApp .tv-bar.ok i{background:#4C7A5E;}
+#trackApp .tv-steps{margin-top:18px;position:relative;}
+#trackApp .tv-step{display:flex;gap:14px;position:relative;padding-bottom:20px;}
+#trackApp .tv-step:last-child{padding-bottom:0;}
+#trackApp .tv-step::before{content:"";position:absolute;left:15px;top:32px;bottom:-2px;width:2px;background:#DAD3C3;}
+#trackApp .tv-step:last-child::before{display:none;}
+#trackApp .tv-step.done::before{background:#4C7A5E;}
+#trackApp .tv-dot{flex:none;width:32px;height:32px;border-radius:50%;border:2px solid #DAD3C3;background:#FFFCF6;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#5B5449;z-index:1;}
+#trackApp .tv-step.done .tv-dot{background:#4C7A5E;border-color:#4C7A5E;color:#fff;}
+#trackApp .tv-step.cur .tv-dot{background:#C98A2C;border-color:#C98A2C;color:#fff;box-shadow:0 0 0 5px rgba(201,138,44,.2);animation:tvp 1.6s infinite;}
+@keyframes tvp{50%{box-shadow:0 0 0 9px rgba(201,138,44,.05);}}
+#trackApp .tv-st-t{font-weight:700;font-size:15px;line-height:1.3;padding-top:5px;}
+#trackApp .tv-step:not(.done):not(.cur) .tv-st-t{color:#8b8374;font-weight:600;}
+#trackApp .tv-st-d{font-size:12.5px;color:#5B5449;margin-top:2px;line-height:1.5;}
+#trackApp .tv-st-w{font-family:'JetBrains Mono',monospace;font-size:11px;color:#33507A;margin-top:3px;}
+#trackApp .tv-tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.04em;background:#C98A2C;color:#fff;border-radius:99px;padding:2px 8px;margin-left:6px;vertical-align:middle;}
+#trackApp .tv-banner{border-radius:12px;padding:12px 14px;font-size:13.5px;line-height:1.55;margin-bottom:14px;}
+#trackApp .tv-banner.pay{background:#fbf0dc;border:1.5px solid #C98A2C;color:#6b4710;}
+#trackApp .tv-banner.ok{background:#dcebe1;border:1.5px solid #4C7A5E;color:#2d5340;}
+#trackApp .tv-banner.note{background:#FFFCF6;border:1.5px solid #6B87AC;color:#233858;}
+#trackApp .tv-msg{text-align:center;padding:50px 16px;color:#5B5449;line-height:1.6;}
+#trackApp .tv-msg h2{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.03em;color:#211D1A;margin:0 0 6px;}
+#trackApp .tv-foot{text-align:center;font-size:11.5px;color:#8b8374;line-height:1.6;margin-top:8px;}
+#trackApp .tv-live{display:inline-block;width:8px;height:8px;border-radius:50%;background:#4C7A5E;margin-right:6px;animation:tvp2 1.6s infinite;}
+@keyframes tvp2{50%{opacity:.3;}}
 </style>
 </head>
 <body class="tx-locked">
+<script>
+/* Mode halaman lacak customer: https://.../?lacak=TOKEN  -> tanpa login, hanya menampilkan progres 1 pesanan */
+(function(){ try{ var m=(location.search||'').match(/[?&]lacak=([A-Za-z0-9_\-]{12,64})/); if(m){ window.TRACK_TOKEN=m[1]; document.body.classList.remove('tx-locked'); document.body.classList.add('tx-track'); } }catch(e){} })();
+</script>
+<div id="trackApp"></div>
 <div id="authGate">
   <div class="ag-card">
     <div class="ag-mark">TX</div>
@@ -3315,7 +3382,9 @@ let projectsCache = [];
 async function saveProject(p){
   if(!CONFIG_READY) return false;
   try{
+    try{ trkPrepare(p); }catch(e){ console.warn('trkPrepare', e); }
     await db.collection('projects').doc(p.id).set(p);
+    try{ trkPush(p); }catch(e){ console.warn('trkPush', e); }
     return true;
   }catch(e){
     console.error('Gagal menyimpan data', e);
@@ -3672,9 +3741,11 @@ function renderAdminView(){
     <div class="subnav">
       <button class="${state.adminView==='projects'?'active':''}" onclick="setAdminView('projects')">Daftar Project</button>
       <button class="${state.adminView==='rekap'?'active':''}" onclick="setAdminView('rekap')">Rekap Komisi Produksi</button>
+      <button class="${state.adminView==='link'?'active':''}" onclick="setAdminView('link')">Link Customer</button>
     </div>
   `;
   if(state.adminView==='rekap') return sub + renderRekapKomisi();
+  if(state.adminView==='link') return sub + renderLinkCustomer();
 
   const all = projectsCache;
   const counts = {
@@ -4470,6 +4541,7 @@ async function deleteProject(id){
   if(!CONFIG_READY) return;
   try{
     await db.collection('projects').doc(id).delete();
+    try{ if(p.lacakToken) await db.collection('trackLinks').doc(p.lacakToken).delete(); }catch(e){ console.warn('hapus trackLinks', e); }
   }catch(e){
     console.error('Gagal menghapus data', e);
     alert('Gagal menghapus data: ' + e.message);
@@ -4901,6 +4973,7 @@ function wfClientMsg(p){
   L.push('');
   L.push('*Progres*');
   L.push(wfStepLines(p));
+  try{ L.push(''); L.push('Pantau progres pesanan Kakak kapan saja di sini:'); L.push(trkUrl(p)); }catch(e){}
   const late = wfLateDays(p);
   if(late > 0){
     L.push('');
@@ -4921,6 +4994,7 @@ function wfApologyMsg(p, newDate){
   L.push('');
   L.push('*Posisi pesanan saat ini*');
   L.push(wfStepLines(p));
+  try{ L.push(''); L.push('Pantau progres pesanan Kakak kapan saja di sini:'); L.push(trkUrl(p)); }catch(e){}
   L.push('');
   L.push(newDate ? ('Estimasi terbaru: selesai paling lambat *' + fmtDate(newDate) + '*.') : 'Tim kami sedang memprioritaskan pesanan Kakak dan akan segera menyampaikan estimasi penyelesaiannya.');
   L.push('');
@@ -8000,7 +8074,7 @@ let wspEmployeesCache = [];
 let wspAttendanceCache = [];
 let wspMarketingCache = [];
 let wspProspectsCache = [];
-let wspSettings = { kontakTarget: 10, eventTarget: 10, logTarget: 3, prodTarget: 50, jamMulai: '07:00', jamSelesai: '17:00', batasAman: 70, batasBonus: 100 };
+let wspSettings = { customDivisions: [], divCfg: {}, kontakTarget: 10, eventTarget: 10, logTarget: 3, prodTarget: 50, jamMulai: '07:00', jamSelesai: '17:00', batasAman: 70, batasBonus: 100 };
 let wspInited = false;
 let wspStream = null;
 let wspCapturedDataUrl = null;
@@ -8059,14 +8133,19 @@ function wspWithinAttendanceWindow(){
   return now >= mulai && now <= selesai;
 }
 function wspWorkingDaysInMonth(yyyymm){
-  const parts = (yyyymm || wspCurrentMonthStr()).split('-').map(Number);
+  /* FIX: target bulanan TIDAK lagi bertambah otomatis tiap hari.
+     Sebelumnya hari kerja dihitung sampai "hari ini" untuk bulan berjalan, sehingga
+     target (hari kerja x target/hari) naik sendiri setiap hari tanpa input Owner/Admin.
+     Sekarang: pakai angka hari kerja yang diisi Owner/Admin (Pengaturan KPI & Jam) bila ada,
+     jika belum diisi pakai total hari kerja (Senin-Sabtu) SEBULAN PENUH yang nilainya tetap. */
+  const key = yyyymm || wspCurrentMonthStr();
+  const parts = key.split('-').map(Number);
   const y = parts[0], m = parts[1];
+  const ov = (wspSettings && wspSettings.hariKerjaBulan) ? Number(wspSettings.hariKerjaBulan[key]) : 0;
+  if(ov > 0) return ov;
   const daysInMonth = new Date(y, m, 0).getDate();
-  const today = new Date();
-  const isCurrentMonth = (today.getFullYear()===y && (today.getMonth()+1)===m);
-  const lastDay = isCurrentMonth ? today.getDate() : daysInMonth;
   let count = 0;
-  for(let day=1; day<=lastDay; day++){
+  for(let day=1; day<=daysInMonth; day++){
     if(new Date(y, m-1, day).getDay() !== 0) count++;
   }
   return count;
@@ -10143,10 +10222,7 @@ function wspEditEmployee(id){
         <input type="text" id="wspEmpName" value="${emp ? escapeHtml(emp.name) : ''}" placeholder="Nama lengkap">
         <label>Divisi</label>
         <select id="wspEmpDivision">
-          <option value="umum" ${(!emp || emp.division==='umum')?'selected':''}>Umum</option>
-          <option value="marketing" ${emp && emp.division==='marketing'?'selected':''}>Marketing</option>
-          <option value="logistik" ${emp && emp.division==='logistik'?'selected':''}>Logistik</option>
-          <option value="produksi" ${emp && emp.division==='produksi'?'selected':''}>Produksi</option>
+          ${wspDivisions().map(d=>`<option value="${escapeHtml(d.id)}" ${((!emp && d.id==='umum') || (emp && (emp.division||'umum')===d.id))?'selected':''}>${escapeHtml(d.name)}</option>`).join('')}
         </select>
         <label>Status</label>
         <select id="wspEmpActive">
@@ -10366,14 +10442,16 @@ function wspOpenMarketingDetail(employeeId){
    Kuning = skor >= batas aman, < batas bonus     -> gaji pokok aman, bonus belum terbuka
    Hijau  = skor >= batas bonus                   -> bonus over-target cair
    Batas bisa diubah Owner di tab "Pengaturan KPI & Jam" (default 70% dan 100%). */
-function wspTrafficLimits(){
+function wspTrafficLimits(divId){
   let aman = Number(wspSettings.batasAman); if(!(aman>0)) aman = 70;
   let bonus = Number(wspSettings.batasBonus); if(!(bonus>0)) bonus = 100;
+  const c = divId && wspSettings.divCfg && wspSettings.divCfg[divId];
+  if(c){ if(Number(c.batasAman)>0) aman = Number(c.batasAman); if(Number(c.batasBonus)>0) bonus = Number(c.batasBonus); }
   if(aman > bonus){ const t = aman; aman = bonus; bonus = t; }
   return { aman, bonus };
 }
-function wspTrafficLevel(scorePct){
-  const L = wspTrafficLimits();
+function wspTrafficLevel(scorePct, divId){
+  const L = wspTrafficLimits(divId);
   if(scorePct >= L.bonus) return 'hijau';
   if(scorePct >= L.aman) return 'kuning';
   return 'merah';
@@ -10401,13 +10479,17 @@ function wspKpiRows(month){
     } else if(e.division === 'produksi'){
       const r = prodKpi(e, month, workingDays, monthAttendance);
       scorePct = r.score; detail = r.detail; metricLabel = r.label;
+    } else if(wspIsCustomDiv(e.division)){
+      const dv = wspDivInfo(e.division);
+      const r = wspCustomKpi(e, dv, month, workingDays, monthAttendance);
+      scorePct = r.score; detail = r.detail; metricLabel = r.label;
     } else {
       const count = monthAttendance.filter(a=>a.employeeId===e.id).length;
       scorePct = workingDays ? Math.round((count/workingDays)*100) : 0;
       detail = `Hadir ${count}/${workingDays} hari kerja`;
       metricLabel = 'Kedisiplinan Absensi';
     }
-    const level = wspTrafficLevel(scorePct);
+    const level = wspTrafficLevel(scorePct, e.division);
     const statusClass = level==='hijau' ? 'tercapai' : level==='kuning' ? 'proses' : 'kurang';
     const statusLabel = level==='hijau' ? 'TERCAPAI' : level==='kuning' ? 'PROSES' : 'PERLU PERHATIAN';
     return { emp:e, scorePct, detail, metricLabel, statusClass, statusLabel, level };
@@ -10533,69 +10615,192 @@ function wspOpenKpiDetail(employeeId){
   } else if(emp.division === 'marketing'){
     wspState.marketingMonth = wspState.kpiMonth;
     wspOpenMarketingDetail(employeeId);
+  } else if(wspIsCustomDiv(emp.division)){
+    wspState.ownerTab = 'kpi'; wspState.kpiDiv = emp.division;
+    renderAbsensi();
+    try{ window.scrollTo(0,0); }catch(e){}
   } else {
     wspState.rekapMonth = wspState.kpiMonth;
     wspOpenRekapDetail(employeeId);
   }
 }
 
-function renderOwnerKpi(){
-  return `
-    <div class="ab-card">
-      <h2>Pengaturan KPI &amp; Jam Absen</h2>
-      <div class="sub" style="font-size:13px;color:var(--ab-muted);margin-bottom:6px;">Hanya Owner/Admin yang bisa mengubah pengaturan ini. Perubahan berlaku untuk seluruh karyawan.</div>
-      <div class="ab-row2">
-        <div>
-          <label>Target Kontak / Hari (Marketing)</label>
-          <input type="number" id="wspCfgKontak" min="0" value="${Number(wspSettings.kontakTarget)||10}">
-        </div>
-        <div>
-          <label>Target Event / Hari (Marketing)</label>
-          <input type="number" id="wspCfgEvent" min="0" value="${Number(wspSettings.eventTarget)||10}">
-        </div>
-      </div>
-      <div class="ab-row2">
-        <div>
-          <label>Target Paket Diproses / Hari (Logistik)</label>
-          <input type="number" id="wspCfgLog" min="0" value="${Number(wspSettings.logTarget)||3}">
-        </div>
-        <div>
-          <label>Target Pcs Selesai / Hari (Produksi)</label>
-          <input type="number" id="wspCfgProd" min="0" value="${Number(wspSettings.prodTarget)||50}">
-        </div>
-      </div>
-      <div class="ab-row2">
-        <div>
-          <label>Jam Mulai Absen</label>
-          <input type="time" id="wspCfgJamMulai" value="${wspSettings.jamMulai || '07:00'}">
-        </div>
-        <div>
-          <label>Jam Selesai Absen</label>
-          <input type="time" id="wspCfgJamSelesai" value="${wspSettings.jamSelesai || '17:00'}">
-        </div>
-      </div>
-      <div class="ab-row2">
-        <div>
-          <label>Batas Aman Gaji Pokok (% skor) — di bawah ini = MERAH</label>
-          <input type="number" id="wspCfgAman" min="1" max="200" value="${wspTrafficLimits().aman}">
-        </div>
-        <div>
-          <label>Batas Bonus Over-Target (% skor) — mulai angka ini = HIJAU</label>
-          <input type="number" id="wspCfgBonus" min="1" max="300" value="${wspTrafficLimits().bonus}">
-        </div>
-      </div>
-      <div id="wspCfgStatus" style="font-size:12px;color:var(--ab-green);margin-top:8px;"></div>
-      <button class="btn block" style="margin-top:14px;" onclick="wspSaveKpiForm()">Simpan Pengaturan</button>
-      <div class="ab-note">Absen hanya bisa dilakukan Senin–Sabtu pada rentang jam di atas. Hari Minggu otomatis libur untuk semua karyawan.</div>
-    </div>
-  `;
+/* ===================== DIVISI DINAMIS + PENGATURAN KPI PER DIVISI =====================
+   - Divisi bawaan: Marketing, Logistik, Produksi, Umum (tidak bisa dihapus).
+   - Owner/Admin bisa menambah divisi baru -> otomatis punya halaman Pengaturan KPI sendiri
+     (indikator + target/hari + batas warna). Realisasi diinput Owner/Admin di halaman divisi itu.
+   - Disimpan di Firestore: wspSettings/config.customDivisions, wspSettings/config.divCfg,
+     dan realisasi bulanan di wspSettings/divProgress_YYYY-MM. */
+var WSP_BUILTIN_DIVS = [
+  { id:'marketing', name:'Marketing', color:'#7A6FB0', builtin:true },
+  { id:'logistik',  name:'Logistik',  color:'#1f7a8c', builtin:true },
+  { id:'produksi',  name:'Produksi',  color:'#B0452A', builtin:true },
+  { id:'umum',      name:'Umum',      color:'#33507A', builtin:true }
+];
+function wspCustomDivs(){ return Array.isArray(wspSettings.customDivisions) ? wspSettings.customDivisions : []; }
+function wspDivisions(){ return WSP_BUILTIN_DIVS.concat(wspCustomDivs().map(d=>Object.assign({}, d, {builtin:false}))); }
+function wspDivInfo(id){ return wspDivisions().find(d=>d.id===id) || null; }
+function wspIsCustomDiv(id){ const d = wspDivInfo(id); return !!(d && !d.builtin); }
+function wspRandId(p){ return p + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+/* ---- Realisasi bulanan divisi kustom ---- */
+var wspDivProgressCache = {};
+var wspDivProgressSubs = {};
+function wspDivProgressFor(month, empId){ const m = wspDivProgressCache[month]; return (m && m[empId]) || {}; }
+function wspEnsureDivProgress(month){
+  if(!month || wspDivProgressSubs[month]) return;
+  wspDivProgressSubs[month] = true;
+  try{ const raw = localStorage.getItem('tenx_wsp_divprog_'+month); if(raw) wspDivProgressCache[month] = JSON.parse(raw); }catch(e){}
+  if(typeof CONFIG_READY==='undefined' || !CONFIG_READY || typeof db==='undefined' || !db) return;
+  db.collection('wspSettings').doc('divProgress_'+month).onSnapshot(doc=>{
+    wspDivProgressCache[month] = (doc.exists && doc.data().values) || {};
+    try{ localStorage.setItem('tenx_wsp_divprog_'+month, JSON.stringify(wspDivProgressCache[month])); }catch(e){}
+    renderAbsensi();
+  }, err=>console.error('Realtime divProgress error', err));
 }
-async function wspSaveKpiForm(){
+function wspCustomKpi(e, div, month, wd, monthAtt){
+  wspEnsureDivProgress(month);
+  const inds = div.indicators || [];
+  const prog = wspDivProgressFor(month, e.id);
+  const parts = [], bits = [];
+  inds.forEach(ind=>{
+    const tgt = wd * (Number(ind.targetDay)||0);
+    const val = Number(prog[ind.id])||0;
+    parts.push(tgt ? val/tgt*100 : 0);
+    bits.push(ind.name + ' ' + val + '/' + tgt + (ind.unit ? ' ' + ind.unit : ''));
+  });
+  if(div.useAttendance !== false){
+    const hadir = monthAtt.filter(a=>a.employeeId===e.id).length;
+    parts.push(wd ? Math.min(100, hadir/wd*100) : 0);
+    bits.push('Hadir ' + hadir + '/' + wd + ' hari');
+  }
+  const score = parts.length ? Math.round(parts.reduce((s,v)=>s+v,0)/parts.length) : 0;
+  const detail = bits.length ? bits.join(' · ') : 'Belum ada indikator — atur di Pengaturan KPI → ' + div.name;
+  return { score:score, detail:detail, label:'Kinerja ' + div.name };
+}
+
+/* ---- Label & badge divisi ---- */
+function wspDivLabel(d){ const i = wspDivInfo(d); return i ? i.name : 'Umum'; }
+function wspDivBadge(e, small){
+  const d = (e && e.division) || 'umum', info = wspDivInfo(d);
+  const cls = (info && info.builtin) ? info.id : 'umum';
+  const bg = (info && !info.builtin) ? 'background:' + escapeHtml(info.color || '#33507A') + ';' : '';
+  return '<span class="ab-badge ' + cls + '" style="transform:none;' + bg + (small ? 'font-size:10px;' : '') + '">' + escapeHtml(info ? info.name : 'Umum').toUpperCase() + '</span>';
+}
+
+/* ---- Halaman Pengaturan KPI (tab per divisi) ---- */
+function wspSetKpiDiv(id){ wspState.kpiDiv = id; renderAbsensi(); }
+function renderOwnerKpi(){
+  const divs = wspDivisions();
+  let cur = wspState.kpiDiv || 'global';
+  if(cur !== 'global' && !wspDivInfo(cur)) cur = 'global';
+  const nav = '<div class="ab-subnav kpi-div-nav">' +
+    '<button class="' + (cur==='global'?'active':'') + '" onclick="wspSetKpiDiv(\'global\')">Pengaturan Umum</button>' +
+    divs.map(d=>'<button class="' + (cur===d.id?'active':'') + '" onclick="wspSetKpiDiv(\'' + d.id + '\')"><i class="kpi-dot" style="background:' + escapeHtml(d.color||'#33507A') + '"></i>' + escapeHtml(d.name) + '</button>').join('') +
+    '<button class="kpi-add-div" onclick="wspEditDivision(\'\')">+ Tambah Divisi</button></div>';
+  return nav + (cur === 'global' ? renderKpiGlobal() : renderKpiDivPage(wspDivInfo(cur)));
+}
+function renderKpiGlobal(){
+  const L = wspTrafficLimits();
+  return '<div class="ab-card">' +
+    '<h2>Pengaturan Umum</h2>' +
+    '<div class="sub" style="font-size:13px;color:var(--ab-muted);margin-bottom:6px;">Berlaku untuk semua divisi. Target KPI tiap divisi diatur di tab divisinya masing-masing.</div>' +
+    '<div class="ab-row2"><div><label>Jam Mulai Absen</label><input type="time" id="wspCfgJamMulai" value="' + (wspSettings.jamMulai || '07:00') + '"></div>' +
+    '<div><label>Jam Selesai Absen</label><input type="time" id="wspCfgJamSelesai" value="' + (wspSettings.jamSelesai || '17:00') + '"></div></div>' +
+    '<div class="ab-row2"><div><label>Hari Kerja Bulan ' + wspMonthLabel(wspState.kpiMonth) + ' (pengali target bulanan)</label>' +
+    '<input type="number" id="wspCfgHariKerja" min="1" max="31" value="' + wspWorkingDaysInMonth(wspState.kpiMonth) + '"></div>' +
+    '<div style="font-size:12px;color:var(--ab-muted);align-self:end;">Target bulanan = hari kerja × target/hari. Nilai ini tetap sampai Owner/Admin mengubahnya.</div></div>' +
+    '<div class="ab-row2"><div><label>Batas Aman Gaji Pokok default (% skor) — di bawah ini = MERAH</label>' +
+    '<input type="number" id="wspCfgAman" min="1" max="200" value="' + L.aman + '"></div>' +
+    '<div><label>Batas Bonus Over-Target default (% skor) — mulai angka ini = HIJAU</label>' +
+    '<input type="number" id="wspCfgBonus" min="1" max="300" value="' + L.bonus + '"></div></div>' +
+    '<div class="ab-note" style="margin-top:8px;">Batas warna ini jadi acuan semua divisi, kecuali divisi tersebut punya batas sendiri di halamannya.</div>' +
+    '<div id="wspCfgStatus" style="font-size:12px;color:var(--ab-green);margin-top:8px;"></div>' +
+    '<button class="btn block" style="margin-top:14px;" onclick="wspSaveKpiGlobal()">Simpan Pengaturan</button>' +
+    '<div class="ab-note">Absen hanya bisa dilakukan Senin–Sabtu pada rentang jam di atas. Hari Minggu otomatis libur untuk semua karyawan.</div>' +
+    '</div>';
+}
+function wspIndRowHtml(ind){
+  ind = ind || {};
+  return '<div class="ab-ind-row" data-id="' + escapeHtml(ind.id || '') + '">' +
+    '<div><label>Nama Indikator</label><input type="text" class="ind-name" value="' + escapeHtml(ind.name || '') + '" placeholder="mis. Desain selesai"></div>' +
+    '<div><label>Satuan</label><input type="text" class="ind-unit" value="' + escapeHtml(ind.unit || '') + '" placeholder="mis. desain"></div>' +
+    '<div><label>Target / Hari</label><input type="number" class="ind-target" min="0" step="any" value="' + (ind.targetDay != null ? ind.targetDay : '') + '"></div>' +
+    '<button type="button" class="btn rust small" onclick="this.closest(\'.ab-ind-row\').remove()">Hapus</button></div>';
+}
+function wspAddIndRow(){ const box = document.getElementById('wspIndList'); if(box) box.insertAdjacentHTML('beforeend', wspIndRowHtml()); }
+
+function renderKpiDivPage(div){
+  const cfg = (wspSettings.divCfg && wspSettings.divCfg[div.id]) || {};
+  const G = wspTrafficLimits();
+  let how = '', fields = '';
+  if(div.id === 'marketing'){
+    how = 'Skor = rata-rata pencapaian target kontak &amp; event (dihitung otomatis dari data prospek).';
+    fields = '<div class="ab-row2"><div><label>Target Kontak / Hari</label><input type="number" id="wspCfgKontak" min="0" value="' + (Number(wspSettings.kontakTarget)||10) + '"></div>' +
+      '<div><label>Target Event / Hari</label><input type="number" id="wspCfgEvent" min="0" value="' + (Number(wspSettings.eventTarget)||10) + '"></div></div>';
+  } else if(div.id === 'logistik'){
+    how = 'Skor = rata-rata (paket diproses ÷ target) dan kehadiran. Dihitung otomatis dari modul Logistik.';
+    fields = '<div><label>Target Paket Diproses / Hari</label><input type="number" id="wspCfgLog" min="0" value="' + (Number(wspSettings.logTarget)||3) + '"></div>';
+  } else if(div.id === 'produksi'){
+    how = 'Skor = rata-rata (pcs selesai ÷ target), ketepatan deadline, dan kehadiran. Dihitung otomatis dari Alur Kerja.';
+    fields = '<div><label>Target Pcs Selesai / Hari</label><input type="number" id="wspCfgProd" min="0" value="' + (Number(wspSettings.prodTarget)||50) + '"></div>';
+  } else if(div.id === 'umum'){
+    how = 'Skor = kehadiran ÷ hari kerja. Divisi Umum tidak punya target angka lain, hanya batas warna.';
+  } else {
+    how = 'Skor = rata-rata pencapaian tiap indikator (realisasi ÷ (target/hari × hari kerja)) ditambah kehadiran bila dicentang. Realisasi bulanan diinput di bagian bawah halaman ini.';
+    fields = '<label>Indikator KPI</label><div id="wspIndList">' + (div.indicators||[]).map(wspIndRowHtml).join('') + '</div>' +
+      '<button type="button" class="btn ghost small" style="margin:4px 0 10px;" onclick="wspAddIndRow()">+ Tambah Indikator</button>' +
+      '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="wspCfgUseAtt" style="width:18px;height:18px;" ' + (div.useAttendance !== false ? 'checked' : '') + '> <span>Ikut hitung kehadiran dalam skor</span></label>';
+  }
+  const head = '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;">' +
+    '<div><h2 style="margin:0;">KPI Divisi ' + escapeHtml(div.name) + '</h2>' +
+    '<div class="sub" style="font-size:13px;color:var(--ab-muted);margin:4px 0 8px;">' + how + '</div></div>' +
+    (div.builtin ? '' : '<div style="display:flex;gap:8px;"><button class="btn ghost small" onclick="wspEditDivision(\'' + div.id + '\')">Ubah Nama/Warna</button><button class="btn rust small" onclick="wspDeleteDivision(\'' + div.id + '\')">Hapus Divisi</button></div>') +
+    '</div>';
+  const th = '<div class="ab-row2" style="margin-top:10px;"><div><label>Batas Aman divisi ini (% skor) — kosong = ikut default ' + G.aman + '%</label>' +
+    '<input type="number" id="wspCfgDivAman" min="0" max="200" value="' + (Number(cfg.batasAman)>0 ? Number(cfg.batasAman) : '') + '" placeholder="' + G.aman + '"></div>' +
+    '<div><label>Batas Bonus divisi ini (% skor) — kosong = ikut default ' + G.bonus + '%</label>' +
+    '<input type="number" id="wspCfgDivBonus" min="0" max="300" value="' + (Number(cfg.batasBonus)>0 ? Number(cfg.batasBonus) : '') + '" placeholder="' + G.bonus + '"></div></div>';
+  const card = '<div class="ab-card">' + head + fields + th +
+    '<div id="wspCfgStatus" style="font-size:12px;color:var(--ab-green);margin-top:8px;"></div>' +
+    '<button class="btn block" style="margin-top:14px;" onclick="wspSaveKpiDiv(\'' + div.id + '\')">Simpan KPI ' + escapeHtml(div.name) + '</button></div>';
+  return card + (div.builtin ? '' : renderKpiCustomProgress(div));
+}
+function renderKpiCustomProgress(div){
+  const month = wspState.kpiMonth || wspCurrentMonthStr();
+  wspEnsureDivProgress(month);
+  const inds = div.indicators || [];
+  const wd = wspWorkingDaysInMonth(month);
+  const emps = wspEmployeesCache.filter(e=>e.division === div.id && e.active !== false);
+  const scoreRows = wspKpiRows(month);
+  let body;
+  if(!emps.length){
+    body = '<div class="ab-empty">Belum ada karyawan di divisi ini. Tambahkan lewat tab "Kelola Karyawan" dan pilih divisi ' + escapeHtml(div.name) + '.</div>';
+  } else if(!inds.length){
+    body = '<div class="ab-empty">Tambahkan minimal satu indikator di atas (lalu simpan) untuk mulai mencatat realisasi.</div>';
+  } else {
+    body = '<div style="overflow-x:auto;"><table class="ab-table" id="wspDivTable"><thead><tr><th>Karyawan</th>' +
+      inds.map(i=>'<th>' + escapeHtml(i.name) + '<br><span style="font-weight:400;">target ' + (wd * (Number(i.targetDay)||0)) + (i.unit ? ' ' + escapeHtml(i.unit) : '') + '</span></th>').join('') +
+      '<th>Skor KPI</th></tr></thead><tbody>' +
+      emps.map(e=>{
+        const prog = wspDivProgressFor(month, e.id);
+        const sr = scoreRows.find(r=>r.emp.id === e.id);
+        return '<tr><td>' + escapeHtml(e.name) + '</td>' +
+          inds.map(i=>'<td><input type="number" min="0" step="any" data-e="' + e.id + '" data-i="' + i.id + '" value="' + (Number(prog[i.id])||0) + '" style="width:90px;"></td>').join('') +
+          '<td>' + (sr ? '<b>' + sr.scorePct + '%</b>' : '-') + '</td></tr>';
+      }).join('') + '</tbody></table></div>' +
+      '<div id="wspDivStatus" style="font-size:12px;color:var(--ab-green);margin-top:8px;"></div>' +
+      '<button class="btn block" style="margin-top:12px;" onclick="wspSaveDivProgress(\'' + div.id + '\')">Simpan Realisasi</button>';
+  }
+  return '<div class="ab-card"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">' +
+    '<h2 style="margin:0;">Realisasi Bulanan ' + escapeHtml(div.name) + '</h2>' +
+    '<input type="month" value="' + month + '" onchange="wspChangeKpiMonth(this.value)" style="max-width:200px;"></div>' +
+    '<div class="sub" style="font-size:13px;color:var(--ab-muted);margin:6px 0 10px;">Isi total capaian tiap karyawan selama bulan ' + wspMonthLabel(month) + '. Skor KPI di dashboard ikut berubah otomatis.</div>' + body + '</div>';
+}
+
+/* ---- Simpan ---- */
+async function wspSaveKpiGlobal(){
   const cfg = {
-    kontakTarget: Number(document.getElementById('wspCfgKontak').value) || 10,
-    eventTarget: Number(document.getElementById('wspCfgEvent').value) || 10,
-    logTarget: Number(document.getElementById('wspCfgLog').value) || 3,
-    prodTarget: Number(document.getElementById('wspCfgProd').value) || 50,
     jamMulai: document.getElementById('wspCfgJamMulai').value || '07:00',
     jamSelesai: document.getElementById('wspCfgJamSelesai').value || '17:00',
     batasAman: Number(document.getElementById('wspCfgAman').value) || 70,
@@ -10603,13 +10808,110 @@ async function wspSaveKpiForm(){
     updatedAt: new Date().toISOString()
   };
   if(cfg.batasAman > cfg.batasBonus){ const t = cfg.batasAman; cfg.batasAman = cfg.batasBonus; cfg.batasBonus = t; }
+  const hkEl = document.getElementById('wspCfgHariKerja');
+  const hk = hkEl ? Math.round(Number(hkEl.value)) : 0;
+  if(hk > 0 && hk <= 31){
+    const mk = wspState.kpiMonth || wspCurrentMonthStr();
+    cfg.hariKerjaBulan = Object.assign({}, (wspSettings && wspSettings.hariKerjaBulan) || {}, {[mk]: hk});
+  }
+  wspKpiFinishSave(cfg);
+}
+async function wspSaveKpiDiv(divId){
+  const div = wspDivInfo(divId); if(!div) return;
+  const num = (id, def)=>{ const el = document.getElementById(id); return el ? (Number(el.value) || def) : def; };
+  const cfg = { updatedAt: new Date().toISOString() };
+  if(divId === 'marketing'){ cfg.kontakTarget = num('wspCfgKontak', 10); cfg.eventTarget = num('wspCfgEvent', 10); }
+  else if(divId === 'logistik'){ cfg.logTarget = num('wspCfgLog', 3); }
+  else if(divId === 'produksi'){ cfg.prodTarget = num('wspCfgProd', 50); }
+  else if(!div.builtin){
+    const inds = [];
+    document.querySelectorAll('#wspIndList .ab-ind-row').forEach(row=>{
+      const name = row.querySelector('.ind-name').value.trim();
+      if(!name) return;
+      inds.push({
+        id: row.getAttribute('data-id') || wspRandId('i'),
+        name: name,
+        unit: row.querySelector('.ind-unit').value.trim(),
+        targetDay: Number(row.querySelector('.ind-target').value) || 0
+      });
+    });
+    const att = document.getElementById('wspCfgUseAtt');
+    cfg.customDivisions = wspCustomDivs().map(d=> d.id === divId ? Object.assign({}, d, { indicators: inds, useAttendance: att ? att.checked : true }) : d);
+  }
+  let a = num('wspCfgDivAman', 0), b = num('wspCfgDivBonus', 0);
+  if(a > 0 && b > 0 && a > b){ const t = a; a = b; b = t; }
+  cfg.divCfg = Object.assign({}, wspSettings.divCfg || {}, { [divId]: { batasAman: a, batasBonus: b } });
+  wspKpiFinishSave(cfg);
+}
+async function wspKpiFinishSave(cfg){
   const ok = await wspSaveSettings(cfg);
   const statusEl = document.getElementById('wspCfgStatus');
   if(ok){
     wspSettings = Object.assign({}, wspSettings, cfg);
-    if(statusEl){ statusEl.textContent = 'Tersimpan.'; setTimeout(()=>{ if(statusEl) statusEl.textContent=''; }, 2000); }
+    if(statusEl){ statusEl.textContent = 'Tersimpan.'; setTimeout(()=>{ if(statusEl) statusEl.textContent = ''; }, 2000); }
+    if(cfg.customDivisions) renderAbsensi();
   }
 }
+async function wspSaveDivProgress(divId){
+  const div = wspDivInfo(divId); if(!div) return;
+  const month = wspState.kpiMonth || wspCurrentMonthStr();
+  const values = {};
+  document.querySelectorAll('#wspDivTable input[data-e]').forEach(el=>{
+    const e = el.getAttribute('data-e'), i = el.getAttribute('data-i');
+    (values[e] = values[e] || {})[i] = Number(el.value) || 0;
+  });
+  wspDivProgressCache[month] = Object.assign({}, wspDivProgressCache[month] || {}, values);
+  try{ localStorage.setItem('tenx_wsp_divprog_' + month, JSON.stringify(wspDivProgressCache[month])); }catch(e){}
+  if(CONFIG_READY){
+    try{ await db.collection('wspSettings').doc('divProgress_' + month).set({ month: month, values: values, updatedAt: new Date().toISOString() }, { merge:true }); }
+    catch(err){ alert('Gagal menyimpan realisasi: ' + err.message); return; }
+  }
+  const st = document.getElementById('wspDivStatus');
+  if(st){ st.textContent = 'Realisasi tersimpan.'; setTimeout(()=>{ if(st) st.textContent = ''; }, 2000); }
+}
+
+/* ---- Tambah / ubah / hapus divisi ---- */
+function wspEditDivision(id){
+  const d = id ? wspDivInfo(id) : null;
+  const root = document.getElementById('abModalRoot');
+  root.innerHTML = '<div class="overlay" onclick="if(event.target===this) wspCloseModal()"><div class="modal">' +
+    '<button class="close" onclick="wspCloseModal()">✕</button>' +
+    '<h3>' + (d ? 'Ubah Divisi' : 'Tambah Divisi Baru') + '</h3>' +
+    '<label>Nama Divisi</label><input type="text" id="wspDivName" value="' + escapeHtml(d ? d.name : '') + '" placeholder="mis. Desain, Keuangan, Gudang">' +
+    '<label>Warna Label</label><input type="color" id="wspDivColor" value="' + escapeHtml(d ? (d.color || '#33507A') : '#33507A') + '" style="height:42px;padding:3px;">' +
+    (d ? '' : '<div class="ab-note" style="margin-top:10px;">Setelah disimpan, divisi ini langsung punya halaman Pengaturan KPI sendiri dan muncul di pilihan divisi saat tambah/ubah karyawan.</div>') +
+    '<button class="btn block" style="margin-top:16px;" onclick="wspSaveDivisionForm(\'' + (d ? d.id : '') + '\')">Simpan</button></div></div>';
+}
+async function wspSaveDivisionForm(id){
+  const name = document.getElementById('wspDivName').value.trim();
+  const color = document.getElementById('wspDivColor').value || '#33507A';
+  if(!name){ alert('Nama divisi wajib diisi'); return; }
+  if(wspDivisions().some(d=>d.id !== id && d.name.trim().toLowerCase() === name.toLowerCase())){ alert('Nama divisi sudah dipakai.'); return; }
+  let list;
+  if(id){ list = wspCustomDivs().map(d=> d.id === id ? Object.assign({}, d, { name: name, color: color }) : d); }
+  else { id = wspRandId('d_'); list = wspCustomDivs().concat([{ id: id, name: name, color: color, indicators: [], useAttendance: true }]); }
+  const cfg = { customDivisions: list, updatedAt: new Date().toISOString() };
+  const ok = await wspSaveSettings(cfg);
+  if(ok){
+    wspSettings = Object.assign({}, wspSettings, cfg);
+    wspState.ownerTab = 'kpi'; wspState.kpiDiv = id;
+    wspCloseModal(); renderAbsensi();
+  }
+}
+async function wspDeleteDivision(id){
+  const d = wspDivInfo(id); if(!d || d.builtin) return;
+  const members = wspEmployeesCache.filter(e=>e.division === id);
+  const msg = 'Hapus divisi "' + d.name + '"?' + (members.length ? '\n\n' + members.length + ' karyawan akan dipindah ke divisi Umum.' : '') + '\nPengaturan KPI divisi ini ikut terhapus.';
+  if(!confirm(msg)) return;
+  const cfg = { customDivisions: wspCustomDivs().filter(x=>x.id !== id), updatedAt: new Date().toISOString() };
+  const ok = await wspSaveSettings(cfg);
+  if(!ok) return;
+  wspSettings = Object.assign({}, wspSettings, cfg);
+  for(const e of members){ await wspSaveEmployee(Object.assign({}, e, { division:'umum' })); }
+  wspState.kpiDiv = 'global';
+  renderAbsensi();
+}
+
 
 /* ===================== MODUL SOP TENX APPAREL ===================== */
 const SOP_META = {
@@ -12111,7 +12413,7 @@ async function aixUndo(key, mi, ai){
   let ok = false;
   try{
     if(a.type==='expense') ok = await deleteExpense(a.savedId);
-    else if(a.type==='project'){ await db.collection('projects').doc(a.savedId).delete(); ok = true; }
+    else if(a.type==='project'){ const _pp = projectsCache.find(x=>x.id===a.savedId); await db.collection('projects').doc(a.savedId).delete(); try{ if(_pp && _pp.lacakToken) await db.collection('trackLinks').doc(_pp.lacakToken).delete(); }catch(e){} ok = true; }
     else if(a.type==='project_update'){
       const p = projectsCache.find(x=>x.id===a.pid);
       if(p && a.prev) ok = await saveProject(Object.assign({}, p, a.prev));
@@ -14180,7 +14482,246 @@ function plAksesHtml(){
   return h;
 }
 
-authInit();
+/* =====================================================================
+   LINK CUSTOMER & TRACKING PROGRES PESANAN
+   - Tiap project punya token acak (p.lacakToken) -> link unik: <alamat>?lacak=TOKEN
+   - Setiap status berubah, tersimpan di p.lacakLog (riwayat) lalu disalin ke koleksi publik
+     "trackLinks/{token}" yang HANYA berisi data aman (nama, no. pesanan, jumlah pcs, status, target, riwayat).
+     Tidak ada No. HP, harga, komisi, brief, atau nama karyawan.
+   ===================================================================== */
+const TRK_STEPS = [
+  { k:'baru',              t:'Pesanan diterima',  d:'Pesanan Anda sudah tercatat di sistem kami.' },
+  { k:'diproses_desainer', t:'Desain dikerjakan', d:'Tim desain sedang menyiapkan desain pesanan Anda.' },
+  { k:'desain_selesai',    t:'Desain selesai',    d:'Desain sudah rampung dan siap masuk produksi.' },
+  { k:'diproses_produksi', t:'Proses produksi',   d:'Pesanan sedang diproduksi (cetak, jahit, finishing).' },
+  { k:'selesai',           t:'Pesanan selesai',   d:'Pesanan sudah selesai. Silakan hubungi admin untuk pengambilan / pengiriman.' }
+];
+function trkNewToken(){
+  const a = new Uint8Array(24);
+  (window.crypto||window.msCrypto).getRandomValues(a);
+  return Array.from(a, b=>(b%36).toString(36)).join('');
+}
+function trkBase(){ return location.origin + location.pathname; }
+/* Mengembalikan link; kalau project belum punya token, dibuatkan & disimpan di belakang layar */
+function trkUrl(p){
+  if(!p.lacakToken){
+    p.lacakToken = trkNewToken();
+    trkEnsure(p);
+  }
+  return trkBase() + '?lacak=' + p.lacakToken;
+}
+function trkPrepare(p){
+  if(!p.lacakToken) p.lacakToken = trkNewToken();
+  const log = p.lacakLog = Array.isArray(p.lacakLog) ? p.lacakLog : [];
+  if(!log.length){
+    // project lama: susun riwayat dari tanda waktu yang sudah ada
+    const first = p.status==='menunggu_pembayaran' ? 'menunggu_pembayaran' : 'baru';
+    log.push({ s:first, at:p.createdAt||Date.now() });
+    if(first==='baru' && p.status!=='baru'){
+      if(p.desainMulai && p.status!=='baru') log.push({ s:'diproses_desainer', at:p.desainMulai });
+      if(p.produksiMulai) log.push({ s:'diproses_produksi', at:p.produksiMulai });
+      if(p.selesaiAt && p.status==='selesai') log.push({ s:'selesai', at:p.selesaiAt });
+    }
+  }
+  const last = log[log.length-1];
+  if(!last || last.s !== p.status){
+    if(log.length>=2 && log[log.length-2].s===p.status) log.pop();   // dibatalkan (undo) -> hapus catatan terakhir
+    else log.push({ s:p.status, at:Date.now() });
+  }
+  if(log.length>60) log.splice(0, log.length-60);
+  if(p.lacakNote==null) p.lacakNote = '';
+}
+function trkPublicDoc(p){
+  return {
+    token:p.lacakToken, nama:p.namaKlien||'', no:p.id, qty:totalQty(p),
+    status:p.status||'baru', deadline:p.deadline||'', selesaiAt:p.selesaiAt||null,
+    log:(p.lacakLog||[]).map(x=>({ s:x.s, at:x.at||0 })),
+    note:p.lacakNote||'', aktif:!p.lacakOff, createdAt:p.createdAt||0, updatedAt:Date.now()
+  };
+}
+function trkPush(p){
+  if(!CONFIG_READY || !p.lacakToken) return Promise.resolve(false);
+  return db.collection('trackLinks').doc(p.lacakToken).set(trkPublicDoc(p))
+    .then(()=>true).catch(e=>{ console.error('trackLinks set (cek Firestore Rules koleksi "trackLinks")', e); return false; });
+}
+/* simpan token + salin ke koleksi publik untuk project yang sudah ada (tanpa menimpa field lain) */
+async function trkEnsure(p){
+  if(!CONFIG_READY) return false;
+  try{
+    trkPrepare(p);
+    await db.collection('projects').doc(p.id).update({ lacakToken:p.lacakToken, lacakLog:p.lacakLog, lacakNote:p.lacakNote||'', lacakOff:!!p.lacakOff });
+    await trkPush(p);
+    return true;
+  }catch(e){ console.error('trkEnsure', e); return false; }
+}
+function trkPct(st){ return ({ menunggu_pembayaran:0, baru:20, diproses_desainer:40, desain_selesai:60, diproses_produksi:80, selesai:100 })[st] || 0; }
+
+/* ---------- Halaman admin: Link Customer ---------- */
+state.trkFilter = 'all'; state.trkLimit = 40;
+function renderLinkCustomer(){
+  const all = projectsCache;
+  const q = (state.searchQuery||'').trim().toLowerCase();
+  let list = all.filter(p=>{
+    if(state.trkFilter==='aktif' && p.status==='selesai') return false;
+    if(state.trkFilter==='selesai' && p.status!=='selesai') return false;
+    if(state.trkFilter==='belum' && p.lacakToken) return false;
+    if(q && !((p.namaKlien||'').toLowerCase().includes(q) || (p.id||'').toLowerCase().includes(q) || (p.noHp||'').toLowerCase().includes(q))) return false;
+    return true;
+  });
+  const nBelum = all.filter(p=>!p.lacakToken).length;
+  const pill = (k,l,n)=>`<button class="stage-pill ${state.trkFilter===k?'active':''}" onclick="trkSetFilter('${k}')">${l} <span class="count">${n}</span></button>`;
+  const shown = list.slice(0, state.trkLimit);
+  const rows = shown.map(p=>{
+    const has = !!p.lacakToken, url = has ? trkBase()+'?lacak='+p.lacakToken : '';
+    const pct = trkPct(p.status);
+    return `<div class="trk-row ${p.lacakOff?'off':''}">
+      <div>
+        <div class="trk-nm">${escapeHtml(p.namaKlien||'-')}</div>
+        <div class="trk-id">${escapeHtml(p.id)} · ${escapeHtml(p.noHp||'-')} · ${totalQty(p)} pcs</div>
+        <span class="trk-st ${p.status==='selesai'?'done':''}">${escapeHtml(STATUS_LABEL[p.status]||p.status||'-')}</span>
+        <div class="trk-bar"><i style="width:${pct}%"></i></div>
+      </div>
+      <div>
+        ${has ? `<input class="trk-url" readonly value="${escapeHtml(url)}" onclick="this.select()">
+        <div class="trk-act">
+          <button class="btn small" onclick="trkCopy('${p.id}')">Salin Link</button>
+          <button class="btn ghost small" onclick="trkWa('${p.id}')">Kirim WA</button>
+          <button class="btn ghost small" onclick="trkOpen('${p.id}')">Lihat Tampilan Customer</button>
+          <button class="btn ghost small" onclick="trkNote('${p.id}')">Catatan</button>
+          <button class="btn ghost small" onclick="trkToggle('${p.id}')">${p.lacakOff?'Aktifkan':'Nonaktifkan'}</button>
+        </div>
+        ${p.lacakNote ? `<div class="trk-note">Catatan untuk customer: ${escapeHtml(p.lacakNote)}</div>` : ''}
+        ${p.lacakOff ? `<div class="trk-note">Link sedang dinonaktifkan — customer tidak bisa membuka.</div>` : ''}`
+        : `<div class="trk-note" style="margin:0 0 8px;">Link belum dibuat untuk project ini.</div><button class="btn small" onclick="trkMake('${p.id}')">Buat Link</button>`}
+      </div>
+    </div>`;
+  }).join('');
+  return `
+    <div class="trk-info">Setiap project otomatis punya <b>link unik</b>. Customer hanya melihat <b>progres pesanannya sendiri</b> (tanpa harga, No. HP, atau data internal),
+      dan tampilannya <b>ikut berubah otomatis</b> setiap Desainer / Produksi / Admin memperbarui status di Alur Kerja.</div>
+    <div class="trk-top">
+      <div class="search-box"><input type="text" id="searchInput" value="${escapeHtml(state.searchQuery||'')}" placeholder="Cari nama pemesan / No. HP / ID project…" oninput="onSearchInput(this.value)"></div>
+      ${nBelum ? `<button class="btn small" onclick="trkMakeAll()">Buat ${nBelum} Link yang Belum Ada</button>` : ''}
+    </div>
+    <div class="stage-nav">
+      ${pill('all','Semua',all.length)}${pill('aktif','Belum Selesai',all.filter(p=>p.status!=='selesai').length)}${pill('selesai','Selesai',all.filter(p=>p.status==='selesai').length)}${pill('belum','Belum Ada Link',nBelum)}
+    </div>
+    <div class="trk-list">${rows || '<div class="empty"><div class="display">Tidak ada project</div></div>'}</div>
+    ${list.length>shown.length ? `<div style="text-align:center;margin-top:14px;"><button class="btn ghost" onclick="trkMore()">Tampilkan lagi (${list.length-shown.length} tersisa)</button></div>` : ''}`;
+}
+function trkSetFilter(k){ state.trkFilter = k; state.trkLimit = 40; render(); }
+function trkMore(){ state.trkLimit += 40; render(); }
+async function trkMake(id){
+  const p = projectsCache.find(x=>x.id===id); if(!p) return;
+  const ok = await trkEnsure(p);
+  if(!ok) alert('Gagal membuat link. Pastikan Firestore Rules mengizinkan koleksi "trackLinks".');
+  render();
+}
+async function trkMakeAll(){
+  const todo = projectsCache.filter(p=>!p.lacakToken);
+  if(!todo.length) return;
+  if(!confirm('Buat link untuk '+todo.length+' project yang belum punya?')) return;
+  let ok = 0;
+  for(const p of todo){ if(await trkEnsure(p)) ok++; }
+  alert(ok+' dari '+todo.length+' link berhasil dibuat.');
+  render();
+}
+function trkCopy(id){
+  const p = projectsCache.find(x=>x.id===id); if(!p) return;
+  const url = trkUrl(p);
+  const done = ()=>{ if(typeof wfToastShow==='function') wfToastShow('<div class="wt-msg"><b>Link disalin ✓</b><small>'+escapeHtml(p.namaKlien||'')+'</small></div><div class="wt-act"><button class="x" onclick="wfToastHide()">×</button></div>', 2500); else alert('Link disalin'); };
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done).catch(()=>{ prompt('Salin link ini:', url); });
+  else prompt('Salin link ini:', url);
+}
+function trkWa(id){
+  const p = projectsCache.find(x=>x.id===id); if(!p) return;
+  const url = trkUrl(p);
+  const msg = '*TENX APPAREL*\n\n'+wfSapaan()+', Kak *'+(p.namaKlien||'')+'*.\nPesanan Kakak dengan No. *'+p.id+'* sudah kami catat.\n\nPantau progres pesanan Kakak kapan saja (otomatis ter-update) lewat link berikut:\n'+url+'\n\nTerima kasih atas kepercayaan Kakak kepada TENX APPAREL.';
+  const w = wfWaUrl(p, msg);
+  if(!w){ alert('No. HP client belum valid: '+(p.noHp||'-')+'. Perbaiki lewat Edit Data Project.'); return; }
+  window.open(w, '_blank');
+}
+function trkOpen(id){
+  const p = projectsCache.find(x=>x.id===id); if(!p) return;
+  window.open(trkUrl(p), '_blank');
+}
+async function trkNote(id){
+  const p = projectsCache.find(x=>x.id===id); if(!p) return;
+  const v = prompt('Catatan yang tampil di halaman customer (kosongkan untuk menghapus):', p.lacakNote||'');
+  if(v===null) return;
+  p.lacakNote = v.trim().slice(0,300);
+  if(await saveProject(p)) render();
+}
+async function trkToggle(id){
+  const p = projectsCache.find(x=>x.id===id); if(!p) return;
+  const off = !p.lacakOff;
+  if(off && !confirm('Nonaktifkan link? Customer tidak bisa lagi membuka halaman progres ini.')) return;
+  p.lacakOff = off;
+  if(await saveProject(p)) render();
+}
+
+/* ---------- Halaman publik: yang dilihat customer ---------- */
+function trkFmt(ts){
+  if(!ts) return '';
+  const d = new Date(ts); if(isNaN(d)) return '';
+  return d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}) + ', ' + d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}).replace(':','.');
+}
+function trkShell(inner){
+  return '<div class="tv-head"><div class="tv-mark">TX</div><div><b>TENX APPAREL</b><small>Lacak Pesanan</small></div></div><div class="tv-wrap">'+inner+'</div>';
+}
+function trkMsg(t, d){ return trkShell('<div class="tv-msg"><h2>'+t+'</h2><div>'+d+'</div></div>'); }
+function trkViewHtml(x){
+  const st = x.status || 'baru';
+  const idx = TRK_STEPS.findIndex(s=>s.k===st);
+  const running = (st==='diproses_desainer' || st==='diproses_produksi');
+  const pct = trkPct(st);
+  const when = {};
+  (x.log||[]).forEach(l=>{ when[l.s] = l.at; });
+  let steps = '';
+  TRK_STEPS.forEach((s,i)=>{
+    const isDone = idx>=0 && (i<idx || (i===idx && !running));
+    const isCur = idx>=0 && i===idx && running;
+    steps += '<div class="tv-step '+(isDone?'done':(isCur?'cur':''))+'"><div class="tv-dot">'+(isDone?'✓':(i+1))+'</div><div>'+
+      '<div class="tv-st-t">'+s.t+(isCur?'<span class="tv-tag">SEDANG BERJALAN</span>':'')+'</div>'+
+      ((isDone||isCur) ? '<div class="tv-st-d">'+s.d+'</div>' : '')+
+      ((isDone||isCur) && when[s.k] ? '<div class="tv-st-w">'+trkFmt(when[s.k])+'</div>' : '')+
+      '</div></div>';
+  });
+  let banner = '';
+  if(st==='menunggu_pembayaran') banner = '<div class="tv-banner pay"><b>Menunggu pembayaran.</b> Pesanan akan mulai diproses setelah pembayaran/DP kami terima. Silakan hubungi admin bila sudah membayar.</div>';
+  else if(st==='selesai') banner = '<div class="tv-banner ok"><b>Pesanan Anda sudah selesai 🎉</b><br>'+(x.selesaiAt?'Selesai pada '+trkFmt(x.selesaiAt)+'. ':'')+'Silakan hubungi admin untuk pengambilan atau pengiriman.</div>';
+  const note = x.note ? '<div class="tv-banner note"><b>Catatan dari tim:</b><br>'+escapeHtml(x.note)+'</div>' : '';
+  const target = (st!=='selesai' && x.deadline) ? '<br>Target selesai: <b>'+escapeHtml(fmtDate(x.deadline))+'</b>' : '';
+  return trkShell(
+    '<div class="tv-card"><div class="tv-hi">Halo, '+escapeHtml(x.nama||'Pelanggan')+'</div>'+
+      '<div class="tv-meta">No. Pesanan: <b>'+escapeHtml(x.no||'-')+'</b><br>Jumlah: <b>'+(x.qty||0)+' pcs</b>'+
+      (x.createdAt?'<br>Tanggal masuk: <b>'+escapeHtml(fmtDate(x.createdAt))+'</b>':'')+target+'</div></div>'+
+    banner + note +
+    '<div class="tv-card"><div class="tv-pct"><span>Progres Pengerjaan</span><span>'+pct+'%</span></div>'+
+      '<div class="tv-bar '+(st==='selesai'?'ok':'')+'"><i style="width:'+pct+'%"></i></div>'+
+      '<div class="tv-steps">'+steps+'</div></div>'+
+    '<div class="tv-foot"><span class="tv-live"></span>Halaman ini ter-update otomatis'+(x.updatedAt?' · Pembaruan terakhir '+trkFmt(x.updatedAt):'')+
+      '<br>Link ini khusus untuk pesanan Anda — mohon tidak dibagikan ke orang lain.</div>'
+  );
+}
+function trkViewInit(){
+  const root = document.getElementById('trackApp');
+  document.title = 'Lacak Pesanan — TENX APPAREL';
+  try{ document.querySelector('meta[name="theme-color"]').setAttribute('content','#211D1A'); }catch(e){}
+  root.innerHTML = trkShell('<div class="tv-msg">Memuat progres pesanan…</div>');
+  if(!CONFIG_READY){ root.innerHTML = trkMsg('Belum tersedia','Sistem pelacakan belum aktif. Silakan hubungi admin.'); return; }
+  db.collection('trackLinks').doc(window.TRACK_TOKEN).onSnapshot(doc=>{
+    if(!doc.exists){ root.innerHTML = trkMsg('Link tidak ditemukan','Link pelacakan ini tidak valid atau sudah tidak berlaku. Silakan hubungi admin untuk meminta link baru.'); return; }
+    const x = doc.data();
+    if(x.aktif===false){ root.innerHTML = trkMsg('Link dinonaktifkan','Link pelacakan ini sedang tidak aktif. Silakan hubungi admin.'); return; }
+    root.innerHTML = trkViewHtml(x);
+  }, err=>{
+    console.error('trackLinks', err);
+    root.innerHTML = trkMsg('Gagal memuat','Tidak dapat memuat progres pesanan saat ini. Periksa koneksi internet Anda lalu muat ulang halaman.');
+  });
+}
+
+if(window.TRACK_TOKEN){ trkViewInit(); } else { authInit(); }
 
 </script>
 
@@ -14750,6 +15291,10 @@ async function wprSaveReason(id){
 <style>
 /* ===== LOGISTIK (Workspace) ===== */
 #absensiApp .ab-badge.logistik{background:#1f7a8c;} #absensiApp .ab-badge.produksi{background:#B0452A;}
+#absensiApp .kpi-div-nav button .kpi-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:1px;}
+#absensiApp .kpi-div-nav button.kpi-add-div{border-style:dashed;color:var(--ab-denim);}
+#absensiApp .ab-ind-row{display:grid;grid-template-columns:2fr 1.2fr 1fr auto;gap:10px;align-items:end;margin-bottom:10px;}
+@media(max-width:640px){#absensiApp .ab-ind-row{grid-template-columns:1fr 1fr;}#absensiApp .ab-ind-row>div:first-child{grid-column:1/-1;}}
 #absensiApp .lg-tabs{display:flex;gap:6px;overflow-x:auto;margin:0 0 12px;padding-bottom:4px;scrollbar-width:none;}
 #absensiApp .lg-tabs::-webkit-scrollbar{display:none;}
 #absensiApp .lg-tabs button{flex:none;white-space:nowrap;border:1.5px solid var(--ab-line,#ddd);background:#fff;border-radius:999px;padding:9px 15px;font-weight:700;font-size:13px;cursor:pointer;min-height:40px;color:#2b261f;}
@@ -15328,7 +15873,7 @@ function logiAbsensiView(){
     const a = wspAttendanceFor(e.id, today), cnt = wspAttendanceCache.filter(r=>r.employeeId===e.id && r.date && r.date.startsWith(mk)).length;
     const pct = wd ? Math.round(cnt/wd*100) : 0;
     const dots = days.map(d=>{ const r = wspAttendanceFor(e.id, d), sun = wspIsSunday(d); return '<span class="lg-dot '+(r?'y':(sun?'':'n'))+'" title="'+d+'">'+(r?'✓':(sun?'L':'–'))+'</span>'; }).join('');
-    return '<tr><td><b>'+escapeHtml(e.name)+'</b><br><span class="ab-badge '+e.division+'" style="transform:none;font-size:10px;">'+wspDivLabel(e.division).toUpperCase()+'</span></td>'+
+    return '<tr><td><b>'+escapeHtml(e.name)+'</b><br>'+wspDivBadge(e,true)+'</td>'+
       '<td>'+(a ? '<b style="color:#2f7d4f;">Hadir '+escapeHtml(a.time)+'</b>' : (wspIsSunday(today)?'Libur':'<span style="color:#B0452A;">Belum</span>'))+'</td>'+
       '<td>'+cnt+'/'+wd+' ('+pct+'%)</td><td>'+dots+'</td></tr>';
   }).join('')+'</tbody></table>';
@@ -15404,11 +15949,6 @@ function logiOpenKpiDetail(empId){
 }
 
 /* ---------- Divisi (label) & tautan dari Alur Kerja ---------- */
-function wspDivLabel(d){ return d==='marketing' ? 'Marketing' : d==='logistik' ? 'Logistik' : d==='produksi' ? 'Produksi' : 'Umum'; }
-function wspDivBadge(e, small){
-  const d = (e && e.division) || 'umum';
-  return '<span class="ab-badge '+(['marketing','logistik','produksi'].indexOf(d)>=0?d:'umum')+'" style="transform:none;'+(small?'font-size:10px;':'')+'">'+wspDivLabel(d).toUpperCase()+'</span>';
-}
 function logiProjectLine(p){
   const L = (typeof logiCache!=='undefined' ? logiCache : []).filter(x=>x.projectId===p.id);
   if(!L.length) return '';
