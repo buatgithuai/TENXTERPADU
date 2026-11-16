@@ -2307,6 +2307,7 @@ body.tx-track #trackApp{display:block !important;}
 #trackApp .tv-banner{border-radius:12px;padding:12px 14px;font-size:13.5px;line-height:1.55;margin-bottom:14px;}
 #trackApp .tv-banner.pay{background:#fbf0dc;border:1.5px solid #C98A2C;color:#6b4710;}
 #trackApp .tv-banner.ok{background:#dcebe1;border:1.5px solid #4C7A5E;color:#2d5340;}
+#trackApp .tv-banner.late{background:#f8e4df;border:1.5px solid #B0452A;color:#7a2d1a;}
 #trackApp .tv-banner.note{background:#FFFCF6;border:1.5px solid #6B87AC;color:#233858;}
 #trackApp .tv-msg{text-align:center;padding:50px 16px;color:#5B5449;line-height:1.6;}
 #trackApp .tv-msg h2{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.03em;color:#211D1A;margin:0 0 6px;}
@@ -14536,7 +14537,8 @@ function trkPublicDoc(p){
     token:p.lacakToken, nama:p.namaKlien||'', no:p.id, qty:totalQty(p),
     status:p.status||'baru', deadline:p.deadline||'', selesaiAt:p.selesaiAt||null,
     log:(p.lacakLog||[]).map(x=>({ s:x.s, at:x.at||0 })),
-    note:p.lacakNote||'', aktif:!p.lacakOff, createdAt:p.createdAt||0, updatedAt:Date.now()
+    note:p.lacakNote||'', aktif:!p.lacakOff, createdAt:p.createdAt||0, updatedAt:Date.now(),
+    lateReason: p.lateReason ? { kat:(typeof wprKatLabel==='function' ? wprKatLabel(p.lateReason.kat) : (p.lateReason.kat||'')), alasan:p.lateReason.alasan||'', at:p.lateReason.at||0 } : null
   };
 }
 function trkPush(p){
@@ -14690,13 +14692,26 @@ function trkViewHtml(x){
   let banner = '';
   if(st==='menunggu_pembayaran') banner = '<div class="tv-banner pay"><b>Menunggu pembayaran.</b> Pesanan akan mulai diproses setelah pembayaran/DP kami terima. Silakan hubungi admin bila sudah membayar.</div>';
   else if(st==='selesai') banner = '<div class="tv-banner ok"><b>Pesanan Anda sudah selesai 🎉</b><br>'+(x.selesaiAt?'Selesai pada '+trkFmt(x.selesaiAt)+'. ':'')+'Silakan hubungi admin untuk pengambilan atau pengiriman.</div>';
+  /* keterlambatan: dihitung di sisi customer dari deadline vs hari ini / tanggal selesai */
+  let lateBanner = '';
+  if(x.deadline && st!=='menunggu_pembayaran'){
+    const _ds = function(v){ const a=String(v).split('-'); return (a.length===3) ? new Date(+a[0],+a[1]-1,+a[2]) : new Date(v); };
+    const _day = function(t){ const d=new Date(t); return new Date(d.getFullYear(),d.getMonth(),d.getDate()); };
+    const endD = (st==='selesai' && x.selesaiAt) ? _day(x.selesaiAt) : _day(Date.now());
+    const lateN = Math.round((endD - _ds(x.deadline)) / 86400000);
+    if(lateN > 0){
+      const lr = x.lateReason;
+      const why = lr ? ('<br><b>Alasan:</b> '+escapeHtml(lr.kat||'')+(lr.alasan?' — '+escapeHtml(lr.alasan):'')) : '<br>Tim kami sedang mengupayakan agar pesanan segera selesai.';
+      lateBanner = '<div class="tv-banner late"><b>'+(st==='selesai' ? 'Pesanan selesai lewat dari target ('+lateN+' hari).' : 'Pesanan melewati target selesai ('+lateN+' hari).')+'</b> Mohon maaf atas ketidaknyamanannya.'+why+'</div>';
+    }
+  }
   const note = x.note ? '<div class="tv-banner note"><b>Catatan dari tim:</b><br>'+escapeHtml(x.note)+'</div>' : '';
   const target = (st!=='selesai' && x.deadline) ? '<br>Target selesai: <b>'+escapeHtml(fmtDate(x.deadline))+'</b>' : '';
   return trkShell(
     '<div class="tv-card"><div class="tv-hi">Halo, '+escapeHtml(x.nama||'Pelanggan')+'</div>'+
       '<div class="tv-meta">No. Pesanan: <b>'+escapeHtml(x.no||'-')+'</b><br>Jumlah: <b>'+(x.qty||0)+' pcs</b>'+
       (x.createdAt?'<br>Tanggal masuk: <b>'+escapeHtml(fmtDate(x.createdAt))+'</b>':'')+target+'</div></div>'+
-    banner + note +
+    banner + lateBanner + note +
     '<div class="tv-card"><div class="tv-pct"><span>Progres Pengerjaan</span><span>'+pct+'%</span></div>'+
       '<div class="tv-bar '+(st==='selesai'?'ok':'')+'"><i style="width:'+pct+'%"></i></div>'+
       '<div class="tv-steps">'+steps+'</div></div>'+
