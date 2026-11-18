@@ -2573,6 +2573,10 @@ body.tx-track #trackApp{display:block !important;}
       <button class="btn btn-outline" onclick="handlePrintNota()">Cetak</button>
       <button class="btn btn-primary" id="btnDownload" onclick="downloadPDF()">Unduh PDF</button>
     </div>
+    <div id="notaEditActions" style="display:none;margin-top:8px;">
+      <button class="btn btn-primary" id="btnSaveEdit" style="width:100%;" onclick="saveNotaEdit()">Simpan Perubahan Nota</button>
+      <button class="btn btn-outline" style="width:100%;margin-top:8px;" onclick="cancelNotaEdit()">Batal Edit</button>
+    </div>
     <button class="btn btn-outline" style="width:100%;margin-top:8px;" onclick="startNewNota()">Nota Baru (kosongkan form)</button>
     <div class="hint">Nota otomatis dicatat ke <b>Riwayat &amp; Keuangan</b> (lengkap dengan nomor urut &amp; atas nama) begitu Anda klik Cetak atau Unduh PDF pertama kali. Perubahan berikutnya (mis. tambah pembayaran) dicatat di tab Keuangan.</div>
   </div>
@@ -5185,6 +5189,7 @@ function openNotaFromProject(id){
     setTimeout(()=>{ try{ openInvoiceDetail(String(exist.invNo)); }catch(e){ console.warn(e); } }, 350);
     return;
   }
+  exitNotaEdit();
   notaSourceProjectId = p.id;
 
   const tag = ((typeof wfTagMap!=='undefined' && wfTagMap[p.id]) || []).filter(t=>t!=='Lainnya')[0] || 'Kaos';
@@ -5368,7 +5373,9 @@ function renderNota(){
 
 /* ===================== SIMPAN NOTA KE RIWAYAT (sekali per nota, nomor terkunci) ===================== */
 let notaSaving = false;
+let notaEditInvNo = '';   // diisi saat sedang MENGEDIT nota yang sudah tersimpan
 async function ensureNotaSaved(){
+  if(notaEditInvNo){ return await saveNotaEdit(true); }   // mode edit: simpan perubahan ke nota yang sama (nomor tetap)
   const invEl = document.getElementById('invNo');
   if(invEl.value){ return invEl.value; } // sudah punya nomor, tidak dobel-simpan
   if(notaSaving) return null;
@@ -5414,12 +5421,14 @@ async function ensureNotaSaved(){
 }
 
 async function handlePrintNota(){
-  await ensureNotaSaved();
+  const _r = await ensureNotaSaved();
+  if(notaEditInvNo && !_r) return;   // gagal menyimpan perubahan -> jangan cetak versi lama
   window.print();
 }
 
 function startNewNota(){
   if(!confirm('Kosongkan form untuk membuat nota baru? Nota sebelumnya tetap tersimpan di Riwayat & Keuangan.')) return;
+  exitNotaEdit();
   document.getElementById('custName').value = '';
   document.getElementById('custPhone').value = '';
   document.getElementById('invNo').value = '';
@@ -5463,7 +5472,8 @@ async function downloadPDF(){
   btn.textContent = "Menyiapkan PDF...";
   btn.disabled = true;
 
-  await ensureNotaSaved();
+  const _saved = await ensureNotaSaved();
+  if(notaEditInvNo && !_saved){ btn.textContent = originalLabel; btn.disabled = false; return; }
 
   const invNo = (document.getElementById('invNo').value || 'nota').trim();
   const custRaw = (document.getElementById('custName').value || 'pemesan').trim();
@@ -8005,7 +8015,7 @@ function openInvoiceDetail(invNo){
     ? inv.payments.map((p,i)=>`
         <div class="kg-pay-row">
           <span>${formatDateID((p.at||'').slice(0,10))} — ${formatRupiah(p.amount)}</span>
-          <span class="p-note">${escapeHtml(p.note||'')}${p.proofUrl ? ` <a class="kgs-paylink" href="${escapeHtml(p.proofUrl)}" target="_blank" rel="noopener">📎 bukti</a>` : ''}${rsPayTag(inv, p, i)}</span>
+          <span class="p-note">${escapeHtml(p.note||'')}${p.proofUrl ? ` <a class="kgs-paylink" href="${escapeHtml(p.proofUrl)}" target="_blank" rel="noopener">📎 bukti</a>` : ''}${rsPayTag(inv, p, i)}${kgPayActions(inv, p, i)}</span>
         </div>`).join('')
     : `<div class="kg-pay-row"><span class="p-note">Belum ada pembayaran tercatat.</span></div>`;
 
@@ -8045,11 +8055,206 @@ function openInvoiceDetail(invNo){
         ` : `<div style="text-align:center;color:var(--green);font-weight:700;margin-top:10px;">Nota ini sudah lunas</div>`}
 
         <div style="font-size:11.5px;color:var(--muted);margin-top:16px;">Dibuat oleh ${escapeHtml(inv.createdBy||'-')} · ${formatDateID(inv.invDate)}</div>
+        ${inv.source==='reseller'
+          ? `<div style="font-size:11.5px;color:var(--muted);margin-top:12px;">Nota reseller tidak diedit dari sini (harganya mengikuti pesanan reseller).</div>`
+          : `<button class="btn gold" style="width:100%;margin-top:14px;" onclick="openInvoiceEdit('${inv.invNo}')">✏️ Edit Nota (item, harga, nama, tanggal)</button>`}
+        ${inv.editedAt ? `<div style="font-size:11.5px;color:var(--muted);margin-top:8px;">Terakhir diedit oleh ${escapeHtml(inv.editedBy||'-')} · ${formatDateID(String(inv.editedAt).slice(0,10))}</div>` : ''}
         <button class="btn ghost" style="width:100%;margin-top:10px;" onclick="confirmDeleteInvoice('${inv.invNo}')">Hapus Nota Ini</button>
       </div></div>
     </div>`;
   kgInitWords(root);
   kgScanRenderBody();
+}
+
+/* =====================================================================
+   ===================== EDIT NOTA & PEMBAYARAN =====================
+   Nota yang sudah tersimpan bisa diubah (nama, HP, tanggal, item, harga, qty, catatan)
+   TANPA membuat nota baru. Nomor invoice tetap. Setelah tersimpan:
+   - Keuangan / laporan / grafik otomatis ikut (membaca koleksi 'invoices' realtime)
+   - Link pelacakan customer otomatis ikut (trkSyncNota membaca total & dibayar)
+   - Nama / HP / deadline di Project yang tertaut ikut diperbarui
+   ===================================================================== */
+function exitNotaEdit(){
+  notaEditInvNo = '';
+  const dp = document.getElementById('dpAmount'); if(dp){ dp.readOnly = false; dp.style.opacity = ''; }
+  const ea = document.getElementById('notaEditActions'); if(ea) ea.style.display = 'none';
+  const banner = document.getElementById('notaSourceBanner'); if(banner && banner.dataset.edit){ banner.style.display = 'none'; delete banner.dataset.edit; }
+  const hint = document.getElementById('sisaHint'); if(hint) hint.innerHTML = 'Sisa pembayaran akan dihitung &amp; ditampilkan otomatis di nota.';
+}
+function cancelNotaEdit(){
+  if(!confirm('Batalkan edit? Perubahan yang belum disimpan akan hilang.')) return;
+  startNewNotaSilent();
+}
+function startNewNotaSilent(){
+  exitNotaEdit();
+  document.getElementById('custName').value = '';
+  document.getElementById('custPhone').value = '';
+  document.getElementById('invNo').value = '';
+  document.getElementById('invDate').value = new Date().toISOString().slice(0,10);
+  const d = new Date(); d.setDate(d.getDate()+14);
+  document.getElementById('dueDate').value = d.toISOString().slice(0,10);
+  document.getElementById('dpAmount').value = '';
+  document.getElementById('notes').value = '';
+  notaItems = [{ desc:"", price:0, qty:1 }];
+  notaSourceProjectId = '';
+  renderItemsForm(); renderNota();
+}
+
+function openInvoiceEdit(invNo){
+  const inv = (invoicesCache||[]).find(x=>String(x.invNo)===String(invNo));
+  if(!inv){ alert('Nota tidak ditemukan.'); return; }
+  if(inv.source==='reseller'){ alert('Nota reseller tidak bisa diedit dari sini.'); return; }
+  closeKgModal();
+  exitNotaEdit();
+  notaSourceProjectId = '';
+  notaEditInvNo = String(inv.invNo);
+
+  document.getElementById('custName').value  = inv.custName || '';
+  document.getElementById('custPhone').value = inv.custPhone || '';
+  document.getElementById('invNo').value     = String(inv.invNo);
+  document.getElementById('invDate').value   = inv.invDate || '';
+  document.getElementById('dueDate').value   = inv.dueDate || '';
+  document.getElementById('notes').value     = inv.notes || '';
+  notaItems = (inv.items||[]).map(it=>({ desc:it.desc||'', price:Number(it.price)||0, qty:Number(it.qty)||0 }));
+  if(!notaItems.length) notaItems = [{ desc:'', price:0, qty:1 }];
+
+  // DP/pembayaran dikelola dari Keuangan (riwayat pembayaran), di sini hanya ditampilkan
+  const dp = document.getElementById('dpAmount');
+  dp.value = Number(inv.totalDibayar||0) || '';
+  dp.readOnly = true; dp.style.opacity = '.6';
+  const hint = document.getElementById('sisaHint');
+  if(hint) hint.textContent = 'Total yang sudah dibayar diambil dari Riwayat Pembayaran. Untuk ubah / tambah pembayaran, buka nota ini di tab Keuangan.';
+
+  const banner = document.getElementById('notaSourceBanner');
+  if(banner){
+    banner.style.display = 'block'; banner.dataset.edit = '1';
+    banner.textContent = 'MODE EDIT — Nota #' + inv.invNo + '. Ubah data lalu klik "Simpan Perubahan Nota". Nomor nota tetap, Keuangan & link pelacakan customer ikut diperbarui otomatis.';
+  }
+  const ea = document.getElementById('notaEditActions'); if(ea) ea.style.display = 'block';
+
+  renderItemsForm();
+  renderNota();
+  showMode('nota');
+}
+
+async function saveNotaEdit(silent){
+  const invNo = notaEditInvNo;
+  if(!invNo) return null;
+  if(!CONFIG_READY){ alert('Firebase belum dikonfigurasi.'); return null; }
+  const val = id => (document.getElementById(id)||{}).value || '';
+  const items = notaItems
+    .map(it=>({ desc:String(it.desc||'').trim(), price:Number(it.price)||0, qty:Number(it.qty)||0 }))
+    .filter(it=>it.desc || it.price || it.qty);
+  if(!items.length){ alert('Minimal harus ada 1 item pesanan.'); return null; }
+  const subtotal = items.reduce((s,it)=>s+it.price*it.qty, 0);
+  const patch = {
+    custName: val('custName').trim() || '(tanpa nama)',
+    custPhone: val('custPhone').trim(),
+    invDate: val('invDate'),
+    dueDate: val('dueDate'),
+    items, subtotal, total: subtotal,
+    notes: val('notes')
+  };
+  const btn = document.getElementById('btnSaveEdit');
+  if(btn){ btn.disabled = true; btn.dataset.t = btn.textContent; btn.textContent = 'Menyimpan…'; }
+  let before = null, changed = false;
+  try{
+    const ref = db.collection('invoices').doc(String(invNo));
+    await db.runTransaction(async tx=>{
+      const sn = await tx.get(ref);
+      if(!sn.exists) throw new Error('Nota tidak ditemukan (mungkin sudah dihapus).');
+      const d = sn.data(); before = d;
+      const sig = o => JSON.stringify([o.custName,o.custPhone||'',o.invDate||'',o.dueDate||'',o.notes||'',(o.items||[]).map(i=>[i.desc,Number(i.price)||0,Number(i.qty)||0])]);
+      if(sig(d) === sig(patch)){ changed = false; return; }
+      changed = true;
+      const hist = (d.editHistory||[]).concat([{ at:new Date().toISOString(), by:state.myName||'-', totalDari:Number(d.total)||0, totalMenjadi:subtotal, namaDari:d.custName||'' }]).slice(-30);
+      tx.update(ref, Object.assign({}, patch, { editedAt:new Date().toISOString(), editedBy:state.myName||'-', editHistory:hist }));
+    });
+    if(changed){
+      await notaEditPropagate(invNo, before, patch);
+      try{ trkSyncSoon(); }catch(e){}
+      if(typeof rsToast==='function') rsToast('✓ Nota #'+invNo+' diperbarui · Keuangan & pelacakan ikut berubah');
+      else if(!silent) alert('Nota #'+invNo+' berhasil diperbarui.');
+    } else if(!silent){
+      if(typeof rsToast==='function') rsToast('Tidak ada perubahan pada nota #'+invNo);
+    }
+    return String(invNo);
+  }catch(e){
+    console.error('saveNotaEdit', e);
+    alert('Gagal menyimpan perubahan nota: ' + e.message);
+    return null;
+  }finally{
+    if(btn){ btn.disabled = false; if(btn.dataset.t) btn.textContent = btn.dataset.t; }
+  }
+}
+
+/* Teruskan perubahan nota ke Project & link pelacakan customer yang tertaut */
+async function notaEditPropagate(invNo, before, patch){
+  try{
+    const projs = (projectsCache||[]).filter(p=> p.via!=='Reseller' &&
+      (String(p.invNo||'')===String(invNo) || (before.projectId && p.id===before.projectId)));
+    if(!projs.length) return;
+    const b = db.batch(); let n = 0;
+    projs.forEach(p=>{
+      const upd = {}, pub = {};
+      if(patch.custName !== before.custName){ upd.namaKlien = patch.custName; pub.nama = patch.custName; }
+      if((patch.custPhone||'') !== (before.custPhone||'')) upd.noHp = patch.custPhone;
+      // deadline hanya ikut berubah jika sebelumnya memang sama dengan jatuh tempo nota
+      if((patch.dueDate||'') !== (before.dueDate||'') && (p.deadline||'') === (before.dueDate||'')){ upd.deadline = patch.dueDate; pub.deadline = patch.dueDate; }
+      if(!Object.keys(upd).length) return;
+      b.update(db.collection('projects').doc(p.id), upd);
+      if(p.lacakToken && Object.keys(pub).length) b.set(db.collection('trackLinks').doc(p.lacakToken), Object.assign({ updatedAt:Date.now() }, pub), { merge:true });
+      Object.assign(p, upd); n++;
+    });
+    if(n) await b.commit();
+  }catch(e){ console.warn('notaEditPropagate', e); }
+}
+
+/* ---------- Edit / hapus satu pembayaran (salah ketik nominal, dll) ---------- */
+function kgPayActions(inv, p, i){
+  if(p && p.source==='reseller') return '';   // pembayaran reseller lewat alur verifikasi / tolak
+  return ' <button class="btn ghost small" style="padding:2px 8px;font-size:11px;" onclick="kgEditPayment(\''+inv.invNo+'\','+i+')">Ubah</button>'
+       + ' <button class="btn ghost small" style="padding:2px 8px;font-size:11px;color:var(--rust);" onclick="kgDeletePayment(\''+inv.invNo+'\','+i+')">Hapus</button>';
+}
+async function kgMutatePayments(invNo, fn, label){
+  if(!CONFIG_READY) return false;
+  try{
+    await db.runTransaction(async tx=>{
+      const ref = db.collection('invoices').doc(String(invNo)), sn = await tx.get(ref);
+      if(!sn.exists) throw new Error('Nota tidak ditemukan');
+      const d = sn.data();
+      const pays = fn((d.payments||[]).map(x=>Object.assign({}, x)));
+      const totalDibayar = pays.reduce((a,x)=>a+(Number(x.amount)||0), 0);
+      const hist = (d.editHistory||[]).concat([{ at:new Date().toISOString(), by:state.myName||'-', pembayaran:label, dibayarDari:Number(d.totalDibayar)||0, dibayarMenjadi:totalDibayar }]).slice(-30);
+      tx.update(ref, { payments:pays, totalDibayar, editHistory:hist });
+    });
+    try{ trkSyncSoon(); }catch(e){}
+    return true;
+  }catch(e){ alert('Gagal: '+e.message); return false; }
+}
+async function kgEditPayment(invNo, idx){
+  const inv = (invoicesCache||[]).find(x=>String(x.invNo)===String(invNo)); const p = inv && (inv.payments||[])[idx];
+  if(!p) return;
+  const raw = prompt('Ubah nominal pembayaran (Rp):', String(p.amount||0)); if(raw===null) return;
+  const amt = Number(String(raw).replace(/[^\d]/g,''));
+  if(!(amt>0)){ alert('Nominal harus lebih dari 0. Untuk menghapus, pakai tombol Hapus.'); return; }
+  const note = prompt('Ubah catatan pembayaran:', p.note||''); if(note===null) return;
+  const ok = await kgMutatePayments(invNo, pays=>{
+    if(!pays[idx]) throw new Error('Pembayaran tidak ditemukan');
+    pays[idx] = Object.assign(pays[idx], { amount:amt, note:note, editedAt:new Date().toISOString(), editedBy:state.myName||'-' });
+    return pays;
+  }, 'ubah '+formatRupiah(p.amount)+' → '+formatRupiah(amt));
+  if(ok) setTimeout(()=>openInvoiceDetail(String(invNo)), 350);
+}
+async function kgDeletePayment(invNo, idx){
+  const inv = (invoicesCache||[]).find(x=>String(x.invNo)===String(invNo)); const p = inv && (inv.payments||[])[idx];
+  if(!p) return;
+  if(!confirm('Hapus pembayaran '+formatRupiah(p.amount)+' ini? Total dibayar & sisa tagihan akan dihitung ulang.')) return;
+  const ok = await kgMutatePayments(invNo, pays=>{
+    if(!pays[idx]) throw new Error('Pembayaran tidak ditemukan');
+    pays.splice(idx,1); return pays;
+  }, 'hapus '+formatRupiah(p.amount));
+  if(ok) setTimeout(()=>openInvoiceDetail(String(invNo)), 350);
 }
 
 async function submitPayment(invNo, sisa){
